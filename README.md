@@ -16,4 +16,4 @@
 
 可以查看 [https://echoyl.com/antadmin](https://echoyl.com/antadmin) 在线查看后台效果
 
-[GitHub](https://github.com/echoyl/deadmin)
+[GitHub](https://github.com/echoyl/deadmin) [Gitee](https://gitee.com/deadmin/deadmin.git)
