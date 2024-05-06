@@ -8,9 +8,9 @@
 
 ## 效果
 
-![image](https://echoyl.com/storage/light.jpg)
+![image](https://echoyl.com/storage/light.jpg?v=0.8.4)
 
-![image](https://echoyl.com/storage/dark.jpg)
+![image](https://echoyl.com/storage/dark.jpg?v=0.8.4)
 
 ## 示例
 
