@@ -20,6 +20,7 @@ export const columnType = [
   { label: 'html', value: 'html' },
   { label: 'select', value: 'select' },
   { label: '拾色器 - colorPicker', value: 'colorPicker' },
+  { label: '下拉操作 - dropdownAction', value: 'dropdownAction' },
 ];
 
 const formMoreType = [

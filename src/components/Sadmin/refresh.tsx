@@ -8,16 +8,14 @@ import { SaDevContext } from './dev';
 import { isJsonString, uid } from './helpers';
 import { message } from './message';
 import { getTheme } from './themSwitch';
+import cache from './helper/cache';
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
   const cacheKey = 'adminSetting';
-  let localsetting = localStorage.getItem(cacheKey);
+  let localsetting = await cache.get(cacheKey);
   if (force || !localsetting) {
     const { data } = await request.get('setting');
     localsetting = data;
-
-    localStorage.setItem(cacheKey, JSON.stringify(localsetting));
-  } else {
-    localsetting = isJsonString(localsetting) ? JSON.parse(localsetting) : {};
+    cache.set(cacheKey, data, 3600);
   }
   if (!localsetting) {
     return {};

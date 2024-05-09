@@ -16,13 +16,15 @@ import ModalJson from '../action/modalJson';
 import { saValueTypeMap } from '../helpers';
 import Refresh from '../refresh';
 import { ToolBarMenu, ToolMenuForm } from './table/toolbar';
+import { HookAPI } from 'antd/es/modal/useModal';
 
 export const SaDevContext = createContext<{
   setting?: any;
   setSetting?: (setting: any) => void;
-  admin?: any;
-  setAdmin?: (admin: any) => void;
+  // admin?: any;
+  // setAdmin?: (admin: any) => void;
   messageApi?: MessageInstance;
+  modalApi?: HookAPI;
 }>({});
 
 export const DevLinks = () => {

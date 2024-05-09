@@ -4,7 +4,7 @@ import ButtonModal from '@/components/Sadmin/action/buttonModal';
 import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
 import { message, notification } from '@/components/Sadmin/message';
 import { saGetSetting } from '@/components/Sadmin/refresh';
-import request, { adminTokenName } from '@/services/ant-design-pro/sadmin';
+import request, { adminTokenName, setAdminToken } from '@/services/ant-design-pro/sadmin';
 import { LockOutlined, UserOutlined, WechatOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import {
@@ -22,6 +22,7 @@ import { Tabs, QRCode, Space, theme, GetProp } from 'antd';
 import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import styles from './index.less';
+import cache from '@/components/Sadmin/helper/cache';
 
 const LoginComponent: React.FC = () => {
   return <Login />;
@@ -49,7 +50,7 @@ const Login: React.FC = () => {
   }, []);
 
   const doLogin = (data) => {
-    localStorage.setItem(adminTokenName, data.access_token);
+    setAdminToken(data.access_token);
     //await fetchUserInfo();
     bind?.();
     setInitialState((s) => ({
@@ -79,7 +80,7 @@ const Login: React.FC = () => {
     const { data } = messageData;
     if (data?.action == 'login') {
       //如果是登录的话 跳转登录
-      localStorage.setItem('Sa-Remember', '1');
+      cache.set('Sa-Remember', 1);
       message.success({
         content: data.msg,
         duration: 1,
@@ -117,9 +118,9 @@ const Login: React.FC = () => {
           }
         } else {
           if (values.autoLogin) {
-            localStorage.setItem('Sa-Remember', '1');
+            cache.set('Sa-Remember', 1);
           } else {
-            localStorage.setItem('Sa-Remember', '0');
+            cache.set('Sa-Remember', 0);
           }
           message.success({
             content: msg,

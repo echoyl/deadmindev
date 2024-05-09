@@ -1,10 +1,89 @@
-import { saFormTabColumnsType } from '../../helpers';
+import { saFormColumnsType, saFormTabColumnsType } from '../../helpers';
 import { getModelColumns } from '../table/baseFormColumns';
 
 export default (model_id: number, dev: { [key: string]: any }): saFormTabColumnsType => {
   //const columns: any[] = [];
-
+  const styleColumns = (name?: string): saFormColumnsType => {
+    const getname = (rname: string, tname?: string) => {
+      return tname ? [tname, rname] : rname;
+    };
+    return [
+      {
+        valueType: 'group',
+        columns: [
+          {
+            title: '背景色',
+            dataIndex: getname('background', name),
+            valueType: 'colorPicker',
+            colProps: { span: 12 },
+          },
+          {
+            title: '字体颜色',
+            dataIndex: getname('color', name),
+            colProps: { span: 12 },
+            valueType: 'colorPicker',
+          },
+        ],
+      },
+      {
+        valueType: 'group',
+        columns: [
+          {
+            title: '字号大小',
+            dataIndex: getname('fontsize', name),
+            colProps: { span: 12 },
+            valueType: 'digit',
+            width: '100%',
+          },
+          {
+            title: '行高',
+            dataIndex: getname('height', name),
+            colProps: { span: 12 },
+            valueType: 'digit',
+            width: '100%',
+          },
+        ],
+      },
+      {
+        valueType: 'group',
+        columns: [
+          {
+            title: '是否边框',
+            dataIndex: getname('border', name),
+            valueType: 'switch',
+            colProps: { span: 24 },
+          },
+        ],
+      },
+    ];
+  };
   const modelColumns2: any[] = getModelColumns(model_id, dev);
+  const columnsSetting: saFormTabColumnsType = [
+    {
+      title: '设置',
+      formColumns: [
+        {
+          valueType: 'group',
+          columns: [
+            {
+              title: '日期格式',
+              dataIndex: 'dateformat',
+              tooltip: '如果填写会按该格式格式化日期',
+              colProps: { span: 12 },
+            },
+            {
+              title: '是否合计',
+              dataIndex: 'sum',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
+          ],
+        },
+        ...styleColumns(),
+      ],
+    },
+  ];
+
   const columns: saFormTabColumnsType = [
     {
       title: '表头设置',
@@ -19,29 +98,50 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
           },
           columns: [
             {
-              title: '自定义表头',
+              title: '表头显示',
               dataIndex: 'ctitle',
-              colProps: { span: 4 },
-              tooltip: '自定义表头不适用数据库默认名称',
+              colProps: { span: 3 },
             },
             {
-              title: '宽度',
+              title: '宽度设置',
               dataIndex: 'width',
               valueType: 'digit',
-              colProps: { span: 4 },
+              colProps: { span: 3 },
               width: '100%',
             },
             {
               title: '自定义字段',
               dataIndex: 'cname',
-              colProps: { span: 4 },
+              colProps: { span: 3 },
               tooltip: '无字段选择是可手动填入此项 . 分割为数组形式',
             },
             {
-              title: '日期格式',
-              dataIndex: 'dateformat',
-              tooltip: '如果填写会按该格式格式化日期',
-              colProps: { span: 4 },
+              title: '类型选择',
+              dataIndex: 'type',
+              valueType: 'select',
+              fieldProps: {
+                options: [
+                  { label: '价格', value: 'price' },
+                  { label: '日期', value: 'date' },
+                  { label: '序号', value: 'index' },
+                ],
+              },
+              tooltip: '支持价格类，日期，序号类型',
+              colProps: { span: 3 },
+            },
+            {
+              title: '设置',
+              dataIndex: 'setting',
+              valueType: 'confirmForm',
+              colProps: { span: 2 },
+              fieldProps: {
+                btn: {
+                  title: '设置',
+                  size: 'middle',
+                },
+                tabs: columnsSetting,
+                saFormProps: { devEnable: false },
+              },
             },
             {
               title: '字段选择',
@@ -61,63 +161,24 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
           valueType: 'group',
           dataIndex: 'head_setting',
           title: '表头设置',
-          columns: [
-            {
-              title: '背景色',
-              dataIndex: ['head', 'backgroud'],
-              colProps: { span: 8 },
-              valueType: 'colorPicker',
-            },
-            {
-              title: '字体颜色',
-              dataIndex: ['head', 'color'],
-              colProps: { span: 8 },
-              valueType: 'colorPicker',
-            },
-            {
-              title: '字号大小',
-              dataIndex: ['head', 'fontsize'],
-              colProps: { span: 8 },
-              valueType: 'digit',
-              width: '100%',
-            },
-          ],
+          columns: [...styleColumns('head')],
         },
       ],
     },
     {
-      title: '头部显示',
+      title: '顶部显示',
       formColumns: [
         {
           title: '内容',
           dataIndex: ['top', 'content'],
           tooltip: '如果设置则会在最顶部显示该内容 支持blade模板用法 {{data}} 为传入的变量',
         },
-        {
-          valueType: 'group',
-          columns: [
-            {
-              title: '背景色',
-              dataIndex: ['top', 'background'],
-              valueType: 'colorPicker',
-              colProps: { span: 8 },
-            },
-            {
-              title: '字体颜色',
-              dataIndex: ['top', 'color'],
-              colProps: { span: 8 },
-              valueType: 'colorPicker',
-            },
-            {
-              title: '字号大小',
-              dataIndex: ['top', 'fontsize'],
-              colProps: { span: 8 },
-              valueType: 'digit',
-              width: '100%',
-            },
-          ],
-        },
+        ...styleColumns('top'),
       ],
+    },
+    {
+      title: '数据显示',
+      formColumns: [...styleColumns('data')],
     },
   ];
   //console.log('modelColumns2', modelColumns2);
@@ -150,7 +211,7 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
                       title: '设置',
                       size: 'middle',
                     },
-                    width: 1200,
+                    width: 1050,
                     tabs: columns,
                     saFormProps: { devEnable: false },
                   },

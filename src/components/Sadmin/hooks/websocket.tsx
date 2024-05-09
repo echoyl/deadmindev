@@ -1,4 +1,4 @@
-import { adminTokenName } from '@/services/ant-design-pro/sadmin';
+import { adminTokenName, getAdminToken, rememberName } from '@/services/ant-design-pro/sadmin';
 import React, { useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '../dev';
 import { isJsonString } from '../helpers';
@@ -7,6 +7,7 @@ import ConfirmForm from '../action/confirmForm';
 import ButtonModal from '../action/buttonModal';
 import TableFromBread from '../tableFromBread';
 import { App, message, notification } from 'antd';
+import cache from '../helper/cache';
 
 // 创建WebSocket上下文
 export const WebSocketContext = React.createContext<{
@@ -29,9 +30,9 @@ const useWebSocket = () => {
   const { setting } = useContext(SaDevContext);
   let timeinterval: any = null;
   let reconnectInterval: any = null;
-  const bind = (ws?: WebSocket) => {
-    const token = localStorage.getItem(adminTokenName);
-    const remember = localStorage.getItem('Sa-Remember');
+  const bind = async (ws?: WebSocket) => {
+    const token = await getAdminToken();
+    const remember = await cache.get(rememberName);
     //console.log('send bind', token, ws, socket);
     if (!token) {
       //未登录不用绑定

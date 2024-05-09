@@ -170,6 +170,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const [initRequest, setInitRequest] = useState(false);
   //const url = 'posts/posts';
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  //记录当前的排序规则
+  const [sort, setSort] = useState({});
 
   //const actionRef = props.actionRef ? props.actionRef : useRef<ActionType>();
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -211,6 +213,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
         params[i] = JSON.stringify(params[i]);
       }
     }
+    setSort(sort);
     const ret = await request.get(url, { params: { ...params, sort, filter } });
     if (!ret) {
       return;
@@ -499,6 +502,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             selectedRowKeys,
             devEnable,
             pageMenu,
+            sort,
             ...props,
           })}
           rowSelection={
@@ -570,6 +574,9 @@ const SaTable: React.FC<saTableProps> = (props) => {
           handleModalVisible={handleModalVisible}
           paramExtra={paramExtra}
           currentRow={currentRow}
+          afterFormPost={(ret) => {
+            actionRef?.current?.reload();
+          }}
         />
 
         {pageType == 'page' && rowNode && (

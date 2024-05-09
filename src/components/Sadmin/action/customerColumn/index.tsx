@@ -26,6 +26,7 @@ import ConfirmForm from '../confirmForm';
 import Print from '../print';
 import RequestComponent from '../request';
 import ItemTags from './items/tag';
+import DropdownAction from '../../valueTypeMap/dropdownAction';
 const CustomerColumnRender = (props) => {
   const {
     items = [],
@@ -348,59 +349,7 @@ const CustomerColumnRender = (props) => {
             </ButtonDrawer>
           );
         } else if (item.action == 'dropdown') {
-          const [key = 'key', label = 'label'] = item.request?.fieldNames?.split(',');
-          const modelName = item.request?.modelName ? item.request?.modelName : item.request?.model;
-          const items_length = columnData?.[modelName + 's']?.length;
-          const dropdown_items = columnData?.[modelName + 's']?.map((v) => {
-            const badge_status = v[key] ? 'success' : 'error';
-            const _label =
-              items_length > 2 ? v[label] : <Badge status={badge_status} text={v[label]} />;
-            return { key: v[key], label: _label };
-          });
-          //console.log(dropdown_items, columnData, item.request);
-          //如果返回的dom是text的话那么检测状态加入 badge
-          //let showDom = dom;
-          const selectItem = dropdown_items?.find((v) => v.key == text);
-          const showDom = dom == text ? <a>{selectItem?.label}</a> : dom;
-
-          const post_key_name = item.request?.modelName ? item.request?.modelName : 'key';
-          let { url: requestUrl } = item.request;
-          if (requestUrl == '{{url}}') {
-            requestUrl = url;
-          }
-          return (
-            <Dropdown
-              key={key}
-              trigger={['click']}
-              menu={{
-                items: dropdown_items,
-                onClick: (event) => {
-                  //console.log(event.item);
-                  const clickItem = dropdown_items.find((v) => v.key == event.key);
-                  modalApi.confirm(
-                    ConfirmTriggerClick(
-                      {
-                        data: { [post_key_name]: event.key, ...item.request?.data },
-                        url: requestUrl,
-                        dataId: record.id,
-                        msg: (
-                          <Space>
-                            确定要执行
-                            <span style={{ color: 'red' }}>{clickItem?.label}</span>
-                            操作吗？
-                          </Space>
-                        ),
-                      },
-                      actionRef,
-                    ),
-                  );
-                },
-              }}
-              arrow
-            >
-              {showDom}
-            </Dropdown>
-          );
+          return <DropdownAction key={key} {...item.request} value={text} id={record.id} />;
         } else if (item.action == 'popover') {
           //检测弹出的类型
           let popcontent = null;

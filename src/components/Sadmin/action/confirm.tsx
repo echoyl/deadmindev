@@ -2,9 +2,12 @@ import request from '@/services/ant-design-pro/sadmin';
 import { Button, ButtonProps, Modal } from 'antd';
 import React, { FC, useContext, useMemo } from 'react';
 import { SaContext } from '../posts/table';
+import cache from '../helper/cache';
+import { SaDevContext } from '../dev';
+import { MessageInstance } from 'antd/es/message/interface';
 
 interface actionConfirm {
-  msg?: string;
+  msg?: string | React.ReactNode;
   btn?: ButtonProps;
   method?: 'post' | 'delete' | 'get';
   url?: string;
@@ -16,19 +19,24 @@ interface actionConfirm {
   title?: string;
 }
 
-export const ConfirmTriggerClick = (props: actionConfirm, actionRef, searchFormRef = undefined) => {
+export const ConfirmTriggerClick = (
+  props: actionConfirm,
+  actionRef,
+  searchFormRef?: any,
+  messageApi?: MessageInstance,
+) => {
   const { msg, method = 'post', url = '', data = {}, dataId = 0, callback, title } = props;
   const values = searchFormRef?.current?.getFieldsFormatValue();
-
   return {
     title: title ? title : '温馨提示！',
     content: msg,
     onOk: async () => {
       const requestProps =
         method == 'get'
-          ? { params: { ...data, id: dataId, ...values } }
+          ? { params: { ...data, id: dataId, ...values }, messageApi }
           : {
               data: { ...data, id: dataId, ...values },
+              messageApi,
             };
       const ret = await request[method](url, requestProps);
       if (callback) {
@@ -46,7 +54,7 @@ export const ConfirmTriggerClick = (props: actionConfirm, actionRef, searchFormR
         //后台传值后 支持 1.本地storage信息写入 2.页面是否跳转
         if (ret.data?.setStorage) {
           for (let name in ret.data.setStorage) {
-            localStorage.setItem(name, ret.data.setStorage[name]);
+            cache.set(name, ret.data.setStorage[name]);
           }
         }
         if (ret.data?.redirect) {

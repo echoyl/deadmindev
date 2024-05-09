@@ -6,7 +6,7 @@ import {
   SettingDrawer,
 } from '@ant-design/pro-components';
 import { RunTimeLayoutConfig, history } from '@umijs/max';
-import { App, ConfigProvider, message } from 'antd';
+import { App, ConfigProvider, Modal, message } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import React, { useContext, useEffect, useState } from 'react';
@@ -86,7 +86,6 @@ export function rootContainer(container: JSX.Element, args) {
     //const { initialState } = useModel('@@initialState');
     const [setting, setSetting] = useState<any>();
     //const [admin, setAdmin] = useState<any>();
-    const [messageApi, messageHolder] = message.useMessage();
     useEffect(() => {
       //console.log('root get');
       saGetSetting().then((v) => {
@@ -123,12 +122,10 @@ export function rootContainer(container: JSX.Element, args) {
               //setting: initialState?.settings,
               setting,
               setSetting,
-              messageApi,
             }}
           >
             <WebSocketProvider>{props.children}</WebSocketProvider>
             <Message />
-            {messageHolder}
           </SaDevContext.Provider>
         </App>
       </ConfigProvider>
@@ -140,6 +137,7 @@ export function rootContainer(container: JSX.Element, args) {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   const values = useContext(ProProvider);
+  const values2 = useContext(SaDevContext);
   const checkWaterMark = () => {
     if (initialState?.settings?.watermark) {
       return initialState?.settings?.watermark == 'username'
@@ -179,23 +177,36 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       locale: false,
     },
     childrenRender: (children, props) => {
+      const [messageApi, messageHolder] = message.useMessage();
+      const [modalApi, modalHolder] = Modal.useModal();
       return (
         <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
-          <WebSocketListen />
-          {children}
-          {initialState?.settings.dev && !props.location?.pathname?.includes('/login') && (
-            <SettingDrawer
-              disableUrlParams
-              enableDarkTheme
-              settings={initialState?.settings}
-              onSettingChange={(settings) => {
-                setInitialState((preInitialState) => ({
-                  ...preInitialState,
-                  settings: { ...preInitialState.settings, ...settings },
-                }));
-              }}
-            />
-          )}
+          <SaDevContext.Provider
+            value={{
+              ...values2,
+              messageApi,
+              modalApi,
+            }}
+          >
+            {messageHolder}
+            {modalHolder}
+
+            <WebSocketListen />
+            {children}
+            {initialState?.settings.dev && !props.location?.pathname?.includes('/login') && (
+              <SettingDrawer
+                disableUrlParams
+                enableDarkTheme
+                settings={initialState?.settings}
+                onSettingChange={(settings) => {
+                  setInitialState((preInitialState) => ({
+                    ...preInitialState,
+                    settings: { ...preInitialState.settings, ...settings },
+                  }));
+                }}
+              />
+            )}
+          </SaDevContext.Provider>
         </ProConfigProvider>
       );
     },

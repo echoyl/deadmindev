@@ -1,5 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
+import cache from '@/components/Sadmin/helper/cache';
 import { message as gmessage, notification } from '@/components/Sadmin/message';
 import { history, request as orequest } from '@umijs/max';
 import { extend } from 'umi-request';
@@ -27,6 +28,10 @@ export const loginPath = '/login';
 
 export const adminTokenName = 'sadmin-token';
 
+export const rememberName = 'Sa-Remember';
+
+export const settingName = 'adminSetting';
+
 export const messageLoadingKey = 'message_loading_key';
 
 function errorHandler(error) {
@@ -51,24 +56,36 @@ function errorHandler(error) {
 export async function saRequest(url: string, method = 'GET', options?: { [key: string]: any }) {
   //const method = options?.method;
   //console.log(options);
+  const token = await getAdminToken();
   return orequest('/sadmin/' + url, {
     method: method,
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${localStorage.getItem(adminTokenName)}`,
+      authorization: `Bearer ${token}`,
     },
     ...(options || {}),
   });
+}
+
+export async function getAdminToken() {
+  const adminToken = await cache.get(adminTokenName);
+  return adminToken;
+}
+
+export async function setAdminToken(data: string) {
+  return cache.set(adminTokenName, data);
 }
 
 const request = extend({
   prefix: request_prefix,
   errorHandler,
 });
-export function requestHeaders() {
+export async function requestHeaders() {
+  const token = await getAdminToken();
+  const remember = await cache.get(rememberName);
   return {
-    Authorization: `Bearer ${localStorage.getItem(adminTokenName)}`,
-    'Sa-Remember': `${localStorage.getItem('Sa-Remember')}`,
+    Authorization: `Bearer ${token}`,
+    'Sa-Remember': remember,
     'X-Requested-With': 'XMLHttpRequest',
   };
 }
@@ -83,11 +100,12 @@ request.interceptors.request.use(async (url, options) => {
     : {
         'Content-Type': 'application/json',
       };
+  const rheaders = await requestHeaders();
   return {
     url: url,
     options: {
       ...options,
-      headers: { ...headers, ...requestHeaders() },
+      headers: { ...headers, ...rheaders },
     },
   };
 });
@@ -233,16 +251,18 @@ export async function loginOut(cb?: Function) {
   return request.get('index/logout', {
     msgcls: () => {
       //删除数据 token
-      localStorage.setItem(adminTokenName, '');
-      //清除pca数据
-      for (var i in localStorage) {
-        if (i.indexOf('pca') >= 0) {
-          localStorage.setItem(i, '');
+      cache.remove(adminTokenName);
+      cache.remove(settingName);
+      cache.keys((err, keys) => {
+        if (!err) {
+          keys.map((k) => {
+            if (k.indexOf('pca') >= 0) {
+              cache.remove(k);
+            }
+          });
         }
-        if (i.indexOf('adminSetting') >= 0) {
-          localStorage.setItem(i, '');
-        }
-      }
+      });
+
       if (cb) {
         cb();
       }

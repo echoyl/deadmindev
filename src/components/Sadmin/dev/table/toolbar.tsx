@@ -366,6 +366,7 @@ export const toolBarRender = (props) => {
     selectedRowKeys,
     devEnable: pdevEnable,
     pageMenu,
+    sort,
   } = props;
   const createButton = (
     <Button type="primary" key="primary">
@@ -378,7 +379,7 @@ export const toolBarRender = (props) => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const devEnable =
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev;
-  const values = { ...paramExtra, ids: selectedRowKeys };
+  const values = { ...paramExtra, ids: selectedRowKeys, sort };
   if (table_menu_key) {
     values[table_menu_key] = tableMenuId;
   }
@@ -412,6 +413,7 @@ export const toolBarRender = (props) => {
         btn.title = (
           <ToolbarColumnTitle
             {...btn}
+            key={btn.key}
             title={btn.title ? btn.title : defaultTitle[btn.valueType]}
           />
         );

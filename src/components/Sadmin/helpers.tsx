@@ -41,9 +41,8 @@ import IconSelect, { iconToElement } from './valueTypeMap/iconSelect';
 import MDEditor from './valueTypeMap/mdEditor';
 import { wxMenuRender } from './wxMenu';
 import { isString } from 'lodash';
-import { SaContext } from './posts/table';
-import { SaDevContext } from './dev';
 import SaAutoCompleteMap from './valueTypeMap/autoComplete';
+import { DropdownActionMap } from './valueTypeMap/dropdownAction';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -119,6 +118,7 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'colorPicker'
   | 'mdEditor'
   | 'iconSelect'
+  | 'dropdownAction'
 >;
 type saFormColumnsTypeFn<T> = (d: T) => saFormColumnsType;
 export declare type saFormTabColumnsType = Array<{
@@ -476,6 +476,10 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       return _;
     },
     renderFormItem: SaAutoCompleteMap,
+  },
+  dropdownAction: {
+    render: DropdownActionMap,
+    renderFormItem: DropdownActionMap,
   },
 };
 

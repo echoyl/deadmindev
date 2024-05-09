@@ -1,16 +1,15 @@
 import request from '@/services/ant-design-pro/sadmin';
 import { ProFormCascader } from '@ant-design/pro-form';
 import { FC, useEffect, useState } from 'react';
+import cache from './helper/cache';
 
 export async function getPca(level: number, topCode: string) {
   const key = topCode ? 'pca_' + level + topCode : 'pca_' + level;
-  let _data = localStorage.getItem(key);
+  let _data = await cache.get(key);
   if (!_data) {
     const { data } = await request.get('helper/pca', { params: { level: level, topCode } });
-    localStorage.setItem(key, JSON.stringify(data));
+    cache.set(key, data);
     _data = data;
-  } else {
-    _data = JSON.parse(_data);
   }
   return _data;
 }
