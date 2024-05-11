@@ -146,20 +146,27 @@ const ExportButton = ({
 //导入按钮
 
 const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {} }) => {
+  const [headers, setHeaders] = useState();
+
   const uploadProps = {
     name: 'file',
     action: getFullUrl(url + '/import'),
-    headers: requestHeaders(),
     itemRender: () => '',
     ...ups,
   };
   const [loading, setLoading] = useState(false);
   const { message } = App.useApp();
   const { actionRef } = useContext(SaContext);
+  useEffect(() => {
+    requestHeaders().then((v) => {
+      setHeaders(v);
+    });
+  }, []);
   return (
     <Upload
       key="importButton"
       {...uploadProps}
+      headers={headers}
       onChange={(info) => {
         setLoading(true);
         if (info.file.status !== 'uploading') {
