@@ -2,7 +2,7 @@ import { requestHeaders, request_prefix } from '@/services/ant-design-pro/sadmin
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Image, Upload, message } from 'antd';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.less';
 
 import type { DragEndEvent } from '@dnd-kit/core';
@@ -66,13 +66,18 @@ const DraggableUploadListItem = ({ originNode, file }: DraggableUploadListItemPr
 };
 
 const Uploader: React.FC<Props> = (props) => {
+  const [headers, setHeaders] = useState();
+  useEffect(() => {
+    requestHeaders().then((v) => {
+      setHeaders(v);
+    });
+  }, []);
   const {
     max = 1,
     type = 'image',
     value = [],
     size = 0,
     fieldProps = {
-      headers: requestHeaders(),
       name: 'file',
       listType: 'picture-card',
       accept: 'image/*',
@@ -204,6 +209,7 @@ const Uploader: React.FC<Props> = (props) => {
       {max == 1 ? (
         <Upload
           {...fieldProps}
+          headers={headers}
           listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
           className={
             buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
@@ -223,6 +229,7 @@ const Uploader: React.FC<Props> = (props) => {
           >
             <Upload
               {...fieldProps}
+              headers={headers}
               action={action}
               listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
               className={
