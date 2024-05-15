@@ -101,7 +101,7 @@ export function rootContainer(container: JSX.Element, args) {
     }, []);
     const components = {
       Menu: {
-        subMenuItemBg: 'rgb(0,0,0,0)',
+        subMenuItemBg: 'transparent',
       },
       ...setting?.antdtheme?.components,
     };
@@ -168,7 +168,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     layoutBgImgList: [],
 
     menuFooterRender: () => (initialState?.settings.dev ? <DevLinks /> : false),
-    menuHeaderRender: undefined,
+    //menuHeaderRender: undefined,
     menu: {
       params: initialState?.currentUser?.uid,
       request: async (params, defaultMenuData) => {

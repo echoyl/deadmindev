@@ -19,7 +19,7 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
     title = '弹层',
     open = false,
     width = 800,
-    drawerProps,
+    drawerProps = {},
     afterOpenChange,
   } = props;
   const [iopen, setOpen] = useState(open);
@@ -39,7 +39,16 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
         {footerRef.current && submitter ? (
           <React.Fragment key="submitter">
             {createPortal(
-              <div style={{ padding: '8px 16px' }}>{submitter}</div>,
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  padding: '8px 16px',
+                  borderTop: '1px solid rgba(5, 5, 5, 0.06)',
+                }}
+              >
+                <div style={{ padding: '8px 16px' }}>{submitter}</div>
+              </div>,
               footerRef.current,
             )}
           </React.Fragment>
@@ -73,12 +82,21 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
     afterOpenChange?.(iopen);
   }, [iopen]);
 
-  if (drawerProps && !drawerProps.footer) {
-    //有自定义footer
-    drawerProps.styles = {
-      footer:{ padding: 0 }
-    };
-  }
+  // if (drawerProps && !drawerProps.footer) {
+  //   //有自定义footer
+  //   drawerProps.styles = {
+  //     footer: { padding: 0 },
+  //   };
+  // }
+
+  // if (drawerProps && !drawerProps.footerStyle) {
+  //   //有自定义footer
+  //   drawerProps.styles = {
+  //     footer: drawerProps.footerStyle,
+  //   };
+  // }
+
+  const { footerStyle, ...restfooterStyle } = drawerProps;
 
   return (
     <>
@@ -91,27 +109,25 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
         }}
         width={width}
         title={title}
-        footer={
-          <div
-            ref={footerDomRef}
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          />
-        }
+        footer={<div ref={footerDomRef} />}
         maskClosable={false}
-        {...drawerProps}
+        {...restfooterStyle}
+        styles={{
+          footer: {
+            padding: 0,
+            border: 'none',
+          },
+        }}
       >
         <div
           onKeyDown={(e) => {
             e.stopPropagation();
           }}
         >
-        {iopen &&
-          React.Children.map(props.children, (c) => {
-            return React.cloneElement(c, { setOpen, contentRender });
-          })}
+          {iopen &&
+            React.Children.map(props.children, (c) => {
+              return React.cloneElement(c, { setOpen, contentRender });
+            })}
         </div>
       </Drawer>
     </>

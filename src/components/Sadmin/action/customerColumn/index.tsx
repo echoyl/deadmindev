@@ -334,7 +334,12 @@ const CustomerColumnRender = (props) => {
               title={tplComplie(modal?.title, { record })}
               drawerProps={modal?.drawerProps}
             >
-              <TableFromBread readonly={false} fieldProps={fieldProps} record={record} />
+              <TableFromBread
+                readonly={false}
+                fieldProps={fieldProps}
+                record={record}
+                type="drawer"
+              />
             </ButtonDrawer>
           );
         } else if (item.action == 'drawer') {
