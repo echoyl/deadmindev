@@ -80,7 +80,7 @@ const PostsList: React.FC<saTablePros> = (props) => {
         },
       }}
     >
-      <Row gutter={[24, 16]} style={categorys.length > 1 ? { marginLeft: 0, marginRight: 0 } : {}}>
+      <Row gutter={[24, 24]} style={categorys.length > 1 ? { marginLeft: 0, marginRight: 0 } : {}}>
         {categorys.length > 1 && (
           <Col span={3} title={treeTitle} style={{ background: '#fff', paddingTop: 20 }}>
             <Title level={5}>{treeTitle}</Title>

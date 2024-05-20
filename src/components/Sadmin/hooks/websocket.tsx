@@ -15,6 +15,7 @@ export const WebSocketContext = React.createContext<{
   bind?: (socket?: WebSocket) => void;
   clientId?: string;
   messageData?: { [key: string]: any };
+  setMessageData?: (data: any) => void;
 }>({});
 
 // 高阶组件，用于在所有子组件中提供WebSocket实例
@@ -121,7 +122,7 @@ const WebSocketProvider = (props) => {
     }
   }, [socket]);
   return (
-    <WebSocketContext.Provider value={{ socket, bind, clientId, messageData }}>
+    <WebSocketContext.Provider value={{ socket, bind, clientId, messageData, setMessageData }}>
       {props.children}
     </WebSocketContext.Provider>
   );

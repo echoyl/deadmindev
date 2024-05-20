@@ -38,7 +38,7 @@ const Login: React.FC = () => {
 
   const [searchParams] = useSearchParams();
 
-  const { clientId, messageData, bind } = useContext(WebSocketContext);
+  const { clientId, messageData, bind, setMessageData } = useContext(WebSocketContext);
   const [setting, setSetting] = useState<any>();
   const [loginType, setLoginType] = useState();
   useEffect(() => {
@@ -50,8 +50,6 @@ const Login: React.FC = () => {
   }, []);
 
   const doLogin = (data) => {
-    setAdminToken(data.access_token);
-    //await fetchUserInfo();
     bind?.();
     setInitialState((s) => ({
       ...s,
@@ -78,17 +76,22 @@ const Login: React.FC = () => {
       return;
     }
     const { data } = messageData;
+
     if (data?.action == 'login') {
       //如果是登录的话 跳转登录
       cache.set('Sa-Remember', 1);
-      message.success({
-        content: data.msg,
-        duration: 1,
-        onClose: () => {
-          flushSync(() => {
-            doLogin(data);
-          });
-        },
+      //重新设置messagedata，如果这个时候退出登录而没有清空 messagedata的话会一直重复这个动作 服务器发送退出登录的消息 这里可以不用设置messagedata
+      //setMessageData?.(false);
+      setAdminToken(data.access_token).then(() => {
+        message.success({
+          content: data.msg,
+          duration: 1,
+          onClose: () => {
+            flushSync(() => {
+              doLogin(data);
+            });
+          },
+        });
       });
     }
   }, [messageData]);
