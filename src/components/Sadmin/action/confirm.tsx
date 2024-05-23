@@ -17,6 +17,7 @@ interface actionConfirm {
   //trigger?: (value: any) => ReactNode;
   trigger?: JSX.Element;
   title?: string;
+  afterActionType?: 'reload' | 'goback' | 'none';
 }
 
 export const ConfirmTriggerClick = (
@@ -25,7 +26,16 @@ export const ConfirmTriggerClick = (
   searchFormRef?: any,
   messageApi?: MessageInstance,
 ) => {
-  const { msg, method = 'post', url = '', data = {}, dataId = 0, callback, title } = props;
+  const {
+    msg,
+    method = 'post',
+    url = '',
+    data = {},
+    dataId = 0,
+    callback,
+    title,
+    afterActionType = 'reload',
+  } = props;
   const values = searchFormRef?.current?.getFieldsFormatValue();
   return {
     title: title ? title : '温馨提示！',
@@ -61,12 +71,14 @@ export const ConfirmTriggerClick = (
           window.open(ret.data.redirect.url, ret.data.redirect.type);
         } else {
           //不跳转链接就刷新页面
-          if (actionRef?.current) {
+          if (actionRef?.current && afterActionType == 'reload') {
             actionRef.current?.reload();
           } else {
             if (ret.data.reload) {
             } else {
-              history.back();
+              if (afterActionType != 'none') {
+                history.back();
+              }
             }
           }
         }

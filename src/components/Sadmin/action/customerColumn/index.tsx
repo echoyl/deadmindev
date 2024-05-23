@@ -244,6 +244,7 @@ const CustomerColumnRender = (props) => {
               url={item.request?.url}
               postUrl={item.request?.postUrl}
               data={item.request?.data}
+              afterActionType={item.request?.afterActionType}
               dataId={record?.[idName]}
               {...value}
               callback={(ret) => {
@@ -252,7 +253,10 @@ const CustomerColumnRender = (props) => {
                   return;
                 }
                 if (!ret.code) {
-                  actionRef?.current?.reload();
+                  if (item.request?.afterActionType == 'reload') {
+                    actionRef?.current?.reload();
+                  }
+
                   formRef?.current?.setFieldsValue?.({});
                   //formRef?.current?.resetFields();
                 }
@@ -270,6 +274,7 @@ const CustomerColumnRender = (props) => {
               method={item.request?.method ? item.request?.method : 'post'}
               msg={item.modal?.msg}
               title={item.modal?.title}
+              afterActionType={item.request?.afterActionType}
               callback={(ret) => {
                 if (!ret.code && ret.data?.ifram_url) {
                   modalApi.info({

@@ -2,7 +2,6 @@ import CaptchaInput from '@/components/CaptchInput';
 import Footer from '@/components/Footer';
 import ButtonModal from '@/components/Sadmin/action/buttonModal';
 import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
-import { message, notification } from '@/components/Sadmin/message';
 import { saGetSetting } from '@/components/Sadmin/refresh';
 import request, { adminTokenName, setAdminToken } from '@/services/ant-design-pro/sadmin';
 import { LockOutlined, UserOutlined, WechatOutlined } from '@ant-design/icons';
@@ -18,7 +17,7 @@ import {
   setAlpha,
 } from '@ant-design/pro-components';
 import { Helmet, history, useModel, useSearchParams } from '@umijs/max';
-import { Tabs, QRCode, Space, theme, GetProp } from 'antd';
+import { Tabs, QRCode, Space, theme, GetProp, message, notification } from 'antd';
 import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import styles from './index.less';
@@ -37,6 +36,9 @@ const Login: React.FC = () => {
   const [isQrcode, setIsQrcode] = useState(false);
 
   const [searchParams] = useSearchParams();
+
+  const [messageApi, messageHolder] = message.useMessage();
+  const [notificationApi, notificationHolder] = notification.useNotification();
 
   const { clientId, messageData, bind, setMessageData } = useContext(WebSocketContext);
   const [setting, setSetting] = useState<any>();
@@ -83,7 +85,7 @@ const Login: React.FC = () => {
       //重新设置messagedata，如果这个时候退出登录而没有清空 messagedata的话会一直重复这个动作 服务器发送退出登录的消息 这里可以不用设置messagedata
       //setMessageData?.(false);
       setAdminToken(data.access_token).then(() => {
-        message.success({
+        messageApi.success({
           content: data.msg,
           duration: 1,
           onClose: () => {
@@ -108,7 +110,7 @@ const Login: React.FC = () => {
       then: (res) => {
         const { code, msg, data } = res;
         if (res.code) {
-          notification.error({ description: msg, message: '提示' });
+          notificationApi.error({ description: msg, message: '提示' });
           if (loginType == 'phone' && res.code == 3) {
             setCaptchaPhoneReload(captchaReload + 1);
           }
@@ -125,14 +127,16 @@ const Login: React.FC = () => {
           } else {
             cache.set('Sa-Remember', 0);
           }
-          message.success({
-            content: msg,
-            duration: 1,
-            onClose: () => {
-              flushSync(() => {
-                doLogin(res.data);
-              });
-            },
+          setAdminToken(res.data.access_token).then(() => {
+            messageApi.success({
+              content: msg,
+              duration: 1,
+              onClose: () => {
+                flushSync(() => {
+                  doLogin(res.data);
+                });
+              },
+            });
           });
         }
       },
@@ -367,6 +371,8 @@ const Login: React.FC = () => {
       <Helmet>
         <title>登录 - {setting?.title}</title>
       </Helmet>
+      {messageHolder}
+      {notificationHolder}
       <div className={styles.content} style={containerStyle.backgroundImage ? {} : { padding: 0 }}>
         <ProCard
           style={{
@@ -441,7 +447,7 @@ const Login: React.FC = () => {
                     float: 'right',
                   }}
                   onClick={() => {
-                    message.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
+                    messageApi.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
                   }}
                 >
                   忘记密码

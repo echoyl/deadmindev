@@ -39,7 +39,7 @@ export default () => {
       render: (dom, record) => (
         <Space>
           {record.type == 1 ? <FileOutlined /> : <FolderOutlined />}
-          {record.title} - {record.id}
+          {record.title}
         </Space>
       ),
     },
@@ -59,7 +59,7 @@ export default () => {
             if: '{{record.type == 1}}',
             domtype: 'button',
             modal: { msg: '确定要生成数据表吗？' },
-            request: { url: 'dev/model/createModelSchema' },
+            request: { url: 'dev/model/createModelSchema', afterActionType: 'none' },
             action: 'confirm',
             btn: { text: '生成表', size: 'small' },
           },

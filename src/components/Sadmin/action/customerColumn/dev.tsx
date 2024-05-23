@@ -604,6 +604,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                 title: 'request配置',
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  saFormProps: { devEnable: false },
                                   btn: {
                                     title: 'request配置',
                                     size: 'small',
@@ -632,31 +633,61 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                         },
                                       ],
                                     },
+                                    {
+                                      valueType: 'group',
+                                      columns: [
+                                        {
+                                          dataIndex: 'model',
+                                          title: '数据源',
+                                          //valueType: 'select',
+                                          valueType: 'cascader',
+                                          fieldProps: {
+                                            options: relationModel,
+                                          },
+                                          colProps: { span: 12 },
+                                        },
+                                        {
+                                          dataIndex: 'modelName',
+                                          title: '数据源名称',
+                                          tooltip:
+                                            '如果不选择数据源那么直接从列表页面的columnData中获取',
+                                          colProps: { span: 12 },
+                                        },
+                                      ],
+                                    },
+                                    {
+                                      valueType: 'group',
+                                      columns: [
+                                        {
+                                          dataIndex: 'fieldNames',
+                                          title: 'fieldNames',
+                                          tooltip: '在dropdown中指定key和label的键值名称',
+                                          colProps: { span: 12 },
+                                        },
+                                        {
+                                          dataIndex: 'afterActionType',
+                                          valueType: 'select',
+                                          title: '请求后动作',
+                                          fieldProps: {
+                                            options: [
+                                              { label: 'reload', value: 'reload' },
+                                              { label: 'goback', value: 'goback' },
+                                              { label: 'none', value: 'none' },
+                                            ],
+                                            defaultValue: 'reload',
+                                          },
+                                          colProps: { span: 12 },
+                                        },
+                                      ],
+                                    },
 
-                                    {
-                                      dataIndex: 'model',
-                                      title: '数据源',
-                                      //valueType: 'select',
-                                      valueType: 'cascader',
-                                      fieldProps: {
-                                        options: relationModel,
-                                      },
-                                    },
-                                    {
-                                      dataIndex: 'modelName',
-                                      title: '数据源名称',
-                                      tooltip:
-                                        '如果不选择数据源那么直接从列表页面的columnData中获取',
-                                    },
-                                    {
-                                      dataIndex: 'fieldNames',
-                                      title: 'fieldNames',
-                                      tooltip: '在dropdown中指定key和label的键值名称',
-                                    },
                                     {
                                       dataIndex: 'data',
                                       title: '额外传输数据',
                                       valueType: 'jsonEditor',
+                                      fieldProps: {
+                                        height: 250,
+                                      },
                                     },
                                   ],
                                 },

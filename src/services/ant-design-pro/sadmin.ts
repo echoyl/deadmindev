@@ -171,7 +171,7 @@ request.interceptors.response.use(async (response, options) => {
             message.success({
               key: messageLoadingKey,
               content: msg,
-              duration: 2,
+              duration: 1,
             });
             if (data?.logout) {
               message.loading({

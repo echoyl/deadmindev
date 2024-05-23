@@ -12,19 +12,19 @@ const TableIndex = (props) => {
           align-items: center;
           justify-content: space-evenly;
           padding-right: 8px;
-          .nb-table-index {
+          .de-table-index {
             opacity: 0;
           }
           &:not(.checked) {
-            .nb-table-index {
+            .de-table-index {
               opacity: 1;
             }
           }
           &:hover {
-            .nb-table-index {
+            .de-table-index {
               opacity: 0;
             }
-            .nb-origin-node {
+            .de-origin-node {
               display: block;
             }
           }
@@ -42,13 +42,13 @@ const TableIndex = (props) => {
           `,
         )}
       >
-        <div className={classNames('nb-table-index')} style={{ padding: '0 8px 0 16px' }}>
+        <div className={classNames('de-table-index')} style={{ padding: '0 8px 0 16px' }}>
           {record.id}
         </div>
       </div>
       <div
         className={classNames(
-          'nb-origin-node',
+          'de-origin-node',
           checked ? 'checked' : null,
           css`
             position: absolute;

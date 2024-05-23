@@ -297,13 +297,35 @@ export const ToolBarMenu = (props) => {
   );
 };
 
-const ColumnsSelector = (props) => {
+export const ColumnsSelector = (props) => {
   const { trigger, dev } = props;
   const [treeData, setTreeData] = useState<any[]>();
   const [treeChecked, setTreeChecked] = useState<any[]>();
   const {
     tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' },
   } = useContext(SaContext);
+
+  const getDataByType = (type: string) => {
+    if (type == 'table') {
+      return pageMenu?.data?.tableColumns;
+    } else {
+      //表单需要处理数据
+      const cls: any[] = [];
+      pageMenu?.data?.tabs?.forEach((tab: any) => {
+        const formColumns = tab?.formColumns;
+        formColumns?.forEach((group: any) => {
+          const columns = group?.columns;
+          columns?.forEach((cl: any) => {
+            if (cl?.dataIndex) {
+              cls.push({ dataIndex: cl?.dataIndex });
+            }
+          });
+        });
+      });
+      return cls;
+    }
+  };
+
   useEffect(() => {
     const _treeData = getModelColumns(pageMenu?.model_id, dev);
 
@@ -313,10 +335,11 @@ const ColumnsSelector = (props) => {
       }),
     );
     //初始化已有的列
-    const defaultChecked = pageMenu?.data?.tableColumns
+    const defaultChecked = getDataByType(type)
       ?.map((v) => v.dataIndex)
       .filter((v) => isString(v));
     setTreeChecked(defaultChecked);
+    console.log('editUrl', editUrl, type);
   }, []);
   const post = async (e) => {
     const { data } = await request.post(editUrl, {
@@ -349,7 +372,7 @@ const ColumnsSelector = (props) => {
       content={<div style={{ width: 250 }}>{content}</div>}
       title="快速选择需要展示的列"
       trigger={'click'}
-      placement="bottomRight"
+      placement="bottom"
     >
       {trigger}
     </Popover>

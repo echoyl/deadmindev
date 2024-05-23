@@ -6,7 +6,6 @@ import { Button, Col, Flex, Row, Skeleton, Space, Tabs } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { saConfig } from '../../config';
 import { SaBreadcrumbRender, tplComplie } from '../../helpers';
-import { message } from '../../message';
 import { PagePanelHeader } from '../../pagePanel';
 import { getFormFieldColumns } from '../../posts/formDom';
 import { SaContext } from '../../posts/table';
@@ -16,6 +15,7 @@ import { ToolBarMenu } from '../table/toolbar';
 import PanelItemCard from './items/card';
 import PanelItemTable from './items/table';
 import { DevPanelColumnTitle } from './title';
+import { SaDevContext } from '..';
 
 const ItemCol = (props) => {
   const {
@@ -240,14 +240,15 @@ const SaPanel = (props) => {
   const [data, setData] = useState();
   //const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<{ [key: string]: any }>();
+  const { messageApi } = useContext(SaDevContext);
   const getData = async (params = {}) => {
     //setLoading(true);
     //message.loading('加载中...');
-    message.loading({ content: '加载中...', key: messageLoadingKey, duration: 0 });
+    messageApi?.loading({ content: '加载中...', key: messageLoadingKey, duration: 0 });
     const { data: rdata } = await request.get(url, {
       params: { ...formData, ...params },
     });
-    message.destroy();
+    messageApi?.destroy();
     // //setLoading(false);
     setData(rdata);
   };

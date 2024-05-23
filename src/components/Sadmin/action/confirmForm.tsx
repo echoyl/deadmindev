@@ -18,6 +18,7 @@ interface actionConfirm {
   formColumns?: saFormColumnsType;
   tabs?: saFormTabColumnsType;
   callback?: (value: any) => void;
+  afterActionType?: 'reload' | 'goback' | 'none';
   onChange?: (value: any) => void;
   value?: any;
   trigger?: ReactNode;
@@ -46,6 +47,7 @@ const InnerForm = (props) => {
     page,
     readonly = false,
     saFormProps,
+    afterActionType = 'reload',
   } = props;
   const formRef = useRef<ProFormInstance>();
   const { actionRef, formRef: topFormRef } = useContext(SaContext);
@@ -68,6 +70,32 @@ const InnerForm = (props) => {
   } else {
     tabs = utabs ? utabs : [{ title: '基础信息', formColumns: [...formColumns] }];
   }
+
+  const afterAction = (ret: any) => {
+    setOpen(false);
+    const rcb = callback?.(ret);
+    if (callback) {
+      if (actionRef || topFormRef) {
+        return;
+      }
+    }
+
+    if (actionRef || topFormRef) {
+      if (afterActionType == 'reload') {
+        actionRef.current?.reload();
+      }
+    } else {
+      if (!rcb) {
+        history.back();
+      } else {
+        if (afterActionType != 'none') {
+          history.back();
+        }
+      }
+    }
+
+    return;
+  };
 
   return (
     <SaForm
@@ -119,27 +147,7 @@ const InnerForm = (props) => {
         if (url || postUrl) {
           //有url提交
           if (!code) {
-            //console.log('列表刷新 及关闭弹层');
-            //console.log('confirm form has actionRef', actionRef);
-            if (actionRef) {
-              //在列表中 刷新列表
-              //console.log('列表 reload');
-              //actionRef.current?.reload();
-              //设置弹出层关闭，本来会触发table重新加载数据后会关闭弹层，但是如果数据重载过慢的话，这个会感觉很卡所以在这里直接设置弹层关闭
-              setOpen(false);
-              callback?.(ret);
-            } else if (topFormRef) {
-              //console.log('in deep form and close this one');
-              setOpen(false);
-              callback?.(ret);
-            } else {
-              //在表单 中  就返回上一页
-              setOpen(false);
-              const rcb = callback?.(ret);
-              if (!rcb) {
-                history.back();
-              }
-            }
+            afterAction(ret);
           } else {
             return;
           }

@@ -439,6 +439,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                   variant: 'filled',
                   ignoreRules: false,
                   syncToInitialValues: false,
+                  style: { padding: 16 },
                   syncToUrl: (values, type) => {
                     //console.log('syncToUrl', values, type);
                     if (pageType != 'page') {

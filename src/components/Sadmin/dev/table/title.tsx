@@ -6,6 +6,7 @@ import {
   InsertRowRightOutlined,
   MenuOutlined,
   SettingOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons';
 import { css } from '@emotion/css';
 import { useModel } from '@umijs/max';
@@ -26,7 +27,7 @@ import {
   getModelRelations,
 } from './baseFormColumns';
 import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
-import { ToolBarMenu } from './toolbar';
+import { ColumnsSelector, ToolBarMenu } from './toolbar';
 export const designerCss = css`
   position: relative;
   min-width: 60px;
@@ -165,22 +166,22 @@ const BaseForm = (props) => {
             },
           ]
         : ctype == 'formGroup'
-        ? [
-            {
-              title: 'title',
-              dataIndex: ['props', 'title'],
-              colProps: { span: 12 },
-            },
-          ]
-        : type == 'table'
-        ? devBaseTableFormColumns({
-            model_id: pageMenu?.model_id,
-            dev: setting?.dev,
-          })
-        : devBaseFormFormColumns({
-            model_id: pageMenu?.model_id,
-            dev: setting?.dev,
-          });
+          ? [
+              {
+                title: 'title',
+                dataIndex: ['props', 'title'],
+                colProps: { span: 12 },
+              },
+            ]
+          : type == 'table'
+            ? devBaseTableFormColumns({
+                model_id: pageMenu?.model_id,
+                dev: setting?.dev,
+              })
+            : devBaseFormFormColumns({
+                model_id: pageMenu?.model_id,
+                dev: setting?.dev,
+              });
 
     setColumns(columns);
     setColumnsMore(getCustomerColumn(relations, allMenus, modelColumns));
@@ -426,34 +427,34 @@ export const DevTableColumnTitle = (props) => {
           deleteitem,
         ]
       : type == 'formGroup'
-      ? [
-          baseform,
-          addCol,
-          addGroup,
-          addEmptyGroup,
-          {
-            type: 'divider',
-          },
+        ? [
+            baseform,
+            addCol,
+            addGroup,
+            addEmptyGroup,
+            {
+              type: 'divider',
+            },
 
-          deleteitem,
-        ]
-      : type == 'toolbar'
-      ? [
-          uid ? baseform : null,
-          addCol,
-          {
-            type: 'divider',
-          },
-          deleteitem,
-        ]
-      : [
-          baseform,
-          addCol,
-          {
-            type: 'divider',
-          },
-          deleteitem,
-        ];
+            deleteitem,
+          ]
+        : type == 'toolbar'
+          ? [
+              uid ? baseform : null,
+              addCol,
+              {
+                type: 'divider',
+              },
+              deleteitem,
+            ]
+          : [
+              baseform,
+              addCol,
+              {
+                type: 'divider',
+              },
+              deleteitem,
+            ];
   //表单的话 加一个最小宽度
   const styles = {
     form: {
@@ -490,6 +491,7 @@ export const DevTableColumnTitle = (props) => {
 
 export const FormAddTab = (props) => {
   const { pageMenu } = props;
+  const { initialState, setInitialState } = useModel('@@initialState');
   return (
     <Space>
       <BaseForm
@@ -500,6 +502,15 @@ export const FormAddTab = (props) => {
         }
         ctype="tab"
         extpost={{ actionType: 'addTab' }}
+      />
+      <ColumnsSelector
+        key="devcolumns"
+        trigger={
+          <Button type="dashed">
+            <UnorderedListOutlined />
+          </Button>
+        }
+        dev={initialState?.settings?.dev}
       />
       <ToolBarMenu
         key="devsetting"
