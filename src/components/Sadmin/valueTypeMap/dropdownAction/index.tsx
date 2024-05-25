@@ -11,10 +11,22 @@ const DropdownAction: React.FC = (props: {
   value?: any;
   data?: { [key: string]: any };
   id?: number;
+  callback?: (value: any) => void;
+  //trigger?: (value: any) => ReactNode;
+  afterActionType?: 'reload' | 'goback' | 'none';
 }) => {
   const { actionRef, columnData, url: tableUrl } = useContext(SaContext);
   const { modalApi, messageApi } = useContext(SaDevContext);
-  const { fieldNames = 'value,label', modelName = '', url, value, data = {}, id = 0 } = props;
+  const {
+    fieldNames = 'value,label',
+    modelName = '',
+    url,
+    value,
+    data = {},
+    id = 0,
+    callback,
+    afterActionType,
+  } = props;
 
   const [key = 'value', label = 'label'] = fieldNames.split(',');
 
@@ -59,6 +71,8 @@ const DropdownAction: React.FC = (props: {
                     操作吗？
                   </Space>
                 ),
+                callback,
+                afterActionType,
               },
               actionRef,
               null,

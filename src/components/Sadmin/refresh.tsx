@@ -5,8 +5,8 @@ import { Space } from 'antd';
 import { useContext } from 'react';
 import defaultSettings, { lightDefaultToken } from '../../../config/defaultSettings';
 import { SaDevContext } from './dev';
-import { isJsonString, uid } from './helpers';
-import { message } from './message';
+import { uid } from './helpers';
+
 import { getTheme } from './themSwitch';
 import cache from './helper/cache';
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
@@ -31,10 +31,11 @@ export const saGetSetting = async (force: boolean = false): Promise<{ [key: stri
 };
 export default () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { setSetting } = useContext(SaDevContext);
+  const { setSetting, messageApi } = useContext(SaDevContext);
+
   const reload = async () => {
     const mkey = 'refresh_key';
-    message.loading({ key: mkey, content: 'loading...' });
+    messageApi?.loading({ key: mkey, content: 'loading...' });
     const msg = await currentUser();
     //const msg = await cuser();
     const setting = await saGetSetting(true);
@@ -49,7 +50,7 @@ export default () => {
         ...initialState?.settings,
         ...setting,
       });
-      message.success({ key: mkey, content: '刷新成功' });
+      messageApi?.success({ key: mkey, content: '刷新成功' });
     });
 
     return msg.data;

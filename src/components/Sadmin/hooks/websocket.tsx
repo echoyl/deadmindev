@@ -1,4 +1,4 @@
-import { adminTokenName, getAdminToken, rememberName } from '@/services/ant-design-pro/sadmin';
+import { getAdminToken, rememberName } from '@/services/ant-design-pro/sadmin';
 import React, { useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '../dev';
 import { isJsonString } from '../helpers';
@@ -6,7 +6,6 @@ import { isJsonString } from '../helpers';
 import ConfirmForm from '../action/confirmForm';
 import ButtonModal from '../action/buttonModal';
 import TableFromBread from '../tableFromBread';
-import { App, message, notification } from 'antd';
 import cache from '../helper/cache';
 
 // 创建WebSocket上下文
@@ -73,11 +72,14 @@ const useWebSocket = () => {
       }
     };
     ws.onclose = (e) => {
+      console.log('on close', e);
       if (timeinterval) {
         clearInterval(timeinterval);
       }
       //重新连接 每10秒 重连一次
-      //console.log('on close', e);
+      //connect now
+      connect();
+      //set interval to reconnect every 10 seconds
       reconnectInterval = setInterval(() => {
         console.log('reconnect now');
         connect();
@@ -96,7 +98,7 @@ const useWebSocket = () => {
     const ws = connect();
 
     return () => ws.close(); // 组件卸载时关闭连接
-  }, [setting]);
+  }, [setting?.socket]);
   return { socket, bind };
 };
 
@@ -133,9 +135,7 @@ export const WebSocketListen = () => {
   const [modalFormOpen, setModalFormOpen] = useState(false);
   const [modalTableOpen, setModalTableOpen] = useState(false);
   type NotificationType = 'success' | 'info' | 'warning' | 'error';
-
-  const [messageApi, messageHolder] = message.useMessage();
-  const [notificationApi, notificationHolder] = notification.useNotification();
+  const { messageApi, notificationApi } = useContext(SaDevContext);
   useEffect(() => {
     if (messageData) {
       const { type, data } = messageData;
@@ -144,9 +144,9 @@ export const WebSocketListen = () => {
       } else if (type == 'modalTable') {
         setModalTableOpen(true);
       } else if (type == 'message' && data?.message) {
-        messageApi.open(data?.message);
+        messageApi?.open(data?.message);
       } else if (type == 'notification' && data?.notification) {
-        notificationApi[data?.notification?.type as NotificationType]?.({
+        notificationApi?.[data?.notification?.type as NotificationType]?.({
           ...data.data?.notification,
           description: (
             <div
@@ -159,8 +159,6 @@ export const WebSocketListen = () => {
   }, [messageData]);
   return (
     <>
-      {messageHolder}
-      {notificationHolder}
       {messageData?.data?.modalForm && (
         <ConfirmForm
           trigger={<></>}

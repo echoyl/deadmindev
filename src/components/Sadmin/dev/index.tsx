@@ -17,6 +17,7 @@ import { saValueTypeMap } from '../helpers';
 import Refresh from '../refresh';
 import { ToolBarMenu, ToolMenuForm } from './table/toolbar';
 import { HookAPI } from 'antd/es/modal/useModal';
+import { NotificationInstance } from 'antd/es/notification/interface';
 
 export const SaDevContext = createContext<{
   setting?: any;
@@ -25,6 +26,7 @@ export const SaDevContext = createContext<{
   // setAdmin?: (admin: any) => void;
   messageApi?: MessageInstance;
   modalApi?: HookAPI;
+  notificationApi?: NotificationInstance;
 }>({});
 
 export const DevLinks = () => {

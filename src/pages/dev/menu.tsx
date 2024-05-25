@@ -5,9 +5,11 @@ import { CopyOutlined, RollbackOutlined } from '@ant-design/icons';
 import { ActionType } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Space } from 'antd';
-import { useRef } from 'react';
+import { useRef, useContext } from 'react';
 import MenuConfig, { MenuOther } from './menuConfig';
 import MenuTable from './menuTable';
+import { SaDevContext } from '@/components/Sadmin/dev';
+import request, { currentUser, messageLoadingKey } from '@/services/ant-design-pro/sadmin';
 
 export const MenuFormColumn: saFormColumnsType = [
   {
@@ -343,6 +345,22 @@ export const MenuFormColumn: saFormColumnsType = [
 
 export default () => {
   const actionRef = useRef<ActionType>();
+  const { messageApi } = useContext(SaDevContext);
+  const { setInitialState } = useModel('@@initialState');
+  const reload = async () => {
+    messageApi?.loading({ key: messageLoadingKey, content: 'loading...' });
+    const msg = await currentUser();
+    //const msg = await cuser();
+    await request.get('dev/menu/clearCache');
+    const uidx = uid();
+    setInitialState((s) => ({
+      ...s,
+      currentUser: { ...msg.data, uidx },
+    })).then(() => {
+      messageApi?.success({ key: messageLoadingKey, content: '刷新成功' });
+    });
+    return;
+  };
 
   const tableColumns = (enums) => [
     {
@@ -485,6 +503,10 @@ export default () => {
               data: {
                 actype: 'state',
               },
+              callback: async (ret) => {
+                await reload();
+                return;
+              },
             },
           },
         ],
@@ -503,17 +525,6 @@ export default () => {
     'option',
   ];
 
-  const { setInitialState } = useModel('@@initialState');
-  const reData = (ret) => {
-    const { code, data } = ret;
-    if (!code) {
-      setInitialState((s) => ({
-        ...s,
-        currentUser: { ...data.currentUser, uid: uid() },
-      }));
-    }
-    return;
-  };
   return (
     <Category
       name="菜单"
@@ -560,8 +571,8 @@ export default () => {
       tableProps={{
         scroll: { y: 600 },
       }}
-      afterFormPost={reData}
-      afterDelete={reData}
+      afterFormPost={reload}
+      afterDelete={reload}
       url="dev/menu"
       grid={false}
       devEnable={false}

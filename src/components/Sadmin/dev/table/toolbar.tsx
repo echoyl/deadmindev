@@ -339,7 +339,7 @@ export const ColumnsSelector = (props) => {
       ?.map((v) => v.dataIndex)
       .filter((v) => isString(v));
     setTreeChecked(defaultChecked);
-    console.log('editUrl', editUrl, type);
+    //console.log('editUrl', editUrl, type);
   }, []);
   const post = async (e) => {
     const { data } = await request.post(editUrl, {
@@ -370,7 +370,7 @@ export const ColumnsSelector = (props) => {
   return (
     <Popover
       content={<div style={{ width: 250 }}>{content}</div>}
-      title="快速选择需要展示的列"
+      title="快速选择"
       trigger={'click'}
       placement="bottom"
     >
@@ -479,7 +479,11 @@ export const toolBarRender = (props) => {
         btns.push(
           <ColumnsSelector
             key="devcolumns"
-            trigger={<Button type="dashed">{btn.title}</Button>}
+            trigger={
+              <Button type="dashed" title="快速选择">
+                {btn.title}
+              </Button>
+            }
             dev={initialState?.settings?.dev}
           />,
         );

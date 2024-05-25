@@ -5,8 +5,12 @@ import {
   ProProvider,
   SettingDrawer,
 } from '@ant-design/pro-components';
-import { RunTimeLayoutConfig, history } from '@umijs/max';
-import { App, ConfigProvider, Modal, message } from 'antd';
+import { RunTimeLayoutConfig, history, setLocale, getLocale } from '@umijs/max';
+import { App, ConfigProvider, Modal, message, notification, theme } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/locale/en_US';
+import zhTW from 'antd/locale/zh_TW';
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import React, { useContext, useEffect, useState } from 'react';
@@ -16,7 +20,8 @@ import WebSocketProvider, { WebSocketListen } from './components/Sadmin/hooks/we
 import Message from './components/Sadmin/message';
 import { saGetSetting } from './components/Sadmin/refresh';
 import { loginPath, currentUser as queryCurrentUser } from './services/ant-design-pro/sadmin';
-dayjs.locale('zh-cn');
+import { Locale } from 'antd/es/locale';
+
 //const isDev = process.env.NODE_ENV === 'development';
 
 /**
@@ -85,9 +90,19 @@ export function rootContainer(container: JSX.Element, args) {
   const Provider = (props) => {
     //const { initialState } = useModel('@@initialState');
     const [setting, setSetting] = useState<any>();
+    const [currentLocale, setCurrentLocale] = useState<string>(getLocale());
+    const [messageApi, messageHolder] = message.useMessage();
+    const [modalApi, modalHolder] = Modal.useModal();
+    const [notificationApi, notificationHolder] = notification.useNotification();
     //const [admin, setAdmin] = useState<any>();
+    const supportLocale: { [key: string]: Locale } = {
+      'en-US': enUS,
+      'zh-CN': zhCN,
+      'zh-TW': zhTW,
+    };
     useEffect(() => {
       //console.log('root get');
+      dayjs.locale(currentLocale.toLocaleLowerCase());
       saGetSetting().then((v) => {
         setSetting(v);
         // if (history.location.pathname.replace(v.baseurl, '/') !== loginPath) {
@@ -107,13 +122,16 @@ export function rootContainer(container: JSX.Element, args) {
     };
     return (
       <ConfigProvider
+        locale={supportLocale[currentLocale]}
         theme={
           setting?.navTheme == 'light'
             ? {
                 ...setting?.antdtheme,
                 components,
               }
-            : {}
+            : {
+                algorithm: theme.darkAlgorithm,
+              }
         }
       >
         <App>
@@ -122,9 +140,18 @@ export function rootContainer(container: JSX.Element, args) {
               //setting: initialState?.settings,
               setting,
               setSetting,
+              messageApi,
+              modalApi,
+              notificationApi,
             }}
           >
-            <WebSocketProvider>{props.children}</WebSocketProvider>
+            <WebSocketProvider>
+              <WebSocketListen />
+              {props.children}
+            </WebSocketProvider>
+            {messageHolder}
+            {modalHolder}
+            {notificationHolder}
             <Message />
           </SaDevContext.Provider>
         </App>
@@ -137,7 +164,6 @@ export function rootContainer(container: JSX.Element, args) {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   const values = useContext(ProProvider);
-  const values2 = useContext(SaDevContext);
   const checkWaterMark = () => {
     if (initialState?.settings?.watermark) {
       return initialState?.settings?.watermark == 'username'
@@ -170,43 +196,29 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     menuFooterRender: () => (initialState?.settings.dev ? <DevLinks /> : false),
     //menuHeaderRender: undefined,
     menu: {
-      params: initialState?.currentUser?.uid,
+      params: initialState?.currentUser?.uidx,
       request: async (params, defaultMenuData) => {
         return loopMenuItem(initialState?.currentUser?.menuData);
       },
       locale: false,
     },
     childrenRender: (children, props) => {
-      const [messageApi, messageHolder] = message.useMessage();
-      const [modalApi, modalHolder] = Modal.useModal();
       return (
         <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
-          <SaDevContext.Provider
-            value={{
-              ...values2,
-              messageApi,
-              modalApi,
-            }}
-          >
-            {messageHolder}
-            {modalHolder}
-
-            <WebSocketListen />
-            {children}
-            {initialState?.settings.dev && !props.location?.pathname?.includes('/login') && (
-              <SettingDrawer
-                disableUrlParams
-                enableDarkTheme
-                settings={initialState?.settings}
-                onSettingChange={(settings) => {
-                  setInitialState((preInitialState) => ({
-                    ...preInitialState,
-                    settings: { ...preInitialState.settings, ...settings },
-                  }));
-                }}
-              />
-            )}
-          </SaDevContext.Provider>
+          {children}
+          {initialState?.settings.dev && !props.location?.pathname?.includes('/login') && (
+            <SettingDrawer
+              disableUrlParams
+              enableDarkTheme
+              settings={initialState?.settings}
+              onSettingChange={(settings) => {
+                setInitialState((preInitialState) => ({
+                  ...preInitialState,
+                  settings: { ...preInitialState.settings, ...settings },
+                }));
+              }}
+            />
+          )}
         </ProConfigProvider>
       );
     },

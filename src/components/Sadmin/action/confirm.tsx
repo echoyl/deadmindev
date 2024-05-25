@@ -51,7 +51,7 @@ export const ConfirmTriggerClick = (
       const ret = await request[method](url, requestProps);
       if (callback) {
         const cbret = callback(ret);
-        if (cbret) {
+        if (cbret == true) {
           //自定义回调返回true 后 阻断后续操作
           return;
         }

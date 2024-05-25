@@ -267,6 +267,8 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
                     }
                   }
                   nv.dependencies = names;
+                  //将依赖的字段值注入到fieldProps这样组件可以获取该依赖数据
+                  nv.fieldProps = { ...nv.fieldProps, ...dependencyOnName };
                   return nv;
                 });
               } else {

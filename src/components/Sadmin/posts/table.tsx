@@ -575,9 +575,13 @@ const SaTable: React.FC<saTableProps> = (props) => {
           handleModalVisible={handleModalVisible}
           paramExtra={paramExtra}
           currentRow={currentRow}
-          afterFormPost={(ret) => {
-            actionRef?.current?.reload();
-          }}
+          afterFormPost={
+            props.afterFormPost
+              ? props?.afterFormPost
+              : (ret) => {
+                  actionRef?.current?.reload();
+                }
+          }
         />
 
         {pageType == 'page' && rowNode && (

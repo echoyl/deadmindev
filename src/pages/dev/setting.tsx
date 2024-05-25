@@ -106,6 +106,9 @@ export default () => {
                   valueType: 'switch',
                   dataIndex: 'splitMenus',
                   colProps: { span: 8 },
+                  fieldProps: {
+                    defaultChecked: true,
+                  },
                 },
               ],
             },
