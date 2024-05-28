@@ -5,14 +5,12 @@ import {
   ProProvider,
   SettingDrawer,
 } from '@ant-design/pro-components';
-import { RunTimeLayoutConfig, history, setLocale, getLocale } from '@umijs/max';
+import { RunTimeLayoutConfig, history, setLocale, getLocale, addLocale, useIntl } from '@umijs/max';
 import { App, ConfigProvider, Modal, message, notification, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import zhTW from 'antd/locale/zh_TW';
 
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
 import React, { useContext, useEffect, useState } from 'react';
 import { DevLinks, SaDevContext } from './components/Sadmin/dev';
 import { loopMenuItem, saValueTypeMap } from './components/Sadmin/helpers';
@@ -102,9 +100,12 @@ export function rootContainer(container: JSX.Element, args) {
     };
     useEffect(() => {
       //console.log('root get');
-      dayjs.locale(currentLocale.toLocaleLowerCase());
+      //dayjs.locale(currentLocale.toLocaleLowerCase());
       saGetSetting().then((v) => {
         setSetting(v);
+        v?.locales?.map((lo) => {
+          addLocale(lo.name, lo.configs);
+        });
         // if (history.location.pathname.replace(v.baseurl, '/') !== loginPath) {
         //   queryCurrentUser().then(({ code, data }) => {
         //     if (!code) {

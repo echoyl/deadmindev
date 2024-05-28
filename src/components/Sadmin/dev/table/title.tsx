@@ -28,6 +28,7 @@ import {
 } from './baseFormColumns';
 import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
 import { ColumnsSelector, ToolBarMenu } from './toolbar';
+import { tplComplie } from '../../helpers';
 export const designerCss = css`
   position: relative;
   min-width: 60px;
@@ -484,7 +485,7 @@ export const DevTableColumnTitle = (props) => {
           </Space>
         </div>
       </div>
-      <div role="button">{title ? title : 'dev'}</div>
+      <div role="button">{title ? tplComplie(title) : 'dev'}</div>
     </SortableItem>
   );
 };

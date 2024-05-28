@@ -9,7 +9,7 @@ import {
   RouteContext,
   getMenuData,
 } from '@ant-design/pro-components';
-import { useModel, useRouteData } from '@umijs/max';
+import { FormattedMessage, injectIntl, useIntl, useModel, useRouteData } from '@umijs/max';
 import { ColorPicker, Image, Input } from 'antd';
 import { get } from 'rc-util';
 import { useContext, useState } from 'react';
@@ -21,7 +21,7 @@ import CustomerColumnRender from './action/customerColumn';
 import CustomerColumnRenderDev from './action/customerColumn/dev';
 import ModalJson from './action/modalJson';
 import CarBrand from './carBrand';
-import { isObj, isStr } from './checkers';
+import { isBool, isObj, isStr } from './checkers';
 import { FormCalendarRender } from './formCalendar';
 import { Guiges } from './guige';
 import JsonEditor from './jsonEditor';
@@ -72,11 +72,20 @@ export function findParents(array, id, fieldNames = { id: 'id', children: 'child
 }
 
 export const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] =>
-  menus.map(({ icon, routes, ...item }) => ({
-    ...item,
-    icon: icon && iconToElement(icon),
-    routes: routes && loopMenuItem(routes),
-  }));
+  menus.map(({ icon, routes, ...item }) => {
+    //const msg = saFormattedMessage(item.name);
+    const msg = tplComplie(item.name);
+    // if (msg) {
+    //   delete item.name;
+    // }
+    return {
+      ...item,
+      name: msg,
+      icon: icon && iconToElement(icon),
+      routes: routes && loopMenuItem(routes),
+    };
+  });
+
 declare type saColumnsExtend = {
   requestParam?: { url?: string; params?: object };
   requestDataName?: string;
@@ -482,33 +491,73 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     renderFormItem: DropdownActionMap,
   },
 };
-
-export const tplComplie = (exp: string | undefined, props: any) => {
+export const t = (id: string, intl?: any) => {
+  return intl ? (
+    intl.formatMessage({
+      id,
+    })
+  ) : (
+    <FormattedMessage id={id} key={id} />
+  );
+};
+export const tplComplie = (exp: string | undefined, props: any = {}) => {
   if (!exp) {
     return false;
   }
   if (!isString(exp)) {
     return exp;
   }
-  const ExpRE = /^\s*\{\{([\s\S]*)\}\}\s*$/;
-  const matched = exp.match(ExpRE);
-  if (!matched || !matched[1]) return exp;
-  try {
-    //检测是否有return
-    if (matched[1].indexOf('return') > -1) {
-      //console.log('has return', matched[1]);
-      const fuc = ((body) => {
-        return new Function(`return ${body}`)();
-      })(matched[1]);
-      //console.log('func body is', fuc);
-      return fuc(props);
-    } else {
-      return new Function('$root', `with($root) { return (${matched[1]}); }`)(props);
+  const { intl } = props;
+  const t = (id: string) => {
+    const msg = intl ? (
+      intl.formatMessage({
+        id,
+      })
+    ) : (
+      <FormattedMessage id={id} key={id} />
+    );
+    return msg;
+  };
+  const cpl = (exp: string) => {
+    try {
+      //检测是否有return
+      if (exp.indexOf('return') > -1) {
+        //console.log('has return', matched[1]);
+        const fuc = ((body) => {
+          return new Function(`return ${body}`)();
+        })(exp);
+        //console.log('func body is', fuc);
+        return fuc({ ...props, t, intl });
+      } else {
+        return new Function('$root', `with($root) { return (${exp}); }`)({ ...props, t, intl });
+      }
+    } catch (e) {
+      console.log('表达式错误，请' + +'重写', exp, props, e);
+      return false;
     }
-  } catch (e) {
-    console.log('表达式错误，请重写', exp, props, e);
-    return false;
+  };
+
+  const regex = /{{\s*([^{}]*)\s*}}/g;
+
+  // 使用数组的map方法来处理字符串，避免使用dangerouslySetInnerHTML
+  const renderedTemplate = exp
+    .split(regex)
+    .map((part, index) => {
+      if (index % 2 === 0) {
+        // 偶数索引是模板的普通文本部分
+        return part;
+      } else {
+        // 奇数索引是组件占位符
+        return part ? cpl(part) : false;
+      }
+    })
+    .filter((v) => v !== '');
+
+  if (renderedTemplate.length == 1 && (isBool(renderedTemplate[0]) || isStr(renderedTemplate[0]))) {
+    return renderedTemplate[0];
   }
+  console.log('renderedTemplate', renderedTemplate);
+  return intl ? renderedTemplate.join('') : <>{renderedTemplate}</>;
 };
 
 export const stateSwitchProps = {

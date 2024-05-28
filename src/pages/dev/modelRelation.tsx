@@ -51,7 +51,6 @@ export default (props) => {
     <SaTable
       name="relation"
       url="dev/relation"
-      grid={false}
       devEnable={false}
       tableProps={{ params: { model_id: model?.id }, search: false }}
       //toolBarRender={false}
@@ -76,20 +75,37 @@ export default (props) => {
         return contentRender?.(null, dom);
       }}
       formColumns={[
-        { dataIndex: 'title', title: 'title' },
-        { dataIndex: 'name', title: 'name' },
         {
-          dataIndex: 'local_key',
-          title: '本地字段',
-          valueType: 'select',
-          requestDataName: 'columns',
+          valueType: 'group',
+          columns: [
+            { dataIndex: 'title', title: '名称', colProps: { span: 12 } },
+            { dataIndex: 'name', title: 'Name', colProps: { span: 12 } },
+          ],
+        },
+        {
+          valueType: 'group',
+          columns: [
+            {
+              dataIndex: 'local_key',
+              title: '本地字段',
+              valueType: 'select',
+              requestDataName: 'columns',
+              colProps: { span: 12 },
+            },
+            {
+              title: '关系类型',
+              dataIndex: 'type',
+              valueType: 'select',
+              fieldProps: { options: relationType.map((v) => ({ label: v, value: v })) },
+              colProps: { span: 12 },
+            },
+          ],
         },
         {
           valueType: 'group',
           columns: [
             {
               dataIndex: 'foreign_model_id',
-              width: 'md',
               title: '关联模型',
               valueType: 'treeSelect',
               requestDataName: 'models',
@@ -97,6 +113,7 @@ export default (props) => {
                 treeLine: { showLeafIcon: true },
                 treeDefaultExpandAll: true,
               },
+              colProps: { span: 12 },
             },
             {
               valueType: 'dependency',
@@ -110,10 +127,10 @@ export default (props) => {
                     dataIndex: 'foreign_key',
                     title: '关联模型字段',
                     valueType: 'select',
-                    width: 'md',
                     fieldProps: {
                       options: getModelColumns(foreign_model_id),
                     },
+                    colProps: { span: 12 },
                   },
                 ];
                 //return [];
@@ -121,18 +138,13 @@ export default (props) => {
             },
           ],
         },
-        {
-          title: '关系类型',
-          dataIndex: 'type',
-          valueType: 'select',
-          fieldProps: { options: relationType.map((v) => ({ label: v, value: v })) },
-        },
+
         {
           valueType: 'group',
           columns: [
             {
               dataIndex: 'can_search',
-              width: 'md',
+              colProps: { span: 12 },
               title: '是否支持搜索',
               valueType: 'switch',
             },
@@ -148,7 +160,7 @@ export default (props) => {
                     dataIndex: 'search_columns',
                     title: '搜索包含字段',
                     valueType: 'select',
-                    width: 'md',
+                    colProps: { span: 12 },
                     fieldProps: {
                       options: getModelColumns(foreign_model_id),
                       mode: 'multiple',
@@ -173,13 +185,13 @@ export default (props) => {
                       dataIndex: 'with_count',
                       title: '是否计算数量总和',
                       valueType: 'switch',
-                      width: 'md',
+                      colProps: { span: 12 },
                     },
                     {
                       dataIndex: 'with_sum',
                       title: '求和包含字段',
                       valueType: 'select',
-                      width: 'md',
+                      colProps: { span: 12 },
                       fieldProps: {
                         options: getModelColumns(foreign_model_id),
                         mode: 'multiple',
@@ -204,6 +216,7 @@ export default (props) => {
                 unCheckedChildren: '否',
                 defaultChecked: true,
               },
+              colProps: { span: 12 },
             },
             {
               valueType: 'dependency',
@@ -218,7 +231,7 @@ export default (props) => {
                     title: '关联模型包含字段',
                     tooltip: '不选表示全部获取',
                     valueType: 'treeSelect',
-                    width: 'md',
+                    colProps: { span: 12 },
                     fieldProps: {
                       options: getModelColumnsTree(foreign_model_id, allModels),
                       multiple: true,
@@ -251,6 +264,7 @@ export default (props) => {
                         unCheckedChildren: '否',
                         defaultChecked: false,
                       },
+                      colProps: { span: 12 },
                     },
                     {
                       valueType: 'dependency',
@@ -265,7 +279,7 @@ export default (props) => {
                             title: '关联模型包含字段',
                             tooltip: '不选表示全部获取',
                             valueType: 'select',
-                            width: 'md',
+                            colProps: { span: 12 },
                             fieldProps: {
                               options: getModelColumns(foreign_model_id),
                               mode: 'multiple',
@@ -286,8 +300,6 @@ export default (props) => {
         { dataIndex: 'with_default', title: 'withDefault', valueType: 'jsonEditor' },
         { dataIndex: 'filter', title: '筛选条件', valueType: 'jsonEditor' },
         { dataIndex: 'order_by', title: '排序', valueType: 'jsonEditor' },
-
-        'id',
       ]}
       pageType="drawer"
       openType="drawer"

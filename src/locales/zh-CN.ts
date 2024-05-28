@@ -22,4 +22,11 @@ export default {
   ...settings,
   ...pwa,
   ...component,
+  cancel: '取消',
+  view: '查看',
+  edit: '编辑',
+  add: '新增',
+  delete: '删除',
+  addchild: '添加子级',
+  all: '全部',
 };

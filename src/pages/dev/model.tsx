@@ -1,6 +1,5 @@
 import { saTableColumnsType } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
-import request from '@/services/ant-design-pro/sadmin';
 import { CopyOutlined, FileOutlined, FolderOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { ActionType, ProFormInstance } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
@@ -10,6 +9,7 @@ import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
 import modelSettingColumns from '@/components/Sadmin/dev/vars/modelSettingColumns';
 import { SaDevContext } from '@/components/Sadmin/dev';
+import { saReload } from '@/components/Sadmin/refresh';
 /**
  * 默认数据库有的字段
  */
@@ -225,14 +225,13 @@ export default () => {
     );
   };
   const { initialState, setInitialState } = useModel('@@initialState');
-
-  const reData = () => {
-    request.get('setting').then(({ data }) => {
-      initialState.settings.dev.allModels = data.dev?.allModels;
-      setInitialState((s) => initialState);
-    });
+  const { setSetting, setting, messageApi } = useContext(SaDevContext);
+  const reData = async () => {
+    actionRef?.current?.reload();
+    await saReload(initialState, setInitialState, setSetting, messageApi);
+    return true;
   };
-  const { setting } = useContext(SaDevContext);
+
   return (
     <>
       <Category

@@ -1,4 +1,4 @@
-import request, { currentUser } from '@/services/ant-design-pro/sadmin';
+import request, { currentUser, messageLoadingKey } from '@/services/ant-design-pro/sadmin';
 import { SyncOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { Space } from 'antd';
@@ -29,31 +29,47 @@ export const saGetSetting = async (force: boolean = false): Promise<{ [key: stri
 
   return { ...defaultSettings, ...localsetting, ...navTheme };
 };
+
+export const saReload = async (initialState, setInitialState, setSetting, messageApi) => {
+  messageApi?.loading({ key: messageLoadingKey, content: '刷新配置中' });
+  const msg = await currentUser();
+  //const msg = await cuser();
+  const setting = await saGetSetting(true);
+  const uidx = uid();
+  setInitialState((s) => ({
+    ...s,
+    currentUser: { ...msg.data, uidx },
+    settings: setting,
+  })).then(() => {
+    setSetting?.({
+      ...initialState?.settings,
+      ...setting,
+    });
+    messageApi?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
+  });
+  return;
+};
+
+export const saReloadMenu = async (initialState, setInitialState, messageApi) => {
+  messageApi?.loading({ key: messageLoadingKey, content: '刷新配置中' });
+  const msg = await currentUser();
+  //const msg = await cuser();
+  const uidx = uid();
+  setInitialState((s) => ({
+    ...s,
+    currentUser: { ...msg.data, uidx },
+  })).then(() => {
+    messageApi?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
+  });
+  return;
+};
+
 export default () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const { setSetting, messageApi } = useContext(SaDevContext);
 
   const reload = async () => {
-    const mkey = 'refresh_key';
-    messageApi?.loading({ key: mkey, content: 'loading...' });
-    const msg = await currentUser();
-    //const msg = await cuser();
-    const setting = await saGetSetting(true);
-    await request.get('dev/menu/clearCache');
-    const uidx = uid();
-    setInitialState((s) => ({
-      ...s,
-      currentUser: { ...msg.data, uidx },
-      settings: setting,
-    })).then(() => {
-      setSetting?.({
-        ...initialState?.settings,
-        ...setting,
-      });
-      messageApi?.success({ key: mkey, content: '刷新成功' });
-    });
-
-    return msg.data;
+    await saReload(initialState, setInitialState, setSetting, messageApi);
   };
 
   return (

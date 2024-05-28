@@ -8,7 +8,7 @@ import {
   StepsForm,
 } from '@ant-design/pro-components';
 //import { PageContainer } from '@ant-design/pro-layout';
-import { history, useModel, useParams, useSearchParams } from '@umijs/max';
+import { history, useIntl, useModel, useParams, useSearchParams } from '@umijs/max';
 import { App, Col, GetProps, message, Row, Space, Tabs } from 'antd';
 import { isUndefined } from 'lodash';
 import { FC, useContext, useEffect, useRef, useState } from 'react';
@@ -88,6 +88,7 @@ export const SaForm: FC<saFormProps> = (props) => {
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev,
   );
   const { messageApi } = useContext(SaDevContext);
+  const intl = useIntl();
   //提交数据
   const post = async (base: any, callback?: (value: any) => void, then?: any) => {
     //log('post data is ', base);
@@ -177,6 +178,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         columns: tab.formColumns,
         user: initialState?.currentUser,
         devEnable,
+        intl,
       });
     });
   };

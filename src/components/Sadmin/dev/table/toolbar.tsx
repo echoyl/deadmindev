@@ -18,12 +18,14 @@ import { cloneDeep, isString } from 'lodash';
 import React, { useContext, useEffect, useState } from 'react';
 import ButtonDrawer from '../../action/buttonDrawer';
 import CustomerColumnRender from '../../action/customerColumn';
-import { uid } from '../../helpers';
+import { t, uid } from '../../helpers';
 import { SaForm } from '../../posts/post';
 import { SaContext } from '../../posts/table';
 import { DndContext } from '../dnd-context';
 import { getModelColumns } from './baseFormColumns';
 import { ToolbarColumnTitle } from './title';
+import { SaDevContext } from '..';
+import { saReloadMenu } from '../../refresh';
 
 export const ToolBarDom = (props) => {
   const {
@@ -145,7 +147,7 @@ const ExportButton = ({
 
 //导入按钮
 
-const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {} }) => {
+const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {}, afterAction }) => {
   const [headers, setHeaders] = useState();
 
   const uploadProps = {
@@ -155,7 +157,7 @@ const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {} }) => 
     ...ups,
   };
   const [loading, setLoading] = useState(false);
-  const { message } = App.useApp();
+  const { messageApi } = useContext(SaDevContext);
   const { actionRef } = useContext(SaContext);
   useEffect(() => {
     requestHeaders().then((v) => {
@@ -178,15 +180,23 @@ const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {} }) => 
           const { code, msg, data } = info.file.response;
           if (!code) {
             //设置预览图片路径未服务器路径
-            message.success(`${info.file.name} ${msg}`);
-            actionRef.current?.reload();
+            messageApi?.success(`${info.file.name} ${msg}`);
+            if (afterAction) {
+              afterAction?.(info.file.response).then((v) => {
+                if (v != true) {
+                  actionRef.current?.reload();
+                }
+              });
+            } else {
+              actionRef.current?.reload();
+            }
           } else {
             //上传失败了
-            message.error(msg);
+            messageApi?.error(msg);
           }
         } else if (info.file.status === 'error') {
           setLoading(false);
-          message.error(`${info.file.name} file upload failed.`);
+          messageApi?.error(`${info.file.name} file upload failed.`);
         }
       }}
     >
@@ -196,8 +206,9 @@ const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {} }) => 
 };
 
 export const ToolMenuForm = (props) => {
-  const { setInitialState } = useModel('@@initialState');
+  const { setInitialState, initialState } = useModel('@@initialState');
   const { pageMenu = { id: 0 }, trigger } = props;
+  const { messageApi } = useContext(SaDevContext);
   const MenuForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
     return (
@@ -213,14 +224,9 @@ export const ToolMenuForm = (props) => {
         width={1600}
         msgcls={async ({ code, data }) => {
           if (!code) {
-            setOpen(false);
-            const msg = await currentUser();
-            //const msg = await cuser();
-            setInitialState((s) => ({
-              ...s,
-              currentUser: { ...msg.data, uid: uid() },
-            }));
+            saReloadMenu(initialState, setInitialState, messageApi);
           }
+          setOpen(false);
           return;
         }}
         formProps={{
@@ -230,7 +236,7 @@ export const ToolMenuForm = (props) => {
             render: (props, doms) => {
               return [
                 <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                  关闭
+                  {t('cancel')}
                 </Button>,
                 doms[1],
               ];
@@ -397,6 +403,7 @@ export const toolBarRender = (props) => {
     devEnable: pdevEnable,
     pageMenu,
     sort,
+    afterFormPost,
   } = props;
   const createButton = (
     <Button type="primary" key="primary">
@@ -453,7 +460,7 @@ export const toolBarRender = (props) => {
         btns.push(<ExportButton key="export" {...btn} url={url} values={values} />);
       }
       if (btn.valueType == 'import') {
-        btns.push(<ImportButton key="import" {...btn} url={url} />);
+        btns.push(<ImportButton key="import" {...btn} url={url} afterAction={afterFormPost} />);
       }
       if (btn.valueType == 'devadd') {
         btns.push(

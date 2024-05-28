@@ -4,6 +4,8 @@ import ButtonDrawer from '../../action/buttonDrawer';
 import ButtonModal from '../../action/buttonModal';
 import { SaForm } from '../../posts/post';
 import { SaContext, saTableProps } from '../../posts/table';
+import { t, tplComplie } from '../../helpers';
+import { useIntl } from '@umijs/max';
 
 const InnerForm = (props) => {
   const {
@@ -59,7 +61,7 @@ const InnerForm = (props) => {
                 render: (props, doms) => {
                   return [
                     <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                      关闭
+                      {t('cancel')}
                     </Button>,
                     doms[1],
                   ];
@@ -97,14 +99,18 @@ export const TableForm = (
     setting = {},
   } = props;
   const { formWidth } = setting;
+  const intl = useIntl();
   return (
     <>
       {openType == 'modal' && (
         <ButtonModal
           open={createModalVisible}
           title={
-            (currentRow.id ? (currentRow.readonly ? '查看' : '编辑') : '新增') +
-            (name ? ' - ' + name : '')
+            (currentRow.id
+              ? currentRow.readonly
+                ? t('view', intl)
+                : t('edit', intl)
+              : t('add', intl)) + (name ? ' - ' + tplComplie(name, { intl }) : '')
           }
           width={formWidth ? formWidth : openWidth}
           afterOpenChange={(open) => {

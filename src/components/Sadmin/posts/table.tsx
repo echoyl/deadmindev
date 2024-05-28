@@ -25,6 +25,7 @@ import {
   saFormTabColumnsType,
   saTableColumnsType,
   search2Obj,
+  t,
 } from '../helpers';
 import { EditableCell, EditableRow } from './editable';
 import './style.less';
@@ -243,7 +244,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     !initRequest && setInitRequest(true);
     if (ret.search?.table_menu && !initRequest && table_menu_key) {
       if (table_menu_all) {
-        setTableMenu([{ label: '全部', value: 'all' }, ...ret.search.table_menu[table_menu_key]]);
+        setTableMenu([{ label: t('all'), value: 'all' }, ...ret.search.table_menu[table_menu_key]]);
       } else {
         setTableMenu(ret.search.table_menu[table_menu_key]);
         //不再需要默认设置第一个菜单的id了，需要自己在后端实现 未传参数是默认读取第一个参数 (会产生两次请求)
@@ -276,9 +277,12 @@ const SaTable: React.FC<saTableProps> = (props) => {
           data: { id },
         });
         modals.destroy();
-        afterDelete?.(ret);
+        const re = await afterDelete?.(ret);
         if (!ret.code) {
-          actionRef.current?.reload();
+          if (re != true) {
+            actionRef.current?.reload();
+          }
+
           setSelectedRowKeys([]);
         }
       },
@@ -575,13 +579,12 @@ const SaTable: React.FC<saTableProps> = (props) => {
           handleModalVisible={handleModalVisible}
           paramExtra={paramExtra}
           currentRow={currentRow}
-          afterFormPost={
-            props.afterFormPost
-              ? props?.afterFormPost
-              : (ret) => {
-                  actionRef?.current?.reload();
-                }
-          }
+          afterFormPost={async (ret) => {
+            const re = await props?.afterFormPost?.(ret);
+            if (re != true) {
+              actionRef?.current?.reload();
+            }
+          }}
         />
 
         {pageType == 'page' && rowNode && (

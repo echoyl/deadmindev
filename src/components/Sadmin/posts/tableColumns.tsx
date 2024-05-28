@@ -7,14 +7,9 @@ import { cloneDeep } from 'lodash';
 import { useContext } from 'react';
 import { isArr, isUndefined } from '../checkers';
 import { TableColumnTitle } from '../dev/table/title';
-import { getFromObject, tplComplie } from '../helpers';
+import { getFromObject, t, tplComplie } from '../helpers';
 import { defaultColumnsLabel } from './formDom';
 import { SaContext } from './table';
-const actionTitle = {
-  edit: '编辑',
-  view: '查看',
-  delete: '删除',
-};
 
 const SaTableAction = (props) => {
   const { openType } = props;
@@ -31,11 +26,11 @@ const LinkAction = (props) => {
   return (
     <Space>
       <Link key="viewLink" to={(path ? path + '/' : './') + record?.id + '?readonly=1'}>
-        {actionTitle.view}
+        {t('view')}
       </Link>
       {editable ? (
         <Link key="editLink" to={(path ? path + '/' : './') + record?.id}>
-          {actionTitle.edit}
+          {t('edit')}
         </Link>
       ) : null}
       <DeleteActionRender
@@ -78,7 +73,7 @@ const DrawerAction = (props) => {
               saTableContext?.[item](record);
             }}
           >
-            {actionTitle[item]}
+            {t(item)}
           </Button>
         );
       })}
@@ -101,7 +96,7 @@ const DeleteActionRender = (props) => {
           saTableContext?.delete(record);
         }}
       >
-        {actionTitle.delete}
+        {t('delete')}
       </Button>
     ) : null
   ) : (
@@ -127,10 +122,10 @@ const DeleteActionRender = (props) => {
       menus={
         deleteable
           ? [
-              { key: 'add', name: '添加子级' },
-              { key: 'delete', name: '删除', danger: true },
+              { key: 'add', name: t('addchild') },
+              { key: 'delete', name: t('delete'), danger: true },
             ]
-          : [{ key: 'add', name: '添加子级' }]
+          : [{ key: 'add', name: t('addchild') }]
       }
     />
   );

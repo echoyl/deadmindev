@@ -2,7 +2,7 @@ import { ProFormInstance } from '@ant-design/pro-components';
 import { Button, ButtonProps } from 'antd';
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
-import { getBread, saFormColumnsType, saFormTabColumnsType, tplComplie } from '../helpers';
+import { getBread, saFormColumnsType, saFormTabColumnsType, t, tplComplie } from '../helpers';
 import { SaForm, saFormProps } from '../posts/post';
 import { SaContext } from '../posts/table';
 import ButtonModal from './buttonModal';
@@ -128,7 +128,7 @@ const InnerForm = (props) => {
                   ? null
                   : [
                       <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                        关闭
+                        {t('cancel')}
                       </Button>,
                       doms[1],
                     ];

@@ -22,4 +22,11 @@ export default {
   ...pwa,
   ...component,
   ...pages,
+  cancel: 'Cancel',
+  view: 'View',
+  edit: 'Edit',
+  add: 'Add',
+  delete: 'Delete',
+  addchild: 'Add child',
+  all: 'All',
 };

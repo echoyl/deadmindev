@@ -66,6 +66,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     initRequest = false,
     user,
     devEnable = true,
+    intl,
   } = props;
   if (!initRequest) return [];
   const allLabels = { ...defaultColumnsLabel, ...labels };
@@ -337,10 +338,14 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.rowProps = { gutter: 16 };
       }
 
-      if (devEnable && deep <= 1) {
-        if (!React.isValidElement(v.title)) {
-          v.title = <FormColumnTitle {...v} />;
-        }
+      if (devEnable && deep <= 1 && !React.isValidElement(v.title)) {
+        v.title = <FormColumnTitle {...v} />;
+      } else {
+        v.title = tplComplie(v.title);
+      }
+
+      if (v.fieldProps.placeholder) {
+        v.fieldProps.placeholder = tplComplie(v.fieldProps.placeholder, { intl });
       }
 
       return v;
