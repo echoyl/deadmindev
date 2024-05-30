@@ -14,4 +14,8 @@ export default {
   'component.noticeIcon.cleared': '清空了',
   'component.noticeIcon.empty': '暂无数据',
   'component.noticeIcon.view-more': '查看更多',
+  'component.globalHeader.avatar.user': '个人设置',
+  'component.globalHeader.avatar.logout': '退出登录',
+  'component.globalHeader.avatar.logouting': '退出登录中...',
+  'component.globalHeader.avatar.logoutsuccess': '退出成功',
 };

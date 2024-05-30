@@ -14,4 +14,8 @@ export default {
   'component.noticeIcon.cleared': 'Cleared',
   'component.noticeIcon.empty': 'No notifications',
   'component.noticeIcon.view-more': 'View more',
+  'component.globalHeader.avatar.user': 'User setting',
+  'component.globalHeader.avatar.logout': 'Sign out',
+  'component.globalHeader.avatar.logouting': 'Sign out...',
+  'component.globalHeader.avatar.logoutsuccess': 'Sign out success',
 };

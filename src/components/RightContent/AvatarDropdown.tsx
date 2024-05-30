@@ -1,41 +1,73 @@
-import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
-import { history, useModel } from '@umijs/max';
-import { App, Avatar, Space, Spin } from 'antd';
-import React, { useCallback } from 'react';
-
 import { loginOut } from '@/services/ant-design-pro/sadmin';
-import type { MenuInfo } from 'rc-menu/lib/interface';
+import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { history, useIntl, useModel } from '@umijs/max';
+import { Spin } from 'antd';
+import { createStyles } from 'antd-style';
+import { stringify } from 'querystring';
+import React, { useCallback, useContext } from 'react';
+import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
-import styles from './index.less';
+import { messageLoadingKey } from '@/services/ant-design-pro/sadmin';
+import { t } from '../Sadmin/helpers';
+import { SaDevContext } from '../Sadmin/dev';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
+  children?: React.ReactNode;
 };
 
-/**
- * 退出登录，并且将当前的 url 保存
- */
+export const AvatarName = () => {
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
+  return <span className="anticon">{currentUser?.name}</span>;
+};
 
-const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
+const useStyles = createStyles(({ token }) => {
+  return {
+    action: {
+      display: 'flex',
+      height: '48px',
+      marginLeft: 'auto',
+      overflow: 'hidden',
+      alignItems: 'center',
+      padding: '0 8px',
+      cursor: 'pointer',
+      borderRadius: token.borderRadius,
+      '&:hover': {
+        backgroundColor: token.colorBgTextHover,
+      },
+    },
+  };
+});
+
+export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
+  /**
+   * 退出登录，并且将当前的 url 保存
+   */
+  const { styles } = useStyles();
+  const intl = useIntl();
+
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { message } = App.useApp();
+  const { messageApi } = useContext(SaDevContext);
+
   const onMenuClick = useCallback(
-    async (event: MenuInfo) => {
+    (event: any) => {
       const { key } = event;
       if (key === 'logout') {
-        message.loading({
-          content: '退出登录中...',
+        messageApi?.loading({
+          content: t('component.globalHeader.avatar.logouting', intl),
           duration: 0,
-          key: 'request_message_key',
+          key: messageLoadingKey,
         });
-        await loginOut(() => {
-          setInitialState((s) => ({ ...s, currentUser: undefined }));
-          message.info({
-            key: 'request_message_key',
-            content: '退出成功',
+        loginOut(() => {
+          messageApi?.info({
+            key: messageLoadingKey,
+            content: t('component.globalHeader.avatar.logoutsuccess', intl),
             duration: 1,
           });
+          setInitialState((s) => ({ ...s, currentUser: undefined }));
         });
+
         return;
       } else {
         history.push(`/dashboard/${key}`);
@@ -45,7 +77,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   );
 
   const loading = (
-    <span className={`${styles.action} ${styles.account}`}>
+    <span className={styles.action}>
       <Spin
         size="small"
         style={{
@@ -65,47 +97,36 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   if (!currentUser || !currentUser.name) {
     return loading;
   }
+
+  const menuItems = [
+    ...(menu
+      ? [
+          {
+            key: 'user',
+            icon: <SettingOutlined />,
+            label: t('component.globalHeader.avatar.user'),
+          },
+          {
+            type: 'divider' as const,
+          },
+        ]
+      : []),
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: t('component.globalHeader.avatar.logout'),
+    },
+  ];
+
   return (
     <HeaderDropdown
       menu={{
-        items: [
-          {
-            label: (
-              <Space>
-                <SettingOutlined />
-                个人设置
-              </Space>
-            ),
-            key: 'user',
-          },
-          {
-            type: 'divider',
-          },
-          {
-            label: (
-              <Space>
-                <LogoutOutlined />
-                退出登录
-              </Space>
-            ),
-            key: 'logout',
-          },
-        ],
+        selectedKeys: [],
         onClick: onMenuClick,
+        items: menuItems,
       }}
-      placement="bottomRight"
     >
-      <span className={`${styles.action} ${styles.account}`}>
-        <Avatar
-          size="small"
-          className={styles.avatar}
-          src={currentUser.avatar ? currentUser.avatar : initialState?.settings.logo}
-          alt="avatar"
-        />
-        <span className={`${styles.name} anticon`}>{currentUser.name}</span>
-      </span>
+      {children}
     </HeaderDropdown>
   );
 };
-
-export default AvatarDropdown;

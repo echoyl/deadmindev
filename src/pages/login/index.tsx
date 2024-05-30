@@ -16,18 +16,67 @@ import {
   ProFormText,
   setAlpha,
 } from '@ant-design/pro-components';
-import { Helmet, history, useModel, useSearchParams } from '@umijs/max';
+import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
 import { Tabs, QRCode, Space, theme, GetProp, message, notification } from 'antd';
 import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import styles from './index.less';
 import cache from '@/components/Sadmin/helper/cache';
+import { createStyles } from 'antd-style';
+import { SelectLang } from '@/components/RightContent';
+import { t } from '@/components/Sadmin/helpers';
+
+const useStyles = createStyles(({ token, css }) => {
+  return {
+    action: {
+      marginLeft: '8px',
+      color: 'rgba(0, 0, 0, 0.2)',
+      fontSize: '24px',
+      verticalAlign: 'middle',
+      cursor: 'pointer',
+      transition: 'color 0.3s',
+      '&:hover': {
+        color: token.colorPrimaryActive,
+      },
+    },
+    lang: {
+      width: 42,
+      height: 42,
+      lineHeight: '42px',
+      position: 'fixed',
+      right: 16,
+      borderRadius: token.borderRadius,
+      ':hover': {
+        backgroundColor: token.colorBgTextHover,
+      },
+    },
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+      overflow: 'auto',
+      backgroundImage:
+        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
+      backgroundSize: '100% 100%',
+    },
+  };
+});
+
+const Lang = () => {
+  const { styles } = useStyles();
+
+  return (
+    <div className={styles.lang} data-lang>
+      <SelectLang />,
+    </div>
+  );
+};
 
 const LoginComponent: React.FC = () => {
   return <Login />;
 };
 
 const Login: React.FC = () => {
+  const { styles } = useStyles();
   const { initialState, setInitialState } = useModel('@@initialState');
   const [captchaReload, setCaptchaReload] = useState(0);
   const [captchaPhoneReload, setCaptchaPhoneReload] = useState(0);
@@ -144,16 +193,11 @@ const Login: React.FC = () => {
     return;
   };
 
-  const containerStyle: CSSProperties = {};
-
-  if (setting?.loginBgImgage) {
-    containerStyle.backgroundImage = 'url("' + setting.loginBgImgage + '")';
-  }
   const formRef = useRef<ProFormInstance>();
-
+  const intl = useIntl();
   const loginTypeItems = [
     {
-      label: '手机号登录',
+      label: t('pages.login.phoneLogin.tab', intl),
       key: 'phone',
       children:
         loginType != 'phone' ? null : (
@@ -162,17 +206,17 @@ const Login: React.FC = () => {
               name="mobile"
               fieldProps={{
                 size: 'large',
-                prefix: <UserOutlined className={styles.prefixIcon} />,
+                prefix: <UserOutlined />,
               }}
-              placeholder="请输入手机号码"
+              placeholder={t('pages.login.phoneNumber.placeholder', intl)}
               rules={[
                 {
                   required: true,
-                  message: '请输入手机号！',
+                  message: t('pages.login.phoneNumber.required', intl),
                 },
                 {
                   pattern: /^1\d{10}$/,
-                  message: '手机号格式错误！',
+                  message: t('pages.login.phoneNumber.invalid', intl),
                 },
               ]}
             />
@@ -181,13 +225,13 @@ const Login: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: '获取手机验证码请输入图形验证码',
+                  message: t('pages.login.captcha.required', intl),
                 },
               ]}
             >
               <CaptchaInput
                 reload={captchaPhoneReload}
-                placeholder="获取手机验证码请输入图形验证码"
+                placeholder={t('pages.login.captcha.placeholder', intl)}
               />
             </ProForm.Item>
             <ProFormDependency name={['captchaPhone']}>
@@ -203,18 +247,18 @@ const Login: React.FC = () => {
                       size: 'large',
                     }}
                     phoneName="mobile"
-                    placeholder="请输入验证码"
+                    placeholder={t('pages.login.captcha.placeholder', intl)}
                     captchaTextRender={(timing, count) => {
                       if (timing) {
-                        return `${count} 获取验证码`;
+                        return `${count} ${t('pages.login.phoneLogin.getVerificationCode', intl)}`;
                       }
-                      return '获取验证码';
+                      return t('pages.login.phoneLogin.getVerificationCode', intl);
                     }}
                     name="mobilecode"
                     rules={[
                       {
                         required: true,
-                        message: '请输入验证码！',
+                        message: t('pages.login.captcha.required', intl),
                       },
                     ]}
                     onGetCaptcha={async (phone) => {
@@ -252,7 +296,7 @@ const Login: React.FC = () => {
         ),
     },
     {
-      label: '账号密码登录',
+      label: t('pages.login.accountLogin.tab', intl),
       key: 'password',
       children:
         loginType != 'password' ? null : (
@@ -261,13 +305,13 @@ const Login: React.FC = () => {
               name="username"
               fieldProps={{
                 size: 'large',
-                prefix: <UserOutlined className={styles.prefixIcon} />,
+                prefix: <UserOutlined />,
               }}
-              placeholder="请输入账号名称"
+              placeholder={t('pages.login.username.placeholder', intl)}
               rules={[
                 {
                   required: true,
-                  message: '请输入用户名!',
+                  message: t('pages.login.username.required', intl),
                 },
               ]}
             />
@@ -275,13 +319,13 @@ const Login: React.FC = () => {
               name="password"
               fieldProps={{
                 size: 'large',
-                prefix: <LockOutlined className={styles.prefixIcon} />,
+                prefix: <LockOutlined />,
               }}
-              placeholder="请输入登录密码"
+              placeholder={t('pages.login.password.placeholder', intl)}
               rules={[
                 {
                   required: true,
-                  message: '请输入密码！',
+                  message: t('pages.login.password.required', intl),
                 },
               ]}
             />
@@ -303,13 +347,14 @@ const Login: React.FC = () => {
     },
   ];
   const { token } = theme.useToken();
-  const iconStyles: CSSProperties = {
-    marginInlineStart: '16px',
-    color: setAlpha(token.colorTextBase, 0.2),
-    fontSize: '24px',
-    verticalAlign: 'middle',
-    cursor: 'pointer',
-  };
+  const containerStyle: CSSProperties = {};
+  if (setting?.navTheme == 'light') {
+    if (setting?.loginBgImgage) {
+      containerStyle.backgroundImage = 'url("' + setting.loginBgImgage + '")';
+    }
+  } else {
+    containerStyle.background = token.colorBgBase;
+  }
   const ActionLogin = (props) => {
     const { type } = props;
     const [timestamp, setTimestamp] = useState<number>(0);
@@ -373,14 +418,18 @@ const Login: React.FC = () => {
       </Helmet>
       {messageHolder}
       {notificationHolder}
-      <div className={styles.content} style={containerStyle.backgroundImage ? {} : { padding: 0 }}>
+      {setting?.lang ? <Lang /> : null}
+      <div style={{ flex: '1', padding: '48px 0' }}>
         <ProCard
           style={{
             //maxWidth: 440,
             margin: '0px auto',
-            padding: '20px 0',
-            background: containerStyle.backgroundImage ? '#fff' : 'none',
+            // padding: '20px 0',
+            background: setting?.loginBgCardColor,
+            width: 376,
           }}
+          bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
+          className={styles.card}
         >
           <LoginForm
             contentStyle={{
@@ -408,9 +457,9 @@ const Login: React.FC = () => {
             actions={
               setting?.loginActions ? (
                 <Space>
-                  其他登录方式
+                  {t('pages.login.loginWith', intl)}
                   <ButtonModal
-                    trigger={<WechatOutlined style={iconStyles} />}
+                    trigger={<WechatOutlined className={styles.action} />}
                     width={350}
                     title="扫码登录"
                   >
@@ -433,27 +482,25 @@ const Login: React.FC = () => {
                 return loginTypeItems.find((item) => item.key == v);
               })}
             />
-            {isQrcode ? null : (
-              <div
+            <div
+              style={{
+                marginBottom: 24,
+              }}
+            >
+              <ProFormCheckbox noStyle name="autoLogin">
+                {t('pages.login.rememberMe', intl)}
+              </ProFormCheckbox>
+              <a
                 style={{
-                  marginBottom: 24,
+                  float: 'right',
+                }}
+                onClick={() => {
+                  messageApi.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
                 }}
               >
-                <ProFormCheckbox noStyle name="autoLogin">
-                  自动登录
-                </ProFormCheckbox>
-                <a
-                  style={{
-                    float: 'right',
-                  }}
-                  onClick={() => {
-                    messageApi.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
-                  }}
-                >
-                  忘记密码
-                </a>
-              </div>
-            )}
+                {t('pages.login.forgotPassword', intl)}
+              </a>
+            </div>
           </LoginForm>
         </ProCard>
       </div>

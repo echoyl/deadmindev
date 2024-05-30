@@ -253,7 +253,7 @@ const CustomerColumnRender = (props) => {
                   return;
                 }
                 if (!ret.code) {
-                  if (item.request?.afterActionType == 'reload') {
+                  if (!item.request?.afterActionType || item.request?.afterActionType == 'reload') {
                     actionRef?.current?.reload();
                   }
 

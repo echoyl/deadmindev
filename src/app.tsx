@@ -1,4 +1,4 @@
-import { Footer, RightContent } from '@/components';
+import { Footer } from '@/components';
 import {
   Settings as LayoutSettings,
   ProConfigProvider,
@@ -19,6 +19,8 @@ import Message from './components/Sadmin/message';
 import { saGetSetting } from './components/Sadmin/refresh';
 import { loginPath, currentUser as queryCurrentUser } from './services/ant-design-pro/sadmin';
 import { Locale } from 'antd/es/locale';
+import { actionsRender } from './components/RightContent';
+import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
 
 //const isDev = process.env.NODE_ENV === 'development';
 
@@ -175,7 +177,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     }
   };
   return {
-    rightContentRender: () => <RightContent />,
+    actionsRender: actionsRender,
+    avatarProps: {
+      src: initialState?.currentUser?.avatar,
+      title: <AvatarName />,
+      render: (_, avatarChildren) => {
+        return <AvatarDropdown menu={true}>{avatarChildren}</AvatarDropdown>;
+      },
+    },
     //disableContentMargin: false,
     waterMarkProps: {
       content: checkWaterMark(),

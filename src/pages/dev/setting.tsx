@@ -178,6 +178,7 @@ export default () => {
               ],
             },
 
+            { title: '主题色', dataIndex: 'colorPrimary', valueType: 'colorPicker' },
             { title: 'Antd主题配置', dataIndex: 'theme', valueType: 'jsonEditor' },
           ],
         },
@@ -191,7 +192,14 @@ export default () => {
                   title: '登录页背景图',
                   valueType: 'uploader',
                   dataIndex: 'loginBgImgage',
-                  colProps: { span: 24 },
+                  colProps: { span: 12 },
+                },
+                {
+                  title: '登录框背景色',
+                  valueType: 'colorPicker',
+                  dataIndex: 'loginBgCardColor',
+                  tooltip: '如果使用了登录背景图导致登录框不清晰，可以设置该值，默认为none',
+                  colProps: { span: 12 },
                 },
               ],
             },

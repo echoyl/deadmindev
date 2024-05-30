@@ -60,10 +60,10 @@ export default function DebounceSelect<
       setOptions([]);
       setFetching(true);
       const new_params = value == 'reload' ? {} : { keyword: value };
+
       for (let i in params) {
         new_params[i] = tplComplie(params[i], { record });
       }
-
       fetchOptions(new_params).then((newOptions) => {
         if (fetchId !== fetchRef.current) {
           // for fetch callback order

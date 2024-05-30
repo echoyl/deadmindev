@@ -1,16 +1,19 @@
 import { DefaultFooter } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
+import { theme } from 'antd';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const { initialState } = useModel('@@initialState');
   const tech = `${currentYear} ${initialState?.settings?.tech}`;
   const copyright = <span dangerouslySetInnerHTML={{ __html: tech }}></span>;
+  const { token } = theme.useToken();
   return (
     <>
       <DefaultFooter
         style={{
           background: 'none',
+          color: token.colorTextBase,
         }}
         copyright={copyright}
         //copyright={<a href="#">test</a>}

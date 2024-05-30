@@ -14,6 +14,7 @@ const DevSwitch = () => {
     fontSize: 16,
     cursor: 'pointer',
     lineHeight: '48px',
+    margin: '0 2px',
   };
   return initialState?.settings?.dev ? (
     <div

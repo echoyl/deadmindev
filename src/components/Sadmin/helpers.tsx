@@ -12,7 +12,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl, useModel, useRouteData } from '@umijs/max';
 import { ColorPicker, Image, Input } from 'antd';
 import { get } from 'rc-util';
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import DebounceSelect from './DebounceSelect';
 import { ConfirmRender } from './action/confirm';
@@ -552,12 +552,17 @@ export const tplComplie = (exp: string | undefined, props: any = {}) => {
       }
     })
     .filter((v) => v !== '');
-
-  if (renderedTemplate.length == 1 && (isBool(renderedTemplate[0]) || isStr(renderedTemplate[0]))) {
-    return renderedTemplate[0];
+  //检测结果中是否有 dom
+  const element = renderedTemplate.filter((v) => {
+    return React.isValidElement(v);
+  });
+  //console.log('element', renderedTemplate, element);
+  if (element.length > 0) {
+    //有dom
+    return <>{renderedTemplate}</>;
+  } else {
+    return renderedTemplate.length == 1 ? renderedTemplate[0] : renderedTemplate.join('');
   }
-  console.log('renderedTemplate', renderedTemplate);
-  return intl ? renderedTemplate.join('') : <>{renderedTemplate}</>;
 };
 
 export const stateSwitchProps = {

@@ -344,7 +344,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.title = tplComplie(v.title);
       }
 
-      if (v.fieldProps.placeholder) {
+      if (v.fieldProps?.placeholder) {
         v.fieldProps.placeholder = tplComplie(v.fieldProps.placeholder, { intl });
       }
 

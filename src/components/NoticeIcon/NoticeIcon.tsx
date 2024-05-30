@@ -1,5 +1,5 @@
 import { BellOutlined } from '@ant-design/icons';
-import { Badge, Spin, Tabs } from 'antd';
+import { Badge, Spin, Tabs, theme } from 'antd';
 import classNames from 'classnames';
 import useMergedState from 'rc-util/es/hooks/useMergedState';
 import React from 'react';
@@ -7,7 +7,8 @@ import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import type { NoticeIconTabProps } from './NoticeList';
 import NoticeList from './NoticeList';
-
+import { createStyles } from 'antd-style';
+import { useStyle } from './style';
 const { TabPane } = Tabs;
 
 export type NoticeIconProps = {
@@ -32,6 +33,8 @@ export type NoticeIconProps = {
 const NoticeIcon: React.FC<NoticeIconProps> & {
   Tab: typeof NoticeList;
 } = (props) => {
+  const { useToken } = theme;
+  const { token } = useToken();
   const getNotificationBox = (): React.ReactNode => {
     const {
       children,
@@ -74,10 +77,20 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
         ),
       });
     });
+
     return (
       <>
         <Spin spinning={loading} delay={300}>
-          <Tabs className={styles.tabs} onChange={onTabChange} items={items} />
+          <div
+            style={{
+              boxShadow:
+                '0 6px 16px -8px rgba(0,0,0,.08), 0 9px 28px 0 rgba(0,0,0,.05), 0 12px 48px 16px rgba(0,0,0,.03)',
+              borderRadius: 4,
+              background: token.colorBgBase,
+            }}
+          >
+            <Tabs onChange={onTabChange} centered items={items} />
+          </div>
         </Spin>
       </>
     );
@@ -89,22 +102,27 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
     value: props.popupVisible,
     onChange: props.onPopupVisibleChange,
   });
-  const noticeButtonClass = classNames(className, styles.noticeButton);
+
   const notificationBox = getNotificationBox();
-  const NoticeBellIcon = bell || <BellOutlined className={styles.icon} />;
+  const prefixCls = 'header-bell';
+  const { wrapSSR, hashId } = useStyle(prefixCls);
+
+  const NoticeBellIcon = bell || <BellOutlined className={`${prefixCls}-icon ${hashId}`} />;
   const trigger = (
-    <span className={classNames(noticeButtonClass, { opened: visible })}>
-      <Badge count={count} style={{ boxShadow: 'none' }} className={styles.badge}>
+    <span className={`${prefixCls}-span ${hashId}`.trim()}>
+      <Badge count={count} style={{ boxShadow: 'none' }}>
         {NoticeBellIcon}
       </Badge>
     </span>
   );
+
   if (!notificationBox) {
     return trigger;
   }
 
-  return (
+  return wrapSSR(
     <HeaderDropdown
+      className={`${prefixCls} ${hashId}`}
       placement="bottomRight"
       dropdownRender={getNotificationBox}
       overlayClassName={styles.popover}
@@ -113,7 +131,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
       onOpenChange={setVisible}
     >
       {trigger}
-    </HeaderDropdown>
+    </HeaderDropdown>,
   );
 };
 
