@@ -4,6 +4,7 @@ import { DataNode } from 'antd/es/tree';
 import React, { useContext, useEffect, useState } from 'react';
 import { SaContext } from '../posts/table';
 import PermPanel from './panel';
+import { t, tplComplie } from '../helpers';
 const PermGroup2: React.FC<{
   perms?: Array<any>;
   onChange?: (value: any) => void;
@@ -140,6 +141,14 @@ const PermGroup: React.FC<{
     allowClear: true,
   };
 
-  return <TreeSelect {...tProps} />;
+  return (
+    <TreeSelect
+      {...tProps}
+      treeTitleRender={(item) => {
+        //console.log('item', item);
+        return item.label ? tplComplie(item.label) : item.label;
+      }}
+    />
+  );
 };
 export default PermGroup;

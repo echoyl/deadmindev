@@ -491,7 +491,8 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     renderFormItem: DropdownActionMap,
   },
 };
-export const t = (id: string, intl?: any) => {
+export const t = (id?: string, intl?: any) => {
+  //if(!id)return;
   return intl ? (
     intl.formatMessage({
       id,

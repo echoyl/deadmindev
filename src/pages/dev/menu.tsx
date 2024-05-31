@@ -116,6 +116,9 @@ export const MenuFormColumn: saFormColumnsType = [
           treeLine: { showLeafIcon: true },
           treeDefaultExpandAll: true,
           allowClear: true,
+          treeTitleRender: (item) => {
+            return item.label ? tplComplie(item.label) : item.label;
+          },
         },
         width: 'sm',
       },
