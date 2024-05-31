@@ -1,9 +1,9 @@
-import { saFormColumnsType, uid } from '@/components/Sadmin/helpers';
+import { saFormColumnsType, tplComplie, uid } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
 import { CopyOutlined, RollbackOutlined } from '@ant-design/icons';
 import { ActionType } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import { Space } from 'antd';
 import { useRef, useContext } from 'react';
 import MenuConfig, { MenuOther } from './menuConfig';
@@ -370,7 +370,7 @@ export default () => {
       render: (dom, record) => (
         <Space>
           {iconToElement(record.icon)}
-          {record.title}
+          {tplComplie(record.title)}
         </Space>
       ),
     },
