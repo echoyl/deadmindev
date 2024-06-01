@@ -2,7 +2,7 @@
 /* eslint-disable */
 import cache from '@/components/Sadmin/helper/cache';
 import { message, notification } from '@/components/Sadmin/message';
-import { history, request as orequest } from '@umijs/max';
+import { history } from '@umijs/max';
 import { extend } from 'umi-request';
 const codeMessage: { [key: string]: any } = {};
 

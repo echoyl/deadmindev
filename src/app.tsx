@@ -122,22 +122,25 @@ export function rootContainer(container: JSX.Element, args) {
         // }
       });
     }, []);
-    const components = {
-      Menu: {
-        subMenuItemBg: 'transparent',
-      },
-      ...setting?.antdtheme?.components,
-    };
-    return (
+    return setting ? (
       <ConfigProvider
         locale={supportLocale[currentLocale]}
         theme={
           setting?.navTheme == 'light'
             ? {
                 ...setting?.antdtheme,
-                components,
+                Menu: {
+                  subMenuItemBg: 'transparent',
+                },
+                token: {
+                  colorPrimary: setting?.colorPrimary,
+                },
+                ...setting?.antdtheme?.components,
               }
             : {
+                token: {
+                  colorPrimary: setting?.colorPrimary,
+                },
                 algorithm: theme.darkAlgorithm,
               }
         }
@@ -164,7 +167,7 @@ export function rootContainer(container: JSX.Element, args) {
           </SaDevContext.Provider>
         </App>
       </ConfigProvider>
-    );
+    ) : null;
   };
   return React.createElement(Provider, null, container);
 }
