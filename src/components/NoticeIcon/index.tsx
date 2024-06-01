@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { useModel } from '@umijs/max';
 import { message, Tag } from 'antd';
 import dayjs from 'dayjs';

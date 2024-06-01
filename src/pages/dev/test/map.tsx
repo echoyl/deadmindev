@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { AreaMap } from '@ant-design/maps';
 import { useEffect, useState } from 'react';
 

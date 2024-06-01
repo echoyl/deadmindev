@@ -1,4 +1,4 @@
-import { saUpload } from '@/services/ant-design-pro/sadmin';
+import { saUpload } from '@/components/Sadmin/lib/request';
 import { Editor } from '@tinymce/tinymce-react';
 import { useModel } from '@umijs/max';
 import { FC, useRef } from 'react';

@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { BetaSchemaForm, ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import dayjs from 'dayjs';
 import { cloneDeep, isString } from 'lodash';

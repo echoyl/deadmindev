@@ -1,14 +1,14 @@
-import request, { currentUser, messageLoadingKey } from '@/services/ant-design-pro/sadmin';
 import { SyncOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { Space } from 'antd';
 import { useContext } from 'react';
-import defaultSettings, { lightDefaultToken } from '../../../config/defaultSettings';
-import { SaDevContext } from './dev';
-import { uid } from './helpers';
+import defaultSettings, { lightDefaultToken } from '../../../../config/defaultSettings';
+import { SaDevContext } from '../dev';
+import { uid } from '../helpers';
 
-import { getTheme } from './themSwitch';
-import cache from './helper/cache';
+import { getTheme } from '../themSwitch';
+import cache from '../helper/cache';
+import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
   const cacheKey = 'adminSetting';
   let localsetting = await cache.get(cacheKey);

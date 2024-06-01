@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import UiwMDEditor from '@uiw/react-md-editor';
 import { isNull } from 'lodash';
 import type { SetStateAction } from 'react';

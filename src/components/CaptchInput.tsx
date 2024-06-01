@@ -2,7 +2,7 @@ import { SafetyCertificateOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Spin, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-import { captcha } from '@/services/ant-design-pro/sadmin';
+import { captcha } from '@/components/Sadmin/lib/request';
 
 interface CaptchaInputValue {
   captchaCode?: string;

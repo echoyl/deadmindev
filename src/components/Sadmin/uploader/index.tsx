@@ -1,4 +1,4 @@
-import { requestHeaders, request_prefix } from '@/services/ant-design-pro/sadmin';
+import { requestHeaders, request_prefix } from '@/components/Sadmin/lib/request';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Image, Upload, message } from 'antd';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';

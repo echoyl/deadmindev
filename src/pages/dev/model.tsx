@@ -9,7 +9,7 @@ import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
 import modelSettingColumns from '@/components/Sadmin/dev/vars/modelSettingColumns';
 import { SaDevContext } from '@/components/Sadmin/dev';
-import { saReload } from '@/components/Sadmin/refresh';
+import { saReload } from '@/components/Sadmin/components/refresh';
 /**
  * 默认数据库有的字段
  */

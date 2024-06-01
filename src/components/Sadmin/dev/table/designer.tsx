@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { css } from '@emotion/css';
 import { useModel } from '@umijs/max';
 import { Dropdown, DropdownProps } from 'antd';

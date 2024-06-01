@@ -1,4 +1,4 @@
-import { getAdminToken, rememberName } from '@/services/ant-design-pro/sadmin';
+import { getAdminToken, rememberName } from '@/components/Sadmin/lib/request';
 import React, { useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '../dev';
 import { isJsonString } from '../helpers';

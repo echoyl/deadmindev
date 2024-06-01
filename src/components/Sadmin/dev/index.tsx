@@ -14,7 +14,7 @@ import { MessageInstance } from 'antd/es/message/interface';
 import { createContext, useContext } from 'react';
 import ModalJson from '../action/modalJson';
 import { saValueTypeMap } from '../helpers';
-import Refresh from '../refresh';
+import Refresh from '../components/refresh';
 import { ToolBarMenu, ToolMenuForm } from './table/toolbar';
 import { HookAPI } from 'antd/es/modal/useModal';
 import { NotificationInstance } from 'antd/es/notification/interface';

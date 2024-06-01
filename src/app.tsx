@@ -5,7 +5,7 @@ import {
   ProProvider,
   SettingDrawer,
 } from '@ant-design/pro-components';
-import { RunTimeLayoutConfig, history, setLocale, getLocale, addLocale, useIntl } from '@umijs/max';
+import { RunTimeLayoutConfig, history, getLocale, addLocale } from '@umijs/max';
 import { App, ConfigProvider, Modal, message, notification, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
@@ -16,14 +16,19 @@ import { DevLinks, SaDevContext } from './components/Sadmin/dev';
 import { loopMenuItem, saValueTypeMap } from './components/Sadmin/helpers';
 import WebSocketProvider, { WebSocketListen } from './components/Sadmin/hooks/websocket';
 import Message from './components/Sadmin/message';
-import { saGetSetting } from './components/Sadmin/refresh';
-import { loginPath, currentUser as queryCurrentUser } from './services/ant-design-pro/sadmin';
+import { saGetSetting } from './components/Sadmin/components/refresh';
+import { loginPath, currentUser as queryCurrentUser } from '@/components/Sadmin/lib/request';
 import { Locale } from 'antd/es/locale';
 import { actionsRender } from './components/RightContent';
 import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
 
 //const isDev = process.env.NODE_ENV === 'development';
-
+// export default defineConfig({
+//   define: {
+//     REACT_APP_API_BASEURL: 'http://xxx.test/api',
+//     UMI_APP_API_BASEURL: 'http://xxx.test/api',
+//   },
+// });
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */

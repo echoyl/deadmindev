@@ -2,8 +2,8 @@ import CaptchaInput from '@/components/CaptchInput';
 import Footer from '@/components/Footer';
 import ButtonModal from '@/components/Sadmin/action/buttonModal';
 import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
-import { saGetSetting } from '@/components/Sadmin/refresh';
-import request, { adminTokenName, setAdminToken } from '@/services/ant-design-pro/sadmin';
+import { saGetSetting } from '@/components/Sadmin/components/refresh';
+import request, { adminTokenName, setAdminToken } from '@/components/Sadmin/lib/request';
 import { LockOutlined, UserOutlined, WechatOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import {

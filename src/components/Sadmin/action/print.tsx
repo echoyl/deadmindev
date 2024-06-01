@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { App, Button, ButtonProps, Modal, Spin } from 'antd';
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';

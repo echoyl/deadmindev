@@ -1,4 +1,4 @@
-import request, { messageLoadingKey } from '@/services/ant-design-pro/sadmin';
+import request, { messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { TableDropdown } from '@ant-design/pro-components';
 import { history, Link, useModel } from '@umijs/max';
 import { Button, Space } from 'antd';

@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { TreeSelect } from 'antd';
 import { DataNode } from 'antd/es/tree';
 import React, { useContext, useEffect, useState } from 'react';
@@ -92,7 +92,10 @@ const PermGroup: React.FC<{
   const [init, setInit] = useState(false);
 
   const getData = async (roleid: number) => {
-    const { data } = await request.get('perm/role/perms', { params: { roleid } });
+    const { data, code } = await request.get('perm/role/perms', { params: { roleid } });
+    if (code) {
+      return;
+    }
     setPerms(data.perms);
     //console.log('get data ivalue is', ivalue, init);
     if (ivalue && !init) {

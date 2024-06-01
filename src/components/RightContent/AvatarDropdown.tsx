@@ -1,4 +1,4 @@
-import { loginOut } from '@/services/ant-design-pro/sadmin';
+import { loginOut,messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { history, useIntl, useModel } from '@umijs/max';
 import { Spin } from 'antd';
@@ -7,7 +7,6 @@ import { stringify } from 'querystring';
 import React, { useCallback, useContext } from 'react';
 import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
-import { messageLoadingKey } from '@/services/ant-design-pro/sadmin';
 import { t } from '../Sadmin/helpers';
 import { SaDevContext } from '../Sadmin/dev';
 

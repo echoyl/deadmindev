@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { ProFormSelect, ProFormCascader } from '@ant-design/pro-components';
 import { useLocation } from '@umijs/max';
 import { Cascader, Empty, Select, Spin } from 'antd';

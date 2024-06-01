@@ -1,26 +1,10 @@
 // @ts-ignore
 /* eslint-disable */
 import cache from '@/components/Sadmin/helper/cache';
-import { message as gmessage, notification } from '@/components/Sadmin/message';
+import { message, notification } from '@/components/Sadmin/message';
 import { history, request as orequest } from '@umijs/max';
 import { extend } from 'umi-request';
-const codeMessage = {
-  200: '服务器成功返回请求的数据。',
-  201: '新建或修改数据成功。',
-  202: '一个请求已经进入后台排队（异步任务）。',
-  204: '删除数据成功。',
-  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-  401: '用户没有权限（令牌、用户名、密码错误）。',
-  403: '用户得到授权，但是访问是被禁止的。',
-  404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
-  406: '请求的格式不可得。',
-  410: '请求的资源被永久删除，且不会再得到的。',
-  422: '当创建一个对象时，发生一个验证错误。',
-  500: '服务器发生错误，请检查服务器。',
-  502: '网关错误。',
-  503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。',
-};
+const codeMessage: { [key: string]: any } = {};
 
 export const request_prefix = '/sadmin/';
 
@@ -53,19 +37,6 @@ function errorHandler(error) {
     throw error;
   }
 }
-export async function saRequest(url: string, method = 'GET', options?: { [key: string]: any }) {
-  //const method = options?.method;
-  //console.log(options);
-  const token = await getAdminToken();
-  return orequest('/sadmin/' + url, {
-    method: method,
-    headers: {
-      'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
-    },
-    ...(options || {}),
-  });
-}
 
 export async function getAdminToken() {
   const adminToken = await cache.get(adminTokenName);
@@ -77,7 +48,6 @@ export async function setAdminToken(data: string) {
 }
 
 const request = extend({
-  prefix: request_prefix,
   errorHandler,
 });
 export async function requestHeaders() {
@@ -95,17 +65,16 @@ export function getFullUrl(url: string) {
 }
 
 request.interceptors.request.use(async (url, options) => {
-  const headers = options.headers
-    ? options.headers
-    : {
-        'Content-Type': 'application/json',
-      };
+  const { headers } = options;
+  const contentType = {
+    'Content-Type': 'application/json',
+  };
   const rheaders = await requestHeaders();
   return {
-    url: url,
+    url: getFullUrl(url),
     options: {
       ...options,
-      headers: { ...headers, ...rheaders },
+      headers: { ...headers, ...contentType, ...rheaders },
     },
   };
 });
@@ -134,20 +103,18 @@ export const responseCodeAction = (code: number, method: string, drawer: boolean
   return false;
 };
 request.interceptors.request.use(async (response, options) => {
-  const { method, messageApi } = options;
-  if (method == 'post' && messageApi) {
-    messageApi.loading({ content: '提交中...', duration: 0, key: messageLoadingKey });
+  const { showLoading } = options;
+  if (showLoading) {
+    message.loading({ content: 'Loading...', duration: 0, key: messageLoadingKey });
   }
 });
 request.interceptors.response.use(async (response, options) => {
   if (response.status == 200) {
     const res = await response.clone().json();
     const { code, msg, data } = res;
-    const { messageApi } = options;
-    const message = messageApi ? messageApi : gmessage;
     if (code) {
       //message.error(msg);
-      if (responseCodeAction(code, options.method, options.drawer)) {
+      if (responseCodeAction(code, options.method as string, options.drawer)) {
         return false;
       }
     }

@@ -1,5 +1,5 @@
 import { MenuFormColumn } from '@/pages/dev/menu';
-import request, { currentUser, getFullUrl, requestHeaders } from '@/services/ant-design-pro/sadmin';
+import request, { currentUser, getFullUrl, requestHeaders } from '@/components/Sadmin/lib/request';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -25,7 +25,7 @@ import { DndContext } from '../dnd-context';
 import { getModelColumns } from './baseFormColumns';
 import { ToolbarColumnTitle } from './title';
 import { SaDevContext } from '..';
-import { saReloadMenu } from '../../refresh';
+import { saReloadMenu } from '../../components/refresh';
 
 export const ToolBarDom = (props) => {
   const {

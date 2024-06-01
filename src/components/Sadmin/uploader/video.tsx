@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import OSS from 'ali-oss/dist/aliyun-oss-sdk.min';
 import { Button, Modal, Upload, UploadFile, UploadProps, message } from 'antd';

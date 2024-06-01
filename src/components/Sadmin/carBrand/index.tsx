@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { Form, Select } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 

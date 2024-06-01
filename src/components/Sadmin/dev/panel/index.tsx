@@ -1,4 +1,4 @@
-import request, { messageLoadingKey } from '@/services/ant-design-pro/sadmin';
+import request, { messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { SettingOutlined } from '@ant-design/icons';
 import { BetaSchemaForm, PageContainer, ProCard } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';

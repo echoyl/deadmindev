@@ -9,7 +9,7 @@ import { useRef, useContext } from 'react';
 import MenuConfig, { MenuOther } from './menuConfig';
 import MenuTable from './menuTable';
 import { SaDevContext } from '@/components/Sadmin/dev';
-import request, { currentUser, messageLoadingKey } from '@/services/ant-design-pro/sadmin';
+import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 
 export const MenuFormColumn: saFormColumnsType = [
   {

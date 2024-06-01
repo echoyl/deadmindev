@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { BetaSchemaForm, PageContainer, ProCard, StatisticCard } from '@ant-design/pro-components';
 import { Link, useModel } from '@umijs/max';
 //import { PageContainer } from '@ant-design/pro-layout';

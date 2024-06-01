@@ -1,4 +1,4 @@
-import request from '@/services/ant-design-pro/sadmin';
+import request from '@/components/Sadmin/lib/request';
 import { Button, ButtonProps, Modal } from 'antd';
 import React, { FC, useContext, useMemo } from 'react';
 import { SaContext } from '../posts/table';
