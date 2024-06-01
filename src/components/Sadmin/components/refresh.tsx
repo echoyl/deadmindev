@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import defaultSettings, { lightDefaultToken } from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
-
+import { message } from '@/components/Sadmin/message';
 import { getTheme } from '../themSwitch';
 import cache from '../helper/cache';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
@@ -30,8 +30,8 @@ export const saGetSetting = async (force: boolean = false): Promise<{ [key: stri
   return { ...defaultSettings, ...localsetting, ...navTheme };
 };
 
-export const saReload = async (initialState, setInitialState, setSetting, messageApi) => {
-  messageApi?.loading({ key: messageLoadingKey, content: '刷新配置中' });
+export const saReload = async (initialState, setInitialState, setSetting) => {
+  message?.loading({ key: messageLoadingKey, content: '刷新配置中' });
   const msg = await currentUser();
   //const msg = await cuser();
   const setting = await saGetSetting(true);
@@ -45,13 +45,13 @@ export const saReload = async (initialState, setInitialState, setSetting, messag
       ...initialState?.settings,
       ...setting,
     });
-    messageApi?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
+    message?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
   });
   return;
 };
 
-export const saReloadMenu = async (initialState, setInitialState, messageApi) => {
-  messageApi?.loading({ key: messageLoadingKey, content: '刷新配置中' });
+export const saReloadMenu = async (initialState, setInitialState) => {
+  message?.loading({ key: messageLoadingKey, content: '刷新配置中' });
   const msg = await currentUser();
   //const msg = await cuser();
   const uidx = uid();
@@ -59,17 +59,17 @@ export const saReloadMenu = async (initialState, setInitialState, messageApi) =>
     ...s,
     currentUser: { ...msg.data, uidx },
   })).then(() => {
-    messageApi?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
+    message?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
   });
   return;
 };
 
 export default () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { setSetting, messageApi } = useContext(SaDevContext);
+  const { setSetting } = useContext(SaDevContext);
 
   const reload = async () => {
-    await saReload(initialState, setInitialState, setSetting, messageApi);
+    await saReload(initialState, setInitialState, setSetting);
   };
 
   return (

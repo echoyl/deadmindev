@@ -208,7 +208,6 @@ const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {}, after
 export const ToolMenuForm = (props) => {
   const { setInitialState, initialState } = useModel('@@initialState');
   const { pageMenu = { id: 0 }, trigger } = props;
-  const { messageApi } = useContext(SaDevContext);
   const MenuForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
     return (
@@ -224,7 +223,7 @@ export const ToolMenuForm = (props) => {
         width={1600}
         msgcls={async ({ code, data }) => {
           if (!code) {
-            saReloadMenu(initialState, setInitialState, messageApi);
+            saReloadMenu(initialState, setInitialState);
           }
           setOpen(false);
           return;

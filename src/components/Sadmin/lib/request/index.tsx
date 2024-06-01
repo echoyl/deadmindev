@@ -20,22 +20,22 @@ export const messageLoadingKey = 'message_loading_key';
 
 function errorHandler(error) {
   // 请求已发送但服务端返回状态码非 2xx 的响应
-  if (error.response) {
-    const { status, statusText } = error.response;
-    const description = codeMessage[status] || statusText;
+  //console.log(typeof error, JSON.stringify(error), error);
+  if (error.data) {
+    const { status, statusText, message } = error.data;
+    const description = message || codeMessage[status] || statusText;
     notification?.error?.({
       message: '提示',
-      description: '服务器错误:' + description,
+      description: description,
     });
     // 请求初始化时出错或者没有响应返回的异常
-    throw error;
   } else {
     const description = error.message || error.errDesc || '系统异常';
     if (description != 'error') {
       notification?.error?.({ description, message: '提示' });
     }
-    throw error;
   }
+  throw new Error();
 }
 
 export async function getAdminToken() {
@@ -47,9 +47,7 @@ export async function setAdminToken(data: string) {
   return cache.set(adminTokenName, data);
 }
 
-const request = extend({
-  errorHandler,
-});
+const request = extend({ errorHandler });
 export async function requestHeaders() {
   const token = await getAdminToken();
   const remember = await cache.get(rememberName);
@@ -109,87 +107,64 @@ request.interceptors.request.use(async (response, options) => {
   }
 });
 request.interceptors.response.use(async (response, options) => {
-  if (response.status == 200) {
-    const res = await response.clone().json();
-    const { code, msg, data } = res;
-    if (code) {
-      //message.error(msg);
-      if (responseCodeAction(code, options.method as string, options.drawer)) {
-        return false;
-      }
+  const res = await response.clone().json();
+  //console.log('res', res);
+  const { code, msg, data } = res;
+  if (code) {
+    //message.error(msg);
+    if (responseCodeAction(code, options.method as string, options.drawer)) {
+      return false;
     }
+  }
 
-    if (options.then) {
-      //自定义接管之后的操作设置
-      options.then({ code, msg, data, res });
+  if (options.then) {
+    //自定义接管之后的操作设置
+    options.then({ code, msg, data, res });
+  } else {
+    //默认的操作设置
+    if (code) {
+      notification.error({ description: msg, message: '提示' });
+      options.msgcls && options.msgcls({ code, msg, data, res });
     } else {
-      //默认的操作设置
-      if (code) {
-        notification.error({ description: msg, message: '提示' });
-        options.msgcls && options.msgcls({ code, msg, data, res });
-      } else {
-        if (msg) {
-          if (options.method == 'POST' || options.method == 'DELETE') {
-            // notification.info({
-            //   message: '提示',
-            //   description: msg,
-            //   duration: 3,
-            // });
-            message.success({
+      if (msg) {
+        if (options.method == 'POST' || options.method == 'DELETE') {
+          // notification.info({
+          //   message: '提示',
+          //   description: msg,
+          //   duration: 3,
+          // });
+          message.success({
+            key: messageLoadingKey,
+            content: msg,
+            duration: 1,
+          });
+          if (data?.logout) {
+            message.loading({
+              content: '退出登录中...',
+              duration: 0,
               key: messageLoadingKey,
-              content: msg,
-              duration: 1,
             });
-            if (data?.logout) {
-              message.loading({
-                content: '退出登录中...',
-                duration: 0,
-                key: messageLoadingKey,
-              });
-              await loginOut(() => {
-                message.destroy(messageLoadingKey);
-              });
-            } else {
-              options.msgcls && options.msgcls({ code, msg, data, res });
-            }
-            // message.success({
-            //   content: msg,
-            //   duration: 1,
-            //   key: 'request_message_key',
-            //   onClose: async () => {
-            //     //如果有退出命令
-            //     if (data?.logout) {
-            //       message.loading({
-            //         content: '退出登录中...',
-            //         duration: 0,
-            //         key: 'request_message_key',
-            //       });
-            //       await loginOut(() => {
-            //         message.destroy('request_message_key');
-            //       });
-            //     } else {
-            //       options.msgcls && options.msgcls({ code, msg, data, res });
-            //     }
-            //   },
-            // });
+            await loginOut(() => {
+              message.destroy(messageLoadingKey);
+            });
           } else {
             options.msgcls && options.msgcls({ code, msg, data, res });
           }
-          //添加导出跳转下载页面功能
-          if (data?.download) {
-            const a = document.createElement('a');
-            a.target = '_blank';
-            a.download = data.download;
-            a.href = data.url;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          }
+        } else {
+          options.msgcls && options.msgcls({ code, msg, data, res });
+        }
+        //添加导出跳转下载页面功能
+        if (data?.download) {
+          const a = document.createElement('a');
+          a.target = '_blank';
+          a.download = data.download;
+          a.href = data.url;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
         }
       }
     }
-  } else {
-    throw new Error();
   }
 
   return response;
