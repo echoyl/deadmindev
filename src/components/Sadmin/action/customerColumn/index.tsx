@@ -207,6 +207,7 @@ const CustomerColumnRender = (props) => {
         ? tplComplie(item.fieldProps.cal, {
             record,
             user: initialState?.currentUser,
+            func: true,
           })
         : text;
       return (
@@ -215,6 +216,7 @@ const CustomerColumnRender = (props) => {
           dataSource={dataSource}
           {...item.fieldProps?.value}
           columns={tableColumns}
+          width={'100%'}
         />
       );
     }

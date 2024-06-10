@@ -5,7 +5,7 @@ import { Divider, Progress, Space } from 'antd';
 import PanelItemChart from './chart';
 
 const PanelItemCard = (props) => {
-  const { title, data, config = {} } = props;
+  const { title, data, config = {}, height } = props;
   const { open } = config;
 
   const getDescription = (config) => {
@@ -86,7 +86,7 @@ const PanelItemCard = (props) => {
   return (
     <StatisticCard
       footer={getFooter(config, data)}
-      style={{ height: '100%' }}
+      style={{ height: height ? height : '100%' }}
       title={title}
       statistic={statistic}
       chart={getChart(config, data)}

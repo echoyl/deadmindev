@@ -508,7 +508,7 @@ export const tplComplie = (exp: string | undefined, props: any = {}) => {
   if (!isString(exp)) {
     return exp;
   }
-  const { intl } = props;
+  const { intl, func } = props;
   const t = (id: string) => {
     const msg = intl ? (
       intl.formatMessage({
@@ -537,8 +537,8 @@ export const tplComplie = (exp: string | undefined, props: any = {}) => {
       return false;
     }
   };
-
-  const regex = /{{\s*([^{}]*)\s*}}/g;
+  //使用func 只匹配一次，exp必须{{ 首尾有空格 }}
+  const regex = func ? /^\s*\{\{([\s\S]*)\}\}\s*$/ : /{{\s*([^{}]*)\s*}}/g;
 
   // 使用数组的map方法来处理字符串，避免使用dangerouslySetInnerHTML
   const renderedTemplate = exp

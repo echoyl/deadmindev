@@ -156,11 +156,14 @@ export default () => {
     { label: '省市区 - pca', value: 'pca' },
     { label: '地图组件 - tmapInput', value: 'tmapInput' },
     { label: '富文本 - tinyEditor', value: 'tinyEditor' },
-    { label: '价格- price', value: 'price' },
+    { label: '价格2- price', value: 'price' },
+    { label: '价格3- mprice', value: 'mprice' },
+    { label: '价格4- mmprice', value: 'mmprice' },
     { label: '数字- digit', value: 'digit' },
     { label: 'json', value: 'json' },
     { label: '弹层选择 - modalSelect', value: 'modalSelect' },
     { label: '拾色器 - colorPicker', value: 'colorPicker' },
+    { label: '图标选择器 - iconSelect', value: 'iconSelect' },
   ];
 
   const setTableColumns = (type: string) => {
@@ -216,6 +219,7 @@ export default () => {
           open: '启用',
           close: '禁用',
         },
+        table_menu: true,
       },
     ];
 
@@ -225,10 +229,10 @@ export default () => {
     );
   };
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { setSetting, setting, messageApi } = useContext(SaDevContext);
+  const { setSetting, setting } = useContext(SaDevContext);
   const reData = async () => {
     actionRef?.current?.reload();
-    await saReload(initialState, setInitialState, setSetting, messageApi);
+    //await saReload(initialState, setInitialState, setSetting);
     return true;
   };
 
@@ -248,7 +252,6 @@ export default () => {
         afterFormPost={reData}
         afterDelete={reData}
         openWidth={1500}
-        grid={false}
         devEnable={false}
         tableProps={{
           scroll: { y: 600 },
@@ -285,18 +288,18 @@ export default () => {
               {
                 title: '名称',
                 dataIndex: 'title',
-                width: 'md',
+                colProps: { span: 8 },
                 fieldProps: { placeholder: '请输入名称' },
               },
               {
                 title: 'name',
                 dataIndex: 'name',
-                width: 'md',
+                colProps: { span: 8 },
                 fieldProps: { placeholder: '请输入名称' },
               },
               {
                 title: '模型所属',
-                width: 'md',
+                colProps: { span: 8 },
                 dataIndex: 'admin_type',
                 valueType: 'select',
                 requestDataName: 'admin_types',
@@ -310,7 +313,7 @@ export default () => {
                 title: '类型',
                 dataIndex: 'type',
                 valueType: 'select',
-                width: 'md',
+                colProps: { span: 8 },
                 fieldProps: {
                   placeholder: '请选择类型',
                   options: [
@@ -323,13 +326,14 @@ export default () => {
                 title: '模型类型',
                 dataIndex: 'leixing',
                 valueType: 'select',
-                width: 'md',
+                colProps: { span: 8 },
                 fieldProps: { options: modelType.map((v) => ({ label: v, value: v })) },
               },
               {
                 title: '设置',
                 dataIndex: 'setting',
                 valueType: 'confirmForm',
+                colProps: { span: 8 },
                 fieldProps: {
                   btn: {
                     title: '设置',
@@ -375,12 +379,12 @@ export default () => {
                     fieldProps: {
                       options: [{ label: '允许空值', value: 1 }],
                     },
-                    width: 100,
+                    colProps: { span: 2 },
                   },
                   {
                     title: '名称',
                     dataIndex: 'title',
-                    width: 140,
+                    colProps: { span: 4 },
                     fieldProps: {
                       placeholder: '名称备注',
                     },
@@ -388,7 +392,7 @@ export default () => {
                   {
                     title: '字段',
                     dataIndex: 'name',
-                    width: 140,
+                    colProps: { span: 2 },
                     fieldProps: {
                       placeholder: '字段名',
                     },
@@ -397,13 +401,13 @@ export default () => {
                     title: '类型',
                     dataIndex: 'type',
                     valueType: 'select',
-                    width: 180,
+                    colProps: { span: 4 },
                     fieldProps: { options: schemaType },
                   },
                   {
                     title: '默认值',
                     dataIndex: 'default',
-                    width: 100,
+                    colProps: { span: 2 },
                     fieldProps: {
                       placeholder: '默认值',
                     },
@@ -411,7 +415,7 @@ export default () => {
                   {
                     title: '长度',
                     dataIndex: 'length',
-                    width: 100,
+                    colProps: { span: 2 },
                     fieldProps: {
                       placeholder: '字段长度',
                     },
@@ -420,13 +424,14 @@ export default () => {
                     title: 'form类型',
                     dataIndex: 'form_type',
                     valueType: 'select',
-                    width: 180,
+                    colProps: { span: 4 },
                     fieldProps: { options: formType },
                   },
                   {
                     title: '配置',
                     dataIndex: 'setting',
                     valueType: 'confirmForm',
+                    colProps: { span: 2 },
                     fieldProps: {
                       btn: { title: '配置' },
                       saFormProps: {
@@ -473,6 +478,7 @@ export default () => {
                     dataIndex: 'table_menu',
                     valueType: 'switch',
                     title: '菜单',
+                    colProps: { span: 2 },
                     fieldProps: {
                       checkedChildren: 'tab',
                       unCheckedChildren: 'tab',
@@ -513,6 +519,7 @@ export default () => {
                         {
                           title: 'url参数名称',
                           dataIndex: 'name',
+                          colProps: { span: 8 },
                         },
                         {
                           title: '类型',
@@ -521,14 +528,14 @@ export default () => {
                           fieldProps: {
                             options: searchColumnType.map((v) => ({ label: v, value: v })),
                           },
-                          width: 150,
+                          colProps: { span: 4 },
                         },
                         {
                           title: '字段',
                           dataIndex: 'columns',
                           valueType: 'select',
                           tooltip: '不存在的字段请自行输入，比如whereHas，请输入关联名称',
-                          width: 300,
+                          colProps: { span: 8 },
                           fieldProps: {
                             options: [...foreignOptions, ...devDefaultFields],
                             mode: 'tags',

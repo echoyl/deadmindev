@@ -269,6 +269,9 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
                   }
                   nv.dependencies = names;
                   //将依赖的字段值注入到fieldProps这样组件可以获取该依赖数据
+                  if (nv.fieldProps?.placeholder) {
+                    nv.fieldProps.placeholder = tplComplie(nv.fieldProps.placeholder, { intl });
+                  }
                   nv.fieldProps = { ...nv.fieldProps, ...dependencyOnName };
                   return nv;
                 });
@@ -324,6 +327,11 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
           v.columns = relateMenu.data.formColumns
             ? relateMenu.data.formColumns
             : relateMenu.data.tabs[0]?.formColumns;
+        }
+      } else {
+        //如果时formlist 没有page 且没有columns 默认给一个 防止无属性不渲染dom
+        if (v.valueType == 'formList' && !v.columns) {
+          v.columns = [];
         }
       }
 

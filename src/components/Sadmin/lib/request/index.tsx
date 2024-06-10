@@ -22,8 +22,14 @@ function errorHandler(error) {
   // 请求已发送但服务端返回状态码非 2xx 的响应
   //console.log(typeof error, JSON.stringify(error), error);
   if (error.data) {
-    const { status, statusText, message } = error.data;
-    const description = message || codeMessage[status] || statusText;
+    const { status, statusText, message, file, line } = error.data;
+    let description;
+    if (message && file && line) {
+      description = [message, file, line].join(' ');
+    } else {
+      description = message || codeMessage[status] || statusText;
+    }
+
     notification?.error?.({
       message: '提示',
       description: description,
@@ -35,7 +41,8 @@ function errorHandler(error) {
       notification?.error?.({ description, message: '提示' });
     }
   }
-  throw new Error();
+  return false;
+  //throw new Error();
 }
 
 export async function getAdminToken() {
@@ -63,16 +70,20 @@ export function getFullUrl(url: string) {
 }
 
 request.interceptors.request.use(async (url, options) => {
-  const { headers } = options;
-  const contentType = {
-    'Content-Type': 'application/json',
-  };
+  const { headers, requestType = 'json' } = options;
+  //tinyeditor 上传文件使用 requestType = form 不能设置 contentType；
+  const contentType =
+    requestType == 'json'
+      ? {
+          'Content-Type': 'application/json',
+        }
+      : {};
   const rheaders = await requestHeaders();
   return {
     url: getFullUrl(url),
     options: {
       ...options,
-      headers: { ...headers, ...contentType, ...rheaders },
+      headers: { ...contentType, ...headers, ...rheaders },
     },
   };
 });
@@ -108,7 +119,7 @@ request.interceptors.request.use(async (response, options) => {
 });
 request.interceptors.response.use(async (response, options) => {
   const res = await response.clone().json();
-  //console.log('res', res);
+
   const { code, msg, data } = res;
   if (code) {
     //message.error(msg);
