@@ -153,7 +153,7 @@
             }
           }
         </style>
-        <div style="
+        <div id="rootLoading" style="
           display: flex;
           flex-direction: column;
           align-items: center;

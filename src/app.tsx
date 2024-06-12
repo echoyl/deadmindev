@@ -113,6 +113,12 @@ export function rootContainer(container: JSX.Element, args) {
         v?.locales?.map((lo) => {
           addLocale(lo.name, lo.configs);
         });
+        var element = document.querySelector('#rootLoading');
+        if (element) {
+          element.parentNode?.removeChild(element);
+          // 或者
+          // element.remove();
+        }
         // if (history.location.pathname.replace(v.baseurl, '/') !== loginPath) {
         //   queryCurrentUser().then(({ code, data }) => {
         //     if (!code) {
