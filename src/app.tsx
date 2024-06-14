@@ -135,13 +135,15 @@ export function rootContainer(container: JSX.Element, args) {
           setting?.navTheme == 'light'
             ? {
                 ...setting?.antdtheme,
-                Menu: {
-                  subMenuItemBg: 'transparent',
-                },
                 token: {
                   colorPrimary: setting?.colorPrimary,
                 },
-                ...setting?.antdtheme?.components,
+                components: {
+                  Menu: {
+                    subMenuItemBg: 'transparent',
+                  },
+                  ...setting?.antdtheme?.components,
+                },
               }
             : {
                 token: {

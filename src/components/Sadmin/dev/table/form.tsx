@@ -48,7 +48,7 @@ const InnerForm = (props) => {
       paramExtra={{ ...currentRow, ...paramExtra }}
       postExtra={{ ...currentRow, ...postExtra }}
       url={url}
-      showTabs={tabs?.length > 1 ? true : false}
+      //showTabs={tabs?.length > 1 ? true : false}
       formProps={{
         contentRender,
         submitter:
@@ -80,6 +80,7 @@ export const TableForm = (
     createModalVisible?: any;
     currentRow?: any;
     handleModalVisible?: any;
+    afterFormPost?: any;
   },
 ) => {
   const {
