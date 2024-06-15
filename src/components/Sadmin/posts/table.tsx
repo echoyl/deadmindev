@@ -521,13 +521,15 @@ const SaTable: React.FC<saTableProps> = (props) => {
                   checkStrictly: false,
                   columnWidth: 80,
                   renderCell: (checked, record, index, originNode) => {
-                    return (
+                    return !setting?.table?.checkHoverDisable ? (
                       <TableIndex
                         checked={checked}
                         record={record}
                         index={index}
                         originNode={originNode}
                       />
+                    ) : (
+                      originNode
                     );
                   },
                 }
