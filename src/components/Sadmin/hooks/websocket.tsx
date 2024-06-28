@@ -61,7 +61,9 @@ const useWebSocket = () => {
   };
   const init = (ws: WebSocket) => {
     ws.onopen = (e) => {
+      setIsInit(true);
       bind(ws);
+      console.log('ws is opening');
       if (setting.socket?.ping) {
         timeinterval = setInterval(
           () => {
@@ -90,7 +92,7 @@ const useWebSocket = () => {
     if (!setting || isInit) {
       return;
     }
-    setIsInit(true);
+
     if (!setting.socket?.open) {
       return () => {};
     }

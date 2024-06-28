@@ -139,41 +139,36 @@ request.interceptors.response.use(async (response, options) => {
     } else {
       if (msg) {
         if (options.method == 'POST' || options.method == 'DELETE') {
-          // notification.info({
-          //   message: '提示',
-          //   description: msg,
-          //   duration: 3,
-          // });
           message.success({
             key: messageLoadingKey,
             content: msg,
             duration: 1,
           });
-          if (data?.logout) {
-            message.loading({
-              content: '退出登录中...',
-              duration: 0,
-              key: messageLoadingKey,
-            });
-            await loginOut(() => {
-              message.destroy(messageLoadingKey);
-            });
-          } else {
-            options.msgcls && options.msgcls({ code, msg, data, res });
-          }
-        } else {
-          options.msgcls && options.msgcls({ code, msg, data, res });
         }
-        //添加导出跳转下载页面功能
-        if (data?.download) {
-          const a = document.createElement('a');
-          a.target = '_blank';
-          a.download = data.download;
-          a.href = data.url;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
+      }
+
+      //添加导出跳转下载页面功能
+      if (data?.download) {
+        const a = document.createElement('a');
+        a.target = '_blank';
+        a.download = data.download;
+        a.href = data.url;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      if (data?.logout) {
+        message.loading({
+          content: '退出登录中...',
+          duration: 0,
+          key: messageLoadingKey,
+        });
+        await loginOut(() => {
+          message.destroy(messageLoadingKey);
+        });
+      } else {
+        options.msgcls && options.msgcls({ code, msg, data, res });
       }
     }
   }
