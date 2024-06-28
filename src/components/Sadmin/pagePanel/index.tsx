@@ -100,9 +100,11 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
 
   const getChart = (chart) => {
     const { type } = chart;
+    let x = chart.config?.xField;
+    let y = chart.config?.yField;
     if (type == 'pie') {
-      const x = chart.config.colorField;
-      const y = chart.config.angleField;
+      x = chart.config.colorField;
+      y = chart.config.angleField;
       const sum_val = sum(chart.data.map((v) => v[y]));
 
       return (
@@ -123,6 +125,7 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
           label={{
             position: 'spider',
             text: (item: any) => {
+              console.log('item is ', item);
               return `${item[x]}: ${numeral(item[y]).format('0,0')}`;
             },
           }}
@@ -144,25 +147,26 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
               type: 'element-active',
             },
           ]}
-          legend={false}
+          legend={chart.config?.legend ? chart.config?.legend : false}
           {...chart.config}
         />
       );
     } else if (type == 'bar') {
       return (
         <Bar
-          xField="x"
-          yField="y"
+          xField={x}
+          yField={y}
           scale={{ x: { paddingInner: 0.4 } }}
           data={chart.data}
+          tooltip={{ name: chart.config?.name, field: y }}
           {...chart.config}
         />
       );
     } else if (type == 'column') {
       return (
         <Column
-          xField="x"
-          yField="y"
+          xField={x}
+          yField={y}
           scale={{ x: { paddingInner: 0.4 } }}
           data={chart.data}
           {...chart.config}

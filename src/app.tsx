@@ -21,6 +21,7 @@ import { loginPath, currentUser as queryCurrentUser } from '@/components/Sadmin/
 import { Locale } from 'antd/es/locale';
 import { actionsRender } from './components/RightContent';
 import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
+import defaultSettings from '../config/defaultSettings';
 
 //const isDev = process.env.NODE_ENV === 'development';
 // export default defineConfig({
@@ -94,7 +95,7 @@ export function rootContainer(container: JSX.Element, args) {
 
   const Provider = (props) => {
     //const { initialState } = useModel('@@initialState');
-    const [setting, setSetting] = useState<any>();
+    const [setting, setSetting] = useState<any>(defaultSettings);
     const [currentLocale, setCurrentLocale] = useState<string>(getLocale());
     const [messageApi, messageHolder] = message.useMessage();
     const [modalApi, modalHolder] = Modal.useModal();
@@ -113,8 +114,10 @@ export function rootContainer(container: JSX.Element, args) {
         v?.locales?.map((lo) => {
           addLocale(lo.name, lo.configs);
         });
+
         var element = document.querySelector('#rootLoading');
         if (element) {
+          console.log('remove loading force');
           element.parentNode?.removeChild(element);
           // 或者
           // element.remove();
@@ -128,7 +131,7 @@ export function rootContainer(container: JSX.Element, args) {
         // }
       });
     }, []);
-    return setting ? (
+    return (
       <ConfigProvider
         locale={supportLocale[currentLocale]}
         theme={
@@ -175,7 +178,7 @@ export function rootContainer(container: JSX.Element, args) {
           </SaDevContext.Provider>
         </App>
       </ConfigProvider>
-    ) : null;
+    );
   };
   return React.createElement(Provider, null, container);
 }
