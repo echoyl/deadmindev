@@ -123,7 +123,10 @@ const ButtonModal: FC<actionConfirm> = (props) => {
           }
         }}
         maskClosable={false}
-        styles={{ body: { maxHeight: height, overflowY: 'auto', overflowX: 'hidden' } }}
+        styles={{
+          body: { maxHeight: height, overflowY: 'auto', overflowX: 'hidden' },
+          ...modalProps?.styles,
+        }}
       >
         <div
           onKeyDown={(e) => {

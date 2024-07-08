@@ -10,7 +10,7 @@ export const iconToElement = (name: string, style = {}) => {
   const map = {
     dashboard: 'DashboardOutlined',
     table: 'TableOutlined',
-    setting: 'TableOutlined',
+    setting: 'SettingOutlined',
     questionCircle: 'QuestionCircleOutlined',
     wechat: 'WechatOutlined',
     menu: 'MenuOutlined',

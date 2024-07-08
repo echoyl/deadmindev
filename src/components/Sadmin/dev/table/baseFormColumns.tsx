@@ -54,7 +54,9 @@ const formMoreType = [
   { label: 'treeSelect', value: 'treeSelect' },
   { label: 'cascader', value: 'cascader' },
   { label: 'radio', value: 'radio' },
+  { label: 'switch', value: 'switch' },
   { label: 'AutoComplete', value: 'saAutoComplete' },
+  { label: '单选按钮 - radioButton', value: 'radioButton' },
 ];
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {

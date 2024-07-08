@@ -18,4 +18,5 @@ export default {
   'component.globalHeader.avatar.logout': '退出登錄',
   'component.globalHeader.avatar.logouting': '退出登錄中...',
   'component.globalHeader.avatar.logoutsuccess': '退出成功',
+  'component.globalHeader.avatar.lockscreen': '锁定屏幕',
 };

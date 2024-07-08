@@ -77,11 +77,11 @@ const Uploader: React.FC<Props> = (props) => {
     type = 'image',
     value = [],
     size = 0,
+    accept = type == 'image' ? 'image/*' : 'application/*,text/*',
     fieldProps = {
       name: 'file',
       listType: 'picture-card',
-      accept: 'image/*',
-      data: { toSize: size }, //数组则固定大小 数字等比例缩放
+      data: { toSize: size, isFile: type == 'image' ? 0 : 1 }, //数组则固定大小 数字等比例缩放
     },
     buttonType = 'card',
   } = props;
@@ -94,6 +94,7 @@ const Uploader: React.FC<Props> = (props) => {
   const [loading, setLoading] = useState(false);
   fieldProps.maxCount = max;
   fieldProps.multiple = max > 1 ? true : false;
+  fieldProps.accept = accept;
 
   const handlePreview = async (file: UploadFile) => {
     //console.log(fileList, file);
@@ -113,10 +114,10 @@ const Uploader: React.FC<Props> = (props) => {
   if (type == 'image') {
     fieldProps.onPreview = handlePreview;
   }
-  if (type == 'file') {
-    fieldProps.accept =
-      '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,.xls,.xlsx,.ppt,.rar,.zip,.chm';
-  }
+  // if (type == 'file') {
+  //   fieldProps.accept = 'application/*,text/*';
+  //   //'.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,.xls,.xlsx,.ppt,.rar,.zip,.chm,text/*';
+  // }
 
   const uploadButton = (
     <div>
@@ -181,8 +182,9 @@ const Uploader: React.FC<Props> = (props) => {
         props.onChange?.([...fileList]);
       } else {
         //上传失败了
-        message.error(msg);
+        //message.error(msg);
         info.file.status = 'error';
+        info.file.errorMsg = msg;
       }
       setFileList([...fileList]);
       setLoading(false);
@@ -194,7 +196,7 @@ const Uploader: React.FC<Props> = (props) => {
       setFileList(newfiles);
     }
     if (info.file.status === 'error') {
-      message.error(`${info.file.name} 上传失败.`);
+      message.error(`${info.file.name} 上传失败. ${info.file.errorMsg}`);
       const index = fileList.findIndex((v) => v.uid == info.file.uid);
       fileList.splice(index, 1);
       setFileList([...fileList]);

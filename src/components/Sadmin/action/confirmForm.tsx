@@ -1,5 +1,5 @@
 import { ProFormInstance } from '@ant-design/pro-components';
-import { Button, ButtonProps } from 'antd';
+import { Button, ButtonProps, GetProps, Modal } from 'antd';
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
 import { getBread, saFormColumnsType, saFormTabColumnsType, t, tplComplie } from '../helpers';
@@ -29,6 +29,8 @@ interface actionConfirm {
   saFormProps?: saFormProps;
   open?: boolean;
   onOpen?: (open: boolean) => void;
+  closable?: boolean;
+  modalProps?: GetProps<typeof Modal>;
 }
 
 const InnerForm = (props) => {
@@ -48,6 +50,7 @@ const InnerForm = (props) => {
     readonly = false,
     saFormProps,
     afterActionType = 'reload',
+    closable = true,
   } = props;
   const formRef = useRef<ProFormInstance>();
   const { actionRef, formRef: topFormRef } = useContext(SaContext);
@@ -127,9 +130,11 @@ const InnerForm = (props) => {
                 return readonly
                   ? null
                   : [
-                      <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                        {t('cancel')}
-                      </Button>,
+                      closable ? (
+                        <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
+                          {t('cancel')}
+                        </Button>
+                      ) : null,
                       doms[1],
                     ];
               },
@@ -183,6 +188,9 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     saFormProps = {},
     open: oopen = false,
     onOpen,
+    modalProps,
+    closable = true,
+    afterActionType = 'reload',
   } = props;
   //console.log('ConfirmForm props ', props);
   const defaultButton = { title: '操作', type: 'primary', danger: false, size: 'small' };
@@ -207,6 +215,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
         setOpen(open);
         onOpen?.(open);
       }}
+      modalProps={modalProps}
     >
       <InnerForm
         url={url}
@@ -221,6 +230,8 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
         onChange={onChange}
         readonly={readonly}
         saFormProps={saFormProps}
+        closable={closable}
+        afterActionType={afterActionType}
       />
     </ButtonModal>
   );

@@ -1,14 +1,16 @@
-import { loginOut,messageLoadingKey } from '@/components/Sadmin/lib/request';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { loginOut, messageLoadingKey } from '@/components/Sadmin/lib/request';
+import { LockOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { history, useIntl, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
 import { stringify } from 'querystring';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
 import { t } from '../Sadmin/helpers';
 import { SaDevContext } from '../Sadmin/dev';
+import LockScreen from './lockscreen';
+import cache from '../Sadmin/helper/cache';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -48,6 +50,16 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
   const { initialState, setInitialState } = useModel('@@initialState');
   const { messageApi } = useContext(SaDevContext);
+  const [open, setOpen] = useState<boolean>();
+  //检测锁屏是否已开启
+
+  useEffect(() => {
+    cache.get('lockscreen').then((v) => {
+      if (v) {
+        setOpen(true);
+      }
+    });
+  }, []);
 
   const onMenuClick = useCallback(
     (event: any) => {
@@ -68,6 +80,9 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
         });
 
         return;
+      } else if (key == 'lockscreen') {
+        cache.set('lockscreen', true);
+        setOpen(true);
       } else {
         history.push(`/dashboard/${key}`);
       }
@@ -105,11 +120,16 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
             icon: <SettingOutlined />,
             label: t('component.globalHeader.avatar.user'),
           },
-          {
-            type: 'divider' as const,
-          },
         ]
       : []),
+    {
+      key: 'lockscreen',
+      icon: <LockOutlined />,
+      label: t('component.globalHeader.avatar.lockscreen'),
+    },
+    {
+      type: 'divider' as const,
+    },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
@@ -118,14 +138,22 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
   ];
 
   return (
-    <HeaderDropdown
-      menu={{
-        selectedKeys: [],
-        onClick: onMenuClick,
-        items: menuItems,
-      }}
-    >
-      {children}
-    </HeaderDropdown>
+    <>
+      <HeaderDropdown
+        menu={{
+          selectedKeys: [],
+          onClick: onMenuClick,
+          items: menuItems,
+        }}
+      >
+        {children}
+      </HeaderDropdown>
+      <LockScreen
+        open={open}
+        onOpen={(open) => {
+          setOpen(open);
+        }}
+      />
+    </>
   );
 };

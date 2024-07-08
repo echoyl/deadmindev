@@ -43,6 +43,7 @@ import { wxMenuRender } from './wxMenu';
 import { isString } from 'lodash';
 import SaAutoCompleteMap from './valueTypeMap/autoComplete';
 import { DropdownActionMap } from './valueTypeMap/dropdownAction';
+import { ColorPickerMap } from './valueTypeMap/colorPicker';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -425,48 +426,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     render: (_, props) => {
       return <ColorPicker size="small" value={_} showText disabled />;
     },
-    renderFormItem: (_, props) => {
-      const [value, setValue] = useState(
-        props.fieldProps?.value ? props.fieldProps?.value : '#ffffff',
-      );
-
-      return (
-        <ColorPicker
-          value={value}
-          onChange={(color) => {
-            props.fieldProps?.onChange(color.toHexString());
-            setValue(color.toHexString());
-          }}
-          presets={[
-            {
-              label: 'Recommended',
-              colors: [
-                'red',
-                '#000000',
-                '#F5222D',
-                '#FA8C16',
-                '#FADB14',
-                '#8BBB11',
-                '#52C41A',
-                '#13A8A8',
-                '#1677FF',
-                '#2F54EB',
-                '#722ED1',
-              ],
-            },
-          ]}
-        >
-          <Input
-            addonBefore={<BgColorsOutlined style={{ color: value }} />}
-            value={value}
-            onChange={(e) => {
-              props.fieldProps?.onChange(e.target.value);
-              setValue(e.target.value);
-            }}
-          />
-        </ColorPicker>
-      );
-    },
+    renderFormItem: ColorPickerMap,
   },
   mdEditor: {
     render: (_, props) => {

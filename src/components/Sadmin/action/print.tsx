@@ -41,8 +41,8 @@ const Print: FC<actionConfirm> = (props) => {
     const init = async () => {
       setLoading(true);
       //console.log('init print ', props);
-      const ret = await request.get(url, {
-        params: { ...data, id: dataId },
+      const ret = await request.post(url, {
+        data: { ...data, id: dataId },
         then: ({ code, msg }) => {
           return;
         },

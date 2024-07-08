@@ -18,4 +18,5 @@ export default {
   'component.globalHeader.avatar.logout': 'Sign out',
   'component.globalHeader.avatar.logouting': 'Sign out...',
   'component.globalHeader.avatar.logoutsuccess': 'Sign out success',
+  'component.globalHeader.avatar.lockscreen': 'Lock Screen',
 };
