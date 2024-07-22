@@ -83,7 +83,7 @@ const TableFromBread: FC<{
   }, []);
   //console.log('alwaysenable', props, alwaysenable, post_key);
   return !alwaysenable && !post_key ? (
-    '-'
+    '-x'
   ) : (
     <>
       <SaTable

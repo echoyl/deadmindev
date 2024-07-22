@@ -5,18 +5,26 @@ import React, { FC, useEffect, useState } from 'react';
 import { uid } from '../helpers';
 import SaPca, { getPcaValue } from '../pca';
 //MapKey HSWBZ-STOW4-YEPUL-XZ3JF-Z4TJV-NYBLU
-export function TMapGL(MapKey: string): Promise<void> {
-  if (window.TMap) {
+export function BMapGL(MapKey: string): Promise<void> {
+  if (window.BMapGL) {
     return Promise.resolve();
   }
   return new Promise(function (resolve, reject) {
     //log('tmap init now');
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'https://map.qq.com/api/gljs?v=2.exp&libraries=tools,service&key=' + MapKey;
+    script.src =
+      'https://api.map.baidu.com/getscript?type=webgl&v=1.0&services=&t=20240617102711&ak=' +
+      MapKey;
     script.onerror = () => reject();
     script.onload = () => resolve();
+
     document.head.appendChild(script);
+    var link = document.createElement('link');
+    link.href = 'https://api.map.baidu.com/res/webgl/10/bmap.css';
+    link.type = 'text/css';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
   });
 }
 
@@ -25,7 +33,7 @@ export function TMapGL(MapKey: string): Promise<void> {
 //   lng?: string;
 // };
 
-export class TmapInput extends React.Component {
+export class BmapInput extends React.Component {
   state = {
     isModalVisible: false,
     latlng: {},
@@ -80,11 +88,12 @@ export class TmapInput extends React.Component {
       //this.form.setFieldsValue({ [this.name]: [lat, lng] });
     } else {
       //console.log('设置form值', { ...this.state.okLatlng });
+      const dv = this.props.defaultValue ? this.props.defaultValue : this.defaultValue;
       this.setState({
-        latlng: { ...this.defaultValue },
-        okLatlng: { ...this.defaultValue },
+        latlng: { ...dv },
+        okLatlng: { ...dv },
       });
-      this.props.onChange?.([this.defaultValue.lat, this.defaultValue.lng]);
+      this.props.onChange?.([dv.lat, dv.lng]);
     }
   }
 
@@ -142,18 +151,19 @@ export class TmapInput extends React.Component {
           <Button type="primary" onClick={this.showModal} icon={<PushpinOutlined />} />
         </Space.Compact>
 
-        {this.state.latlng?.lat && false && (
-          <TampShow lat={this.state.latlng?.lat} lng={this.state.latlng?.lng} />
+        {this.state.latlng?.lat && this.props.showMap && (
+          <BampShow lat={this.state.latlng?.lat} lng={this.state.latlng?.lng} />
         )}
         <Modal
           width={800}
-          title="腾讯地图，点击地图选取坐标点"
+          title="百度地图，点击地图选取坐标点"
           open={this.state.isModalVisible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <Tmap
+          <Bmap
             initPoint={this.state.latlng}
+            {...this.props?.mapProps}
             onChange={(res) => {
               this.setState({ okLatlng: res });
             }}
@@ -164,7 +174,7 @@ export class TmapInput extends React.Component {
   }
 }
 
-export const TampShow: FC<{
+export const BampShow: FC<{
   lat?: string;
   lng?: string;
   dots?: Array<{ [key: string]: any }>;
@@ -172,10 +182,11 @@ export const TampShow: FC<{
   height?: number;
   markerCenter?: boolean;
 }> = (props) => {
-  const [id] = useState('tmap_' + uid());
+  const [id] = useState('bmap_' + uid());
   const { lat = '', lng = '', dots = [], zoom = 16.2, height = 350, markerCenter = true } = props;
   const [init, setInit] = useState(false);
   const [map, setMap] = useState();
+  const [centerPoint, setCenterPoint] = useState();
   const [layer, setLayer] = useState();
   const { initialState } = useModel('@@initialState');
   const getWindow = (title: string) => {
@@ -191,51 +202,21 @@ export const TampShow: FC<{
     //   return;
     // }
     // 开始加载腾讯地图gl文件
-    TMapGL(initialState?.settings?.tmap_key).then(() => {
+    const key = initialState?.settings?.bmap_key;
+    BMapGL(key).then(() => {
       setTimeout(() => {
         //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错
-        const center = new window.TMap.LatLng(lat, lng);
-        const map = new window.TMap.Map(document.querySelector('#' + id), {
-          center,
-          zoom,
-          baseMap: [
-            { type: 'vector' }, //设置矢量底图
-            // { type: 'traffic' }, //设置路况底图
-          ],
-        });
+        const center = new window.BMapGL.Point(lng, lat);
+        const map = new window.BMapGL.Map(id);
+        map.centerAndZoom(center, zoom);
+        map.enableScrollWheelZoom(true);
         setMap(map);
-        const markerLayer = new window.TMap.MultiMarker({
-          id: 'marker-layer',
-          map: map,
-        });
-        setLayer(markerLayer);
+
+        const marker = new window.BMapGL.Marker(center);
         if (markerCenter) {
-          markerLayer.add({
-            id: 'tmap_marker',
-            position: center,
-          });
+          setCenterPoint(marker);
+          map.addOverlay(marker);
         }
-        dots?.map((dot, i) => {
-          // const markerLayer = new window.TMap.MultiMarker({
-          //   id: 'marker-layer' + i,
-          //   map: map,
-          // });
-          const _dot = new window.TMap.LatLng(dot.lat, dot.lng);
-          //setLayer(markerLayer);
-          //markerLayer.remove(['tmap_marker']);
-          // markerLayer.add({
-          //   id: 'tmap_marker_dot' + i,
-          //   position: _dot,
-          // });
-          new window.TMap.InfoWindow({
-            map: map,
-            //offset:{x:'10px',y:'10px'},
-            enableCustom: true,
-            position: _dot, //设置信息框位置
-            content: getWindow(dot.title), //设置信息框内容
-          });
-          return dot;
-        });
 
         setInit(true);
       }, 500);
@@ -244,25 +225,26 @@ export const TampShow: FC<{
   useEffect(() => {
     if (!init) return;
     console.log('update', lat, lng);
-    const center = new window.TMap.LatLng(lat, lng);
-    map.setCenter(center);
-    layer.remove(['tmap_marker']);
-    layer.add({
-      id: 'tmap_marker',
-      position: center,
-    });
+    const center = new window.BMapGL.Point(lng, lat);
+    map?.centerAndZoom(center, zoom);
+    if (markerCenter) {
+      map.removeOverlay(centerPoint);
+      const marker = new window.BMapGL.Marker(center);
+      setCenterPoint(marker);
+      map.addOverlay(marker);
+    }
   }, [lat, lng]);
 
   return <div id={id} style={{ height, width: '100%' }}></div>;
 };
 
-const Tmap: FC = (props: {
+const Bmap: FC = (props: {
   initPoint?: { [key: string]: any };
   onChange?: (res: any) => void;
-  level?: number;
   zoom?: number;
+  level?: number;
 }) => {
-  const [id] = useState('tmap_' + uid());
+  const [id] = useState('bmap_' + uid());
   const [searchText, setSearchText] = useState('');
   const [pc, setPc] = useState([]);
   const [pc_str, setPcStr] = useState([]);
@@ -274,39 +256,32 @@ const Tmap: FC = (props: {
   const [res, setRes] = useState({ lat: '', lng: '', address: '' });
   const { initialState } = useModel('@@initialState');
   const { zoom = 15, level = 2 } = props;
+
   useEffect(() => {
-    TMapGL(initialState?.settings?.tmap_key) // 开始加载腾讯地图gl文件
+    const key = initialState?.settings?.bmap_key;
+    BMapGL(key) // 开始加载腾讯地图gl文件
       .then(() => {
         // 完成加载后，开始渲染地图
-        const maps = window.TMap;
-        const center = new maps.LatLng(props.initPoint?.lat, props.initPoint?.lng);
-        const map = new maps.Map(document.querySelector('#' + id), {
-          center,
-          zoom: 16.2,
-          baseMap: [
-            { type: 'vector' }, //设置矢量底图
-            // { type: 'traffic' }, //设置路况底图
-          ],
-        });
+        const maps = window.BMapGL;
+        const center = new maps.Point(props.initPoint?.lng, props.initPoint?.lat);
+        const map = new maps.Map(id);
+        map.centerAndZoom(center, zoom);
+        map.enableScrollWheelZoom(true);
+        const zoomCtrl = new maps.ZoomControl(); // 添加缩放控件
+        map.addControl(zoomCtrl);
         setMap(map);
         setMaps(maps);
-        setMarkerLayer(
-          new maps.MultiMarker({
-            id: 'marker-layer',
-            map: map,
-          }),
-        );
       });
   }, []);
+
   useEffect(() => {
-    if (markerLayer) {
-      console.log('map add marker');
+    if (maps) {
       addMarker(props.initPoint?.lat, props.initPoint?.lng);
-      map?.on('click', (e) => {
-        addMarker(e.latLng.lat, e.latLng.lng);
+      map?.addEventListener('click', (e) => {
+        addMarker(e.latlng.lat, e.latlng.lng);
       });
     }
-  }, [markerLayer]);
+  }, [maps]);
 
   const onSearch = () => {
     const _pc_str = pc_str.join('');
@@ -316,32 +291,35 @@ const Tmap: FC = (props: {
   };
 
   const addMarker = (lat, lng) => {
-    const maps = window.TMap;
-    var latLng = new maps.LatLng(lat, lng);
+    //const maps = window.TMap;
+    map.clearOverlays();
+
+    const latLng = new maps.Point(lng, lat);
+    const nmarker = new maps.Marker(latLng);
+    console.log('nmarker', latLng);
+    setMaker(nmarker);
+    map.addOverlay(nmarker);
+
     const _res = { ...res, ...latLng };
     setRes(_res);
-    markerLayer?.remove(['tmap_marker']);
-    markerLayer?.add({
-      id: 'tmap_marker',
-      position: latLng,
-    });
+
     //解析地址
-    var geocoder = new maps.service.Geocoder();
-    geocoder
-      .getAddress({ location: latLng }) // 将给定的坐标位置转换为地址
-      .then(async (result) => {
-        const initPcaValue = await getPcaValue(
-          [result.result.address_component.province, result.result.address_component.city],
-          level,
-        );
+    var geocoder = new maps.Geocoder();
+    geocoder.getLocation(latLng, async function (result) {
+      // 将给定的坐标位置转换为地址
+      console.log('result', result);
+      var addComp = result.addressComponents;
+      if (level) {
+        const initPcaValue = await getPcaValue([addComp.province, addComp.city], level);
         setPc(initPcaValue);
-        setPcStr([result.result.address_component.province, result.result.address_component.city]);
-        setSearchText(result.result.address);
-        const res2 = { ..._res, address: result.result.address };
-        setRes(res2);
-        props.onChange?.(res2);
-        // 显示搜索到的地址
-      });
+        setPcStr([addComp.province, addComp.city]);
+      }
+
+      setSearchText(result.address);
+      const res2 = { ..._res, address: result.address };
+      setRes(res2);
+      props.onChange?.(res2);
+    });
     return latLng;
   };
 
@@ -356,12 +334,11 @@ const Tmap: FC = (props: {
   };
 
   const searchAddress = (address) => {
-    var geocoder = new maps.service.Geocoder();
-    geocoder
-      .getLocation({ address: address }) // 将给定的坐标位置转换为地址
-      .then((result) => {
-        map?.setCenter(new maps.LatLng(result.result.location.lat, result.result.location.lng));
-      });
+    var geocoder = new maps.Geocoder();
+    geocoder.getPoint(address, (result) => {
+      // 将给定的坐标位置转换为地址
+      map.centerAndZoom(result, zoom);
+    });
   };
 
   //const { editorState } = this.state
@@ -393,10 +370,9 @@ const Tmap: FC = (props: {
             onSearch={onSearch}
           />
         </Flex>
-
         <div id={id} style={{ height: '450px', width: '100%' }}></div>
       </Flex>
     </>
   );
 };
-export default Tmap;
+export default Bmap;

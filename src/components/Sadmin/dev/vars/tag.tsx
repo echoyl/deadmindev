@@ -22,6 +22,8 @@ const tagConfig: saFormColumnsType = [
     title: '是否有边框',
     fieldProps: {
       defaultChecked: true,
+      checkedChildren: '边框',
+      unCheckedChildren: '边框',
     },
   },
   {
@@ -30,6 +32,8 @@ const tagConfig: saFormColumnsType = [
     title: '开启ellipsis',
     fieldProps: {
       defaultChecked: true,
+      checkedChildren: 'ellipsis',
+      unCheckedChildren: 'ellipsis',
     },
   },
 ];

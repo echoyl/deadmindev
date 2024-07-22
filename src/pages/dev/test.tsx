@@ -2,6 +2,7 @@ import ConfirmForm from '@/components/Sadmin/action/confirmForm';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import modelSettingColumns from '@/components/Sadmin/dev/vars/modelSettingColumns';
 import cache from '@/components/Sadmin/helper/cache';
+import Bmap, { BampShow, BmapInput } from '@/components/Sadmin/map/bmap';
 import PostsForm from '@/components/Sadmin/posts/post';
 import { useIntl } from '@umijs/max';
 import { Button, Modal, Space } from 'antd';
@@ -16,42 +17,16 @@ export default function App() {
   });
   //console.log('dev setting', setting);
   return (
-    <ConfirmForm
-      trigger={<Button>test</Button>}
-      closable={false}
-      modalProps={{
-        closable: false,
-        styles: { mask: { backgroundColor: 'rgba(0,0,0,0.8)' } },
+    <BmapInput
+      lat="116.404"
+      lng="39.915"
+      //value={[42.89506647538567, 140.73675480831693]}
+      mapProps={{
+        level: 0,
       }}
-      callback={(ret) => {
-        console.log(ret);
-        return true;
-      }}
-      afterActionType="none"
-      msg="屏幕已锁定请输入密码解锁"
-      postUrl="lockscreen"
-      tabs={[
-        {
-          title: 'test',
-          formColumns: [
-            {
-              title: '',
-              dataIndex: 'password',
-              valueType: 'password',
-              formItemProps: {
-                rules: [
-                  {
-                    required: true,
-                  },
-                ],
-              },
-              fieldProps: {
-                placeholder: '请输入解锁密码',
-              },
-            },
-          ],
-        },
-      ]}
+      defaultValue={{ lng: 140.73675480831693, lat: 42.89506647538567 }}
+      initPoint={{ lng: 116.404, lat: 39.915 }}
+      level={0}
     />
   );
 }

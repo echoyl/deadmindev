@@ -155,6 +155,7 @@ export default () => {
     { label: '层级选择 - cascader', value: 'cascader' },
     { label: '省市区 - pca', value: 'pca' },
     { label: '地图组件 - tmapInput', value: 'tmapInput' },
+    { label: '地图组件 - bmapInput', value: 'bmapInput' },
     { label: '富文本 - tinyEditor', value: 'tinyEditor' },
     { label: '价格2- price', value: 'price' },
     { label: '价格3- mprice', value: 'mprice' },
@@ -171,8 +172,9 @@ export default () => {
     const cateColumns = [
       { title: 'id', name: 'id', type: 'int' },
       { title: '名称', name: 'title', type: 'vachar' },
-      { title: '描述', name: 'desc', type: 'vachar' },
-      { title: '颜色', name: 'color', type: 'vachar' },
+      { title: '描述', name: 'desc', type: 'vachar', form_type: 'textarea' },
+      { title: '颜色', name: 'color', type: 'vachar', form_type: 'colorPicker' },
+      { title: 'Icon', name: 'icon', type: 'vachar', form_type: 'iconSelect' },
       { title: '父级Id', name: 'parent_id', type: 'int', desc: '' },
       {
         title: '图片',
@@ -384,7 +386,7 @@ export default () => {
                   {
                     title: '名称',
                     dataIndex: 'title',
-                    colProps: { span: 4 },
+                    colProps: { span: 3 },
                     fieldProps: {
                       placeholder: '名称备注',
                     },
@@ -401,7 +403,7 @@ export default () => {
                     title: '类型',
                     dataIndex: 'type',
                     valueType: 'select',
-                    colProps: { span: 4 },
+                    colProps: { span: 3 },
                     fieldProps: { options: schemaType },
                   },
                   {
@@ -421,11 +423,19 @@ export default () => {
                     },
                   },
                   {
+                    title: '备注',
+                    dataIndex: 'desc',
+                    colProps: { span: 2 },
+                    fieldProps: {
+                      placeholder: '默认名称为备注',
+                    },
+                  },
+                  {
                     title: 'form类型',
                     dataIndex: 'form_type',
                     valueType: 'select',
                     colProps: { span: 4 },
-                    fieldProps: { options: formType },
+                    fieldProps: { options: formType, showSearch: true },
                   },
                   {
                     title: '配置',

@@ -312,9 +312,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       <ToolBarDom
         key="table_row_select_bar"
         selectRowBtns={selectRowBtns}
-        selectedRows={data.filter((v) => {
-          return inArray(v.id, selectedRowKeys) > -1;
-        })}
+        selectedIds={selectedRowKeys}
         remove={remove}
         switchState={switchState}
         deleteable={deleteable}
@@ -516,6 +514,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
               : {
                   selectedRowKeys,
                   onChange: (newSelectedRowKeys, selectedRows) => {
+                    console.log('newSelectedRowKeys', newSelectedRowKeys);
                     setSelectedRowKeys(newSelectedRowKeys);
                   },
                   checkStrictly: false,

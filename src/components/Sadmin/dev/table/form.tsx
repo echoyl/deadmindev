@@ -142,6 +142,7 @@ export const TableForm = (
           afterOpenChange={(open) => {
             handleModalVisible(open);
           }}
+          drawerProps={{ styles: { body: { paddingTop: 0 } } }}
         >
           <InnerForm
             {...props}

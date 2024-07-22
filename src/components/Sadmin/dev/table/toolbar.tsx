@@ -29,7 +29,7 @@ import { saReloadMenu } from '../../components/refresh';
 
 export const ToolBarDom = (props) => {
   const {
-    selectedRows,
+    selectedIds,
     selectRowBtns = [],
     remove,
     switchState,
@@ -38,7 +38,7 @@ export const ToolBarDom = (props) => {
   } = props;
   const { searchData } = useContext(SaContext);
   //console.log('props.btns', selectRowBtns);
-  const selectedIds = selectedRows.map((item) => item.id);
+  //const selectedIds = selectedRows.map((item) => item.id);
   const { initialState } = useModel('@@initialState');
   const devEnable =
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev;
@@ -46,7 +46,7 @@ export const ToolBarDom = (props) => {
     <Space>
       <Space key="selectbar_count">
         <span>选择</span>
-        <a style={{ fontWeight: 600 }}>{selectedRows.length}</a>
+        <a style={{ fontWeight: 600 }}>{selectedIds.length}</a>
         <span>项</span>
       </Space>
       {searchData?.states?.map((stateButton, k) => {
@@ -60,7 +60,7 @@ export const ToolBarDom = (props) => {
             onClick={async () => {
               switchState(
                 selectedIds,
-                '确定要' + stateButton.label + ':' + selectedRows.length + '条记录吗？',
+                '确定要' + stateButton.label + ':' + selectedIds.length + '条记录吗？',
                 stateButton.value,
               );
             }}
@@ -78,7 +78,7 @@ export const ToolBarDom = (props) => {
           size="small"
           icon={<DeleteOutlined />}
           onClick={async () => {
-            remove(selectedIds, '确定要删除:' + selectedRows.length + '条记录吗？');
+            remove(selectedIds, '确定要删除:' + selectedIds.length + '条记录吗？');
           }}
         >
           批量删除

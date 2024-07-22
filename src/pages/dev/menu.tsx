@@ -118,7 +118,7 @@ export const MenuFormColumn: saFormColumnsType = [
           treeDefaultExpandAll: true,
           allowClear: true,
           treeTitleRender: (item) => {
-            return item.label ? tplComplie(item.label) : item.label;
+            return item ? (item.label ? tplComplie(item.label) : item.label) : '-';
           },
         },
         width: 'sm',
@@ -303,6 +303,7 @@ export default () => {
                     options: enums?.menus,
                     treeLine: { showLeafIcon: true },
                     treeDefaultExpandAll: true,
+                    showSearch: true,
                   },
                 },
               ],
@@ -377,12 +378,28 @@ export default () => {
     {
       dataIndex: 'status',
       title: '显示',
-      valueType: 'select',
+      valueType: 'customerColumn',
       search: false,
-      valueEnum: [
-        { text: '隐藏', status: 'error' },
-        { text: '显示', status: 'success' },
-      ],
+      fieldProps: {
+        items: [
+          {
+            domtype: 'text',
+            action: 'dropdown',
+            request: {
+              url: '{{url}}',
+              modelName: 'status',
+              fieldNames: 'value,label',
+              data: {
+                actype: 'status',
+              },
+              callback: async (ret) => {
+                await reload();
+                return;
+              },
+            },
+          },
+        ],
+      },
     },
     'option',
   ];

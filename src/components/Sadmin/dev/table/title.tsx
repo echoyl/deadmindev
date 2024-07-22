@@ -494,7 +494,7 @@ export const FormAddTab = (props) => {
   const { pageMenu } = props;
   const { initialState, setInitialState } = useModel('@@initialState');
   return (
-    <Space>
+    <Space style={{ marginTop: 16 }}>
       <BaseForm
         title={
           <Button type="dashed">

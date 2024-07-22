@@ -96,8 +96,6 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
   //   };
   // }
 
-  const { footerStyle, ...restfooterStyle } = drawerProps;
-
   return (
     <>
       {triggerDom}
@@ -111,12 +109,13 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
         title={title}
         footer={<div ref={footerDomRef} />}
         maskClosable={false}
-        {...restfooterStyle}
+        {...drawerProps}
         styles={{
           footer: {
             padding: 0,
             border: 'none',
           },
+          ...drawerProps?.styles,
         }}
       >
         <div

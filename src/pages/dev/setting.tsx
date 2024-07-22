@@ -62,9 +62,8 @@ export default () => {
                   title: '水印设置',
                   dataIndex: 'watermark',
                   tooltip: '1.username表示后台用户名',
-                  colProps: { span: 12 },
+                  colProps: { span: 24 },
                 },
-                { title: '腾讯地图key', dataIndex: 'tmap_key', colProps: { span: 12 } },
               ],
             },
             {
@@ -136,6 +135,18 @@ export default () => {
                   dataIndex: 'sms_name',
                   colProps: { span: 8 },
                 },
+              ],
+            },
+          ],
+        },
+        {
+          title: '地图设置',
+          formColumns: [
+            {
+              valueType: 'group',
+              columns: [
+                { title: '腾讯地图key', dataIndex: 'tmap_key', colProps: { span: 12 } },
+                { title: '百度地图key', dataIndex: 'bmap_key', colProps: { span: 12 } },
               ],
             },
           ],

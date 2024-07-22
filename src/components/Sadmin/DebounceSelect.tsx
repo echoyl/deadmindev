@@ -64,7 +64,7 @@ export default function DebounceSelect<
       for (let i in params) {
         new_params[i] = tplComplie(params[i], { record });
       }
-      fetchOptions(new_params).then((newOptions) => {
+      fetchOptions?.(new_params).then((newOptions) => {
         if (fetchId !== fetchRef.current) {
           // for fetch callback order
           return;
@@ -114,6 +114,7 @@ export default function DebounceSelect<
 
   return type == 'select' ? (
     <ProFormSelect
+      noStyle
       {...props}
       // value={thisValue}
       // onChange={(v) => {
@@ -133,6 +134,7 @@ export default function DebounceSelect<
     />
   ) : (
     <Cascader
+      noStyle
       {...props}
       value={thisValue}
       onChange={(v) => {

@@ -44,6 +44,7 @@ import { isString } from 'lodash';
 import SaAutoCompleteMap from './valueTypeMap/autoComplete';
 import { DropdownActionMap } from './valueTypeMap/dropdownAction';
 import { ColorPickerMap } from './valueTypeMap/colorPicker';
+import { BampShow, BmapInput } from './map/bmap';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -102,6 +103,8 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'jsonEditor'
   | 'tmapInput'
   | 'tmapShow'
+  | 'bmapInput'
+  | 'bmapShow'
   | 'pca'
   | 'permGroup'
   | 'userPerm'
@@ -239,6 +242,21 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
         text = text ? JSON.parse(text) : {};
       }
       return <TampShow {...text} />;
+    },
+  },
+  bmapInput: {
+    render: (text) => text,
+    renderFormItem: (text, props) => {
+      return <BmapInput {...props.fieldProps} />;
+    },
+  },
+  bmapShow: {
+    render: (text) => {
+      console.log(text);
+      if (isStr(text)) {
+        text = text ? JSON.parse(text) : {};
+      }
+      return <BampShow {...text} />;
     },
   },
   pca: {

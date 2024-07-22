@@ -91,7 +91,7 @@ const InnerForm = (props) => {
       if (!rcb) {
         history.back();
       } else {
-        if (afterActionType != 'none') {
+        if (afterActionType == 'goback') {
           history.back();
         }
       }

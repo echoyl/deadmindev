@@ -80,7 +80,7 @@ const CustomerColumnRender = (props) => {
       return <Divider key={i} type="vertical" />;
     } else if (item.domtype == 'timeline') {
       //处理icon
-      console.log('timeline', item);
+      //console.log('timeline', item);
       const items = record?.[item.props?.name]?.map((it) => {
         if (it.icon) {
           it.dot = parseIcon(it.icon);

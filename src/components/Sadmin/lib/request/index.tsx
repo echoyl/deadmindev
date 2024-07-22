@@ -4,6 +4,7 @@ import cache from '@/components/Sadmin/helper/cache';
 import { message, notification } from '@/components/Sadmin/message';
 import { history } from '@umijs/max';
 import { extend } from 'umi-request';
+import { isUndefined } from '../../checkers';
 const codeMessage: { [key: string]: any } = {};
 
 export const request_prefix = '/sadmin/';
@@ -118,6 +119,10 @@ request.interceptors.request.use(async (response, options) => {
   }
 });
 request.interceptors.response.use(async (response, options) => {
+  if (response.status != 200) {
+    return response;
+  }
+
   const res = await response.clone().json();
 
   const { code, msg, data } = res;
