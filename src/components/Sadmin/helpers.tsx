@@ -271,15 +271,23 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       const level = props.fieldProps.level ? props.fieldProps.level : 3;
       const topCode = props.fieldProps.topCode ? props.fieldProps.topCode : '';
       delete props.fieldProps.topCode;
-      //console.log('pca props', props, topCode, props.fieldProps);
+
       if (props.fieldProps.value) {
         if (isJsonString(props.fieldProps.value)) {
           props.fieldProps.value = JSON.parse(props.fieldProps.value);
         }
         if (Array.isArray(props.fieldProps.value)) {
-          props.fieldProps.value = props.fieldProps.value.map((v) => parseInt(v));
+          if (props.fieldProps.multiple) {
+            //支持多选
+            props.fieldProps.value = props.fieldProps.value.map((sv) => {
+              return sv.map((v) => parseInt(v));
+            });
+          } else {
+            props.fieldProps.value = props.fieldProps.value.map((v) => parseInt(v));
+          }
         }
       }
+      //console.log('pca props', props, topCode, props.fieldProps);
       return (
         <ProFormCascader
           noStyle

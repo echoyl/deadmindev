@@ -35,14 +35,15 @@ export const PcaRender: FC = (props: { text?: any; level?: number; topcode?: str
   const { text = [], level = 3, topcode = '' } = props;
 
   const [textValue, setText] = useState([]);
-
+  //console.log('out pca render ', text);
   useEffect(() => {
+    //console.log('pca render ', text);
     if (text && text.length > 0) {
       getPcaValue(text, level, ['value', 'label'], topcode).then((v) => {
         setText(v);
       });
     }
-  }, []);
+  }, [text]);
 
   return <>{textValue?.join(' / ')}</>;
 };

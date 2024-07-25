@@ -31,7 +31,7 @@ export default function DebounceSelect<
   ...props
 }: DebounceSelectProps) {
   const { formRef } = useContext(SaContext);
-  const record = formRef.current.getFieldsValue?.(true);
+  const record = formRef.current ? formRef.current.getFieldsValue?.(true) : false;
   //console.log('record', record);
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState<ValueType[]>([]);
@@ -60,10 +60,12 @@ export default function DebounceSelect<
       setOptions([]);
       setFetching(true);
       const new_params = value == 'reload' ? {} : { keyword: value };
-
-      for (let i in params) {
-        new_params[i] = tplComplie(params[i], { record });
+      if (record) {
+        for (let i in params) {
+          new_params[i] = tplComplie(params[i], { record });
+        }
       }
+
       fetchOptions?.(new_params).then((newOptions) => {
         if (fetchId !== fetchRef.current) {
           // for fetch callback order

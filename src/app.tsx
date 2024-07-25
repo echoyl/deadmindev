@@ -6,6 +6,7 @@ import {
   SettingDrawer,
 } from '@ant-design/pro-components';
 import { RunTimeLayoutConfig, history, getLocale, addLocale } from '@umijs/max';
+
 import { App, ConfigProvider, Modal, message, notification, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';

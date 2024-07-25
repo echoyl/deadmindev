@@ -239,8 +239,14 @@ export const getTableColumns = (props) => {
       };
     }
     let options = [];
-    if (v.requestDataName) {
-      options = enums?.[v.requestDataName];
+    const requestName = v.requestDataName
+      ? v.requestDataName
+      : v.fieldProps?.requestDataName
+        ? v.fieldProps.requestDataName
+        : false;
+    if (requestName) {
+      options = enums?.[requestName];
+      delete v.fieldProps?.requestDataName;
       v.fieldProps = {
         ...v.fieldProps,
         options: options ? options : [],
@@ -258,6 +264,15 @@ export const getTableColumns = (props) => {
         return aval - bval;
       };
       delete v.sort;
+    }
+    //加入合并行设置
+    if (v.rowSpan) {
+      const rowSpanKey = [v.dataIndex, 'rowSpan'].join('_');
+      v.onCell = (_, indx) => {
+        return {
+          rowSpan: _[rowSpanKey],
+        };
+      };
     }
 
     if (v.fieldProps?.showTime?.defaultValue) {

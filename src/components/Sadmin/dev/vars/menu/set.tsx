@@ -36,7 +36,19 @@ const tableSet: saFormColumnsType = [
       },
       {
         dataIndex: ['table', 'checkHoverDisable'],
-        title: 'check hover disable',
+        title: '禁用勾选框悬浮效果',
+        valueType: 'switch',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['table', 'bordered'],
+        title: 'Bordered',
+        valueType: 'switch',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: 'checkDisable',
+        title: '禁用勾选',
         valueType: 'switch',
         colProps: { span: 12 },
       },

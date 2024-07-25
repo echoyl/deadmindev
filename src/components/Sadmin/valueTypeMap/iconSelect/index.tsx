@@ -14,7 +14,7 @@ export const iconToElement = (name: string, style = {}) => {
     questionCircle: 'QuestionCircleOutlined',
     wechat: 'WechatOutlined',
     menu: 'MenuOutlined',
-    lock: 'MenuOutlined',
+    lock: 'LockOutlined',
     shop: 'ShopOutlined',
     user: 'UserOutlined',
     accountBook: 'AccountBookOutlined',

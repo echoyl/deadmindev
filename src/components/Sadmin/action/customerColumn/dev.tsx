@@ -51,28 +51,12 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
       valueType: 'group',
       columns: [
         {
-          title: '表头title',
-          dataIndex: ['props', 'title'],
-          colProps: {
-            span: 12,
-          },
-        },
-        {
           title: '列宽',
           dataIndex: ['props', 'width'],
           colProps: {
             span: 12,
           },
         },
-        {
-          title: '字段名称',
-          tooltip: '如果选择器中无想要的字段名称，请填写在这里',
-          dataIndex: ['props', 'dataIndex'],
-          colProps: {
-            span: 12,
-          },
-        },
-
         {
           title: '栅格',
           dataIndex: ['props', 'span'],

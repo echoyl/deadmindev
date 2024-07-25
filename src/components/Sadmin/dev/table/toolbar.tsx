@@ -117,6 +117,7 @@ const ExportButton = ({
   fieldProps = { post: {}, button: {} },
   values = {},
   url = '',
+  requestUrl = '', //新增手动设定导出
 }) => {
   const { searchFormRef } = useContext(SaContext);
   const [modalApi, modalHolder] = Modal.useModal();
@@ -132,7 +133,8 @@ const ExportButton = ({
             content: '确定要导出吗？',
             onOk: async () => {
               const search = searchFormRef?.current?.getFieldsFormatValue();
-              await request.post(url + '/export', { data: { ...values, ...post, ...search } });
+              const purl = requestUrl ? requestUrl : url + '/export';
+              await request.post(purl, { data: { ...values, ...post, ...search } });
             },
           });
         }}

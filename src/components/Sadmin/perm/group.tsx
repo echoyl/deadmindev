@@ -98,9 +98,9 @@ const PermGroup: React.FC<{
     }
     setPerms(data.perms);
     //console.log('get data ivalue is', ivalue, init);
-    if (ivalue && !init) {
+    if (!init) {
       setInit(true);
-      setValue(ivalue.split(','));
+      setValue(ivalue ? ivalue.split(',') : []);
     } else {
       //console.log('set roleid s perms',roleid,data.role_perms2);
       if (roleid && data.role_perms2) {

@@ -21,6 +21,7 @@ export const columnType = [
   { label: 'select', value: 'select' },
   { label: '拾色器 - colorPicker', value: 'colorPicker' },
   { label: '下拉操作 - dropdownAction', value: 'dropdownAction' },
+  { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
 ];
 
 const formMoreType = [
@@ -59,6 +60,7 @@ const formMoreType = [
   { label: 'switch', value: 'switch' },
   { label: 'AutoComplete', value: 'saAutoComplete' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
+  { label: '省市区 - pca', value: 'pca' },
 ];
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {
@@ -373,22 +375,24 @@ export const devBaseFormFormColumns = (props: devTabelFieldsProps) => {
         },
       ],
     },
-    // {
-    //   valueType: 'group',
-    //   columns: [
-    //     {
-    //       title: '自定义title',
-    //       dataIndex: ['props', 'title'],
-    //       colProps: { span: 12 },
-    //     },
-    //     {
-    //       title: '自定义字段',
-    //       tooltip: '如果选择器中无想要的字段名称，可定义填写，多层级使用.拼接',
-    //       dataIndex: ['props', 'dataIndex'],
-    //       colProps: { span: 12 },
-    //     },
-    //   ],
-    // },
+    {
+      valueType: 'group',
+      columns: [
+        {
+          dataIndex: ['props', 'title'],
+          title: '自定义Title',
+          colProps: { span: 12 },
+        },
+        {
+          title: '自定义字段',
+          tooltip: '如果选择器中无想要的字段名称，请填写在这里',
+          dataIndex: ['props', 'dataIndex'],
+          colProps: {
+            span: 12,
+          },
+        },
+      ],
+    },
     {
       valueType: 'group',
       columns: [
@@ -597,21 +601,24 @@ export const devBaseTableFormColumns = (props: devTabelFieldsProps): saFormColum
         },
       ],
     },
-    // {
-    //   valueType: 'group',
-    //   columns: [
-    //     {
-    //       dataIndex: ['props', 'title'],
-    //       title: '自定义表头',
-    //       colProps: { span: 12 },
-    //     },
-    //     {
-    //       dataIndex: ['props', 'width'],
-    //       title: '自定义列宽',
-    //       colProps: { span: 12 },
-    //     },
-    //   ],
-    // },
+    {
+      valueType: 'group',
+      columns: [
+        {
+          dataIndex: ['props', 'title'],
+          title: '自定义Title',
+          colProps: { span: 12 },
+        },
+        {
+          title: '自定义字段',
+          tooltip: '如果选择器中无想要的字段名称，请填写在这里',
+          dataIndex: ['props', 'dataIndex'],
+          colProps: {
+            span: 12,
+          },
+        },
+      ],
+    },
     {
       valueType: 'group',
       columns: [
@@ -677,12 +684,18 @@ export const devBaseTableFormColumns = (props: devTabelFieldsProps): saFormColum
                   fieldProps: {
                     placeholder: '请输入左侧菜单label，value字段名称',
                   },
-                  colProps: { span: 18 },
+                  colProps: { span: 6 },
                 },
               ];
             }
             return [];
           },
+        },
+        {
+          dataIndex: 'rowSpan',
+          valueType: 'switch',
+          title: '行合并',
+          colProps: { span: 6 },
         },
       ],
     },

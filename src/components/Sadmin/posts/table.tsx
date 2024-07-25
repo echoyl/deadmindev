@@ -509,12 +509,12 @@ const SaTable: React.FC<saTableProps> = (props) => {
             ...props,
           })}
           rowSelection={
-            !checkEnable
+            !checkEnable || setting?.checkDisable
               ? false
               : {
                   selectedRowKeys,
                   onChange: (newSelectedRowKeys, selectedRows) => {
-                    console.log('newSelectedRowKeys', newSelectedRowKeys);
+                    //console.log('newSelectedRowKeys', newSelectedRowKeys);
                     setSelectedRowKeys(newSelectedRowKeys);
                   },
                   checkStrictly: false,
