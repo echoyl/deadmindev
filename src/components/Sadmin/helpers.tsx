@@ -584,7 +584,7 @@ export function isJsonString(str) {
 
 export const isDev = () => {
   const { initialState } = useModel('@@initialState');
-  return initialState?.settings.dev;
+  return initialState?.settings?.adminSetting?.dev;
 };
 
 export function log(...data: any) {

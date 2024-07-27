@@ -88,7 +88,7 @@ const NoticeIconView: React.FC = () => {
       setNotices(data || []);
       setTimeout(timeout, 180000); //3分钟检测一次消息提醒
     };
-    if (!initialState?.settings.dev) {
+    if (!initialState?.settings?.adminSetting?.dev) {
       timeout();
     }
   }, []);

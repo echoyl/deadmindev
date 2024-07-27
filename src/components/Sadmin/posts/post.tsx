@@ -85,7 +85,7 @@ export const SaForm: FC<saFormProps> = (props) => {
   const [_formColumns, setFormColumns] = useState<any[]>([]);
   const { initialState } = useModel('@@initialState');
   const [devEnable, setDevEnable] = useState(
-    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev,
+    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev,
   );
   const { messageApi } = useContext(SaDevContext);
   const intl = useIntl();
@@ -183,7 +183,11 @@ export const SaForm: FC<saFormProps> = (props) => {
     });
   };
   useEffect(() => {
-    setDevEnable(pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev);
+    setDevEnable(
+      pdevEnable &&
+        !initialState?.settings?.devDisable &&
+        initialState?.settings?.adminSetting?.dev,
+    );
   }, [initialState?.settings?.devDisable]);
   useEffect(() => {
     if (!detail && url) {

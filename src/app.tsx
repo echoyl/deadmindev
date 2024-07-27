@@ -36,10 +36,7 @@ import defaultSettings from '../config/defaultSettings';
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings> & {
-    baseurl?: string;
-    loginTypeDefault?: string;
-    loginBgImgage?: string;
-    dev?: { [key: string]: any } | boolean;
+    adminSetting?: { [key: string]: any };
     [key: string]: any;
   };
   currentUser?: API.CurrentUser;

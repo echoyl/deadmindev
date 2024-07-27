@@ -28,7 +28,7 @@ export const PagePanelHeader: FC = (props) => {
       <div className={styles.avatar}>
         <Avatar
           size="large"
-          src={currentUser.avatar ? currentUser.avatar : initialState?.settings.logo}
+          src={currentUser.avatar ? currentUser.avatar : initialState?.settings?.adminSetting?.logo}
         />
       </div>
       <div className={styles.content}>

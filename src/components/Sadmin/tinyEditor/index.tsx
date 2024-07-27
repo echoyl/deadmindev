@@ -14,7 +14,7 @@ const TinyEditor: FC<{
   const { initialState } = useModel('@@initialState');
   return (
     <Editor
-      tinymceScriptSrc={initialState?.settings?.baseurl + 'tinymce/tinymce.min.js'}
+      tinymceScriptSrc={initialState?.settings?.adminSetting?.baseurl + 'tinymce/tinymce.min.js'}
       onInit={(evt, editor) => (editorRef.current = editor)}
       value={value}
       onEditorChange={(content) => {
@@ -74,9 +74,12 @@ const TinyEditor: FC<{
               progress(pr);
               if (pr < 90) {
                 pr += Math.ceil(Math.random() * 10) + 1;
-                ti = setTimeout(() => {
-                  f1(pr);
-                }, (Math.ceil(Math.random() * 10) + 1) * 10);
+                ti = setTimeout(
+                  () => {
+                    f1(pr);
+                  },
+                  (Math.ceil(Math.random() * 10) + 1) * 10,
+                );
               }
             };
             fd.append('file', blobInfo.blob(), blobInfo.filename());

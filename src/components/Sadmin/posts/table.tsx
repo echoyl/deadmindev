@@ -201,7 +201,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
 
   const { initialState } = useModel('@@initialState');
   const [devEnable, setDevEnable] = useState(
-    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev,
+    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev,
   );
   // const [enumNames, setEnumNames] = useState<any[]>([]);
   // const [search_config, setSearch_config] = useState<any[]>([]);
@@ -378,7 +378,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
   };
 
   useEffect(() => {
-    setDevEnable(pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev);
+    setDevEnable(
+      pdevEnable &&
+        !initialState?.settings?.devDisable &&
+        initialState?.settings?.adminSetting?.dev,
+    );
   }, [initialState?.settings?.devDisable]);
 
   useEffect(() => {

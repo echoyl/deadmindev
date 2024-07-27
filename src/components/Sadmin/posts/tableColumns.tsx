@@ -110,7 +110,7 @@ const DeleteActionRender = (props) => {
             saTableContext?.edit(record, { parent_id: record.id, id: 0 });
           } else {
             history.push(
-              window.location.pathname.replace(initialState?.settings?.baseurl, '/') +
+              window.location.pathname.replace(initialState?.settings?.adminSetting?.baseurl, '/') +
                 '/0?parent_id=' +
                 record.id,
             );

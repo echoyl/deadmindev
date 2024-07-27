@@ -80,7 +80,7 @@ const AliyunVideo: FC<Props> = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const loadin_key = 'aliyun_video_uploader_progress';
   const { initialState } = useModel('@@initialState');
-  const baseUrl = initialState?.settings?.baseurl;
+  const baseUrl = initialState?.settings?.adminSetting?.baseurl;
   const createUploader = (e) => {
     var uploader = new AliyunUpload.Vod({
       timeout: 600000,
