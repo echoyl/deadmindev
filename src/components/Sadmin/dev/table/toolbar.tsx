@@ -41,7 +41,7 @@ export const ToolBarDom = (props) => {
   //const selectedIds = selectedRows.map((item) => item.id);
   const { initialState } = useModel('@@initialState');
   const devEnable =
-    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev;
+    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev;
   return (
     <Space>
       <Space key="selectbar_count">
@@ -416,7 +416,7 @@ export const toolBarRender = (props) => {
   );
   const { initialState, setInitialState } = useModel('@@initialState');
   const devEnable =
-    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.dev;
+    pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev;
   const values = { ...paramExtra, ids: selectedRowKeys, sort };
   if (table_menu_key) {
     values[table_menu_key] = tableMenuId;
@@ -492,7 +492,7 @@ export const toolBarRender = (props) => {
                 {btn.title}
               </Button>
             }
-            dev={initialState?.settings?.dev}
+            dev={initialState?.settings?.adminSetting?.dev}
           />,
         );
       }

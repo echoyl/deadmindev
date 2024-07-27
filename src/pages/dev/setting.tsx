@@ -302,69 +302,58 @@ export default () => {
               valueType: 'switch',
             },
             {
-              valueType: 'dependency',
-              name: [['socket', 'open']],
-              columns: ({ socket }) => {
-                if (socket?.open) {
-                  return [
-                    {
-                      title: '连接地址',
-                      dataIndex: ['socket', 'url'],
-                    },
-                    {
-                      valueType: 'group',
-                      columns: [
+              title: '连接地址',
+              dataIndex: ['socket', 'url'],
+            },
+            {
+              valueType: 'group',
+              columns: [
+                {
+                  title: '开启ping',
+                  dataIndex: ['socket', 'ping'],
+                  valueType: 'switch',
+                },
+                {
+                  valueType: 'dependency',
+                  name: [['socket', 'ping']],
+                  columns: ({ socket }) => {
+                    if (socket?.ping) {
+                      return [
                         {
-                          title: '开启ping',
-                          dataIndex: ['socket', 'ping'],
-                          valueType: 'switch',
-                        },
-                        {
-                          valueType: 'dependency',
-                          name: [['socket', 'ping']],
-                          columns: ({ socket }) => {
-                            if (socket?.ping) {
-                              return [
-                                {
-                                  title: '时间间隔',
-                                  dataIndex: ['socket', 'pingInterval'],
-                                  valueType: 'digit',
-                                  colProps: { span: 12 },
-                                  fieldProps: {
-                                    addonAfter: '秒',
-                                  },
-                                  formItemProps: {
-                                    rules: [
-                                      {
-                                        required: true,
-                                      },
-                                    ],
-                                  },
-                                  width: '100%',
-                                },
-                                {
-                                  title: 'ping信息',
-                                  dataIndex: ['socket', 'pingData'],
-                                  colProps: { span: 12 },
-                                  formItemProps: {
-                                    rules: [
-                                      {
-                                        required: true,
-                                      },
-                                    ],
-                                  },
-                                },
-                              ];
-                            }
-                            return [];
+                          title: '时间间隔',
+                          dataIndex: ['socket', 'pingInterval'],
+                          valueType: 'digit',
+                          colProps: { span: 12 },
+                          fieldProps: {
+                            addonAfter: '秒',
                           },
+                          // formItemProps: {
+                          //   rules: [
+                          //     {
+                          //       required: true,
+                          //     },
+                          //   ],
+                          // },
+                          width: '100%',
                         },
-                      ],
-                    },
-                  ];
-                }
-                return [];
-              },
+                        {
+                          title: 'ping信息',
+                          dataIndex: ['socket', 'pingData'],
+                          colProps: { span: 12 },
+                          // formItemProps: {
+                          //   rules: [
+                          //     {
+                          //       required: true,
+                          //     },
+                          //   ],
+                          // },
+                        },
+                      ];
+                    }
+                    return [];
+                  },
+                },
+              ],
             },
           ],
         },

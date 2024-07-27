@@ -191,7 +191,7 @@ export const TampShow: FC<{
     //   return;
     // }
     // 开始加载腾讯地图gl文件
-    TMapGL(initialState?.settings?.tmap_key).then(() => {
+    TMapGL(initialState?.settings?.adminSetting?.tmap_key).then(() => {
       setTimeout(() => {
         //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错
         const center = new window.TMap.LatLng(lat, lng);
@@ -275,7 +275,7 @@ const Tmap: FC = (props: {
   const { initialState } = useModel('@@initialState');
   const { zoom = 15, level = 2 } = props;
   useEffect(() => {
-    TMapGL(initialState?.settings?.tmap_key) // 开始加载腾讯地图gl文件
+    TMapGL(initialState?.settings?.adminSetting?.tmap_key) // 开始加载腾讯地图gl文件
       .then(() => {
         // 完成加载后，开始渲染地图
         const maps = window.TMap;

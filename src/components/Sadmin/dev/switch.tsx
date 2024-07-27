@@ -16,7 +16,7 @@ const DevSwitch = () => {
     lineHeight: '48px',
     margin: '0 2px',
   };
-  return initialState?.settings?.dev ? (
+  return initialState?.settings?.adminSetting?.dev ? (
     <div
       style={checked ? { ...defaultStyle, ...checkedStyle } : defaultStyle}
       title={checked ? '预览' : '切换至开发模式'}

@@ -36,7 +36,7 @@ const TableFromBread: FC<{
     //console.log('readonlyProps is', readonly_result, readonlyProps, readonly, record);
   }
   const post_key = record?.[fieldProps.local_key] ? record?.[fieldProps.local_key] : 0;
-  //console.log('getBread', fieldProps.path);
+  console.log('getBread', fieldProps.path);
   const bread = getBread(fieldProps.path);
   //console.log('fieldProps.props is', JSON.stringify(fieldProps.props), bread);
   if (bread) {

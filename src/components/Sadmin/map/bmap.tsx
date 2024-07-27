@@ -202,7 +202,7 @@ export const BampShow: FC<{
     //   return;
     // }
     // 开始加载腾讯地图gl文件
-    const key = initialState?.settings?.bmap_key;
+    const key = initialState?.settings?.adminSetting?.bmap_key;
     BMapGL(key).then(() => {
       setTimeout(() => {
         //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错
@@ -258,7 +258,7 @@ const Bmap: FC = (props: {
   const { zoom = 15, level = 2 } = props;
 
   useEffect(() => {
-    const key = initialState?.settings?.bmap_key;
+    const key = initialState?.settings?.adminSetting?.bmap_key;
     BMapGL(key) // 开始加载腾讯地图gl文件
       .then(() => {
         // 完成加载后，开始渲染地图

@@ -69,7 +69,7 @@ export async function getInitialState(): Promise<{
   //   loginPath,
   //   history.location.pathname.replace(adminSetting.baseurl, '/'),
   // );
-  if (history.location.pathname.replace(settings.baseurl, '/') !== loginPath) {
+  if (history.location.pathname.replace(settings.adminSetting?.baseurl, '/') !== loginPath) {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -112,7 +112,7 @@ export function rootContainer(container: JSX.Element, args) {
       //dayjs.locale(currentLocale.toLocaleLowerCase());
       saGetSetting().then((v) => {
         setSetting(v);
-        v?.locales?.map((lo) => {
+        v?.adminSetting?.locales?.map((lo) => {
           addLocale(lo.name, lo.configs);
         });
 
@@ -138,7 +138,7 @@ export function rootContainer(container: JSX.Element, args) {
         theme={
           setting?.navTheme == 'light'
             ? {
-                ...setting?.antdtheme,
+                ...setting?.adminSetting?.antdtheme,
                 token: {
                   colorPrimary: setting?.colorPrimary,
                 },
@@ -146,7 +146,7 @@ export function rootContainer(container: JSX.Element, args) {
                   Menu: {
                     subMenuItemBg: 'transparent',
                   },
-                  ...setting?.antdtheme?.components,
+                  ...setting?.adminSetting?.antdtheme?.components,
                 },
               }
             : {
@@ -168,10 +168,11 @@ export function rootContainer(container: JSX.Element, args) {
               notificationApi,
             }}
           >
-            <WebSocketProvider>
+            {/* <WebSocketProvider>
               <WebSocketListen />
               {props.children}
-            </WebSocketProvider>
+            </WebSocketProvider> */}
+            {props.children}
             {messageHolder}
             {modalHolder}
             {notificationHolder}
@@ -187,15 +188,16 @@ export function rootContainer(container: JSX.Element, args) {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   const values = useContext(ProProvider);
+  const { adminSetting, ...rest } = initialState?.settings;
   const checkWaterMark = () => {
-    if (initialState?.settings?.watermark) {
-      return initialState?.settings?.watermark == 'username'
-        ? initialState?.currentUser?.name
-        : initialState?.settings?.watermark;
+    const watermark = adminSetting?.watermark;
+    if (watermark) {
+      return watermark == 'username' ? initialState?.currentUser?.name : watermark;
     } else {
       return false;
     }
   };
+
   return {
     actionsRender: actionsRender,
     avatarProps: {
@@ -212,7 +214,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     footerRender: () => <Footer />,
     onPageChange: () => {
       // 如果没有登录，重定向到 login
-      const pathname = history.location.pathname.replace(initialState?.settings?.baseurl, '/');
+      const pathname = history.location.pathname.replace(adminSetting?.baseurl, '/');
       if (!initialState?.currentUser && pathname !== loginPath) {
         console.log('no user');
         history.push({
@@ -223,7 +225,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     layoutBgImgList: [],
 
-    menuFooterRender: () => (initialState?.settings.dev ? <DevLinks /> : false),
+    menuFooterRender: () => (adminSetting.dev ? <DevLinks /> : false),
     //menuHeaderRender: undefined,
     menu: {
       params: initialState?.currentUser?.uidx,
@@ -235,12 +237,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     childrenRender: (children, props) => {
       return (
         <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
-          {children}
-          {initialState?.settings.dev && !props.location?.pathname?.includes('/login') && (
+          <WebSocketProvider>
+            <WebSocketListen />
+            {children}
+          </WebSocketProvider>
+          {adminSetting.dev && !props.location?.pathname?.includes('/login') && (
             <SettingDrawer
               disableUrlParams
               enableDarkTheme
-              settings={initialState?.settings}
+              settings={rest}
               onSettingChange={(settings) => {
                 setInitialState((preInitialState) => ({
                   ...preInitialState,

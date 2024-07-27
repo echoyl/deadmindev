@@ -44,11 +44,11 @@ const useWebSocket = () => {
     } else {
       socket?.send(JSON.stringify({ type: 'bind', data: { token, remember } }));
     }
-
+    //console.log('send bind', token, ws, socket);
     return;
   };
   const connect = (): WebSocket => {
-    const url = setting.socket?.url;
+    const url = setting.adminSetting?.socket?.url;
     //console.log('connect url is ', url);
     const ws = new WebSocket(url);
     if (reconnectInterval) {
@@ -64,12 +64,12 @@ const useWebSocket = () => {
       setIsInit(true);
       bind(ws);
       console.log('ws is opening');
-      if (setting.socket?.ping) {
+      if (setting.adminSetting?.socket?.ping && setting.adminSetting?.socket?.pingInterval) {
         timeinterval = setInterval(
           () => {
-            ws.send(setting.socket?.pingData);
+            ws.send(setting.adminSetting?.socket?.pingData);
           },
-          parseInt(setting.socket?.pingInterval) * 1000,
+          parseInt(setting.adminSetting?.socket?.pingInterval) * 1000,
         );
       }
     };
@@ -93,14 +93,14 @@ const useWebSocket = () => {
       return;
     }
 
-    if (!setting.socket?.open) {
+    if (!setting.adminSetting?.socket?.open) {
       return () => {};
     }
 
-    const ws = connect();
+    connect();
 
-    return () => ws.close(); // 组件卸载时关闭连接
-  }, [setting?.socket]);
+    //return () => ws.close(); // 组件卸载时关闭连接
+  }, [setting?.adminSetting?.socket]);
   return { socket, bind };
 };
 
@@ -173,7 +173,7 @@ export const WebSocketListen = () => {
           key="modal"
         />
       )}
-      {messageData?.data?.modalTable && (
+      {messageData?.data?.modalTable && messageData?.data?.modalTable.page && (
         <ButtonModal
           open={modalTableOpen}
           afterOpenChange={(open) => {
@@ -185,7 +185,7 @@ export const WebSocketListen = () => {
           modalProps={{ footer: null }}
         >
           <TableFromBread
-            fieldProps={{ path: messageData?.data?.modalTable?.page }}
+            fieldProps={{ path: messageData.data.modalTable.page }}
             record={{}}
             alwaysenable={true}
           />

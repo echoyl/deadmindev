@@ -49,7 +49,7 @@ export const getTheme = (adminSetting: { [key: string]: any } | undefined): stri
 
 const ThemeSwitch = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const theme = getTheme(initialState?.settings);
+  const theme = getTheme(initialState?.settings?.adminSetting);
   //const [checked, setChecked] = useState(theme != 'light' ? true : false);
   const [checked, setChecked] = useState(theme);
   const { setSetting } = useContext(SaDevContext);

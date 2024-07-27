@@ -126,10 +126,10 @@ const BaseForm = (props) => {
 
   const [relations, setRelations] = useState<any[]>([]);
   const [modelColumns, setModelColumns] = useState<any[]>([]);
-  const { allMenus = [] } = setting?.dev;
+  const { allMenus = [] } = setting?.adminSetting?.dev;
   useEffect(() => {
-    setRelations(getModelRelations(pageMenu?.model_id, setting?.dev));
-    setModelColumns(getModelColumns(pageMenu?.model_id, setting?.dev));
+    setRelations(getModelRelations(pageMenu?.model_id, setting?.adminSetting?.dev));
+    setModelColumns(getModelColumns(pageMenu?.model_id, setting?.adminSetting?.dev));
   }, []);
   //console.log('title pageMenu is', pageMenu);
   useEffect(() => {
@@ -177,11 +177,11 @@ const BaseForm = (props) => {
           : type == 'table'
             ? devBaseTableFormColumns({
                 model_id: pageMenu?.model_id,
-                dev: setting?.dev,
+                dev: setting?.adminSetting?.dev,
               })
             : devBaseFormFormColumns({
                 model_id: pageMenu?.model_id,
-                dev: setting?.dev,
+                dev: setting?.adminSetting?.dev,
               });
 
     setColumns(columns);
@@ -511,7 +511,7 @@ export const FormAddTab = (props) => {
             <UnorderedListOutlined />
           </Button>
         }
-        dev={initialState?.settings?.dev}
+        dev={initialState?.settings?.adminSetting?.dev}
       />
       <ToolBarMenu
         key="devsetting"
@@ -528,12 +528,12 @@ export const FormAddTab = (props) => {
 
 export const TableColumnTitle: FC = (props) => {
   const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.dev ? true : false;
+  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
   return dev ? <DevTableColumnTitle {...props} devData={{ type: 'table' }} /> : <>{props.title}</>;
 };
 export const FormColumnTitle: FC = (props) => {
   const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.dev ? true : false;
+  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
 
   const title =
     props.valueType == 'group' && !props.title ? ['分组', props.uid].join(' - ') : props.title;
@@ -547,7 +547,7 @@ export const FormColumnTitle: FC = (props) => {
 
 export const ToolbarColumnTitle: FC = (props) => {
   const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.dev ? true : false;
+  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
   return dev ? (
     <DevTableColumnTitle {...props} devData={{ type: 'toolbar' }} />
   ) : (
@@ -557,6 +557,6 @@ export const ToolbarColumnTitle: FC = (props) => {
 
 export const TabColumnTitle: FC = (props) => {
   const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.dev ? true : false;
+  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
   return dev ? <DevTableColumnTitle {...props} devData={{ type: 'tab' }} /> : <>{props.title}</>;
 };

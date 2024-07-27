@@ -6,7 +6,7 @@ import ThemeSwitch from '../Sadmin/themSwitch';
 
 export const SelectLang = () => {
   const { initialState } = useModel('@@initialState');
-  return initialState?.settings?.lang ? <UmiSelectLang /> : null;
+  return initialState?.settings?.adminSetting?.lang ? <UmiSelectLang /> : null;
 };
 
 export const actionsRender = () => {

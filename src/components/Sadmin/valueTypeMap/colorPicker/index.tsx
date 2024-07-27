@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const ColorPicker = (props) => {
   const { onChange, colorType = 'hex' } = props;
-  const [value, setValue] = useState(props?.value ? props?.value : '#ffffff');
+  const [value, setValue] = useState(props?.value ? props?.value : '');
   const getColorValueString = (color: Color) => {
     if (colorType == 'rgb') {
       return color.toRgbString();

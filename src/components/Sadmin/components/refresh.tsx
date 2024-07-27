@@ -9,6 +9,25 @@ import { message } from '@/components/Sadmin/message';
 import { getTheme } from '../themSwitch';
 import cache from '../helper/cache';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
+export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
+  const theme = getTheme(localsetting);
+  const navTheme: { [key: string]: any } =
+    theme == 'light'
+      ? { navTheme: theme, token: { ...lightDefaultToken } }
+      : { navTheme: theme, token: { sider: {}, header: {} } };
+  //之后会将adpro的设置 存到一个字段下面，
+  if (localsetting.colorPrimary) {
+    navTheme.colorPrimary = localsetting.colorPrimary;
+  }
+  if (localsetting.title) {
+    navTheme.title = localsetting.title;
+  }
+  if (localsetting.splitMenus) {
+    navTheme.splitMenus = localsetting.splitMenus;
+  }
+
+  return { ...defaultSettings, adminSetting: localsetting, ...navTheme, logo: localsetting.logo };
+};
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
   const cacheKey = 'adminSetting';
   let localsetting = await cache.get(cacheKey);
@@ -21,13 +40,7 @@ export const saGetSetting = async (force: boolean = false): Promise<{ [key: stri
     return {};
   }
 
-  const theme = getTheme(localsetting);
-  const navTheme =
-    theme == 'light'
-      ? { navTheme: theme, token: { ...lightDefaultToken } }
-      : { navTheme: theme, token: { sider: {}, header: {} } };
-
-  return { ...defaultSettings, ...localsetting, ...navTheme };
+  return parseAdminSeting(localsetting);
 };
 
 export const saReload = async (initialState, setInitialState, setSetting) => {

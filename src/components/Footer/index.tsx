@@ -5,7 +5,7 @@ import { theme } from 'antd';
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const { initialState } = useModel('@@initialState');
-  const tech = `${currentYear} ${initialState?.settings?.tech}`;
+  const tech = `${currentYear} ${initialState?.settings?.adminSetting?.tech}`;
   const copyright = <span dangerouslySetInnerHTML={{ __html: tech }}></span>;
   const { token } = theme.useToken();
   return (

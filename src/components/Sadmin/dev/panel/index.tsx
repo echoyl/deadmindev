@@ -256,7 +256,7 @@ const SaPanel = (props) => {
   const [rows, setColumns] = useState();
   const { initialState } = useModel('@@initialState');
   const [devEnable, setDevEnable] = useState<boolean>(
-    !initialState?.settings?.devDisable && initialState?.settings?.dev ? true : false,
+    !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev ? true : false,
   );
 
   useEffect(() => {
@@ -276,7 +276,11 @@ const SaPanel = (props) => {
     sourceData: data,
   });
   useEffect(() => {
-    setDevEnable(!initialState?.settings?.devDisable && initialState?.settings?.dev ? true : false);
+    setDevEnable(
+      !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev
+        ? true
+        : false,
+    );
   }, [initialState?.settings?.devDisable]);
 
   return (
