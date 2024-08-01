@@ -647,6 +647,7 @@ export const devBaseTableFormColumns = (props: devTabelFieldsProps): saFormColum
           fieldProps: {
             options: [{ label: 'tab', value: 1 }],
           },
+          tooltip: '1.必须在模型中开启tab 2.数据必须是[{label,value}] 不能设置其它字段名称',
           colProps: { span: 6 },
         },
         {

@@ -1,5 +1,5 @@
 import { getAdminToken, rememberName } from '@/components/Sadmin/lib/request';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../dev';
 import { isJsonString } from '../helpers';
 
@@ -26,11 +26,12 @@ export const WebSocketContext = React.createContext<{
 // 自定义钩子，用于管理WebSocket连接
 const useWebSocket = () => {
   const [socket, setSocket] = useState<WebSocket>();
+  const socketRef = useRef<WebSocket | null>(null);
   const [isInit, setIsInit] = useState(false);
   const { setting } = useContext(SaDevContext);
-  let timeinterval: any = null;
-  let reconnectInterval: any = null;
-  const bind = async (ws?: WebSocket) => {
+  const [timeinterval, setPingInterval] = useState<any>(null);
+  const bind = async () => {
+    const ws = socketRef.current;
     const token = await getAdminToken();
     const remember = await cache.get(rememberName);
     //console.log('send bind', token, ws, socket);
@@ -39,54 +40,48 @@ const useWebSocket = () => {
       //console.log('no token');
       return;
     }
-    if (ws) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'bind', data: { token, remember } }));
-    } else {
-      socket?.send(JSON.stringify({ type: 'bind', data: { token, remember } }));
     }
+
     //console.log('send bind', token, ws, socket);
     return;
   };
-  const connect = (): WebSocket => {
+
+  const ping = () => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      console.log('ping:', setting.adminSetting?.socket?.pingData);
+      // 发送消息
+      socketRef.current.send(setting.adminSetting?.socket?.pingData);
+    }
+    return;
+  };
+  const connect = (): WebSocket | null => {
     const url = setting.adminSetting?.socket?.url;
     //console.log('connect url is ', url);
     const ws = new WebSocket(url);
-    if (reconnectInterval) {
-      //重新连接后 如果还有重连interval 需要清除
-      clearInterval(reconnectInterval);
-    }
     setSocket(ws);
-    init(ws);
+    socketRef.current = ws;
+    init();
     return ws;
   };
-  const init = (ws: WebSocket) => {
+  const init = () => {
+    if (!socketRef.current) {
+      return;
+    }
+    const ws = socketRef.current;
     ws.onopen = (e) => {
       setIsInit(true);
-      bind(ws);
+      bind();
       console.log('ws is opening');
-      if (setting.adminSetting?.socket?.ping && setting.adminSetting?.socket?.pingInterval) {
-        timeinterval = setInterval(
-          () => {
-            ws.send(setting.adminSetting?.socket?.pingData);
-          },
-          parseInt(setting.adminSetting?.socket?.pingInterval) * 1000,
-        );
-      }
-    };
-    ws.onclose = (e) => {
-      console.log('on close', e);
-      if (timeinterval) {
-        clearInterval(timeinterval);
-      }
-      //重新连接 每10秒 重连一次
-      //connect now
-      connect();
-      //set interval to reconnect every 10 seconds
-      reconnectInterval = setInterval(() => {
-        console.log('reconnect now');
+      ws.onclose = (e) => {
+        console.log('ws close and reconnect');
+        //connect now
         connect();
-      }, 10 * 1000);
+      };
     };
+
+    ws.onerror = (e) => {};
   };
   useEffect(() => {
     if (!setting || isInit) {
@@ -96,8 +91,19 @@ const useWebSocket = () => {
     if (!setting.adminSetting?.socket?.open) {
       return () => {};
     }
-
     connect();
+
+    //增加定时器
+
+    if (setting.adminSetting?.socket?.ping && setting.adminSetting?.socket?.pingInterval) {
+      const timeintervalx = setInterval(
+        ping,
+        parseInt(setting.adminSetting?.socket?.pingInterval) * 1000,
+      );
+
+      setPingInterval(timeintervalx);
+    }
+    return () => clearInterval(timeinterval); //清除定时器
 
     //return () => ws.close(); // 组件卸载时关闭连接
   }, [setting?.adminSetting?.socket]);
@@ -148,8 +154,10 @@ export const WebSocketListen = () => {
       } else if (type == 'message' && data?.message) {
         messageApi?.open(data?.message);
       } else if (type == 'notification' && data?.notification) {
-        notificationApi?.[data?.notification?.type as NotificationType]?.({
-          ...data.data?.notification,
+        console.log('messageData', messageData);
+        const { type: ntype, ...notificationProps } = data?.notification;
+        notificationApi?.[ntype as NotificationType]?.({
+          ...notificationProps,
           description: (
             <div
               dangerouslySetInnerHTML={{ __html: messageData.data.notification.description }}
