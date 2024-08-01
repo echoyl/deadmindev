@@ -75,7 +75,12 @@ const Lang = () => {
 };
 
 const LoginComponent: React.FC = () => {
-  return <Login />;
+  return (
+    <WebSocketProvider>
+      <WebSocketListen />
+      <Login />
+    </WebSocketProvider>
+  );
 };
 
 const Login: React.FC = () => {
@@ -92,7 +97,7 @@ const Login: React.FC = () => {
   const [messageApi, messageHolder] = message.useMessage();
   const [notificationApi, notificationHolder] = notification.useNotification();
 
-  const { clientId, messageData, bind, setMessageData } = useContext(WebSocketContext);
+  const { clientId, messageData, bind } = useContext(WebSocketContext);
   const [setting, setSetting] = useState<any>();
   const [loginType, setLoginType] = useState();
   useEffect(() => {
@@ -399,7 +404,7 @@ const Login: React.FC = () => {
     if (type == 'wechat') {
       const { url, desc } = setting?.adminSetting?.loginWechat;
       const qrcodeUrl = url + '?client_id=' + clientId + '&timestamp=' + timestamp;
-      console.log('qrcodeUrl', qrcodeUrl);
+      //console.log('qrcodeUrl', qrcodeUrl);
       return (
         <div style={{ textAlign: 'center' }}>
           {timestamp ? (
@@ -417,106 +422,101 @@ const Login: React.FC = () => {
     return null;
   };
   return setting ? (
-    <WebSocketProvider>
-      <WebSocketListen />
-      <div className={styles.container} style={{ ...containerStyle }}>
-        <Helmet>
-          <title>登录 - {setting?.title}</title>
-        </Helmet>
-        {messageHolder}
-        {notificationHolder}
-        {setting?.adminSetting?.lang ? <Lang /> : null}
-        <div style={{ flex: '1', padding: '48px 0' }}>
-          <ProCard
-            style={{
-              //maxWidth: 440,
-              margin: '0px auto',
-              // padding: '20px 0',
-              background: setting?.adminSetting?.loginBgCardColor,
-              width: 376,
+    <div className={styles.container} style={{ ...containerStyle }}>
+      <Helmet>
+        <title>登录 - {setting?.title}</title>
+      </Helmet>
+      {messageHolder}
+      {notificationHolder}
+      {setting?.adminSetting?.lang ? <Lang /> : null}
+      <div style={{ flex: '1', padding: '88px 0' }}>
+        <ProCard
+          style={{
+            //maxWidth: 440,
+            margin: '0px auto',
+            // padding: '20px 0',
+            background: setting?.adminSetting?.loginBgCardColor,
+            width: 376,
+          }}
+          bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
+          className={styles.card}
+        >
+          <LoginForm
+            contentStyle={{
+              minWidth: 280,
+              maxWidth: '75vw',
             }}
-            bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
-            className={styles.card}
+            containerStyle={{
+              paddingInline: 0,
+            }}
+            formRef={formRef}
+            logo={setting?.logo}
+            title={setting?.title}
+            subTitle={
+              setting?.adminSetting?.subtitle ? (
+                <span dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}></span>
+              ) : null
+            }
+            initialValues={{
+              autoLogin: true,
+            }}
+            onFinish={async (values) => {
+              await handleSubmit(values as API.LoginParams);
+            }}
+            //submitter={isQrcode ? false : undefined}
+            actions={
+              setting?.adminSetting?.loginActions ? (
+                <Space>
+                  {t('pages.login.loginWith', intl)}
+                  <ButtonModal
+                    trigger={<WechatOutlined className={styles.action} />}
+                    width={350}
+                    title="扫码登录"
+                  >
+                    {setting?.adminSetting?.loginActions?.map((ac, index) => {
+                      return <ActionLogin key={index} type={ac} />;
+                    })}
+                  </ButtonModal>
+                </Space>
+              ) : null
+            }
           >
-            <LoginForm
-              contentStyle={{
-                minWidth: 280,
-                maxWidth: '75vw',
+            <Tabs
+              centered
+              activeKey={loginType}
+              onChange={(activeKey) => {
+                setLoginType(activeKey);
+                setIsQrcode(activeKey == 'phone');
               }}
-              containerStyle={{
-                paddingInline: 0,
+              items={setting.adminSetting?.loginType?.map((v) => {
+                return loginTypeItems.find((item) => item.key == v);
+              })}
+            />
+            <div
+              style={{
+                marginBottom: 24,
               }}
-              formRef={formRef}
-              logo={setting?.logo}
-              title={setting?.title}
-              subTitle={
-                setting?.adminSetting?.subtitle ? (
-                  <span
-                    dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}
-                  ></span>
-                ) : null
-              }
-              initialValues={{
-                autoLogin: true,
-              }}
-              onFinish={async (values) => {
-                await handleSubmit(values as API.LoginParams);
-              }}
-              //submitter={isQrcode ? false : undefined}
-              actions={
-                setting?.adminSetting?.loginActions ? (
-                  <Space>
-                    {t('pages.login.loginWith', intl)}
-                    <ButtonModal
-                      trigger={<WechatOutlined className={styles.action} />}
-                      width={350}
-                      title="扫码登录"
-                    >
-                      {setting?.adminSetting?.loginActions?.map((ac, index) => {
-                        return <ActionLogin key={index} type={ac} />;
-                      })}
-                    </ButtonModal>
-                  </Space>
-                ) : null
-              }
             >
-              <Tabs
-                centered
-                activeKey={loginType}
-                onChange={(activeKey) => {
-                  setLoginType(activeKey);
-                  setIsQrcode(activeKey == 'phone');
-                }}
-                items={setting.adminSetting?.loginType?.map((v) => {
-                  return loginTypeItems.find((item) => item.key == v);
-                })}
-              />
-              <div
+              <ProFormCheckbox noStyle name="autoLogin">
+                {t('pages.login.rememberMe', intl)}
+              </ProFormCheckbox>
+              <a
                 style={{
-                  marginBottom: 24,
+                  float: 'right',
+                }}
+                onClick={() => {
+                  messageApi.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
                 }}
               >
-                <ProFormCheckbox noStyle name="autoLogin">
-                  {t('pages.login.rememberMe', intl)}
-                </ProFormCheckbox>
-                <a
-                  style={{
-                    float: 'right',
-                  }}
-                  onClick={() => {
-                    messageApi.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
-                  }}
-                >
-                  {t('pages.login.forgotPassword', intl)}
-                </a>
-              </div>
-            </LoginForm>
-          </ProCard>
-        </div>
-
-        <Footer />
+                {t('pages.login.forgotPassword', intl)}
+              </a>
+            </div>
+          </LoginForm>
+        </ProCard>
       </div>
-    </WebSocketProvider>
+
+      <Footer />
+    </div>
   ) : null;
 };
 
