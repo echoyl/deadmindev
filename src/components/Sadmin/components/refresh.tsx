@@ -6,7 +6,7 @@ import defaultSettings, { lightDefaultToken } from '../../../../config/defaultSe
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
 import { message } from '@/components/Sadmin/message';
-import { getTheme } from '../themSwitch';
+import { getTheme } from '../themeSwitch';
 import cache from '../helper/cache';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {

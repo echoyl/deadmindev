@@ -1,54 +1,38 @@
-import JSONEditor from 'jsoneditor';
-import 'jsoneditor/dist/jsoneditor.css';
-import _ from 'lodash';
-import { useCallback, useEffect, useRef } from 'react';
-import './style.less';
+import VanillaJSONEditor from "./VanillaJSONEditor";
+import { useEffect,useState } from 'react';
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+import { useModel } from "@umijs/max";
+import { getTheme } from "../themeSwitch";
+import { theme } from "antd";
 
 const JsonEditor = (props) => {
-  const { value, onChange, options = {}, height = 400 } = props;
+  const { value = {}, onChange, options = {}, height = 400 } = props;
+  const { initialState } = useModel('@@initialState');
+  const themeStr = getTheme(initialState?.settings?.adminSetting);
+  const { useToken } = theme;
+  const { token } = useToken();
+  const [dark,setDark] = useState('');
+  const [content, setContent] = useState({
+    json: value,
+    text: undefined
+  });
 
-  const editorRef = useRef();
-  const editorObj = useRef();
+  useEffect(()=>{
+    setDark(themeStr != 'light'?'jse-theme-dark':'');
+  },[themeStr]);
 
-  // 注意这边暴露到外面的是一个json
-  const handleChange = useCallback(
-    (value) => {
-      try {
-        const currenValue = value === '' ? null : editorObj.current.get();
-        onChange && onChange(currenValue);
-      } catch (err) {}
-    },
-    [onChange],
-  );
+  const onChangeR = (e)=>{
+    setContent(e);
+    onChange?.(e.text);
+    //console.log(e);
+  }
 
-  // 初始化JSON编辑器
-  const initEditor = useCallback(() => {
-    if (!editorObj.current) {
-      const totalOptions = {
-        mode: 'code',
-        onChangeText: handleChange,
-        ...options,
-      };
-      editorObj.current = new JSONEditor(editorRef.current, totalOptions);
-    }
-  }, [handleChange, options]);
-
-  useEffect(() => {
-    initEditor();
-  }, [initEditor]);
-
-  // 监听外部传入的value
-  useEffect(() => {
-    try {
-      if (value && !_.isEqual(editorObj.current.get(), value)) {
-        editorObj.current.update(value);
-      }
-    } catch (error) {
-      // 当编辑器内容为空时，editorObj.current.get()会抛出异常，所以这里需要捕获
-    }
-  }, [value]);
-
-  return <div style={{ height: height }} ref={editorRef} />;
+  return <div className={`'my-editor' ${dark}`} style={{'--jse-theme-color':token.colorPrimary}}>
+  <VanillaJSONEditor
+    content={content}
+    onChange={onChangeR}
+  />
+</div>;
 };
 
 export default JsonEditor;

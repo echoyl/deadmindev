@@ -4,6 +4,8 @@ import { isNull } from 'lodash';
 import type { SetStateAction } from 'react';
 import { useState } from 'react';
 import { message } from '../../message';
+import { useModel } from '@umijs/max';
+import { getTheme } from '../../themeSwitch';
 
 const insertToTextArea = (intsertString: string) => {
   const textarea = document.querySelector('textarea');
@@ -82,11 +84,14 @@ export const MDEditorReal = (props) => {
     setValue(v);
     onChange?.(v);
   };
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const theme = getTheme(initialState?.settings?.adminSetting);
   return (
     <UiwMDEditor
       {...props}
       overflow={false}
       value={value}
+      data-color-mode={theme == 'light'?'light':'dark'}
       onChange={onChangeValue}
       onPaste={async (event) => {
         await onImagePasted(event.clipboardData, onChangeValue);
