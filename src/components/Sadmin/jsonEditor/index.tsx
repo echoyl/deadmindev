@@ -23,8 +23,9 @@ const JsonEditor = (props) => {
 
   const onChangeR = (e)=>{
     setContent(e);
-    onChange?.(e.text);
-    //console.log(e);
+    const inputValue = e.text?JSON.parse(e.text):'';
+    onChange?.(inputValue);
+    //console.log('inputValue',inputValue);
   }
 
   return <div className={`'my-editor' ${dark}`} style={{'--jse-theme-color':token.colorPrimary}}>

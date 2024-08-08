@@ -50,7 +50,7 @@ const useWebSocket = () => {
 
   const ping = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      console.log('ping:', setting.adminSetting?.socket?.pingData);
+      //console.log('ping:', setting.adminSetting?.socket?.pingData);
       // 发送消息
       socketRef.current.send(setting.adminSetting?.socket?.pingData);
     }

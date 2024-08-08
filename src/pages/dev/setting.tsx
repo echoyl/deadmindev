@@ -89,7 +89,7 @@ export default () => {
                   fieldProps: {
                     defaultChecked: true,
                   },
-                  colProps: { span: 8 },
+                  colProps: { span: 12 },
                 },
                 {
                   title: '多语言',
@@ -98,16 +98,7 @@ export default () => {
                   fieldProps: {
                     defaultChecked: true,
                   },
-                  colProps: { span: 8 },
-                },
-                {
-                  title: '分割菜单 - 顶部显示大菜单',
-                  valueType: 'switch',
-                  dataIndex: 'splitMenus',
-                  colProps: { span: 8 },
-                  fieldProps: {
-                    defaultChecked: true,
-                  },
+                  colProps: { span: 12 },
                 },
               ],
             },
@@ -180,6 +171,7 @@ export default () => {
                               minuteStep: 15,
                               secondStep: 10,
                             },
+                            width:'100%',
                             colProps: { span: 12 },
                           },
                         ]
@@ -189,7 +181,8 @@ export default () => {
               ],
             },
 
-            { title: '主题色', dataIndex: 'colorPrimary', valueType: 'colorPicker' },
+            { title: '主题色', dataIndex: 'colorPrimary', valueType: 'colorPicker',tooltip:'优先级高于右侧设置中选择的主题色' },
+            { title: 'AntdPro配置', dataIndex: 'antdpro', valueType: 'jsonEditor',tooltip:'请将右侧设置按钮中的配置点击拷贝设置后粘贴到这里保存' },
             { title: 'Antd主题配置', dataIndex: 'theme', valueType: 'jsonEditor' },
           ],
         },
