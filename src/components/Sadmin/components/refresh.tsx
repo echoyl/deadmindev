@@ -20,6 +20,9 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   if (localsetting.title) {
     navTheme.title = localsetting.title;
   }
+  if (localsetting.splitMenus) {
+    navTheme.splitMenus = localsetting.splitMenus;
+  }
   //解析后台配置的antdpro配置
   const {antdpro = {}} = localsetting;
   const {title,logo,navTheme:onavTheme,colorPrimary,token,...antdproRest} = antdpro;

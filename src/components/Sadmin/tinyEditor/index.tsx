@@ -3,6 +3,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useModel } from '@umijs/max';
 import { FC, useRef } from 'react';
 import './style.less';
+import { getTheme } from '../themeSwitch';
 const TinyEditor: FC<{
   height?: number;
   width?: number;
@@ -12,6 +13,7 @@ const TinyEditor: FC<{
   const { height = 700, value, width } = props;
   const editorRef = useRef(null);
   const { initialState } = useModel('@@initialState');
+  const theme = getTheme(initialState?.settings?.adminSetting);
   return (
     <Editor
       tinymceScriptSrc={initialState?.settings?.adminSetting?.baseurl + 'tinymce/tinymce.min.js'}
@@ -29,6 +31,8 @@ const TinyEditor: FC<{
         language: 'zh-Hans',
         placeholder: '请输入',
         //skin: 'snow',
+        skin:theme == 'light'?'oxide':'oxide-dark',
+        content_css:theme == 'light'?'default':'dark',
         relative_urls: false,
         remove_script_host: false,
         convert_urls: false,
