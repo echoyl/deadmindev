@@ -3,7 +3,7 @@ import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/
 import { useModel } from '@umijs/max';
 import { Segmented } from 'antd';
 import dayjs from 'dayjs';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { lightDefaultToken } from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 const MoonIconSvg = () => (
@@ -52,7 +52,7 @@ const ThemeSwitch = () => {
   const theme = getTheme(initialState?.settings?.adminSetting);
   //const [checked, setChecked] = useState(theme != 'light' ? true : false);
   const [checked, setChecked] = useState(theme);
-  const { setSetting } = useContext(SaDevContext);
+  const { setSetting,setting } = useContext(SaDevContext);
   const setTheme = (theme: 'realDark' | 'light' | undefined) => {
     const token = theme == 'light' ? { ...lightDefaultToken } : { sider: {}, header: {} };
 
@@ -73,6 +73,10 @@ const ThemeSwitch = () => {
       localStorage.setItem('navTheme', theme ? theme : 'light');
     });
   };
+  useEffect(() => {
+    //监听保存配置后 变更主题
+    setChecked(setting?.navTheme);
+  },[setting?.navTheme])
   return (
     <Segmented
       options={[
@@ -81,7 +85,6 @@ const ThemeSwitch = () => {
       ]}
       value={checked}
       onChange={(v: any) => {
-        setChecked(v);
         setTheme(v);
       }}
     />

@@ -1,25 +1,19 @@
 import VanillaJSONEditor from "./VanillaJSONEditor";
-import { useEffect,useState } from 'react';
+import { useContext, useEffect,useState } from 'react';
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
-import { useModel } from "@umijs/max";
-import { getTheme } from "../themeSwitch";
 import { theme } from "antd";
+import { SaDevContext } from "../dev";
 
 const JsonEditor = (props) => {
   const { value = {}, onChange, options = {}, height = 400 } = props;
-  const { initialState } = useModel('@@initialState');
-  const themeStr = getTheme(initialState?.settings?.adminSetting);
+  const {setting} = useContext(SaDevContext);
   const { useToken } = theme;
   const { token } = useToken();
-  const [dark,setDark] = useState('');
   const [content, setContent] = useState({
     json: value,
     text: undefined
   });
 
-  useEffect(()=>{
-    setDark(themeStr != 'light'?'jse-theme-dark':'');
-  },[themeStr]);
 
   const onChangeR = (e)=>{
     setContent(e);
@@ -28,7 +22,7 @@ const JsonEditor = (props) => {
     //console.log('inputValue',inputValue);
   }
 
-  return <div className={`'my-editor' ${dark}`} style={{'--jse-theme-color':token.colorPrimary}}>
+  return <div className={`'my-editor' ${setting?.navTheme != 'light'?'jse-theme-dark':''}`} style={{'--jse-theme-color':token.colorPrimary}}>
   <VanillaJSONEditor
     content={content}
     onChange={onChangeR}
