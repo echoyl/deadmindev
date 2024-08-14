@@ -162,7 +162,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
               {image.map((file, index) => {
                 if (!props.fieldProps.max || props.fieldProps.max >= index + 1) {
                   return (
-                    <Image width={48} src={file.url} key={file.uid ? file.uid : Math.random()} />
+                    <Image width={48} style={{maxHeight:32}} src={file.url} key={file.uid ? file.uid : Math.random()} />
                   );
                 }
               })}
