@@ -199,7 +199,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     actionsRender: actionsRender,
     avatarProps: {
       src: initialState?.currentUser?.avatar,
-      title: <AvatarName />,
+      title: initialState?.currentUser?.name,
       render: (_, avatarChildren) => {
         return <AvatarDropdown menu={true}>{avatarChildren}</AvatarDropdown>;
       },

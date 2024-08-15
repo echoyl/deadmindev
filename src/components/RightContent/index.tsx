@@ -6,17 +6,19 @@ import ThemeSwitch from '../Sadmin/themeSwitch';
 
 export const SelectLang = () => {
   const { initialState } = useModel('@@initialState');
-  return initialState?.settings?.adminSetting?.lang ? <UmiSelectLang /> : null;
+  return initialState?.settings?.adminSetting?.lang ? (
+    <UmiSelectLang style={actionDefaultStyle} />
+  ) : null;
 };
 
 export const actionDefaultStyle = {
-  cursor: "pointer",
-  padding: "12px",
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: "18px",
-  verticalAlign: "middle",
+  cursor: 'pointer',
+  padding: '12px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '18px',
+  verticalAlign: 'middle',
 };
 
 export const actionsRender = () => {

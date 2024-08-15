@@ -9,6 +9,7 @@ import type { NoticeIconTabProps } from './NoticeList';
 import NoticeList from './NoticeList';
 import { createStyles } from 'antd-style';
 import { useStyle } from './style';
+import { actionDefaultStyle } from '../RightContent';
 const { TabPane } = Tabs;
 
 export type NoticeIconProps = {
@@ -107,13 +108,16 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
   const prefixCls = 'header-bell';
   const { wrapSSR, hashId } = useStyle(prefixCls);
 
-  const NoticeBellIcon = bell || <BellOutlined className={`${prefixCls}-icon ${hashId}`} />;
+  const NoticeBellIcon = bell || <BellOutlined />;
   const trigger = (
-    <span className={`${prefixCls}-span ${hashId}`.trim()}>
-      <Badge count={count} style={{ boxShadow: 'none' }}>
-        {NoticeBellIcon}
-      </Badge>
-    </span>
+    <Badge
+      styles={{ root: { ...actionDefaultStyle, color: 'rgba(0, 0, 0, 0.45)' } }}
+      count={count}
+      size="small"
+      offset={[-10, 10]}
+    >
+      {NoticeBellIcon}
+    </Badge>
   );
 
   if (!notificationBox) {
