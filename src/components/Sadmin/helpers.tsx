@@ -149,37 +149,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       if (typeof image != 'object') {
         image = image ? JSON.parse(image) : [];
       }
-      const preview = image.map((file, index) => {
-        const [url] = file.url.split('?');
-        return url;
-      });
-      const type = props.fieldProps.type ? props.fieldProps.type : 'image';
-      //console.log(image, props);
-      return (
-        <>
-          {type == 'image' ? (
-            <Image.PreviewGroup items={preview}>
-              {image.map((file, index) => {
-                if (!props.fieldProps.max || props.fieldProps.max >= index + 1) {
-                  return (
-                    <Image width={48} style={{maxHeight:32}} src={file.url} key={file.uid ? file.uid : Math.random()} />
-                  );
-                }
-              })}
-            </Image.PreviewGroup>
-          ) : (
-            image.map((file, index) => {
-              if (!props.fieldProps.max || props.fieldProps.max >= index + 1) {
-                return (
-                  <a href={file.url} target="_blank">
-                    {file.name}
-                  </a>
-                );
-              }
-            })
-          )}
-        </>
-      );
+      return <Uploader {...props.fieldProps} value={image} buttonType='table' readonly />;
     },
     renderFormItem: (text, props) => {
       return <Uploader {...props.fieldProps} />;

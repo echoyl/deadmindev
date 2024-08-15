@@ -1,6 +1,6 @@
 import { requestHeaders, request_prefix } from '@/components/Sadmin/lib/request';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Image, Upload, message } from 'antd';
+import { Badge, Button, Image, Upload, message, theme } from 'antd';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import React, { useEffect, useState } from 'react';
 import './index.less';
@@ -18,6 +18,7 @@ interface Props {
   size?: object | number;
   fieldProps?: UploadProps;
   buttonType?: 'card' | 'table' | 'text';
+  readonly?:boolean;
 }
 
 interface DraggableUploadListItemProps {
@@ -84,6 +85,7 @@ const Uploader: React.FC<Props> = (props) => {
       data: { toSize: size, isFile: type == 'image' ? 0 : 1 }, //数组则固定大小 数字等比例缩放
     },
     buttonType = 'card',
+    readonly = false
   } = props;
   //console.log('value', value);
   const [fileList, setFileList] = useState<UploadFile[]>(
@@ -206,9 +208,14 @@ const Uploader: React.FC<Props> = (props) => {
 
   const action = request_prefix + 'uploader/index';
 
+  const { useToken } = theme;
+
+  const { token } = useToken();
+
   return (
     <>
-      {max == 1 ? (
+      {max == 1 || readonly ? (
+        
         <Upload
           {...fieldProps}
           headers={headers}
@@ -216,12 +223,15 @@ const Uploader: React.FC<Props> = (props) => {
           className={
             buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
           }
-          showUploadList={fileList.length && !loading ? true : false}
+          showUploadList={fileList.length && !loading ? {showRemoveIcon:readonly?false:true} : false}
           action={action}
-          fileList={fileList}
+          fileList={fileList.length?[fileList[0]]:[]}
           onChange={fileChange}
+          itemRender={(originNode) => {
+            return <Badge color={token.colorPrimary} count={fileList.length > 1 && readonly?fileList.length:0} size="small" offset={[-10,10]} styles={{root:{height:'100%',width:'100%'}}}>{originNode}</Badge>
+          }}
         >
-          {fileList.length && !loading ? null : uploadButtonOne}
+          {(fileList.length && !loading) || readonly ? null : uploadButtonOne}
         </Upload>
       ) : (
         <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>

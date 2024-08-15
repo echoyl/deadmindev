@@ -17,8 +17,15 @@ const JsonEditor = (props) => {
 
   const onChangeR = (e)=>{
     setContent(e);
-    const inputValue = e.text?JSON.parse(e.text):'';
-    onChange?.(inputValue);
+    try{
+      const inputValue = e.text?JSON.parse(e.text):'';
+      onChange?.(inputValue);
+    }catch(e)
+    {
+      //console.log(e);
+    }
+    
+    
     //console.log('inputValue',inputValue);
   }
 
