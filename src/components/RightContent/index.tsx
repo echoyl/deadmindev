@@ -9,6 +9,16 @@ export const SelectLang = () => {
   return initialState?.settings?.adminSetting?.lang ? <UmiSelectLang /> : null;
 };
 
+export const actionDefaultStyle = {
+  cursor: "pointer",
+  padding: "12px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "18px",
+  verticalAlign: "middle",
+};
+
 export const actionsRender = () => {
   return [
     <DevSwitch key="DevSwitch" />,
