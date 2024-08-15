@@ -27,8 +27,13 @@ import cache from '@/components/Sadmin/helper/cache';
 import { createStyles } from 'antd-style';
 import { SelectLang } from '@/components/RightContent';
 import { t } from '@/components/Sadmin/helpers';
+import { SaDevContext } from '@/components/Sadmin/dev';
 
-const useStyles = createStyles(({ token, css }) => {
+const useStyles = () => {
+  const {setting} = useContext(SaDevContext);
+  const login_bg = setting?.adminSetting?.baseurl;
+  return createStyles(({ token, css }) => {
+  
   return {
     action: {
       marginLeft: '8px',
@@ -57,14 +62,15 @@ const useStyles = createStyles(({ token, css }) => {
       flexDirection: 'column',
       height: '100vh',
       overflow: 'auto',
-      backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
+      backgroundImage:login_bg?`url('${login_bg}/login_bg.png')`:'',
       backgroundSize: '100% 100%',
     },
   };
-});
+})();
+  }
 
 const Lang = () => {
+  
   const { styles } = useStyles();
 
   return (
@@ -81,7 +87,8 @@ const LoginComponent: React.FC = () => {
 };
 
 const Login: React.FC = () => {
-  const { styles } = useStyles();
+
+  
   const { initialState, setInitialState } = useModel('@@initialState');
   const [captchaReload, setCaptchaReload] = useState(0);
   const [captchaPhoneReload, setCaptchaPhoneReload] = useState(0);
@@ -94,8 +101,9 @@ const Login: React.FC = () => {
   const [messageApi, messageHolder] = message.useMessage();
   const [notificationApi, notificationHolder] = notification.useNotification();
 
-  const { clientId, messageData, bind, setMessageData } = useContext(WebSocketContext);
+  const { clientId, messageData, bind } = useContext(WebSocketContext);
   const [setting, setSetting] = useState<any>();
+  const { styles } = useStyles();
   const [loginType, setLoginType] = useState();
   useEffect(() => {
     saGetSetting().then((v) => {
