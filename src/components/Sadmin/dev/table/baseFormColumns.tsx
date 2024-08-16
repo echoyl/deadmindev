@@ -61,6 +61,9 @@ const formMoreType = [
   { label: 'AutoComplete', value: 'saAutoComplete' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
   { label: '省市区 - pca', value: 'pca' },
+  { label: '时间 - datetime', value: 'datetime' },
+  { label: '日期 - date', value: 'date' },
+  { label: 'Time - time', value: 'time' },
 ];
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {

@@ -151,6 +151,7 @@ export default () => {
     { label: '开关 - switch', value: 'switch' },
     { label: '时间 - datetime', value: 'datetime' },
     { label: '日期 - date', value: 'date' },
+    { label: 'Time - time', value: 'time' },
     { label: '层级多选 - cascaders', value: 'cascaders' },
     { label: '层级选择 - cascader', value: 'cascader' },
     { label: '省市区 - pca', value: 'pca' },
