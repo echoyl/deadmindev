@@ -111,7 +111,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
   const NoticeBellIcon = bell || <BellOutlined />;
   const trigger = (
     <Badge
-      styles={{ root: { ...actionDefaultStyle, color: 'rgba(0, 0, 0, 0.45)' } }}
+      styles={{ root: { ...actionDefaultStyle, color: token.colorTextTertiary } }}
       count={count}
       size="small"
       offset={[-10, 10]}

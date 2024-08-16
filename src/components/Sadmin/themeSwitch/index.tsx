@@ -5,8 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { lightDefaultToken } from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 import { actionDefaultStyle } from '@/components/RightContent';
-
-
+import HeaderDropdown from '@/components/HeaderDropdown';
 
 export const getTheme = (adminSetting: { [key: string]: any } | undefined): string => {
   let theme = localStorage.getItem('navTheme');
@@ -35,7 +34,7 @@ const ThemeSwitch = () => {
   const theme = getTheme(initialState?.settings?.adminSetting);
   //const [checked, setChecked] = useState(theme != 'light' ? true : false);
   const [checked, setChecked] = useState(theme);
-  const { setSetting,setting } = useContext(SaDevContext);
+  const { setSetting, setting } = useContext(SaDevContext);
   const setTheme = (theme: 'realDark' | 'light' | undefined) => {
     const token = theme == 'light' ? { ...lightDefaultToken } : { sider: {}, header: {} };
 
@@ -59,17 +58,41 @@ const ThemeSwitch = () => {
   useEffect(() => {
     //监听保存配置后 变更主题
     setChecked(setting?.navTheme);
-  },[setting?.navTheme])
+  }, [setting?.navTheme]);
+
+  const onMenuClick = (event: any) => {
+    const { key } = event;
+    setTheme(key);
+  };
+  const menuItemStyle = { minWidth: '160px' };
+
+  const menuItems = [
+    {
+      key: 'light',
+      icon: <SunOutlined />,
+      label: 'Light',
+      style: menuItemStyle,
+    },
+    {
+      key: 'realDark',
+      icon: <MoonOutlined />,
+      label: 'Dark',
+      style: menuItemStyle,
+    },
+  ];
+
   return (
-    <span
-      style={actionDefaultStyle}
-      title={checked == 'light' ? '切换暗黑模式' : '切换日间模式'}
-      onClick={() => {
-        setTheme(checked == 'light'?'realDark':'light');
+    <HeaderDropdown
+      menu={{
+        selectedKeys: [checked],
+        onClick: onMenuClick,
+        items: menuItems,
+        selectable: true,
       }}
+      placement="bottomRight"
     >
-      {checked == 'light'?<MoonOutlined />:<SunOutlined />}
-    </span>
+      <span style={actionDefaultStyle}>{menuItems.find((v) => v.key == checked)?.icon}</span>
+    </HeaderDropdown>
   );
 };
 export default ThemeSwitch;
