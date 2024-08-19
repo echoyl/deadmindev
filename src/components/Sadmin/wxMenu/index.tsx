@@ -4,7 +4,7 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { css } from '@emotion/css';
-import { Button, Divider, Form, Popover, Select, Space } from 'antd';
+import { Button, Divider, Form, Popover, Select, Space, theme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
 import { inArray } from '../checkers';
@@ -284,6 +284,8 @@ const WxMenu: React.FC<{
   const [formMenu, setFormMenu] = useState<wxMenu>();
   const [thisMenu, setThisMenu] = useState<wxMenu | null>(menus?.[0]);
   const [selected, setSelected] = useState(false);
+  const { useToken } = theme;
+  const { token } = useToken();
   const menuMaxLength = 3;
   const addMenu = () => {
     const ad_menu = {
@@ -352,7 +354,7 @@ const WxMenu: React.FC<{
 
   return (
     <ProCard split="vertical">
-      <ProCard style={{ paddingTop: 440, background: '#eee' }} colSpan={15} key="menupanel">
+      <ProCard style={{ paddingTop: 440, background: token.colorBgLayout }} colSpan={15} key="menupanel">
         {/* <SecondMenu
     data={sm}
     onChange={(v) => {
@@ -445,7 +447,7 @@ const WxMenu: React.FC<{
 };
 
 /**
- * form中不能嵌套form 所有将菜单编辑放入modal中
+ * form中不能嵌套form 所以将菜单编辑放入modal中
  * @param props
  * @returns
  */

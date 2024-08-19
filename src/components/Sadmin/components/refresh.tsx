@@ -6,7 +6,7 @@ import defaultSettings, { lightDefaultToken } from '../../../../config/defaultSe
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
 import { message } from '@/components/Sadmin/message';
-import { getTheme } from '../themSwitch';
+import { getTheme } from '../themeSwitch';
 import cache from '../helper/cache';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
@@ -16,17 +16,28 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
       ? { navTheme: theme, token: { ...lightDefaultToken } }
       : { navTheme: theme, token: { sider: {}, header: {} } };
   //之后会将adpro的设置 存到一个字段下面，
-  if (localsetting.colorPrimary) {
-    navTheme.colorPrimary = localsetting.colorPrimary;
-  }
+  
   if (localsetting.title) {
     navTheme.title = localsetting.title;
   }
   if (localsetting.splitMenus) {
     navTheme.splitMenus = localsetting.splitMenus;
   }
+  //解析后台配置的antdpro配置
+  const {antdpro = {}} = localsetting;
+  const {title,logo,navTheme:onavTheme,colorPrimary,token,...antdproRest} = antdpro;
+  //console.log('localsetting',localsetting);
+  if (localsetting.colorPrimary) {
+    navTheme.colorPrimary = localsetting.colorPrimary;
+  }else
+  {
+    if(colorPrimary)
+    {
+      navTheme.colorPrimary = colorPrimary;
+    }
+  }
 
-  return { ...defaultSettings, adminSetting: localsetting, ...navTheme, logo: localsetting.logo };
+  return { ...defaultSettings, adminSetting: localsetting, ...navTheme,...antdproRest, logo: localsetting.logo };
 };
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
   const cacheKey = 'adminSetting';

@@ -2,8 +2,9 @@ import request from '@/components/Sadmin/lib/request';
 import UiwMDEditor from '@uiw/react-md-editor';
 import { isNull } from 'lodash';
 import type { SetStateAction } from 'react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { message } from '../../message';
+import { SaDevContext } from '../../dev';
 
 const insertToTextArea = (intsertString: string) => {
   const textarea = document.querySelector('textarea');
@@ -82,11 +83,13 @@ export const MDEditorReal = (props) => {
     setValue(v);
     onChange?.(v);
   };
+  const {setting} = useContext(SaDevContext);
   return (
     <UiwMDEditor
       {...props}
       overflow={false}
       value={value}
+      data-color-mode={setting?.navTheme == 'light'?'light':'dark'}
       onChange={onChangeValue}
       onPaste={async (event) => {
         await onImagePasted(event.clipboardData, onChangeValue);

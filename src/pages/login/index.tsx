@@ -27,49 +27,53 @@ import cache from '@/components/Sadmin/helper/cache';
 import { createStyles } from 'antd-style';
 import { SelectLang } from '@/components/RightContent';
 import { t } from '@/components/Sadmin/helpers';
+import { SaDevContext } from '@/components/Sadmin/dev';
 
-const useStyles = createStyles(({ token, css }) => {
-  return {
-    action: {
-      marginLeft: '8px',
-      color: 'rgba(0, 0, 0, 0.2)',
-      fontSize: '24px',
-      verticalAlign: 'middle',
-      cursor: 'pointer',
-      transition: 'color 0.3s',
-      '&:hover': {
-        color: token.colorPrimaryActive,
+const useStyles = () => {
+  const { setting } = useContext(SaDevContext);
+  const login_bg = setting?.adminSetting?.baseurl;
+  return createStyles(({ token, css }) => {
+    return {
+      action: {
+        marginLeft: '8px',
+        color: token.colorPrimaryHover,
+        fontSize: '24px',
+        verticalAlign: 'middle',
+        cursor: 'pointer',
+        transition: 'color 0.3s',
+        '&:hover': {
+          color: token.colorPrimary,
+        },
       },
-    },
-    lang: {
-      width: 42,
-      height: 42,
-      lineHeight: '42px',
-      position: 'fixed',
-      right: 16,
-      borderRadius: token.borderRadius,
-      ':hover': {
-        backgroundColor: token.colorBgTextHover,
+      lang: {
+        width: 42,
+        height: 42,
+        lineHeight: '42px',
+        position: 'fixed',
+        right: 16,
+        borderRadius: token.borderRadius,
+        ':hover': {
+          backgroundColor: token.colorBgTextHover,
+        },
       },
-    },
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      overflow: 'auto',
-      backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
-      backgroundSize: '100% 100%',
-    },
-  };
-});
+      container: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        overflow: 'auto',
+        backgroundImage: login_bg ? `url('${login_bg}/login_bg.png')` : '',
+        backgroundSize: '100% 100%',
+      },
+    };
+  })();
+};
 
 const Lang = () => {
   const { styles } = useStyles();
 
   return (
     <div className={styles.lang} data-lang>
-      <SelectLang />,
+      <SelectLang />
     </div>
   );
 };
@@ -77,14 +81,12 @@ const Lang = () => {
 const LoginComponent: React.FC = () => {
   return (
     <WebSocketProvider>
-      <WebSocketListen />
       <Login />
     </WebSocketProvider>
   );
 };
 
 const Login: React.FC = () => {
-  const { styles } = useStyles();
   const { initialState, setInitialState } = useModel('@@initialState');
   const [captchaReload, setCaptchaReload] = useState(0);
   const [captchaPhoneReload, setCaptchaPhoneReload] = useState(0);
@@ -99,6 +101,7 @@ const Login: React.FC = () => {
 
   const { clientId, messageData, bind } = useContext(WebSocketContext);
   const [setting, setSetting] = useState<any>();
+  const { styles } = useStyles();
   const [loginType, setLoginType] = useState();
   useEffect(() => {
     saGetSetting().then((v) => {
@@ -404,7 +407,7 @@ const Login: React.FC = () => {
     if (type == 'wechat') {
       const { url, desc } = setting?.adminSetting?.loginWechat;
       const qrcodeUrl = url + '?client_id=' + clientId + '&timestamp=' + timestamp;
-      //console.log('qrcodeUrl', qrcodeUrl);
+      console.log('qrcodeUrl', qrcodeUrl);
       return (
         <div style={{ textAlign: 'center' }}>
           {timestamp ? (
@@ -429,7 +432,7 @@ const Login: React.FC = () => {
       {messageHolder}
       {notificationHolder}
       {setting?.adminSetting?.lang ? <Lang /> : null}
-      <div style={{ flex: '1', padding: '88px 0' }}>
+      <div style={{ flex: '1', padding: '48px 0' }}>
         <ProCard
           style={{
             //maxWidth: 440,
