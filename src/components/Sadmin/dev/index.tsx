@@ -1,4 +1,5 @@
 import {
+  AntDesignOutlined,
   DatabaseOutlined,
   FileMarkdownOutlined,
   MenuOutlined,
@@ -7,17 +8,16 @@ import {
   SettingOutlined,
   ToolOutlined,
 } from '@ant-design/icons';
-import { ProConfigProvider, ProProvider } from '@ant-design/pro-components';
-import { Link } from '@umijs/max';
-import { Button, Dropdown, Space } from 'antd';
+import { Link, useModel } from '@umijs/max';
+import { Dropdown, FloatButton, Space } from 'antd';
 import { MessageInstance } from 'antd/es/message/interface';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 import ModalJson from '../action/modalJson';
-import { saValueTypeMap } from '../helpers';
 import Refresh from '../components/refresh';
-import { ToolBarMenu, ToolMenuForm } from './table/toolbar';
 import { HookAPI } from 'antd/es/modal/useModal';
 import { NotificationInstance } from 'antd/es/notification/interface';
+import DevSwitch from './switch';
+import { ToolMenuForm } from './table/toolbar';
 
 export const SaDevContext = createContext<{
   setting?: any;
@@ -30,7 +30,7 @@ export const SaDevContext = createContext<{
 }>({});
 
 export const DevLinks = () => {
-  const values = useContext(ProProvider);
+  // const [open, setOpen] = useState(false);
   const items = [
     {
       key: 'menu',
@@ -38,7 +38,7 @@ export const DevLinks = () => {
         <Link
           key="menu"
           style={{ display: 'inline-block', width: '100%', textAlign: 'center' }}
-          to={'dev/menu'}
+          to={'/dev/menu'}
         >
           <Space>
             <MenuOutlined />
@@ -51,7 +51,7 @@ export const DevLinks = () => {
       key: 'model',
       label: (
         <Link
-          to={'dev/model'}
+          to={'/dev/model'}
           style={{ display: 'inline-block', width: '100%', textAlign: 'center' }}
           key="model"
         >
@@ -66,7 +66,7 @@ export const DevLinks = () => {
       key: 'setting',
       label: (
         <Link
-          to={'dev/setting'}
+          to={'/dev/setting'}
           style={{ display: 'inline-block', width: '100%', textAlign: 'center' }}
           key="setting"
         >
@@ -77,10 +77,10 @@ export const DevLinks = () => {
         </Link>
       ),
     },
-    {
-      key: 'refresh',
-      label: <Refresh key="refresh" />,
-    },
+    // {
+    //   key: 'refresh',
+    //   label: <Refresh key="refresh" />,
+    // },
     {
       key: 'json',
       label: (
@@ -112,25 +112,45 @@ export const DevLinks = () => {
         </a>
       ),
     },
+    {
+      key: 'addmenu',
+      label: (
+        <div style={{ width: '100%', textAlign: 'center' }}>
+          <ToolMenuForm
+            key="devsetting"
+            trigger={
+              <Space>
+                <PlusSquareOutlined />
+                菜单
+              </Space>
+            }
+          />
+        </div>
+      ),
+    },
   ];
-  return (
-    <Space direction="vertical" style={{ width: '100%' }}>
-      <Dropdown menu={{ items }} key="more" arrow={{ pointAtCenter: true }} placement="top">
-        <Button type="text" style={{ width: '100%' }} icon={<MoreOutlined />}>
-          更多
-        </Button>
-      </Dropdown>
 
-      <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
-        <ToolMenuForm
-          key="devsetting"
-          trigger={
-            <Button type="text" style={{ width: '100%' }} icon={<PlusSquareOutlined />}>
-              菜单
-            </Button>
-          }
-        />
-      </ProConfigProvider>
-    </Space>
+  const children = (
+    <>
+      <Dropdown menu={{ items }} key="more" arrow={{ pointAtCenter: true }} placement="top">
+        <FloatButton icon={<MoreOutlined />} />
+      </Dropdown>
+      <Refresh key="refresh" />
+      <DevSwitch key="DevSwitch" />
+    </>
+  );
+  return (
+    <>
+      <FloatButton.Group
+        //open={true}
+        //trigger="click"
+        icon={<AntDesignOutlined />}
+        badge={{ dot: true }}
+        //onOpenChange={(open) => setOpen(open)}
+        style={{ insetBlockEnd: 75 }}
+      >
+        {children}
+      </FloatButton.Group>
+    </>
   );
 };

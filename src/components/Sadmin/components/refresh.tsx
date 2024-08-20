@@ -1,7 +1,7 @@
 import { SyncOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { Space } from 'antd';
-import { useContext } from 'react';
+import { FloatButton, Space } from 'antd';
+import { useContext, useState } from 'react';
 import defaultSettings, { lightDefaultToken } from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
@@ -16,7 +16,7 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
       ? { navTheme: theme, token: { ...lightDefaultToken } }
       : { navTheme: theme, token: { sider: {}, header: {} } };
   //之后会将adpro的设置 存到一个字段下面，
-  
+
   if (localsetting.title) {
     navTheme.title = localsetting.title;
   }
@@ -24,20 +24,24 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
     navTheme.splitMenus = localsetting.splitMenus;
   }
   //解析后台配置的antdpro配置
-  const {antdpro = {}} = localsetting;
-  const {title,logo,navTheme:onavTheme,colorPrimary,token,...antdproRest} = antdpro;
+  const { antdpro = {} } = localsetting;
+  const { title, logo, navTheme: onavTheme, colorPrimary, token, ...antdproRest } = antdpro;
   //console.log('localsetting',localsetting);
   if (localsetting.colorPrimary) {
     navTheme.colorPrimary = localsetting.colorPrimary;
-  }else
-  {
-    if(colorPrimary)
-    {
+  } else {
+    if (colorPrimary) {
       navTheme.colorPrimary = colorPrimary;
     }
   }
 
-  return { ...defaultSettings, adminSetting: localsetting, ...navTheme,...antdproRest, logo: localsetting.logo };
+  return {
+    ...defaultSettings,
+    adminSetting: localsetting,
+    ...navTheme,
+    ...antdproRest,
+    logo: localsetting.logo,
+  };
 };
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
   const cacheKey = 'adminSetting';
@@ -91,17 +95,12 @@ export const saReloadMenu = async (initialState, setInitialState) => {
 export default () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const { setSetting } = useContext(SaDevContext);
-
+  const [spin, setSpin] = useState(false);
   const reload = async () => {
+    setSpin(true);
     await saReload(initialState, setInitialState, setSetting);
+    setSpin(false);
   };
 
-  return (
-    <span onClick={reload} style={{ width: '100%', textAlign: 'center', display: 'inline-block' }}>
-      <Space>
-        <SyncOutlined />
-        刷新
-      </Space>
-    </span>
-  );
+  return <FloatButton onClick={reload} icon={<SyncOutlined spin={spin} />} />;
 };

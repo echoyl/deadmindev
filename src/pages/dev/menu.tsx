@@ -8,7 +8,7 @@ import { Space } from 'antd';
 import { useRef, useContext } from 'react';
 import MenuConfig, { MenuOther } from './menuConfig';
 import MenuTable from './menuTable';
-import { SaDevContext } from '@/components/Sadmin/dev';
+import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 import tableSet from '@/components/Sadmin/dev/vars/menu/set';
 
@@ -207,7 +207,7 @@ export const MenuFormColumn: saFormColumnsType = [
 
 export default () => {
   const actionRef = useRef<ActionType>();
-  const { messageApi } = useContext(SaDevContext);
+  const { messageApi, setting } = useContext(SaDevContext);
   const { setInitialState } = useModel('@@initialState');
   const reload = async () => {
     messageApi?.loading({ key: messageLoadingKey, content: 'loading...' });
@@ -405,56 +405,59 @@ export default () => {
   ];
 
   return (
-    <Category
-      name="菜单"
-      title={false}
-      actionRef={actionRef}
-      table_menu_key="state"
-      table_menu_all={false}
-      tableColumns={tableColumns}
-      toolBarButton={[
-        {
-          valueType: 'export',
-        },
-        {
-          valueType: 'import',
-          uploadProps: {
-            accept: '.sql',
+    <>
+      <Category
+        name="菜单"
+        title={false}
+        actionRef={actionRef}
+        table_menu_key="state"
+        table_menu_all={false}
+        tableColumns={tableColumns}
+        toolBarButton={[
+          {
+            valueType: 'export',
           },
-        },
-        {
-          valueType: 'toolbar',
-          fieldProps: {
-            items: [
-              {
-                domtype: 'button',
-                btn: {
-                  text: '生成配置',
-                },
-                action: 'confirm',
-                request: {
-                  url: 'dev/menu/remenu',
-                },
-                modal: {
-                  msg: '确定要重新生成配置吗？',
-                },
-              },
-            ],
+          {
+            valueType: 'import',
+            uploadProps: {
+              accept: '.sql',
+            },
           },
-        },
-      ]}
-      formColumns={MenuFormColumn}
-      expandAll={false}
-      level={4}
-      openWidth={1600}
-      tableProps={{
-        scroll: { y: 600 },
-      }}
-      afterFormPost={reload}
-      afterDelete={reload}
-      url="dev/menu"
-      grid={false}
-      devEnable={false}
-    />
+          {
+            valueType: 'toolbar',
+            fieldProps: {
+              items: [
+                {
+                  domtype: 'button',
+                  btn: {
+                    text: '生成配置',
+                  },
+                  action: 'confirm',
+                  request: {
+                    url: 'dev/menu/remenu',
+                  },
+                  modal: {
+                    msg: '确定要重新生成配置吗？',
+                  },
+                },
+              ],
+            },
+          },
+        ]}
+        formColumns={MenuFormColumn}
+        expandAll={false}
+        level={4}
+        openWidth={1600}
+        tableProps={{
+          scroll: { y: 600 },
+        }}
+        afterFormPost={reload}
+        afterDelete={reload}
+        url="dev/menu"
+        grid={false}
+        devEnable={false}
+      />
+      {setting?.adminSetting?.dev ? null : <DevLinks />}
+    </>
   );
 };

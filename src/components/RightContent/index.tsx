@@ -17,17 +17,17 @@ export const actionDefaultStyle = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '18px',
+  fontSize: '16px',
   verticalAlign: 'middle',
 };
 
-export const actionsRender = () => {
+export const actionsRender = (settings) => {
   return [
-    <DevSwitch key="DevSwitch" />,
+    // <DevSwitch key="DevSwitch" />,
     <ThemeSwitch key="ThemeSwitch" />,
-    <SelectLang key="SelectLang" />,
+    settings?.adminSetting?.lang ? <SelectLang key="SelectLang" /> : false,
     <NoticeIconView />,
-  ];
+  ].filter((children) => children);
 };
 
 export default () => null;

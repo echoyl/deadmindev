@@ -182,7 +182,7 @@ export const BampShow: FC<{
   height?: number;
   markerCenter?: boolean;
 }> = (props) => {
-  const [id] = useState('bmap_' + uid());
+  const [id, setId] = useState<string>();
   const { lat = '', lng = '', dots = [], zoom = 16.2, height = 350, markerCenter = true } = props;
   const [init, setInit] = useState(false);
   const [map, setMap] = useState();
@@ -203,6 +203,8 @@ export const BampShow: FC<{
     // }
     // 开始加载腾讯地图gl文件
     const key = initialState?.settings?.adminSetting?.bmap_key;
+    const id = 'bmap_' + uid();
+    setId(id);
     BMapGL(key).then(() => {
       setTimeout(() => {
         //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错
@@ -244,7 +246,7 @@ const Bmap: FC = (props: {
   zoom?: number;
   level?: number;
 }) => {
-  const [id] = useState('bmap_' + uid());
+  const [id, setId] = useState<string>();
   const [searchText, setSearchText] = useState('');
   const [pc, setPc] = useState([]);
   const [pc_str, setPcStr] = useState([]);
@@ -259,6 +261,8 @@ const Bmap: FC = (props: {
 
   useEffect(() => {
     const key = initialState?.settings?.adminSetting?.bmap_key;
+    const id = 'bmap_' + uid();
+    setId(id);
     BMapGL(key) // 开始加载腾讯地图gl文件
       .then(() => {
         // 完成加载后，开始渲染地图
@@ -296,7 +300,7 @@ const Bmap: FC = (props: {
 
     const latLng = new maps.Point(lng, lat);
     const nmarker = new maps.Marker(latLng);
-    console.log('nmarker', latLng);
+    //console.log('nmarker', latLng);
     setMaker(nmarker);
     map.addOverlay(nmarker);
 
@@ -307,7 +311,7 @@ const Bmap: FC = (props: {
     var geocoder = new maps.Geocoder();
     geocoder.getLocation(latLng, async function (result) {
       // 将给定的坐标位置转换为地址
-      console.log('result', result);
+      //console.log('result', result);
       var addComp = result.addressComponents;
       if (level) {
         const initPcaValue = await getPcaValue([addComp.province, addComp.city], level);

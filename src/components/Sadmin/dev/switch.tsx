@@ -1,19 +1,17 @@
-import { actionDefaultStyle } from '@/components/RightContent';
 import { HighlightOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import useToken from 'antd/es/theme/useToken';
+import { FloatButton } from 'antd';
 import { useState } from 'react';
 
 const DevSwitch = () => {
   const [checked, setChecked] = useState(true);
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const [theme, token] = useToken();
-  const checkedStyle = { backgroundColor: token.colorBgLayout };
-
-  return initialState?.settings?.adminSetting?.dev ? (
-    <span
-      style={checked ? { ...actionDefaultStyle, ...checkedStyle } : actionDefaultStyle}
-      title={checked ? '预览' : '切换至开发模式'}
+  const { setInitialState } = useModel('@@initialState');
+  return (
+    <FloatButton
+      icon={<HighlightOutlined />}
+      type={checked ? 'primary' : 'default'}
+      // style={checked ? { ...checkedStyle } : {}}
+      // title={checked ? '预览' : '切换至开发模式'}
       onClick={() => {
         const _checked = !checked;
         setChecked(_checked);
@@ -27,9 +25,7 @@ const DevSwitch = () => {
           },
         }));
       }}
-    >
-      <HighlightOutlined />
-    </span>
-  ) : null;
+    />
+  );
 };
 export default DevSwitch;

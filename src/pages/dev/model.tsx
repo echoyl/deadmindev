@@ -8,7 +8,7 @@ import { useContext, useRef, useState } from 'react';
 import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
 import modelSettingColumns from '@/components/Sadmin/dev/vars/modelSettingColumns';
-import { SaDevContext } from '@/components/Sadmin/dev';
+import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
 import { saReload } from '@/components/Sadmin/components/refresh';
 /**
  * 默认数据库有的字段
@@ -591,6 +591,7 @@ export default () => {
           'parent_id',
         ]}
       />
+      {setting?.adminSetting?.dev ? null : <DevLinks />}
     </>
   );
 };

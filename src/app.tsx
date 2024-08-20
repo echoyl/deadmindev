@@ -129,6 +129,7 @@ export function rootContainer(container: JSX.Element, args) {
         // }
       });
     }, []);
+    //自定义外层无法使用 @@initialState
     return (
       <ConfigProvider
         locale={supportLocale[currentLocale]}
@@ -222,7 +223,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     layoutBgImgList: [],
 
-    menuFooterRender: () => (adminSetting.dev ? <DevLinks /> : false),
+    //menuFooterRender: () => (adminSetting.dev ? <DevLinks /> : false),
     //menuHeaderRender: undefined,
     menu: {
       params: initialState?.currentUser?.uidx,
@@ -238,18 +239,21 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             <WebSocketListen />
             {children}
           </WebSocketProvider>
-          {adminSetting.dev && !props.location?.pathname?.includes('/login') && (
-            <SettingDrawer
-              disableUrlParams
-              enableDarkTheme
-              settings={rest}
-              onSettingChange={(settings) => {
-                setInitialState((preInitialState) => ({
-                  ...preInitialState,
-                  settings: { ...preInitialState.settings, ...settings },
-                }));
-              }}
-            />
+          {adminSetting.dev && (
+            <>
+              <DevLinks />
+              <SettingDrawer
+                disableUrlParams
+                enableDarkTheme
+                settings={rest}
+                onSettingChange={(settings) => {
+                  setInitialState((preInitialState) => ({
+                    ...preInitialState,
+                    settings: { ...preInitialState.settings, ...settings },
+                  }));
+                }}
+              />
+            </>
           )}
         </ProConfigProvider>
       );

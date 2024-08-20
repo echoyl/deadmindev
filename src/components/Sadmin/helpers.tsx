@@ -149,7 +149,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       if (typeof image != 'object') {
         image = image ? JSON.parse(image) : [];
       }
-      return <Uploader {...props.fieldProps} value={image} buttonType='table' readonly />;
+      return <Uploader {...props.fieldProps} value={image} buttonType="table" readonly />;
     },
     renderFormItem: (text, props) => {
       return <Uploader {...props.fieldProps} />;
@@ -494,7 +494,14 @@ export const tplComplie = (exp: string | undefined, props: any = {}) => {
     }
   };
   //使用func 只匹配一次，exp必须{{ 首尾有空格 }}
-  const regex = func ? /^\s*\{\{([\s\S]*)\}\}\s*$/ : /{{\s*([^{}]*)\s*}}/g;
+  //检测是否是func
+  const is_func = exp.substring(0, 4) == 'func' ? true : false;
+
+  if (is_func) {
+    exp = exp.substring(4);
+  }
+
+  const regex = func || is_func ? /^\s*\{\{([\s\S]*)\}\}\s*$/ : /{{\s*([^{}]*)\s*}}/g;
 
   // 使用数组的map方法来处理字符串，避免使用dangerouslySetInnerHTML
   const renderedTemplate = exp
