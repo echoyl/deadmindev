@@ -373,6 +373,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       actionRef,
       initialState,
       devEnable,
+      viewable: setting?.viewable,
       ...props,
     });
   };

@@ -21,13 +21,15 @@ const SaTableAction = (props) => {
 };
 
 const LinkAction = (props) => {
-  const { record, path, editable, deleteable, level, openType } = props;
+  const { record, path, editable, deleteable, level, openType, viewable } = props;
 
   return (
     <Space>
-      <Link key="viewLink" to={(path ? path + '/' : './') + record?.id + '?readonly=1'}>
-        {t('view')}
-      </Link>
+      {viewable ? (
+        <Link key="viewLink" to={(path ? path + '/' : './') + record?.id + '?readonly=1'}>
+          {t('view')}
+        </Link>
+      ) : null}
       {editable ? (
         <Link key="editLink" to={(path ? path + '/' : './') + record?.id}>
           {t('edit')}
@@ -44,10 +46,10 @@ const LinkAction = (props) => {
 };
 
 const DrawerAction = (props) => {
-  const { record, editable, deleteable, level, openType } = props;
+  const { record, editable, deleteable, level, openType, viewable } = props;
   const { saTableContext } = useContext(SaContext);
   const items: Array<'view' | 'edit' | 'delete' | ''> = [
-    'view',
+    viewable ? 'view' : '',
     editable ? 'edit' : '',
     deleteable ? 'delete' : '',
   ];
@@ -148,6 +150,7 @@ export const getTableColumns = (props) => {
     deleteable = true,
     initialState,
     devEnable = true,
+    viewable = false,
   } = props;
 
   if (!initRequest) return [];
@@ -204,6 +207,7 @@ export const getTableColumns = (props) => {
           level={level}
           editable={editable}
           deleteable={deleteable}
+          viewable={viewable}
         />
       ),
     },

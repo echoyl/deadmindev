@@ -136,6 +136,7 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
 type saFormColumnsTypeFn<T> = (d: T) => saFormColumnsType;
 export declare type saFormTabColumnsType = Array<{
   title?: string;
+  tab?: { title?: string; [key: string]: any };
   formColumns?: saFormColumnsType | saFormColumnsTypeFn<any>;
 }>;
 export declare type saFormColumnsType = Array<saValueTypeMapType | saColumnsExtend | string>;

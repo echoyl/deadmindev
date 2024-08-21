@@ -158,6 +158,15 @@ const tableSet: saFormColumnsType = [
           defaultValue: true,
         },
       },
+      {
+        dataIndex: 'viewable',
+        title: '操作栏查看项',
+        valueType: 'switch',
+        colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: false,
+        },
+      },
     ],
   },
 ];

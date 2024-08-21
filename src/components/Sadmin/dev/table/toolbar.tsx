@@ -26,6 +26,7 @@ import { getModelColumns } from './baseFormColumns';
 import { ToolbarColumnTitle } from './title';
 import { SaDevContext } from '..';
 import { saReloadMenu } from '../../components/refresh';
+import ButtonModal from '../../action/buttonModal';
 
 export const ToolBarDom = (props) => {
   const {
@@ -214,15 +215,13 @@ export const ToolMenuForm = (props) => {
     const { contentRender, setOpen } = mprops;
     return (
       <SaForm
-        formColumns={MenuFormColumn}
+        tabs={MenuFormColumn}
         url="dev/menu/show"
         dataId={pageMenu?.id}
         paramExtra={{ id: pageMenu?.id }}
         postExtra={{ id: pageMenu?.id }}
-        showTabs={false}
-        grid={false}
+        grid={true}
         devEnable={false}
-        width={1600}
         msgcls={async ({ code, data }) => {
           if (!code) {
             saReloadMenu(initialState, setInitialState);
@@ -248,9 +247,9 @@ export const ToolMenuForm = (props) => {
     );
   };
   return (
-    <ButtonDrawer trigger={trigger} width={1600} title="菜单配置">
+    <ButtonModal trigger={trigger} width={860} title="菜单配置">
       <MenuForm />
-    </ButtonDrawer>
+    </ButtonModal>
   );
 };
 
