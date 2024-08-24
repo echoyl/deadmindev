@@ -27,6 +27,7 @@ import { ToolbarColumnTitle } from './title';
 import { SaDevContext } from '..';
 import { saReloadMenu } from '../../components/refresh';
 import ButtonModal from '../../action/buttonModal';
+import { isStr } from '../../checkers';
 
 export const ToolBarDom = (props) => {
   const {
@@ -320,12 +321,18 @@ export const ColumnsSelector = (props) => {
       pageMenu?.data?.tabs?.forEach((tab: any) => {
         const formColumns = tab?.formColumns;
         formColumns?.forEach((group: any) => {
-          const columns = group?.columns;
-          columns?.forEach((cl: any) => {
-            if (cl?.dataIndex) {
-              cls.push({ dataIndex: cl?.dataIndex });
+          if (isStr(group)) {
+            cls.push({ dataIndex: group });
+          } else {
+            const columns = group?.columns;
+            if (!isStr(columns)) {
+              columns?.forEach((cl: any) => {
+                if (cl?.dataIndex) {
+                  cls.push({ dataIndex: cl?.dataIndex });
+                }
+              });
             }
-          });
+          }
         });
       });
       return cls;

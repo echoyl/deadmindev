@@ -371,14 +371,11 @@ export const SaForm: FC<saFormProps> = (props) => {
                       : tabs[index]?.tab?.title
                     : '基础信息';
                   return {
-                    label: devEnable ? (
-                      <TabColumnTitle uid={thistab?.uid} title={label} data={thistab} />
-                    ) : (
-                      label
-                    ),
+                    label: devEnable ? <TabColumnTitle uid={thistab?.uid} title={label} /> : label,
                     key: thistab?.uid ? thistab?.uid : index + '', //key为字符串 如果是数字造成tab过多后点击切换失败的bug
                     children: <GetFormFields columns={cl} />,
                     forceRender: true,
+                    ...tabs[index]?.tab?.props,
                   };
                 })}
                 {...props.tabsProps}

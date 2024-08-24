@@ -208,7 +208,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   },
   tmapShow: {
     render: (text) => {
-      console.log(text);
+      //console.log(text);
       if (isStr(text)) {
         text = text ? JSON.parse(text) : {};
       }

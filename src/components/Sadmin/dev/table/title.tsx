@@ -96,24 +96,29 @@ const getValue = (uid, pageMenu, type) => {
     let value = {};
     //console.log('config', config);
     JSON.parse(config)?.tabs?.map((tab) => {
-      tab.config?.map((group) => {
-        if (group.uid == uid) {
-          value = group;
-        } else {
-          group.columns?.map((column) => {
-            if (column.uid == uid) {
-              value = column;
-            }
-          });
-        }
-      });
+      if (tab.uid == uid) {
+        //tab支持编辑修改其属性
+        value = tab;
+      } else {
+        tab.config?.map((group) => {
+          if (group.uid == uid) {
+            value = group;
+          } else {
+            group.columns?.map((column) => {
+              if (column.uid == uid) {
+                value = column;
+              }
+            });
+          }
+        });
+      }
     });
     return value;
   }
 };
 
 const BaseForm = (props) => {
-  const { title, uid = '', ctype, data, extpost, actionType = 'edit' } = props;
+  const { title, uid, ctype, data, extpost, actionType = 'edit' } = props;
   const {
     tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' },
   } = useContext(SaContext);
@@ -136,7 +141,8 @@ const BaseForm = (props) => {
     //setValue(getValue(uid, pageMenu, ctype ? ctype : type));
     //setValue(data);
     if (actionType != 'add') {
-      if (ctype == 'tab') {
+      if (ctype == 'tabxx') {
+        //not used
         setValue(data);
       } else {
         // console.log(
@@ -156,7 +162,7 @@ const BaseForm = (props) => {
             {
               title: 'title',
               dataIndex: ['tab', 'title'],
-              colProps: { span: 12 },
+              colProps: { span: 24 },
               formItemProps: {
                 rules: [
                   {
@@ -331,6 +337,7 @@ export const DevTableColumnTitle = (props) => {
         }
         uid={uid}
         ctype={type}
+        data={data}
         extpost={{ actionType: 'addTab' }}
       />
     ),

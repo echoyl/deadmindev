@@ -1,6 +1,6 @@
 import { PushpinOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { Button, Col, Flex, Input, Modal, Row, Space } from 'antd';
+import { Button, Col, Flex, Input, Modal, Row, Space, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { uid } from '../helpers';
 import SaPca, { getPcaValue } from '../pca';
@@ -171,9 +171,18 @@ export const TampShow: FC<{
   zoom?: number;
   height?: number;
   markerCenter?: boolean;
+  path?: Array<any>; //支持路径绘制
 }> = (props) => {
   const [id, setId] = useState<string>();
-  const { lat = '', lng = '', dots = [], zoom = 16.2, height = 350, markerCenter = true } = props;
+  const {
+    lat = '',
+    lng = '',
+    dots = [],
+    path = [],
+    zoom = 16.2,
+    height = 350,
+    markerCenter = true,
+  } = props;
   const [init, setInit] = useState(false);
   const [map, setMap] = useState();
   const [layer, setLayer] = useState();
@@ -185,6 +194,67 @@ export const TampShow: FC<{
       '</div><div style="width: 10px; height: 10px; background-color: white; transform: rotate(45deg); position: absolute; bottom: 1px; left: 0px; right: 0px; margin: auto; box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 2px;"></div></div>'
     );
   };
+
+  const drawPath = (path, map) => {
+    if (path.length > 0) {
+      const paths = path.map((p) => {
+        return new window.TMap.LatLng(p[0], p[1]);
+      });
+
+      new window.TMap.MultiMarker({
+        map,
+        styles: {
+          start: new window.TMap.MarkerStyle({
+            width: 25,
+            height: 35,
+            anchor: { x: 16, y: 32 },
+            src: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/start.png',
+          }),
+          end: new window.TMap.MarkerStyle({
+            width: 25,
+            height: 35,
+            anchor: { x: 16, y: 32 },
+            src: 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/end.png',
+          }),
+        },
+        geometries: [
+          {
+            id: 'start',
+            styleId: 'start',
+            position: paths[0],
+          },
+          {
+            id: 'end',
+            styleId: 'end',
+            position: paths[paths.length - 1],
+          },
+        ],
+      });
+
+      new window.TMap.MultiPolyline({
+        map, // 绘制到目标地图
+        // 折线样式定义
+        styles: {
+          style_blue: new window.TMap.PolylineStyle({
+            color: '#3777FF', // 线填充色
+            width: 4, // 折线宽度
+            borderWidth: 2, // 边线宽度
+            borderColor: '#FFF', // 边线颜色
+            lineCap: 'round', // 线端头方式
+            eraseColor: 'rgba(190,188,188,1)',
+          }),
+        },
+        geometries: [
+          {
+            id: 'erasePath',
+            styleId: 'style_blue',
+            paths: paths,
+          },
+        ],
+      });
+    }
+  };
+
   //const divref = useRef();
   useEffect(() => {
     // if (!divref.current) {
@@ -195,7 +265,7 @@ export const TampShow: FC<{
     setId(id);
     TMapGL(initialState?.settings?.adminSetting?.tmap_key).then(() => {
       setTimeout(() => {
-        //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错
+        //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错 在tab设置中加入属性 forceRender:false 一个map就一个tab
         const center = new window.TMap.LatLng(lat, lng);
         const map = new window.TMap.Map(document.querySelector('#' + id), {
           center,
@@ -238,6 +308,7 @@ export const TampShow: FC<{
           });
           return dot;
         });
+        drawPath(path, map);
 
         setInit(true);
       }, 500);
@@ -255,7 +326,11 @@ export const TampShow: FC<{
     });
   }, [lat, lng]);
 
-  return <div id={id} style={{ height, width: '100%' }}></div>;
+  return (
+    <Spin spinning={init ? false : true}>
+      <div id={id} style={{ height, width: '100%' }}></div>
+    </Spin>
+  );
 };
 
 const Tmap: FC = (props: {
@@ -268,7 +343,7 @@ const Tmap: FC = (props: {
   const [searchText, setSearchText] = useState('');
   const [pc, setPc] = useState([]);
   const [pc_str, setPcStr] = useState([]);
-
+  const [init, setInit] = useState(false);
   const [map, setMap] = useState();
   const [maps, setMaps] = useState();
   const [marker, setMaker] = useState();
@@ -300,6 +375,7 @@ const Tmap: FC = (props: {
             map: map,
           }),
         );
+        setInit(true);
       });
   }, []);
   useEffect(() => {
@@ -398,7 +474,9 @@ const Tmap: FC = (props: {
           />
         </Flex>
 
-        <div id={id} style={{ height: '450px', width: '100%' }}></div>
+        <Spin spinning={init ? false : true}>
+          <div id={id} style={{ height: '450px', width: '100%' }}></div>
+        </Spin>
       </Flex>
     </>
   );

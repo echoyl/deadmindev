@@ -222,64 +222,71 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         });
         //delete v.dependencyOn;
         //克隆变量
+        //如果没有条件 dependencyOn 失效
 
-        if (dependencyOn.type == 'render') {
-          if (v.valueType == 'dependency' || !v.valueType) {
-            v.name = names;
-            v.valueType = 'dependency';
-            // ((body) => {
-            //   return new Function(`return ${body}`)();
-            // })(new_column.columns);
+        if (names.length > 0) {
+          if (dependencyOn.type == 'render') {
+            if (v.valueType == 'dependency' || !v.valueType) {
+              v.name = names;
+              v.valueType = 'dependency';
+              // ((body) => {
+              //   return new Function(`return ${body}`)();
+              // })(new_column.columns);
 
-            if (devEnable) {
-              v = {
-                valueType: 'dependency',
-                name: names,
-                columns: (d) => {
-                  const relcol = columnsFun?.(d);
-                  return relcol?.map((nv) => {
-                    nv.title = <FormColumnTitle title={nv.title} uid={v.uid} />;
+              if (devEnable) {
+                v = {
+                  valueType: 'dependency',
+                  name: names,
+                  columns: (d) => {
+                    const relcol = columnsFun?.(d);
+                    return relcol?.map((nv) => {
+                      nv.title = <FormColumnTitle title={nv.title} uid={v.uid} />;
+                      return nv;
+                    });
+                  },
+                };
+              } else {
+                if (columnsFun) {
+                  v.columns = columnsFun;
+                }
+              }
+            } else {
+              v.dependencies = names;
+            }
+
+            //v.valueType = 'dependency';
+          } else {
+            const new_column = JSON.parse(JSON.stringify(v));
+            v = {
+              valueType: 'dependency',
+              name: names,
+              columns: (dependencyOnName: string[]) => {
+                //检测条件是否符合 condition 全部符合才返回数据
+                if (checkCondition(dependencyOnName, dependencyOn) || devEnable) {
+                  return [new_column].map((nv) => {
+                    if (devEnable && deep <= 1) {
+                      if (!React.isValidElement(nv.title)) {
+                        nv.title = <FormColumnTitle {...nv} />;
+                      }
+                    }
+                    nv.dependencies = names;
+                    if (!nv.dataIndex) {
+                      //如果是只读的 选择了自定义字段的 dataindex没有后 field.item 会报错误 这里重新设置一个dataIndex
+                      nv.dataIndex = 'customer_field';
+                    }
+                    //将依赖的字段值注入到fieldProps这样组件可以获取该依赖数据
+                    if (nv.fieldProps?.placeholder) {
+                      nv.fieldProps.placeholder = tplComplie(nv.fieldProps.placeholder, { intl });
+                    }
+                    nv.fieldProps = { ...nv.fieldProps, ...dependencyOnName };
                     return nv;
                   });
-                },
-              };
-            } else {
-              if (columnsFun) {
-                v.columns = columnsFun;
-              }
-            }
-          } else {
-            v.dependencies = names;
+                } else {
+                  return [];
+                }
+              },
+            };
           }
-
-          //v.valueType = 'dependency';
-        } else {
-          const new_column = JSON.parse(JSON.stringify(v));
-          v = {
-            valueType: 'dependency',
-            name: names,
-            columns: (dependencyOnName: string[]) => {
-              //检测条件是否符合 condition 全部符合才返回数据
-              if (checkCondition(dependencyOnName, dependencyOn) || devEnable) {
-                return [new_column].map((nv) => {
-                  if (devEnable && deep <= 1) {
-                    if (!React.isValidElement(nv.title)) {
-                      nv.title = <FormColumnTitle {...nv} />;
-                    }
-                  }
-                  nv.dependencies = names;
-                  //将依赖的字段值注入到fieldProps这样组件可以获取该依赖数据
-                  if (nv.fieldProps?.placeholder) {
-                    nv.fieldProps.placeholder = tplComplie(nv.fieldProps.placeholder, { intl });
-                  }
-                  nv.fieldProps = { ...nv.fieldProps, ...dependencyOnName };
-                  return nv;
-                });
-              } else {
-                return [];
-              }
-            },
-          };
         }
       }
       //支持日期中的presets的value的字符串格式日期
