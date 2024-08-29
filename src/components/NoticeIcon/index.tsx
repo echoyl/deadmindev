@@ -70,8 +70,9 @@ const getUnreadData = (noticeData: Record<string, API.NoticeIconItem[]>) => {
   return unreadMsg;
 };
 
-const NoticeIconView: React.FC = () => {
+const NoticeIconView: React.FC = (props) => {
   const { initialState } = useModel('@@initialState');
+  const { style } = props;
   //const { currentUser } = initialState || {};
   const [notices, setNotices] = useState<API.NoticeIconItem[]>([]);
   //const { data } = useRequest(getNotices);
@@ -139,6 +140,7 @@ const NoticeIconView: React.FC = () => {
       //viewMoreText="查看更多"
       onViewMore={() => message.info('Click on view more')}
       clearClose
+      style={style}
     >
       <NoticeIcon.Tab
         tabKey="notification"

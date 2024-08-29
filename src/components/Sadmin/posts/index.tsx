@@ -1,16 +1,15 @@
-import { findParents, SaBreadcrumbRender, search2Obj } from '@/components/Sadmin/helpers';
-import { PageContainer } from '@ant-design/pro-components';
+import { findParents, search2Obj } from '@/components/Sadmin/helpers';
 //import { PageContainer } from '@ant-design/pro-layout';
 import { useSearchParams } from '@umijs/max';
 import { Col, Row, Tree } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React, { useState } from 'react';
-import { saConfig } from '../config';
 import './style.less';
-import type { saTablePros } from './table';
+import type { saTableProps } from './table';
 import SaTable from './table';
+import { PageContainer404 } from '@/pages/404';
 
-const PostsList: React.FC<saTablePros> = (props) => {
+const PostsList: React.FC<saTableProps> = (props) => {
   //console.log('props', props);
   const {
     tableTitle = false,
@@ -70,17 +69,8 @@ const PostsList: React.FC<saTablePros> = (props) => {
   // }, []);
   //log('categorys',categorys);
   return (
-    <PageContainer
-      title={tableTitle}
-      className="saContainer"
-      fixedHeader={saConfig.fixedHeader}
-      header={{
-        breadcrumbRender: (_, dom) => {
-          return <SaBreadcrumbRender path={path} />;
-        },
-      }}
-    >
-      <Row gutter={[24, 24]} style={categorys.length > 1 ? { marginLeft: 0, marginRight: 0 } : {}}>
+    <PageContainer404 title={tableTitle} path={path}>
+      <Row gutter={[12, 12]} style={categorys.length > 1 ? { marginLeft: 0, marginRight: 0 } : {}}>
         {categorys.length > 1 && (
           <Col span={3} title={treeTitle} style={{ background: '#fff', paddingTop: 20 }}>
             <Title level={5}>{treeTitle}</Title>
@@ -142,7 +132,7 @@ const PostsList: React.FC<saTablePros> = (props) => {
           />
         </Col>
       </Row>
-    </PageContainer>
+    </PageContainer404>
   );
 };
 

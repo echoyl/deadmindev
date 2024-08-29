@@ -1,11 +1,10 @@
 import request, { messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { SettingOutlined } from '@ant-design/icons';
-import { BetaSchemaForm, PageContainer, ProCard } from '@ant-design/pro-components';
+import { BetaSchemaForm, ProCard } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Button, Col, Flex, Row, Skeleton, Space, Tabs } from 'antd';
 import { useContext, useEffect, useState } from 'react';
-import { saConfig } from '../../config';
-import { SaBreadcrumbRender, tplComplie } from '../../helpers';
+import { tplComplie } from '../../helpers';
 import { PagePanelHeader } from '../../pagePanel';
 import { getFormFieldColumns } from '../../posts/formDom';
 import { SaContext } from '../../posts/table';
@@ -16,6 +15,7 @@ import PanelItemCard from './items/card';
 import PanelItemTable from './items/table';
 import { DevPanelColumnTitle } from './title';
 import { SaDevContext } from '..';
+import { PageContainer404 } from '@/pages/404';
 
 const ItemCol = (props) => {
   const {
@@ -284,16 +284,7 @@ const SaPanel = (props) => {
   }, [initialState?.settings?.devDisable]);
 
   return (
-    <PageContainer
-      title={false}
-      className="saContainer"
-      fixedHeader={saConfig.fixedHeader}
-      header={{
-        breadcrumbRender: (_, dom) => {
-          return <SaBreadcrumbRender path={path} />;
-        },
-      }}
-    >
+    <PageContainer404 title={false} path={path}>
       <SaContext.Provider
         value={{
           tableDesigner,
@@ -326,7 +317,7 @@ const SaPanel = (props) => {
           </Space>
         ) : null}
       </SaContext.Provider>
-    </PageContainer>
+    </PageContainer404>
   );
 };
 

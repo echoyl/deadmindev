@@ -4,11 +4,10 @@ import NoticeIconView from '../NoticeIcon';
 import DevSwitch from '../Sadmin/dev/switch';
 import ThemeSwitch from '../Sadmin/themeSwitch';
 
-export const SelectLang = () => {
+export const SelectLang = (props) => {
   const { initialState } = useModel('@@initialState');
-  return initialState?.settings?.adminSetting?.lang ? (
-    <UmiSelectLang style={actionDefaultStyle} />
-  ) : null;
+  const { style } = props;
+  return initialState?.settings?.adminSetting?.lang ? <UmiSelectLang style={style} /> : null;
 };
 
 export const actionDefaultStyle = {
@@ -22,11 +21,13 @@ export const actionDefaultStyle = {
 };
 
 export const actionsRender = (settings) => {
+  const style =
+    settings?.layout == 'side' ? { ...actionDefaultStyle, padding: 0 } : actionDefaultStyle;
   return [
     // <DevSwitch key="DevSwitch" />,
-    <ThemeSwitch key="ThemeSwitch" />,
-    settings?.adminSetting?.lang ? <SelectLang key="SelectLang" /> : false,
-    <NoticeIconView />,
+    <ThemeSwitch style={style} key="ThemeSwitch" />,
+    settings?.adminSetting?.lang ? <SelectLang style={style} key="SelectLang" /> : false,
+    <NoticeIconView style={style} />,
   ].filter((children) => children);
 };
 

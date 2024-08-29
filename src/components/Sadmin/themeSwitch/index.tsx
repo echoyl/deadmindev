@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import { lightDefaultToken } from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
-import { actionDefaultStyle } from '@/components/RightContent';
 import HeaderDropdown from '@/components/HeaderDropdown';
 
 export const getTheme = (adminSetting: { [key: string]: any } | undefined): string => {
@@ -29,8 +28,9 @@ export const getTheme = (adminSetting: { [key: string]: any } | undefined): stri
   return theme ? theme : 'light';
 };
 
-const ThemeSwitch = () => {
+const ThemeSwitch = (props) => {
   const { initialState, setInitialState } = useModel('@@initialState');
+  const { style } = props;
   const theme = getTheme(initialState?.settings?.adminSetting);
   //const [checked, setChecked] = useState(theme != 'light' ? true : false);
   const [checked, setChecked] = useState(theme);
@@ -91,7 +91,7 @@ const ThemeSwitch = () => {
       }}
       placement="bottomRight"
     >
-      <span style={actionDefaultStyle}>{menuItems.find((v) => v.key == checked)?.icon}</span>
+      <span style={style}>{menuItems.find((v) => v.key == checked)?.icon}</span>
     </HeaderDropdown>
   );
 };

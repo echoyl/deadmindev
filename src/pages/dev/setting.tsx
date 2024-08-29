@@ -2,10 +2,9 @@ import { inArray } from '@/components/Sadmin/checkers';
 import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
 import { message } from '@/components/Sadmin/message';
 import PostsForm from '@/components/Sadmin/posts/post';
-import Refresh, { saGetSetting } from '@/components/Sadmin/components/refresh';
+import { saGetSetting } from '@/components/Sadmin/components/refresh';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { useModel } from '@umijs/max';
-import { Button } from 'antd';
 import { useContext } from 'react';
 
 export default () => {
@@ -194,12 +193,24 @@ export default () => {
                   },
                 ],
               },
-
               {
-                title: '主题色',
-                dataIndex: 'colorPrimary',
-                valueType: 'colorPicker',
-                tooltip: '优先级高于右侧设置中选择的主题色',
+                valueType: 'group',
+                columns: [
+                  {
+                    title: '侧边栏暗黑模式',
+                    dataIndex: 'siderDark',
+                    valueType: 'switch',
+                    tooltip: '只有导航模式为侧边菜单布局(layout:side)模式下该设置才会生效',
+                    colProps: { span: 12 },
+                  },
+                  {
+                    title: '主题色',
+                    dataIndex: 'colorPrimary',
+                    valueType: 'colorPicker',
+                    tooltip: '优先级高于右侧设置中选择的主题色',
+                    colProps: { span: 12 },
+                  },
+                ],
               },
               {
                 title: 'AntdPro配置',

@@ -36,6 +36,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
 } = (props) => {
   const { useToken } = theme;
   const { token } = useToken();
+  const { style } = props;
   const getNotificationBox = (): React.ReactNode => {
     const {
       children,
@@ -111,7 +112,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
   const NoticeBellIcon = bell || <BellOutlined />;
   const trigger = (
     <Badge
-      styles={{ root: { ...actionDefaultStyle, color: token.colorTextTertiary } }}
+      styles={{ root: { ...style, color: token.colorTextTertiary } }}
       count={count}
       size="small"
       offset={[-10, 10]}

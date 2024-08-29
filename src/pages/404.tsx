@@ -1,13 +1,14 @@
+import { SaDevContext } from '@/components/Sadmin/dev';
 import SaPanel from '@/components/Sadmin/dev/panel';
-import { getBread } from '@/components/Sadmin/helpers';
+import { SaBreadcrumbRender, getBread } from '@/components/Sadmin/helpers';
 import PagePanel from '@/components/Sadmin/pagePanel';
 import PostsList from '@/components/Sadmin/posts';
 import Category from '@/components/Sadmin/posts/category';
-import PostsForm from '@/components/Sadmin/posts/post';
-import { PageLoading } from '@ant-design/pro-components';
+import PostsForm, { SaForm } from '@/components/Sadmin/posts/post';
+import { PageContainer, PageLoading, ProCard } from '@ant-design/pro-components';
 import { history, useLocation } from '@umijs/max';
 import { Button, Result } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 const NoFoundPage: React.FC = () => (
   // <Result
@@ -69,6 +70,26 @@ const Page: React.FC = () => {
   );
 };
 
+export const PageContainer404 = (props) => {
+  const { title = false, match = false, path } = props;
+  const { setting } = useContext(SaDevContext);
+  return (
+    <PageContainer
+      title={title}
+      fixedHeader={setting?.fixedHeader}
+      className="saContainer"
+      affixProps={setting?.layout == 'side' ? { offsetTop: 0, style: { marginTop: -1 } } : {}}
+      header={{
+        breadcrumbRender: (_, dom) => {
+          return <SaBreadcrumbRender match={match} path={path} />;
+        },
+      }}
+    >
+      {props.children}
+    </PageContainer>
+  );
+};
+
 const PageTypes = ({ menu, match, pathname }) => {
   const { data, page_type, name } = menu;
   //console.log('menu is', menu);
@@ -81,8 +102,9 @@ const PageTypes = ({ menu, match, pathname }) => {
         : '';
     return (
       <PostsForm
-        key={pathname}
         formTitle={false}
+        key={pathname}
+        match={match ? true : false}
         pageMenu={menu}
         {...data}
         msgcls={({ code }) => {
@@ -96,7 +118,6 @@ const PageTypes = ({ menu, match, pathname }) => {
           }
         }}
         url={url}
-        match={match ? true : false}
         dataId={match ? match?.[1] : 0}
       />
     );

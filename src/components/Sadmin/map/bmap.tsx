@@ -1,6 +1,6 @@
 import { PushpinOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { Button, Col, Flex, Input, Modal, Row, Space } from 'antd';
+import { Button, Col, Flex, Input, Modal, Row, Space, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { uid } from '../helpers';
 import SaPca, { getPcaValue } from '../pca';
@@ -182,7 +182,7 @@ export const BampShow: FC<{
   height?: number;
   markerCenter?: boolean;
 }> = (props) => {
-  const [id, setId] = useState<string>();
+  const [id, setId] = useState<string>('bmap_' + uid());
   const { lat = '', lng = '', dots = [], zoom = 16.2, height = 350, markerCenter = true } = props;
   const [init, setInit] = useState(false);
   const [map, setMap] = useState();
@@ -203,8 +203,6 @@ export const BampShow: FC<{
     // }
     // 开始加载腾讯地图gl文件
     const key = initialState?.settings?.adminSetting?.bmap_key;
-    const id = 'bmap_' + uid();
-    setId(id);
     BMapGL(key).then(() => {
       setTimeout(() => {
         //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错
@@ -237,7 +235,11 @@ export const BampShow: FC<{
     }
   }, [lat, lng]);
 
-  return <div id={id} style={{ height, width: '100%' }}></div>;
+  return (
+    <Spin spinning={init ? false : true}>
+      <div id={id} style={{ height, width: '100%' }}></div>
+    </Spin>
+  );
 };
 
 const Bmap: FC = (props: {
@@ -246,11 +248,11 @@ const Bmap: FC = (props: {
   zoom?: number;
   level?: number;
 }) => {
-  const [id, setId] = useState<string>();
+  const [id, setId] = useState<string>('bmap_' + uid());
   const [searchText, setSearchText] = useState('');
   const [pc, setPc] = useState([]);
   const [pc_str, setPcStr] = useState([]);
-
+  const [init, setInit] = useState(false);
   const [map, setMap] = useState();
   const [maps, setMaps] = useState();
   const [marker, setMaker] = useState();
@@ -261,8 +263,6 @@ const Bmap: FC = (props: {
 
   useEffect(() => {
     const key = initialState?.settings?.adminSetting?.bmap_key;
-    const id = 'bmap_' + uid();
-    setId(id);
     BMapGL(key) // 开始加载腾讯地图gl文件
       .then(() => {
         // 完成加载后，开始渲染地图
@@ -275,6 +275,7 @@ const Bmap: FC = (props: {
         map.addControl(zoomCtrl);
         setMap(map);
         setMaps(maps);
+        setInit(true);
       });
   }, []);
 
@@ -374,7 +375,9 @@ const Bmap: FC = (props: {
             onSearch={onSearch}
           />
         </Flex>
-        <div id={id} style={{ height: '450px', width: '100%' }}></div>
+        <Spin spinning={init ? false : true}>
+          <div id={id} style={{ height: '450px', width: '100%' }}></div>
+        </Spin>
       </Flex>
     </>
   );

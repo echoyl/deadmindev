@@ -1,10 +1,8 @@
-import { PageContainer } from '@ant-design/pro-components';
 import React, { useState } from 'react';
-import { saConfig } from '../config';
-import { SaBreadcrumbRender } from '../helpers';
 import './style.less';
 import type { saTableProps } from './table';
 import SaTable from './table';
+import { PageContainer404 } from '@/pages/404';
 type CategoryProps = {
   expandAll?: boolean;
 } & saTableProps;
@@ -55,16 +53,7 @@ const Category: React.FC<CategoryProps> = (props) => {
   };
 
   return (
-    <PageContainer
-      title={tableTitle}
-      className="saContainer"
-      fixedHeader={saConfig.fixedHeader}
-      header={{
-        breadcrumbRender: (_, dom) => {
-          return <SaBreadcrumbRender path={path} />;
-        },
-      }}
-    >
+    <PageContainer404 title={tableTitle} path={path}>
       <SaTable
         {...defaultProps}
         beforeTableGet={(ret) => {
@@ -91,7 +80,7 @@ const Category: React.FC<CategoryProps> = (props) => {
         }}
         tableProps={tableProps}
       />
-    </PageContainer>
+    </PageContainer404>
   );
 };
 

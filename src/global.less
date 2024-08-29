@@ -23,8 +23,12 @@ ul,
 ol {
   list-style: none;
 }
-.deadminLight .ant-layout-sider {
+.deadmin-light.deadmin-sider-dark.deadmin-layout-side .ant-layout-sider {
   /* background-color: #fff !important;*/
+  background: #001529 !important;
+}
+.deadmin-layout-side .ant-pro-sider-collapsed-button {
+  inset-block-start: 34px;
 }
 @media (max-width: 768px) {
   .ant-table {
@@ -42,12 +46,15 @@ ol {
     }
   }
 }
-
 .ant-pro-page-container-children-container {
   padding-top: 0;
   // token 失效后直接写到样式里
-  padding-inline: 20px;
+  padding-inline: 16px;
 }
+.deadmin-layout-side .ant-pro-page-container-children-container {
+  padding-top: 16px;
+}
+
 .saContainer .ant-pro-page-container-children-content {
   padding-block: 0;
   padding-inline: 20px;
@@ -83,4 +90,9 @@ ol {
 }
 .ant-pro-form-list-item-table .ant-col-xs-24 {
   flex: 0 0 auto;
+}
+html,
+div {
+  scrollbar-width: thin;
+  scrollbar-color: unset;
 }

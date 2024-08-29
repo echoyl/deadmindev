@@ -196,6 +196,17 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     }
   };
 
+  const classNames = [];
+  if (initialState?.settings?.adminSetting?.siderDark) {
+    classNames.push('deadmin-sider-dark');
+  }
+  if (initialState?.settings?.layout == 'side') {
+    classNames.push('deadmin-layout-side');
+  }
+  if (initialState?.settings?.navTheme == 'light') {
+    classNames.push('deadmin-light');
+  }
+
   return {
     actionsRender: actionsRender,
     avatarProps: {
@@ -232,6 +243,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       },
       locale: false,
     },
+    menuRender: (props, dom) => {
+      if (
+        initialState?.settings?.adminSetting?.siderDark &&
+        initialState?.settings?.layout == 'side'
+      ) {
+        return <ProConfigProvider dark={true}>{dom}</ProConfigProvider>;
+      }
+
+      return dom;
+    },
     childrenRender: (children, props) => {
       return (
         <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
@@ -259,7 +280,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       );
     },
     siderWidth: 208,
-    className: initialState?.settings?.navTheme == 'light' ? 'deadminLight' : 'deadminDark',
+    className: classNames,
     ...initialState?.settings,
   };
 };

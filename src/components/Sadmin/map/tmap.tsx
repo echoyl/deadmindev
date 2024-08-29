@@ -173,7 +173,7 @@ export const TampShow: FC<{
   markerCenter?: boolean;
   path?: Array<any>; //支持路径绘制
 }> = (props) => {
-  const [id, setId] = useState<string>();
+  const [id, setId] = useState<string>('tmap_' + uid());
   const {
     lat = '',
     lng = '',
@@ -261,8 +261,6 @@ export const TampShow: FC<{
     //   return;
     // }
     // 开始加载腾讯地图gl文件
-    const id = 'tmap_' + uid();
-    setId(id);
     TMapGL(initialState?.settings?.adminSetting?.tmap_key).then(() => {
       setTimeout(() => {
         //form中使用tab forceRender为true 时 导致dom未初始化 初始化地图失败报错 在tab设置中加入属性 forceRender:false 一个map就一个tab
@@ -339,7 +337,7 @@ const Tmap: FC = (props: {
   level?: number;
   zoom?: number;
 }) => {
-  const [id, setId] = useState<string>();
+  const [id, setId] = useState<string>('tmap_' + uid());
   const [searchText, setSearchText] = useState('');
   const [pc, setPc] = useState([]);
   const [pc_str, setPcStr] = useState([]);
@@ -352,8 +350,6 @@ const Tmap: FC = (props: {
   const { initialState } = useModel('@@initialState');
   const { zoom = 15, level = 2 } = props;
   useEffect(() => {
-    const id = 'tmap_' + uid();
-    setId(id);
     TMapGL(initialState?.settings?.adminSetting?.tmap_key) // 开始加载腾讯地图gl文件
       .then(() => {
         // 完成加载后，开始渲染地图

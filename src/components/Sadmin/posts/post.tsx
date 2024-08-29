@@ -1,7 +1,6 @@
 import request from '@/components/Sadmin/lib/request';
 import {
   FooterToolbar,
-  PageContainer,
   ProCard,
   ProForm,
   ProFormInstance,
@@ -9,18 +8,17 @@ import {
 } from '@ant-design/pro-components';
 //import { PageContainer } from '@ant-design/pro-layout';
 import { history, useIntl, useModel, useParams, useSearchParams } from '@umijs/max';
-import { App, Col, GetProps, message, Row, Space, Tabs } from 'antd';
+import { Col, GetProps, Row, Space, Tabs } from 'antd';
 import { isUndefined } from 'lodash';
 import { FC, useContext, useEffect, useRef, useState } from 'react';
-import { saConfig } from '../config';
 import { SaDevContext } from '../dev';
 import { DndContext } from '../dev/dnd-context';
 import { useTableDesigner } from '../dev/table/designer';
 import { FormAddTab, TabColumnTitle } from '../dev/table/title';
-import { SaBreadcrumbRender } from '../helpers';
 
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
 import { SaContext, saTableProps } from './table';
+import { PageContainer404 } from '@/pages/404';
 
 export interface saFormProps extends saTableProps {
   msgcls?: (value: { [key: string]: any }) => void; //提交数据后的 回调
@@ -375,7 +373,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                     key: thistab?.uid ? thistab?.uid : index + '', //key为字符串 如果是数字造成tab过多后点击切换失败的bug
                     children: <GetFormFields columns={cl} />,
                     forceRender: true,
-                    ...tabs[index]?.tab?.props,
+                    ...tabs?.[index]?.tab?.props,
                   };
                 })}
                 {...props.tabsProps}
@@ -397,20 +395,11 @@ const PostsForm: FC<saFormProps & { match?: boolean }> = (props) => {
   const { formTitle = '详情', match = false, path } = props;
   //console.log(value?.breadcrumb);
   return (
-    <PageContainer
-      title={formTitle}
-      fixedHeader={saConfig.fixedHeader}
-      className="saContainer"
-      header={{
-        breadcrumbRender: (_, dom) => {
-          return <SaBreadcrumbRender match={match} path={path} />;
-        },
-      }}
-    >
+    <PageContainer404 title={formTitle} match={match} path={path}>
       <ProCard bordered={false}>
         <SaForm {...props} />
       </ProCard>
-    </PageContainer>
+    </PageContainer404>
   );
 };
 

@@ -10,6 +10,7 @@ import QuickCreate from './quickCreate';
 import modelSettingColumns from '@/components/Sadmin/dev/vars/modelSettingColumns';
 import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
 import { saReload } from '@/components/Sadmin/components/refresh';
+import request from '@/components/Sadmin/lib/request';
 /**
  * 默认数据库有的字段
  */
@@ -168,6 +169,34 @@ export default () => {
     { label: '图标选择器 - iconSelect', value: 'iconSelect' },
   ];
 
+  const { messageApi } = useContext(SaDevContext);
+  const [schemaloading, setSchemaloading] = useState(false);
+
+  const schemaToJson = async () => {
+    const name = formRef?.current?.getFieldValue('name');
+    const parent_id = formRef?.current?.getFieldValue('parent_id');
+
+    if (!name) {
+      messageApi?.error('请先输入name');
+      return;
+    }
+    setSchemaloading(true);
+    const { code, data } = await request.get('dev/model/getJsonFromTable', {
+      params: { name, parent_id },
+    });
+    setSchemaloading(false);
+    if (!code) {
+      clickSetColumns([...data]);
+    }
+  };
+
+  const clickSetColumns = (v: any) => {
+    formRef.current?.setFieldsValue({
+      columns: v,
+      search_columns: [],
+    });
+  };
+
   const setTableColumns = (type: string) => {
     console.log(type);
     const cateColumns = [
@@ -225,11 +254,7 @@ export default () => {
         table_menu: true,
       },
     ];
-
-    formRef.current?.setFieldValue(
-      'columns',
-      type == 'category' ? [...cateColumns] : [...normalColumns],
-    );
+    clickSetColumns(type == 'category' ? [...cateColumns] : [...normalColumns]);
   };
   const { initialState, setInitialState } = useModel('@@initialState');
   const { setSetting, setting } = useContext(SaDevContext);
@@ -350,13 +375,15 @@ export default () => {
           },
 
           {
-            title: (
+            title: () => (
               <Space>
-                <span>表结构</span>
+                <span key="title">表结构</span>
                 <Button
                   onClick={() => setTableColumns('category')}
                   size="small"
                   icon={<PlusCircleOutlined />}
+                  key="category"
+                  type="text"
                 >
                   分类模型结构
                 </Button>
@@ -364,8 +391,20 @@ export default () => {
                   onClick={() => setTableColumns('normal')}
                   size="small"
                   icon={<PlusCircleOutlined />}
+                  key="normal"
+                  type="text"
                 >
                   普通模型结构
+                </Button>
+                <Button
+                  loading={schemaloading}
+                  onClick={schemaToJson}
+                  size="small"
+                  icon={<PlusCircleOutlined />}
+                  key="schema"
+                  type="text"
+                >
+                  通过已存在表生成
                 </Button>
               </Space>
             ),
