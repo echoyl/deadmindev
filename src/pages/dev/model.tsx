@@ -135,6 +135,7 @@ export default () => {
     { label: 'text-文本', value: 'text' },
     { label: 'bigint-长整数', value: 'bigint' },
     { label: 'longtext-长Text', value: 'longtext' },
+    { label: 'enum - 枚举', value: 'enum' },
   ];
   const modelType = ['category', 'normal', 'auth'];
   const searchColumnType = ['=', 'like', 'whereBetween', 'whereIn', 'has', 'doesntHave'];
@@ -443,6 +444,7 @@ export default () => {
                     title: '类型',
                     dataIndex: 'type',
                     valueType: 'select',
+                    tooltip: '如果选择枚举类型，需要在字段配置中配置json可选数据，第一个为默认值',
                     colProps: { span: 3 },
                     fieldProps: { options: schemaType },
                   },
@@ -508,8 +510,18 @@ export default () => {
                         {
                           valueType: 'group',
                           columns: [
-                            { title: 'label', dataIndex: 'label', colProps: { span: 8 } },
-                            { title: 'value', dataIndex: 'value', colProps: { span: 8 } },
+                            {
+                              title: 'label',
+                              dataIndex: 'label',
+                              tooltip: '默认为id',
+                              colProps: { span: 8 },
+                            },
+                            {
+                              title: 'value',
+                              dataIndex: 'value',
+                              tooltip: '默认为title',
+                              colProps: { span: 8 },
+                            },
                             { title: 'children', dataIndex: 'children', colProps: { span: 8 } },
                           ],
                         },
@@ -520,7 +532,39 @@ export default () => {
                             { title: 'swtich关闭', dataIndex: 'close', colProps: { span: 8 } },
                           ],
                         },
-                        { title: 'json可选数据', dataIndex: 'json', valueType: 'jsonEditor' },
+                        {
+                          title: 'json可选数据',
+                          dataIndex: 'json',
+                          valueType: 'formList',
+                          rowProps: {
+                            gutter: 0,
+                          },
+                          columns: [
+                            {
+                              valueType: 'group',
+                              columns: [
+                                { title: 'Value - id', dataIndex: 'id', colProps: { span: 6 } },
+                                {
+                                  title: 'Label - title',
+                                  dataIndex: 'title',
+                                  colProps: { span: 6 },
+                                },
+                                {
+                                  title: 'Icon',
+                                  dataIndex: 'icon',
+                                  valueType: 'iconSelect',
+                                  colProps: { span: 6 },
+                                },
+                                {
+                                  title: 'Color',
+                                  dataIndex: 'color',
+                                  valueType: 'colorPicker',
+                                  colProps: { span: 6 },
+                                },
+                              ],
+                            },
+                          ],
+                        },
                       ],
                     },
                   },

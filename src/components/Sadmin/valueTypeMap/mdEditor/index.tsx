@@ -39,7 +39,8 @@ const fileUpload = async (file) => {
   });
   const { code, data } = await request.post('uploader/index', {
     data: formData,
-    // headers: { 'Content-Type': 'multipart/form-data' },
+    requestType: 'form',
+    //headers: { 'Content-Type': 'multipart/form-data' },
   });
   message.destroy('request_message_key');
   if (!code) {
@@ -83,13 +84,13 @@ export const MDEditorReal = (props) => {
     setValue(v);
     onChange?.(v);
   };
-  const {setting} = useContext(SaDevContext);
+  const { setting } = useContext(SaDevContext);
   return (
     <UiwMDEditor
       {...props}
       overflow={false}
       value={value}
-      data-color-mode={setting?.navTheme == 'light'?'light':'dark'}
+      data-color-mode={setting?.navTheme == 'light' ? 'light' : 'dark'}
       onChange={onChangeValue}
       onPaste={async (event) => {
         await onImagePasted(event.clipboardData, onChangeValue);
