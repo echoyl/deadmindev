@@ -243,21 +243,26 @@ const SaTable: React.FC<saTableProps> = (props) => {
 
     !initRequest && setInitRequest(true);
     if (ret.search?.table_menu && !initRequest && table_menu_key) {
-      if (table_menu_all) {
-        setTableMenu([{ label: t('all'), value: 'all' }, ...ret.search.table_menu[table_menu_key]]);
-      } else {
-        setTableMenu(ret.search.table_menu[table_menu_key]);
-        //不再需要默认设置第一个菜单的id了，需要自己在后端实现 未传参数是默认读取第一个参数 (会产生两次请求)
-      }
       //如果后端传了tab id 那么主动重新设置一次
       if (ret.search?.table_menu_id) {
         console.log('server set table_menu_id', ret.search?.table_menu_id);
+        //这里会再次请求体验不好，所以请在菜单其它配置中设置 table_menu_default
         setTableMenuId(ret.search?.table_menu_id);
       }
     }
     setData([...ret.data]);
     return Promise.resolve({ data: ret.data, success: ret.success, total: ret.total });
   };
+  useEffect(() => {
+    if (enums && enums.table_menu && table_menu_key) {
+      if (table_menu_all) {
+        setTableMenu([{ label: t('all'), value: 'all' }, ...enums.table_menu[table_menu_key]]);
+      } else {
+        setTableMenu(enums.table_menu[table_menu_key]);
+        //不再需要默认设置第一个菜单的id了，需要自己在后端实现 未传参数是默认读取第一个参数 (会产生两次请求)
+      }
+    }
+  }, [table_menu_key, enums, table_menu_all]);
   const [modalApi, modalHolder] = Modal.useModal();
   const { messageApi } = useContext(SaDevContext);
   const post = async (base: any, extra: any, requestRes: any) => {
@@ -539,7 +544,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                 }
           }
           toolbar={
-            tableMenu
+            tableMenu && table_menu_key
               ? {
                   menu: {
                     type: 'tab',
