@@ -4,7 +4,7 @@ import { Color } from 'antd/es/color-picker';
 import { useState } from 'react';
 
 const ColorPicker = (props) => {
-  const { onChange, colorType = 'hex' } = props;
+  const { onChange, colorType = 'hex', disabled } = props;
   const [value, setValue] = useState(props?.value ? props?.value : '');
   const getColorValueString = (color: Color) => {
     if (colorType == 'rgb') {
@@ -47,6 +47,7 @@ const ColorPicker = (props) => {
           onChange?.(e.target.value);
           setValue(e.target.value);
         }}
+        disabled={disabled}
       />
     </ColorPickerAnt>
   );
@@ -59,6 +60,10 @@ export const ColorPickerRel = (props) => {
 export const ColorPickerMap = (_, props) => {
   const { fieldProps } = props;
   return <ColorPickerRel {...fieldProps} />;
+};
+
+export const ColorPickerRenderMap = (_, props) => {
+  return <ColorPicker size="small" format="rgb" value={_} showText disabled />;
 };
 
 export default ColorPicker;

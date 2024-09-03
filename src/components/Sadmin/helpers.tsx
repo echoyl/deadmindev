@@ -1,4 +1,3 @@
-import { BgColorsOutlined } from '@ant-design/icons';
 import {
   MenuDataItem,
   ProBreadcrumb,
@@ -9,19 +8,17 @@ import {
   RouteContext,
   getMenuData,
 } from '@ant-design/pro-components';
-import { FormattedMessage, injectIntl, useIntl, useModel, useRouteData } from '@umijs/max';
-import { ColorPicker, Image, Input } from 'antd';
+import { FormattedMessage, useModel, useRouteData } from '@umijs/max';
 import { get } from 'rc-util';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import DebounceSelect from './DebounceSelect';
 import { ConfirmRender } from './action/confirm';
-import { ConfirmFormRender } from './action/confirmForm';
 import CustomerColumnRender from './action/customerColumn';
 import CustomerColumnRenderDev from './action/customerColumn/dev';
 import ModalJson from './action/modalJson';
 import CarBrand from './carBrand';
-import { isBool, isObj, isStr } from './checkers';
+import { isObj, isStr } from './checkers';
 import { FormCalendarRender } from './formCalendar';
 import { Guiges } from './guige';
 import JsonEditor from './jsonEditor';
@@ -32,19 +29,22 @@ import SaOptions, { SaEditorTable } from './options';
 import { PcaRender, getPca } from './pca';
 import PermGroup from './perm/group';
 import UserPerm from './perm/user';
-import { tableFromBreadRender } from './tableFromBread';
 import TinyEditor from './tinyEditor';
 import { SaTransferRender } from './transfer';
-import Uploader from './uploader';
-import AliyunVideo from './uploader/video';
-import IconSelect, { iconToElement } from './valueTypeMap/iconSelect';
-import MDEditor from './valueTypeMap/mdEditor';
+import IconSelect, { iconToElement, IconSelectRender } from './valueTypeMap/iconSelect';
 import { wxMenuRender } from './wxMenu';
 import { isString } from 'lodash';
 import SaAutoCompleteMap from './valueTypeMap/autoComplete';
 import { DropdownActionMap } from './valueTypeMap/dropdownAction';
-import { ColorPickerMap } from './valueTypeMap/colorPicker';
+import { ColorPickerMap, ColorPickerRenderMap } from './valueTypeMap/colorPicker';
 import { BampShow, BmapInput } from './map/bmap';
+import {
+  AliyunVideoRender,
+  UploaderRender,
+  tableFromBreadRender,
+  ConfirmFormRender,
+  MDEditorRender,
+} from './valueTypeMap';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -150,10 +150,10 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       if (typeof image != 'object') {
         image = image ? JSON.parse(image) : [];
       }
-      return <Uploader {...props.fieldProps} value={image} buttonType="table" readonly />;
+      return <UploaderRender {...props.fieldProps} value={image} buttonType="table" readonly />;
     },
     renderFormItem: (text, props) => {
-      return <Uploader {...props.fieldProps} />;
+      return <UploaderRender {...props.fieldProps} />;
     },
   },
   aliyunVideo: {
@@ -162,7 +162,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
     renderFormItem: (text, props) => {
       //return null;
-      return <AliyunVideo {...props.fieldProps} />;
+      return <AliyunVideoRender {...props.fieldProps} />;
     },
   },
   saFormTable: {
@@ -420,21 +420,17 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
   },
   colorPicker: {
-    render: (_, props) => {
-      return <ColorPicker size="small" value={_} showText disabled />;
-    },
+    render: ColorPickerRenderMap,
     renderFormItem: ColorPickerMap,
   },
   mdEditor: {
     render: (_, props) => {
       return _;
     },
-    renderFormItem: MDEditor,
+    renderFormItem: MDEditorRender,
   },
   iconSelect: {
-    render: (_, props) => {
-      return _;
-    },
+    render: IconSelectRender,
     renderFormItem: IconSelect,
   },
   saAutoComplete: {

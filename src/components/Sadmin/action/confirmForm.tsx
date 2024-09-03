@@ -237,12 +237,4 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
   );
 };
 
-export const ConfirmFormRender = (props) => {
-  let show = true;
-  if (props.if) {
-    show = tplComplie(props.if, props);
-  }
-  return show ? <ConfirmForm dataId={props.record?.id} {...props} /> : null;
-};
-
 export default ConfirmForm;

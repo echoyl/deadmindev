@@ -1,8 +1,9 @@
-import { Badge, Dropdown, Space } from 'antd';
+import { Badge, Dropdown, Space, Tag } from 'antd';
 import React, { useContext } from 'react';
 import { SaContext } from '../../posts/table';
 import { SaDevContext } from '../../dev';
 import { ConfirmTriggerClick } from '../../action/confirm';
+import { iconToElement } from '../iconSelect';
 
 const DropdownAction: React.FC = (props: {
   fieldNames?: string;
@@ -14,29 +15,45 @@ const DropdownAction: React.FC = (props: {
   callback?: (value: any) => void;
   //trigger?: (value: any) => ReactNode;
   afterActionType?: 'reload' | 'goback' | 'none';
+  showType?: 'badge' | 'tag' | 'string';
 }) => {
   const { actionRef, columnData, url: tableUrl } = useContext(SaContext);
   const { modalApi, messageApi } = useContext(SaDevContext);
   const {
     fieldNames = 'value,label',
     modelName = '',
-    url,
+    url = tableUrl, //默认当前table的url
     value,
     data = {},
     id = 0,
     callback,
     afterActionType,
+    showType = 'badge',
   } = props;
 
   const [key = 'value', label = 'label'] = fieldNames.split(',');
 
   const dataName = modelName + 's';
 
-  const items_length = columnData?.[dataName]?.length;
+  //const items_length = columnData?.[dataName]?.length;
+
+  const getLabel = (v: any, type = showType) => {
+    if (type == 'tag') {
+      return (
+        <Tag color={v.color} icon={v.icon ? iconToElement(v.icon) : false} bordered={false}>
+          {v[label]}
+        </Tag>
+      );
+    } else if (type == 'badge') {
+      const badge_status = v.status ? v.status : v[key] ? 'success' : 'error';
+      return <Badge status={badge_status} text={v[label]} />;
+    } else {
+      return v[label];
+    }
+  };
+
   const dropdown_items = columnData?.[dataName]?.map((v: any) => {
-    const badge_status = v.status ? v.status : v[key] ? 'success' : 'error';
-    const _label = items_length > 2 ? v[label] : <Badge status={badge_status} text={v[label]} />;
-    return { key: v[key], label: _label };
+    return { key: v[key], label: getLabel(v), v };
   });
   //console.log(dropdown_items, columnData, item.request);
   //如果返回的dom是text的话那么检测状态加入 badge
@@ -57,11 +74,11 @@ const DropdownAction: React.FC = (props: {
         onClick: (event) => {
           //console.log(event.item);
           const clickItem = dropdown_items.find((v: any) => v.key == event.key);
-
+          const postData = { [post_key_name]: event.key, ...data };
           modalApi?.confirm(
             ConfirmTriggerClick(
               {
-                data: { [post_key_name]: event.key, ...data },
+                data: { ...postData, base: { ...postData } },
                 url: requestUrl,
                 dataId: id,
                 msg: (
@@ -83,7 +100,7 @@ const DropdownAction: React.FC = (props: {
       }}
       arrow
     >
-      <a>{selectItem?.label}</a>
+      <a>{showType == 'badge' ? selectItem?.label : getLabel(selectItem.v, 'tag')}</a>
     </Dropdown>
   );
 };

@@ -15,7 +15,7 @@ import PanelItemCard from './items/card';
 import PanelItemTable from './items/table';
 import { DevPanelColumnTitle } from './title';
 import { SaDevContext } from '..';
-import { PageContainer404 } from '@/pages/404';
+import { PageContainer404 } from '@/components/Sadmin/404';
 
 const ItemCol = (props) => {
   const {

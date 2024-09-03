@@ -1,6 +1,6 @@
 import request from '@/components/Sadmin/lib/request';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import OSS from 'ali-oss/dist/aliyun-oss-sdk.min';
+import OSS from 'ali-oss/dist/aliyun-oss-sdk.min.js';
 import { Button, Modal, Upload, UploadFile, UploadProps, message } from 'antd';
 import { FC, useState } from 'react';
 import './aliyun-upload-sdk-1.5.6.min.js';

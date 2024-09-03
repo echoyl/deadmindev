@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import './style.less';
 import type { saTableProps } from './table';
 import SaTable from './table';
-import { PageContainer404 } from '@/pages/404';
+import { PageContainer404 } from '@/components/Sadmin/404';
 
 const PostsList: React.FC<saTableProps> = (props) => {
   //console.log('props', props);

@@ -5,6 +5,7 @@ import { Card, Flex, Segmented, Select } from 'antd';
 import { isFunction } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 // 编写生成ReactNode的方法
+
 export const iconToElement = (name: string, style = {}) => {
   //做一个map兼容之前的设置
   const map = {
@@ -45,14 +46,12 @@ export const iconToElement = (name: string, style = {}) => {
   if (map[name]) {
     name = map[name];
   }
-  if (Icon && Icon[name]) {
-    return React.createElement(Icon[name], {
-      style,
-      key: name,
-    });
-  } else {
-    return null;
-  }
+  return Icon[name]
+    ? React.createElement(Icon[name], {
+        style,
+        key: name,
+      })
+    : null;
 };
 
 const getIcons = () => {
@@ -225,7 +224,7 @@ const IconSelectInput = (props) => {
   );
 };
 
-const IconSelectRel = (props) => {
+export const IconSelectRel = (props) => {
   const { value: pvalue = '', onChange, width } = props;
   const [value, setValue] = useState(pvalue);
 
@@ -245,6 +244,10 @@ const IconSelectRel = (props) => {
 const IconSelect = (_, props) => {
   const { fieldProps } = props;
   return <IconSelectRel {...fieldProps} />;
+};
+
+export const IconSelectRender = (_, props) => {
+  return _ ? <>{iconToElement(_)}</> : null;
 };
 
 export default IconSelect;

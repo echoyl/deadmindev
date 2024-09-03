@@ -118,16 +118,5 @@ const TableFromBread: FC<{
     </>
   );
 };
-export const tableFromBreadRender = (text, props) => {
-  //console.log('saFormTable here', props);
-  const { fieldProps } = props;
 
-  return (
-    <TableFromBread
-      alwaysenable={fieldProps.alwaysenable}
-      fieldProps={{ ...fieldProps, props: { tableProps: { search: false } } }}
-      readonly={fieldProps.readonly}
-    />
-  );
-};
 export default TableFromBread;

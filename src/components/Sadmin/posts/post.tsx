@@ -18,7 +18,7 @@ import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
 import { SaContext, saTableProps } from './table';
-import { PageContainer404 } from '@/pages/404';
+import { PageContainer404 } from '@/components/Sadmin/404';
 
 export interface saFormProps extends saTableProps {
   msgcls?: (value: { [key: string]: any }) => void; //提交数据后的 回调
