@@ -353,7 +353,7 @@ export const ColumnsSelector = (props) => {
       .filter((v) => isString(v));
     setTreeChecked(defaultChecked);
     //console.log('editUrl', editUrl, type);
-  }, []);
+  }, [dev.allModels]);
   const post = async (e) => {
     const { data } = await request.post(editUrl, {
       data: {

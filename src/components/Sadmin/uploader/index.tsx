@@ -1,14 +1,15 @@
 import { requestHeaders, request_prefix } from '@/components/Sadmin/lib/request';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Badge, Button, Image, Upload, message, theme } from 'antd';
+import { Badge, Button, Image, Upload, theme } from 'antd';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './index.less';
 
 import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { css } from '@emotion/css';
+import { SaDevContext } from '../dev';
 
 interface Props {
   max?: number;
@@ -18,7 +19,7 @@ interface Props {
   size?: object | number;
   fieldProps?: UploadProps;
   buttonType?: 'card' | 'table' | 'text';
-  readonly?:boolean;
+  readonly?: boolean;
 }
 
 interface DraggableUploadListItemProps {
@@ -85,12 +86,13 @@ const Uploader: React.FC<Props> = (props) => {
       data: { toSize: size, isFile: type == 'image' ? 0 : 1 }, //数组则固定大小 数字等比例缩放
     },
     buttonType = 'card',
-    readonly = false
+    readonly = false,
   } = props;
   //console.log('value', value);
   const [fileList, setFileList] = useState<UploadFile[]>(
     value && typeof value !== 'string' ? value : [],
   );
+  const { notificationApi } = useContext(SaDevContext);
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -198,7 +200,10 @@ const Uploader: React.FC<Props> = (props) => {
       setFileList(newfiles);
     }
     if (info.file.status === 'error') {
-      message.error(`${info.file.name} 上传失败. ${info.file.errorMsg}`);
+      notificationApi?.error?.({
+        description: `${info.file.name} 上传失败. ${info.file.errorMsg}`,
+        message: '提示',
+      });
       const index = fileList.findIndex((v) => v.uid == info.file.uid);
       fileList.splice(index, 1);
       setFileList([...fileList]);
@@ -215,7 +220,6 @@ const Uploader: React.FC<Props> = (props) => {
   return (
     <>
       {max == 1 || readonly ? (
-        
         <Upload
           {...fieldProps}
           headers={headers}
@@ -223,12 +227,24 @@ const Uploader: React.FC<Props> = (props) => {
           className={
             buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
           }
-          showUploadList={fileList.length && !loading ? {showRemoveIcon:readonly?false:true} : false}
+          showUploadList={
+            fileList.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
+          }
           action={action}
-          fileList={fileList.length?[fileList[0]]:[]}
+          fileList={fileList.length ? [fileList[0]] : []}
           onChange={fileChange}
           itemRender={(originNode) => {
-            return <Badge color={token.colorPrimary} count={fileList.length > 1 && readonly?fileList.length:0} size="small" offset={[-10,10]} styles={{root:{height:'100%',width:'100%'}}}>{originNode}</Badge>
+            return (
+              <Badge
+                color={token.colorPrimary}
+                count={fileList.length > 1 && readonly ? fileList.length : 0}
+                size="small"
+                offset={[-10, 10]}
+                styles={{ root: { height: '100%', width: '100%' } }}
+              >
+                {originNode}
+              </Badge>
+            );
           }}
         >
           {(fileList.length && !loading) || readonly ? null : uploadButtonOne}
