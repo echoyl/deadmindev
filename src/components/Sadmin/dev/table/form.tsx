@@ -101,6 +101,19 @@ export const TableForm = (
   } = props;
   const { formWidth } = setting;
   const intl = useIntl();
+  const inner = (
+    <InnerForm
+      {...props}
+      formColumns={formColumns}
+      url={url + '/show'}
+      currentRow={currentRow}
+      paramExtra={paramExtra}
+      tabs={tabs}
+      postExtra={postExtra}
+      editable={editable}
+      addable={addable}
+    />
+  );
   return (
     <>
       {openType == 'modal' && (
@@ -118,17 +131,7 @@ export const TableForm = (
             handleModalVisible(open);
           }}
         >
-          <InnerForm
-            {...props}
-            formColumns={formColumns}
-            url={url + '/show'}
-            currentRow={currentRow}
-            paramExtra={paramExtra}
-            tabs={tabs}
-            postExtra={postExtra}
-            editable={editable}
-            addable={addable}
-          />
+          {inner}
         </ButtonModal>
       )}
       {openType == 'drawer' && (
@@ -144,17 +147,7 @@ export const TableForm = (
           }}
           drawerProps={{ styles: { body: { paddingTop: 0 } } }}
         >
-          <InnerForm
-            {...props}
-            formColumns={formColumns}
-            url={url + '/show'}
-            currentRow={currentRow}
-            paramExtra={paramExtra}
-            tabs={tabs}
-            postExtra={postExtra}
-            editable={editable}
-            addable={addable}
-          />
+          {inner}
         </ButtonDrawer>
       )}
     </>

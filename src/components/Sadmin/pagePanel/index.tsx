@@ -16,6 +16,7 @@ import styles from './style.less';
 import AreaMap from '../dev/panel/items/areaMap';
 import { sum } from 'lodash';
 import numeral from 'numeral';
+import { PageContainer404 } from '../404';
 export const PagePanelHeader: FC = (props) => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState;
@@ -372,16 +373,7 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
   };
 
   return (
-    <PageContainer
-      title={false}
-      className="saContainer"
-      fixedHeader={saConfig.fixedHeader}
-      header={{
-        breadcrumbRender: (_, dom) => {
-          return <SaBreadcrumbRender />;
-        },
-      }}
-    >
+    <PageContainer404 title={false} path={props?.path}>
       <Flex vertical gap="middle">
         <ProCard key="headcard">
           <PagePanelHeader flash={getData} />
@@ -443,7 +435,7 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
           }
         })}
       </Flex>
-    </PageContainer>
+    </PageContainer404>
   );
 };
 

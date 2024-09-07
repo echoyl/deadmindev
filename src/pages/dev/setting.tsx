@@ -135,7 +135,7 @@ export default () => {
                     colProps: { span: 8 },
                   },
                   {
-                    title: '模板名称',
+                    title: '签名名称',
                     dataIndex: 'sms_name',
                     colProps: { span: 8 },
                   },

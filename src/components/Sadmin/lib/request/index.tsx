@@ -22,26 +22,26 @@ export const messageLoadingKey = 'message_loading_key';
 function errorHandler(error) {
   // 请求已发送但服务端返回状态码非 2xx 的响应
   //console.log(typeof error, JSON.stringify(error), error);
+  let description;
   if (error.data) {
     const { status, statusText, message, file, line } = error.data;
-    let description;
+
     if (message && file && line) {
       description = [message, file, line].join(' ');
     } else {
       description = message || codeMessage[status] || statusText;
     }
-
-    notification?.error?.({
-      message: '提示',
-      description: description,
-    });
     // 请求初始化时出错或者没有响应返回的异常
   } else {
-    const description = error.message || error.errDesc || '系统异常';
-    if (description != 'error') {
-      notification?.error?.({ description, message: '提示' });
-    }
+    description = error.message || error.errDesc || '系统异常';
   }
+  notification?.error?.({
+    //description,
+    description: (
+      <div style={{ color: 'red' }} dangerouslySetInnerHTML={{ __html: description }}></div>
+    ),
+    message: '提示',
+  });
   return false;
   //throw new Error();
 }
@@ -123,62 +123,74 @@ request.interceptors.response.use(async (response, options) => {
     return response;
   }
 
-  const res = await response.clone().json();
+  try {
+    const res = await response.clone().json();
+    const { code, msg, data } = res;
 
-  const { code, msg, data } = res;
-  if (code) {
-    //message.error(msg);
-    if (responseCodeAction(code, options.method as string, options.drawer)) {
+    //存在后端错误信息未返回500状态值的
+    if (isUndefined(code)) {
+      errorHandler({ data: res });
       return false;
     }
-  }
 
-  if (options.then) {
-    //自定义接管之后的操作设置
-    options.then({ code, msg, data, res });
-  } else {
-    //默认的操作设置
     if (code) {
-      notification.error({ description: msg, message: '提示' });
-      options.msgcls && options.msgcls({ code, msg, data, res });
-    } else {
-      if (msg) {
-        if (options.method == 'POST' || options.method == 'DELETE') {
-          message.success({
-            key: messageLoadingKey,
-            content: msg,
-            duration: 1,
-          });
-        }
-      }
-
-      //添加导出跳转下载页面功能
-      if (data?.download) {
-        const a = document.createElement('a');
-        a.target = '_blank';
-        a.download = data.download;
-        a.href = data.url;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-
-      if (data?.logout) {
-        message.loading({
-          content: '退出登录中...',
-          duration: 0,
-          key: messageLoadingKey,
-        });
-        await loginOut(() => {
-          message.destroy(messageLoadingKey);
-        });
-      } else {
-        options.msgcls && options.msgcls({ code, msg, data, res });
+      //message.error(msg);
+      if (responseCodeAction(code, options.method as string, options.drawer)) {
+        return false;
       }
     }
-  }
 
-  return response;
+    if (options.then) {
+      //自定义接管之后的操作设置
+      options.then({ code, msg, data, res });
+    } else {
+      //默认的操作设置
+      if (code) {
+        notification.error({ description: msg, message: '提示' });
+        options.msgcls && options.msgcls({ code, msg, data, res });
+      } else {
+        if (msg) {
+          if (options.method == 'POST' || options.method == 'DELETE') {
+            message.success({
+              key: messageLoadingKey,
+              content: msg,
+              duration: 1,
+            });
+          }
+        }
+
+        //添加导出跳转下载页面功能
+        if (data?.download) {
+          const a = document.createElement('a');
+          a.target = '_blank';
+          a.download = data.download;
+          a.href = data.url;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+
+        if (data?.logout) {
+          message.loading({
+            content: '退出登录中...',
+            duration: 0,
+            key: messageLoadingKey,
+          });
+          await loginOut(() => {
+            message.destroy(messageLoadingKey);
+          });
+        } else {
+          options.msgcls && options.msgcls({ code, msg, data, res });
+        }
+      }
+    }
+
+    return response;
+  } catch (e) {
+    //接口未返回json格式都报错误
+    const body = await response.clone().text();
+    throw new Error(body);
+  }
 });
 
 export default request;

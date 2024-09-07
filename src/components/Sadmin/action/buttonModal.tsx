@@ -2,7 +2,7 @@ import { Modal, ModalProps } from 'antd';
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 interface actionConfirm {
-  trigger?: JSX.Element;
+  trigger?: ReactNode | JSX.Element;
   title?: string;
   open?: boolean;
   onOk?: () => boolean | void;

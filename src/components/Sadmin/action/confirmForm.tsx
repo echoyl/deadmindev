@@ -1,11 +1,12 @@
 import { ProFormInstance } from '@ant-design/pro-components';
-import { Button, ButtonProps, GetProps, Modal } from 'antd';
+import { Button, ButtonProps, Drawer, GetProps, Modal } from 'antd';
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
 import { getBread, saFormColumnsType, saFormTabColumnsType, t, tplComplie } from '../helpers';
 import { SaForm, saFormProps } from '../posts/post';
 import { SaContext } from '../posts/table';
 import ButtonModal from './buttonModal';
+import ButtonDrawer from './buttonDrawer';
 
 interface actionConfirm {
   msg?: string;
@@ -21,7 +22,8 @@ interface actionConfirm {
   afterActionType?: 'reload' | 'goback' | 'none';
   onChange?: (value: any) => void;
   value?: any;
-  trigger?: ReactNode;
+  initValue?: (value: any) => any;
+  trigger?: ReactNode | JSX.Element;
   width?: number;
   page?: string;
   readonly?: boolean;
@@ -31,6 +33,8 @@ interface actionConfirm {
   onOpen?: (open: boolean) => void;
   closable?: boolean;
   modalProps?: GetProps<typeof Modal>;
+  drawerProps?: GetProps<typeof Drawer>;
+  showType?: 'modal' | 'drawer';
 }
 
 const InnerForm = (props) => {
@@ -54,7 +58,7 @@ const InnerForm = (props) => {
   } = props;
   const formRef = useRef<ProFormInstance>();
   const { actionRef, formRef: topFormRef } = useContext(SaContext);
-
+  console.log('innner form value', value, formColumns);
   let tabs = [];
   let url = ourl;
   let setting = {};
@@ -189,10 +193,12 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     open: oopen = false,
     onOpen,
     modalProps,
+    drawerProps,
     closable = true,
     afterActionType = 'reload',
+    showType = 'modal',
+    initValue = (v) => v,
   } = props;
-  //console.log('ConfirmForm props ', props);
   const defaultButton = { title: '操作', type: 'primary', danger: false, size: 'small' };
   const _btn = { ...defaultButton, ...btn };
 
@@ -204,8 +210,27 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
   useEffect(() => {
     setOpen(oopen);
   }, [oopen]);
+  const inner = (
+    <InnerForm
+      url={url}
+      postUrl={postUrl}
+      formColumns={formColumns}
+      tabs={tabs}
+      page={page}
+      callback={callback}
+      value={initValue(props.value)}
+      data={data}
+      dataid={dataId}
+      onChange={onChange}
+      readonly={readonly}
+      saFormProps={saFormProps}
+      closable={closable}
+      afterActionType={afterActionType}
+    />
+  );
+  //console.log('inner form ', inner);
 
-  return (
+  return showType == 'modal' ? (
     <ButtonModal
       trigger={trigger ? trigger : <Button {..._btn}>{_btn.title}</Button>}
       open={open}
@@ -217,23 +242,22 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
       }}
       modalProps={modalProps}
     >
-      <InnerForm
-        url={url}
-        postUrl={postUrl}
-        formColumns={formColumns}
-        tabs={tabs}
-        page={page}
-        callback={callback}
-        value={props.value}
-        data={data}
-        dataid={dataId}
-        onChange={onChange}
-        readonly={readonly}
-        saFormProps={saFormProps}
-        closable={closable}
-        afterActionType={afterActionType}
-      />
+      {inner}
     </ButtonModal>
+  ) : (
+    <ButtonDrawer
+      trigger={trigger ? trigger : <Button {..._btn}>{_btn.title}</Button>}
+      open={open}
+      width={width}
+      title={msg}
+      afterOpenChange={(open) => {
+        setOpen(open);
+        onOpen?.(open);
+      }}
+      drawerProps={drawerProps}
+    >
+      {inner}
+    </ButtonDrawer>
   );
 };
 

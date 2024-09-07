@@ -1,9 +1,9 @@
 import { Drawer, DrawerProps } from 'antd';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface actionConfirm {
-  trigger?: JSX.Element;
+  trigger?: ReactNode | JSX.Element;
   title?: string;
   open?: boolean;
   width?: number;
@@ -74,12 +74,21 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
     });
   }, [setOpen, trigger, iopen]);
 
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     setOpen(open);
   }, [open]);
 
   useEffect(() => {
     afterOpenChange?.(iopen);
+    console.log('iopen change', iopen);
+    if (iopen) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    } else {
+      setLoading(true);
+    }
   }, [iopen]);
 
   // if (drawerProps && !drawerProps.footer) {
@@ -117,6 +126,7 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
           },
           ...drawerProps?.styles,
         }}
+        loading={loading}
       >
         <div
           onKeyDown={(e) => {

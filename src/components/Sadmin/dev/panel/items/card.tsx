@@ -8,10 +8,11 @@ const PanelItemCard = (props) => {
   const { title, data, config = {}, height } = props;
   const { open } = config;
 
-  const getDescription = (config) => {
-    if (config.href) {
+  const getDescription = (config: Record<string, any>, data: Record<string, any>) => {
+    const href = config?.href ? config.href : data?.href ? data.href : null;
+    if (href) {
       return (
-        <Link to={config?.href} style={{ fontSize: 12 }}>
+        <Link to={href} style={{ fontSize: 12 }}>
           {config.statistic?.description ? config.statistic?.description : '查看'}
         </Link>
       );
@@ -58,7 +59,7 @@ const PanelItemCard = (props) => {
     ? {
         ...config?.statistic,
         value: isObj(data) ? data?.value : data,
-        description: getDescription(config),
+        description: getDescription(config, data),
       }
     : false;
   //console.log('PanelItemCard config ', statistic);

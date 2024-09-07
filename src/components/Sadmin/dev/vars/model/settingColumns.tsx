@@ -1,5 +1,5 @@
-import { saFormColumnsType, saFormTabColumnsType } from '../../helpers';
-import { getModelColumns } from '../table/baseFormColumns';
+import { saFormColumnsType, saFormTabColumnsType } from '../../../helpers';
+import { getModelColumns } from '../../table/baseFormColumns';
 
 export default (model_id: number, dev: { [key: string]: any }): saFormTabColumnsType => {
   //const columns: any[] = [];
@@ -190,12 +190,37 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
   //console.log('modelColumns2', modelColumns2);
   return [
     {
+      title: '基础信息',
+      formColumns: [
+        {
+          valueType: 'group',
+          columns: [
+            {
+              dataIndex: 'soft_delete',
+              title: '软删除',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
+            {
+              dataIndex: 'with_system_admin_id',
+              title: '自动插入系统用户ID',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
+          ],
+        },
+      ],
+    },
+    {
       title: '导出配置',
       formColumns: [
         {
           dataIndex: 'export',
           title: '模板管理',
           valueType: 'formList',
+          rowProps: {
+            gutter: 0,
+          },
           columns: [
             {
               valueType: 'group',
@@ -203,15 +228,18 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
                 {
                   title: '模板名称',
                   dataIndex: 'label',
+                  colProps: { span: 8 },
                 },
                 {
                   title: '模板索引',
                   dataIndex: 'value',
+                  colProps: { span: 8 },
                 },
                 {
                   title: '设置',
                   dataIndex: 'config',
                   valueType: 'confirmForm',
+                  colProps: { span: 8 },
                   fieldProps: {
                     btn: {
                       title: '设置',
@@ -219,22 +247,12 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
                     },
                     width: 1050,
                     tabs: columns,
-                    saFormProps: { devEnable: false },
+                    saFormProps: { devEnable: false, grid: true },
                   },
                 },
               ],
             },
           ],
-        },
-      ],
-    },
-    {
-      title: '基础信息',
-      formColumns: [
-        {
-          dataIndex: 'soft_delete',
-          title: '软删除',
-          valueType: 'switch',
         },
       ],
     },
