@@ -1,13 +1,25 @@
 import ConfirmForm from '@/components/Sadmin/action/confirmForm';
 import { inArray } from '@/components/Sadmin/checkers';
+import { saReload } from '@/components/Sadmin/components/refresh';
+import { SaDevContext } from '@/components/Sadmin/dev';
+import { SaContext } from '@/components/Sadmin/posts/table';
 import { ThunderboltOutlined } from '@ant-design/icons';
+import { useModel } from '@umijs/max';
 import { Button } from 'antd';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 interface SaReord {
   [key: string]: any;
 }
 const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }> = (props) => {
   const { menus, models, foldermodels } = props;
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const { setSetting } = useContext(SaDevContext);
+  const { actionRef } = useContext(SaContext);
+
+  const reload = async () => {
+    await saReload(initialState, setInitialState, setSetting);
+    return;
+  };
   return (
     <ConfirmForm
       key="quick_button"
@@ -150,8 +162,9 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
           return;
         }
         if (!ret.code) {
-          location.reload();
-          //actionRef?.current?.reload();
+          reload();
+          //location.reload();
+          actionRef?.current?.reload();
         }
       }}
     />

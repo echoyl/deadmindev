@@ -29,6 +29,7 @@ import {
 import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
 import { ColumnsSelector, ToolBarMenu } from './toolbar';
 import { tplComplie } from '../../helpers';
+import DevSwitch from '../switch';
 export const designerCss = css`
   position: relative;
   min-width: 60px;
@@ -504,7 +505,7 @@ export const FormAddTab = (props) => {
     <Space style={{ marginTop: 16 }}>
       <BaseForm
         title={
-          <Button type="dashed">
+          <Button>
             <span> + Tab</span>
           </Button>
         }
@@ -513,22 +514,15 @@ export const FormAddTab = (props) => {
       />
       <ColumnsSelector
         key="devcolumns"
-        trigger={
-          <Button type="dashed">
-            <UnorderedListOutlined />
-          </Button>
-        }
+        trigger={<Button icon={<UnorderedListOutlined />} />}
         dev={initialState?.settings?.adminSetting?.dev}
       />
       <ToolBarMenu
         key="devsetting"
-        trigger={
-          <Button type="dashed" danger>
-            <SettingOutlined />
-          </Button>
-        }
+        trigger={<Button icon={<SettingOutlined />} />}
         pageMenu={pageMenu}
       />
+      <DevSwitch key="DevSwitch" type="button" />
     </Space>
   );
 };

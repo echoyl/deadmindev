@@ -2,11 +2,17 @@
 import { defineConfig } from '@umijs/max';
 import { join } from 'path';
 import defaultSettings from './defaultSettings';
-import proxy, { baseurl } from './proxy';
+import proxy from './proxy';
 import routes from './routes';
 const { REACT_APP_ENV = 'dev' } = process.env;
 
-const headers_js = baseurl + 'scripts/loading.js';
+/**
+ * @name 使用公共路径
+ * @description 部署时的路径，如果部署在非根目录下，需要配置这个变量
+ * @doc https://umijs.org/docs/api/config#publicpath
+ */
+const PUBLIC_PATH: string = '/antadmin/';
+
 export default defineConfig({
   hash: true,
   antd: {
@@ -25,8 +31,8 @@ export default defineConfig({
     siderWidth: 208,
     ...defaultSettings,
   },
-  base: baseurl,
-  publicPath: baseurl,
+  base: PUBLIC_PATH,
+  publicPath: PUBLIC_PATH,
   // https://umijs.org/zh-CN/plugins/plugin-locale
   //locale: false,
   locale: {
@@ -49,8 +55,9 @@ export default defineConfig({
    */
   headScripts: [
     // 解决首次加载时白屏的问题
-    { src: headers_js, async: true },
+    { src: join(PUBLIC_PATH, 'scripts/loading.js'), async: true },
   ],
+
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
@@ -80,6 +87,7 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
+
   mfsu: {
     strategy: 'normal',
   },
@@ -88,4 +96,5 @@ export default defineConfig({
   codeSplitting: {
     jsStrategy: 'granularChunks',
   },
+  //mako: {},
 });

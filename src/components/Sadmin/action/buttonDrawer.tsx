@@ -81,11 +81,12 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
 
   useEffect(() => {
     afterOpenChange?.(iopen);
-    console.log('iopen change', iopen);
+    //console.log('iopen change', iopen);
     if (iopen) {
+      //如果打开drawer太卡的话 这里需要先设置loading false打开后再渲染页面
       setTimeout(() => {
         setLoading(false);
-      }, 1000);
+      }, 10);
     } else {
       setLoading(true);
     }

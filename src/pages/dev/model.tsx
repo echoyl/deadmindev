@@ -94,7 +94,7 @@ export const modelFormColumns = (
           title: '字段配置',
           dataIndex: 'columns',
           valueType: 'confirmForm',
-          colProps: { span: 6 },
+          colProps: { span: 4 },
           fieldProps: {
             btn: {
               title: '配置',
@@ -106,6 +106,9 @@ export const modelFormColumns = (
             initValue: (v) => {
               return { columns: v };
             },
+            onChange: (v: Record<string, any[]>) => {
+              formRef?.current?.setFieldValue('columns', v.columns);
+            },
             width: 1500,
             showType: 'drawer',
           },
@@ -114,7 +117,7 @@ export const modelFormColumns = (
           title: '设置',
           dataIndex: 'setting',
           valueType: 'confirmForm',
-          colProps: { span: 6 },
+          colProps: { span: 4 },
           fieldProps: {
             btn: {
               title: '设置',
@@ -123,6 +126,16 @@ export const modelFormColumns = (
             tabs: settingColumns(detail.id, setting?.dev),
             saFormProps: { devEnable: false, grid: true },
             //showType: 'drawer',
+          },
+        },
+        {
+          title: '提交后',
+          dataIndex: 'createModelSchema',
+          valueType: 'checkbox',
+          colProps: { span: 4 },
+          tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
+          fieldProps: {
+            options: [{ label: '生成表', value: 1 }],
           },
         },
       ],
@@ -377,7 +390,7 @@ export default () => {
         level={4}
         url="dev/model"
         formColumns={(detail) => {
-          return modelFormColumns(detail, formRef, setting);
+          return modelFormColumns(detail, formRef, setting?.adminSetting);
         }}
         openType="modal"
       />

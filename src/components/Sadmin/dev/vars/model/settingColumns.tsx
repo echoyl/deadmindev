@@ -209,6 +209,23 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
             },
           ],
         },
+        {
+          valueType: 'group',
+          columns: [
+            {
+              dataIndex: 'global_data_search',
+              title: '使用全局过滤数据',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
+            {
+              dataIndex: 'global_post_check',
+              title: '使用全局检测提交数据',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
+          ],
+        },
       ],
     },
     {

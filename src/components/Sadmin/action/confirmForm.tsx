@@ -1,8 +1,8 @@
-import { ProFormInstance } from '@ant-design/pro-components';
+import { PageLoading, ProFormInstance } from '@ant-design/pro-components';
 import { Button, ButtonProps, Drawer, GetProps, Modal } from 'antd';
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
-import { getBread, saFormColumnsType, saFormTabColumnsType, t, tplComplie } from '../helpers';
+import { getBread, saFormColumnsType, saFormTabColumnsType, t } from '../helpers';
 import { SaForm, saFormProps } from '../posts/post';
 import { SaContext } from '../posts/table';
 import ButtonModal from './buttonModal';
@@ -58,7 +58,7 @@ const InnerForm = (props) => {
   } = props;
   const formRef = useRef<ProFormInstance>();
   const { actionRef, formRef: topFormRef } = useContext(SaContext);
-  console.log('innner form value', value, formColumns);
+  //console.log('innner form value', value, formColumns);
   let tabs = [];
   let url = ourl;
   let setting = {};

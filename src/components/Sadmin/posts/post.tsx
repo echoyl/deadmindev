@@ -242,7 +242,9 @@ export const SaForm: FC<saFormProps> = (props) => {
       }}
     >
       <DndContext>
-        {devEnable ? <FormAddTab pageMenu={pageMenu} /> : null}
+        {initialState?.settings?.adminSetting?.dev && pdevEnable ? (
+          <FormAddTab pageMenu={pageMenu} />
+        ) : null}
         {setting?.steps_form ? (
           <StepsForm
             current={stepFormCurrent}

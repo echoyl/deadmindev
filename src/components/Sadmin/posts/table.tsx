@@ -282,6 +282,9 @@ const SaTable: React.FC<saTableProps> = (props) => {
           data: { id },
         });
         modals.destroy();
+        if (!ret) {
+          return;
+        }
         const re = await afterDelete?.(ret);
         if (!ret.code) {
           if (re != true) {

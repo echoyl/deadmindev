@@ -13,9 +13,9 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { FormattedMessage, Link, useModel } from '@umijs/max';
-import { App, Button, Dropdown, Modal, Popover, Space, Tree, Upload } from 'antd';
+import { App, Button, Dropdown, Modal, Popover, Space, Tooltip, Tree, Upload } from 'antd';
 import { cloneDeep, isString } from 'lodash';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import ButtonDrawer from '../../action/buttonDrawer';
 import CustomerColumnRender from '../../action/customerColumn';
 import { t, uid } from '../../helpers';
@@ -25,9 +25,12 @@ import { DndContext } from '../dnd-context';
 import { getModelColumns } from './baseFormColumns';
 import { ToolbarColumnTitle } from './title';
 import { SaDevContext } from '..';
-import { saReloadMenu } from '../../components/refresh';
+import { saReload, saReloadMenu } from '../../components/refresh';
 import ButtonModal from '../../action/buttonModal';
 import { isStr } from '../../checkers';
+import { modelFormColumns } from '@/pages/dev/model';
+import { ProFormInstance } from '@ant-design/pro-components';
+import ModelRelation from '@/pages/dev/modelRelation';
 
 export const ToolBarDom = (props) => {
   const {
@@ -254,32 +257,116 @@ export const ToolMenuForm = (props) => {
   );
 };
 
+export const ToolModelForm = (props) => {
+  const { setInitialState, initialState } = useModel('@@initialState');
+  const { pageMenu = { model_id: 0 }, trigger } = props;
+  const ModelForm = (mprops) => {
+    const { contentRender, setOpen } = mprops;
+    const formRef = useRef<ProFormInstance<any>>({} as any);
+
+    const { setting, setSetting } = useContext(SaDevContext);
+    return (
+      <SaForm
+        formRef={formRef}
+        formColumns={(detail) => {
+          return modelFormColumns(detail, formRef, setting?.adminSetting);
+        }}
+        url="dev/model/show"
+        dataId={pageMenu?.model_id}
+        paramExtra={{ id: pageMenu?.model_id }}
+        postExtra={{ id: pageMenu?.model_id }}
+        grid={true}
+        devEnable={false}
+        msgcls={async ({ code, data }) => {
+          if (!code) {
+            saReload(initialState, setInitialState, setSetting);
+          }
+          setOpen(false);
+          return;
+        }}
+        formProps={{
+          contentRender,
+          submitter: {
+            //移除默认的重置按钮，点击重置按钮后会重新请求一次request
+            render: (props, doms) => {
+              return [
+                <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
+                  {t('cancel')}
+                </Button>,
+                doms[1],
+              ];
+            },
+          },
+        }}
+      />
+    );
+  };
+  return (
+    <ButtonModal trigger={trigger} width={860} title="模型配置">
+      <ModelForm />
+    </ButtonModal>
+  );
+};
+
 /**
  * 打开后显示当前菜单的form表单
  * @param props
  * @returns
  */
 export const ToolBarMenu = (props) => {
-  const { trigger, pageMenu = { id: 0 } } = props;
-
+  const { trigger, pageMenu = { id: 0, model_id: 0 } } = props;
+  //console.log('pageMenu', pageMenu);
   return (
     <Dropdown
       trigger={['click']}
       menu={{
         items: [
           {
-            key: 'edit',
+            key: 'editMenu',
             label: (
               <ToolMenuForm
                 pageMenu={pageMenu}
                 trigger={
-                  <Button icon={<EditOutlined />} type="link">
-                    编辑
+                  <Button type="link" icon={<EditOutlined />}>
+                    菜单
                   </Button>
                 }
               />
             ),
           },
+          pageMenu.model_id
+            ? {
+                key: 'editModel',
+                label: (
+                  <ToolModelForm
+                    pageMenu={pageMenu}
+                    trigger={
+                      <Button type="link" icon={<EditOutlined />}>
+                        模型
+                      </Button>
+                    }
+                  />
+                ),
+              }
+            : null,
+          pageMenu.model_id
+            ? {
+                key: 'editModelRelation',
+                label: (
+                  <ButtonDrawer
+                    trigger={
+                      <Button type="link" icon={<EditOutlined />}>
+                        关联
+                      </Button>
+                    }
+                    width={1000}
+                    title="关联"
+                  >
+                    <ModelRelation model={{ id: pageMenu.model_id }} />
+                  </ButtonDrawer>
+                ),
+              }
+            : null,
           {
             key: 'export',
             label: (
@@ -350,7 +437,9 @@ export const ColumnsSelector = (props) => {
     //初始化已有的列
     const defaultChecked = getDataByType(type)
       ?.map((v) => v.dataIndex)
-      .filter((v) => isString(v));
+      .filter((v) => {
+        return isString(v) && _treeData.findIndex((tv) => tv.value == v) >= 0;
+      });
     setTreeChecked(defaultChecked);
     //console.log('editUrl', editUrl, type);
   }, [dev.allModels]);
@@ -432,12 +521,12 @@ export const toolBarRender = (props) => {
   if (devEnable) {
     _btns.push({
       valueType: 'devcolumns',
-      title: <UnorderedListOutlined />,
+      icon: <UnorderedListOutlined />,
       key: 'devcolumns',
     });
     _btns.push({
       valueType: 'devsetting',
-      title: <SettingOutlined />,
+      icon: <SettingOutlined />,
       key: 'devsetting',
     });
     if (_btns.length <= 2) {
@@ -478,26 +567,14 @@ export const toolBarRender = (props) => {
       }
       if (btn.valueType == 'devsetting') {
         btns.push(
-          <ToolBarMenu
-            key="devsetting"
-            trigger={
-              <Button type="dashed" danger>
-                {btn.title}
-              </Button>
-            }
-            pageMenu={pageMenu}
-          />,
+          <ToolBarMenu key="devsetting" trigger={<Button icon={btn.icon} />} pageMenu={pageMenu} />,
         );
       }
       if (btn.valueType == 'devcolumns') {
         btns.push(
           <ColumnsSelector
             key="devcolumns"
-            trigger={
-              <Button type="dashed" title="快速选择">
-                {btn.title}
-              </Button>
-            }
+            trigger={<Button title="快速选择" icon={btn.icon} />}
             dev={initialState?.settings?.adminSetting?.dev}
           />,
         );

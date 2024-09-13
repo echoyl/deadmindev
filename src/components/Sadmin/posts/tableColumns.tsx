@@ -217,6 +217,15 @@ export const getTableColumns = (props) => {
   //const allColumns = [...defaulColumns, ...customerColumns];
 
   const parseColumns = (v) => {
+    //加入if条件控制
+    if (v.fieldProps?.if) {
+      const show = tplComplie(v.fieldProps?.if, { record: enums, user: initialState?.currentUser });
+      //console.log('v.fieldProps?.if', v.fieldProps?.if, show);
+      if (!show) {
+        return undefined;
+      }
+    }
+
     const df = v.valueType ? defaulColumnsRender(v.valueType) : false;
     if (df) {
       df.uid = v.uid;
@@ -228,14 +237,6 @@ export const getTableColumns = (props) => {
       }
     }
 
-    //加入if条件控制
-    if (v.fieldProps?.if) {
-      const show = tplComplie(v.fieldProps?.if, { record: enums, user: initialState?.currentUser });
-      //console.log('v.fieldProps?.if', v.fieldProps?.if, show);
-      if (!show) {
-        return undefined;
-      }
-    }
     if (v.requestParam) {
       v.request = async () => {
         const { data } = await request.get(v.requestParam.url, { params: v.requestParam.params });

@@ -2,7 +2,7 @@ import { saFormColumnsType } from '@/components/Sadmin/helpers';
 import { useContext, useRef, useState } from 'react';
 import { SaDevContext } from '../..';
 import request from '@/components/Sadmin/lib/request';
-import { Button, Space } from 'antd';
+import { Button, Input, Space } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { SaContext } from '@/components/Sadmin/posts/table';
 
@@ -10,6 +10,7 @@ export const SchemaToJsonButton = (props) => {
   const { formRef } = useContext(SaContext);
   const [schemaloading, setSchemaloading] = useState(false);
   const { messageApi } = useContext(SaDevContext);
+  const [name, setName] = useState<string>();
 
   const setTableColumns = (type: string) => {
     //console.log(type);
@@ -72,11 +73,10 @@ export const SchemaToJsonButton = (props) => {
   };
 
   const click = async () => {
-    const name = formRef?.current?.getFieldValue('name');
     const parent_id = formRef?.current?.getFieldValue('parent_id');
 
     if (!name) {
-      messageApi?.error('请先输入name');
+      messageApi?.error('请输入检测表名');
       return;
     }
     setSchemaloading(true);
@@ -124,6 +124,7 @@ export const SchemaToJsonButton = (props) => {
       >
         通过已存在表生成
       </Button>
+      <Input placeholder="请输入检测表名" onChange={(v) => setName(v.target.value)} allowClear />
     </Space>
   );
 };
