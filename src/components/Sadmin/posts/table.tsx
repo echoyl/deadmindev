@@ -196,7 +196,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
     : [];
   const enumNames = _tableColumns?.filter((v) => v.valueEnum).map((v) => v.dataIndex);
   const search_config = _tableColumns?.filter(
-    (v) => isObj(v) && (isUndefined(v.search) || v.search),
+    (v) =>
+      isObj(v) &&
+      (isUndefined(v.search) || v.search) &&
+      !['displayorder', 'option'].includes(v.valueType),
   );
 
   const { initialState } = useModel('@@initialState');

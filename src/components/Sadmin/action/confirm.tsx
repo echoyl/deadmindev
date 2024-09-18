@@ -74,11 +74,8 @@ export const ConfirmTriggerClick = (
           if (actionRef?.current && afterActionType == 'reload') {
             actionRef.current?.reload();
           } else {
-            if (ret.data.reload) {
-            } else {
-              if (afterActionType != 'none') {
-                history.back();
-              }
+            if (afterActionType == 'goback') {
+              history.back();
             }
           }
         }

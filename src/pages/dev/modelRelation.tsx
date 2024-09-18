@@ -74,232 +74,229 @@ export default (props) => {
       selectRowRender={(dom) => {
         return contentRender?.(null, dom);
       }}
-      formColumns={[
+      tabs={[
         {
-          valueType: 'group',
-          columns: [
-            { dataIndex: 'title', title: '名称', colProps: { span: 12 } },
-            { dataIndex: 'name', title: 'Name', colProps: { span: 12 } },
-          ],
-        },
-        {
-          valueType: 'group',
-          columns: [
+          tab: { title: '基础信息' },
+          formColumns: [
             {
-              dataIndex: 'local_key',
-              title: '本地字段',
-              valueType: 'select',
-              requestDataName: 'columns',
-              colProps: { span: 12 },
+              valueType: 'group',
+              columns: [
+                { dataIndex: 'title', title: '名称', colProps: { span: 12 } },
+                { dataIndex: 'name', title: 'Name', colProps: { span: 12 } },
+              ],
             },
             {
-              title: '关系类型',
-              dataIndex: 'type',
-              valueType: 'select',
-              fieldProps: { options: relationType.map((v) => ({ label: v, value: v })) },
-              colProps: { span: 12 },
-            },
-          ],
-        },
-        {
-          valueType: 'group',
-          columns: [
-            {
-              dataIndex: 'foreign_model_id',
-              title: '关联模型',
-              valueType: 'treeSelect',
-              requestDataName: 'models',
-              fieldProps: {
-                treeLine: { showLeafIcon: true },
-                treeDefaultExpandAll: true,
-              },
-              colProps: { span: 12 },
-            },
-            {
-              valueType: 'dependency',
-              name: ['foreign_model_id'],
-              columns: ({ foreign_model_id }: any) => {
-                if (!foreign_model_id) {
-                  return [];
-                }
-                return [
-                  {
-                    dataIndex: 'foreign_key',
-                    title: '关联模型字段',
-                    valueType: 'select',
-                    fieldProps: {
-                      options: getModelColumns(foreign_model_id),
-                    },
-                    colProps: { span: 12 },
-                  },
-                ];
-                //return [];
-              },
-            },
-          ],
-        },
-
-        {
-          valueType: 'group',
-          columns: [
-            {
-              dataIndex: 'can_search',
-              colProps: { span: 12 },
-              title: '是否支持搜索',
-              valueType: 'switch',
-            },
-            {
-              valueType: 'dependency',
-              name: ['foreign_model_id', 'can_search'],
-              columns: ({ foreign_model_id, can_search }: any) => {
-                if (!foreign_model_id || !can_search) {
-                  return [];
-                }
-                return [
-                  {
-                    dataIndex: 'search_columns',
-                    title: '搜索包含字段',
-                    valueType: 'select',
-                    colProps: { span: 12 },
-                    fieldProps: {
-                      options: getModelColumns(foreign_model_id),
-                      mode: 'multiple',
-                    },
-                  },
-                ];
-                //return [];
-              },
-            },
-          ],
-        },
-        {
-          valueType: 'dependency',
-          name: ['type', 'foreign_model_id'],
-          columns: ({ type, foreign_model_id }: any) => {
-            if (type == 'many') {
-              return [
+              valueType: 'group',
+              columns: [
                 {
-                  valueType: 'group',
-                  columns: [
-                    {
-                      dataIndex: 'with_count',
-                      title: '是否计算数量总和',
-                      valueType: 'switch',
-                      colProps: { span: 12 },
-                    },
-                    {
-                      dataIndex: 'with_sum',
-                      title: '求和包含字段',
-                      valueType: 'select',
-                      colProps: { span: 12 },
-                      fieldProps: {
-                        options: getModelColumns(foreign_model_id),
-                        mode: 'multiple',
-                      },
-                    },
-                  ],
+                  dataIndex: 'local_key',
+                  title: '本地字段',
+                  valueType: 'select',
+                  requestDataName: 'columns',
+                  colProps: { span: 12 },
                 },
-              ];
-            }
-            return [];
-          },
-        },
-        {
-          valueType: 'group',
-          columns: [
+                {
+                  title: '关系类型',
+                  dataIndex: 'type',
+                  valueType: 'select',
+                  fieldProps: { options: relationType.map((v) => ({ label: v, value: v })) },
+                  colProps: { span: 12 },
+                },
+              ],
+            },
             {
-              title: '是否加入with',
-              dataIndex: 'is_with',
-              valueType: 'switch',
-              fieldProps: {
-                checkedChildren: '是',
-                unCheckedChildren: '否',
-                defaultChecked: true,
-              },
-              colProps: { span: 12 },
+              valueType: 'group',
+              columns: [
+                {
+                  dataIndex: 'foreign_model_id',
+                  title: '关联模型',
+                  valueType: 'treeSelect',
+                  requestDataName: 'models',
+                  fieldProps: {
+                    treeLine: { showLeafIcon: true },
+                    treeDefaultExpandAll: true,
+                  },
+                  colProps: { span: 12 },
+                },
+                {
+                  valueType: 'dependency',
+                  name: ['foreign_model_id'],
+                  columns: ({ foreign_model_id }: any) => {
+                    if (!foreign_model_id) {
+                      return [];
+                    }
+                    return [
+                      {
+                        dataIndex: 'foreign_key',
+                        title: '关联模型字段',
+                        valueType: 'select',
+                        fieldProps: {
+                          options: getModelColumns(foreign_model_id),
+                        },
+                        colProps: { span: 12 },
+                      },
+                    ];
+                    //return [];
+                  },
+                },
+              ],
+            },
+            {
+              valueType: 'group',
+              columns: [
+                {
+                  dataIndex: 'can_search',
+                  colProps: { span: 12 },
+                  title: '是否支持搜索',
+                  valueType: 'switch',
+                },
+                {
+                  valueType: 'dependency',
+                  name: ['foreign_model_id', 'can_search'],
+                  columns: ({ foreign_model_id, can_search }: any) => {
+                    if (!foreign_model_id || !can_search) {
+                      return [];
+                    }
+                    return [
+                      {
+                        dataIndex: 'search_columns',
+                        title: '搜索包含字段',
+                        valueType: 'select',
+                        colProps: { span: 12 },
+                        fieldProps: {
+                          options: getModelColumns(foreign_model_id),
+                          mode: 'multiple',
+                        },
+                      },
+                    ];
+                    //return [];
+                  },
+                },
+              ],
             },
             {
               valueType: 'dependency',
-              name: ['foreign_model_id', 'is_with'],
-              columns: ({ foreign_model_id, is_with }: any) => {
-                if (!foreign_model_id || !is_with) {
-                  return [];
-                }
-                return [
-                  {
-                    dataIndex: 'select_columns',
-                    title: '关联模型包含字段',
-                    tooltip: '不选表示全部获取',
-                    valueType: 'treeSelect',
-                    colProps: { span: 12 },
-                    fieldProps: {
-                      options: getModelColumnsTree(foreign_model_id, allModels),
-                      multiple: true,
-                      treeLine: { showLeafIcon: false },
-                      showCheckedStrategy: TreeSelect.SHOW_PARENT,
-                      treeCheckable: true,
-                    },
-                  },
-                ];
-                //return [];
-              },
-            },
-          ],
-        },
-        {
-          valueType: 'dependency',
-          name: ['type', 'foreign_model_id'],
-          columns: ({ type, foreign_model_id }: any) => {
-            if (type == 'one' && foreign_model_id) {
-              return [
-                {
-                  valueType: 'group',
-                  columns: [
+              name: ['type', 'foreign_model_id'],
+              columns: ({ type, foreign_model_id }: any) => {
+                if (type == 'many') {
+                  return [
                     {
-                      title: '是否加入with_in_page',
-                      dataIndex: 'is_with_in_page',
-                      valueType: 'switch',
-                      fieldProps: {
-                        checkedChildren: '是',
-                        unCheckedChildren: '否',
-                        defaultChecked: false,
-                      },
-                      colProps: { span: 12 },
-                    },
-                    {
-                      valueType: 'dependency',
-                      name: ['is_with_in_page'],
-                      columns: ({ is_with_in_page }: any) => {
-                        if (!is_with_in_page) {
-                          return [];
-                        }
-                        return [
-                          {
-                            dataIndex: 'in_page_select_columns',
-                            title: '关联模型包含字段',
-                            tooltip: '不选表示全部获取',
-                            valueType: 'select',
-                            colProps: { span: 12 },
-                            fieldProps: {
-                              options: getModelColumns(foreign_model_id),
-                              mode: 'multiple',
-                              multiple: true,
-                            },
+                      valueType: 'group',
+                      columns: [
+                        {
+                          dataIndex: 'with_count',
+                          title: '是否计算数量总和',
+                          valueType: 'switch',
+                          colProps: { span: 12 },
+                        },
+                        {
+                          dataIndex: 'with_sum',
+                          title: '求和包含字段',
+                          valueType: 'select',
+                          colProps: { span: 12 },
+                          fieldProps: {
+                            options: getModelColumns(foreign_model_id),
+                            mode: 'multiple',
                           },
-                        ];
-                        //return [];
-                      },
+                        },
+                      ],
                     },
-                  ],
+                  ];
+                }
+                return [];
+              },
+            },
+            {
+              valueType: 'group',
+              columns: [
+                {
+                  title: '是否加入with',
+                  dataIndex: 'is_with',
+                  valueType: 'switch',
+                  fieldProps: {
+                    checkedChildren: '是',
+                    unCheckedChildren: '否',
+                  },
+                  colProps: { span: 12 },
                 },
-              ];
-            }
-            return [];
-          },
+                {
+                  valueType: 'dependency',
+                  name: ['foreign_model_id', 'is_with'],
+                  columns: ({ foreign_model_id, is_with }: any) => {
+                    if (!foreign_model_id || !is_with) {
+                      return [];
+                    }
+                    return [
+                      {
+                        dataIndex: 'select_columns',
+                        title: '关联模型包含字段',
+                        tooltip: '不选表示全部获取',
+                        valueType: 'treeSelect',
+                        colProps: { span: 12 },
+                        fieldProps: {
+                          options: getModelColumnsTree(foreign_model_id, allModels),
+                          multiple: true,
+                          treeLine: { showLeafIcon: false },
+                          showCheckedStrategy: TreeSelect.SHOW_PARENT,
+                          treeCheckable: true,
+                        },
+                      },
+                    ];
+                    //return [];
+                  },
+                },
+              ],
+            },
+            {
+              valueType: 'dependency',
+              name: ['type', 'foreign_model_id'],
+              columns: ({ type, foreign_model_id }: any) => {
+                if (type == 'one' && foreign_model_id) {
+                  return [
+                    {
+                      valueType: 'group',
+                      columns: [
+                        {
+                          title: '是否加入with_in_page',
+                          dataIndex: 'is_with_in_page',
+                          valueType: 'switch',
+                          fieldProps: {
+                            checkedChildren: '是',
+                            unCheckedChildren: '否',
+                            defaultChecked: false,
+                          },
+                          colProps: { span: 12 },
+                        },
+                        {
+                          dataIndex: 'in_page_select_columns',
+                          title: '关联模型包含字段(选择数据所查询的字段)',
+                          tooltip:
+                            '默认使用字段配置中设置的label和value。未设置则使用id,title。勾选with_in_page后不选表示全部获取',
+                          valueType: 'select',
+                          colProps: { span: 12 },
+                          fieldProps: {
+                            options: getModelColumns(foreign_model_id),
+                            mode: 'multiple',
+                            multiple: true,
+                          },
+                        },
+                      ],
+                    },
+                  ];
+                }
+                return [];
+              },
+            },
+          ],
         },
-        { dataIndex: 'with_default', title: 'withDefault', valueType: 'jsonEditor' },
-        { dataIndex: 'filter', title: '筛选条件', valueType: 'jsonEditor' },
-        { dataIndex: 'order_by', title: '排序', valueType: 'jsonEditor' },
+        {
+          tab: { title: '其它设置' },
+          formColumns: [
+            { dataIndex: 'with_default', title: 'withDefault', valueType: 'jsonEditor' },
+            { dataIndex: 'filter', title: '筛选条件', valueType: 'jsonEditor' },
+            { dataIndex: 'order_by', title: '排序', valueType: 'jsonEditor' },
+          ],
+        },
       ]}
       pageType="drawer"
       openType="drawer"
