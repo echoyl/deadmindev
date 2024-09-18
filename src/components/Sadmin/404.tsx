@@ -156,13 +156,13 @@ const PageTypes = ({ menu, match, pathname }) => {
       case 'panel':
         return (
           <Suspense fallback={<PageLoading />}>
-            <PagePanel pageMenu={menu} {...data} path={pathname} />
+            <PagePanel key={pathname} pageMenu={menu} {...data} path={pathname} />
           </Suspense>
         );
       case 'panel2':
         return (
           <Suspense fallback={<PageLoading />}>
-            <SaPanel pageMenu={menu} {...data} path={pathname} />
+            <SaPanel key={pathname} pageMenu={menu} {...data} path={pathname} />
           </Suspense>
         );
       default:
