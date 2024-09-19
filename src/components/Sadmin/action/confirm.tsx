@@ -51,10 +51,11 @@ export const ConfirmTriggerClick = (
     onOk: async () => {
       const requestProps =
         method == 'get'
-          ? { params: { ...newData, id: dataId, ...values }, messageApi }
+          ? { params: { ...newData, id: dataId, ...values }, messageApi, drawer: true }
           : {
               data: { ...newData, id: dataId, ...values },
               messageApi,
+              drawer: true,
             };
       const ret = await request[method](url, requestProps);
       if (callback) {
