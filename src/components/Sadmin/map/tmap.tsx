@@ -311,7 +311,7 @@ export const TampShow: FC<{
         setInit(true);
       }, 500);
     });
-  }, []);
+  }, [id]);
   useEffect(() => {
     if (!init) return;
     console.log('update', lat, lng);

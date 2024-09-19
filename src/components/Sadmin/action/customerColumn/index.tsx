@@ -266,10 +266,12 @@ const CustomerColumnRender = (props) => {
             />
           );
         } else if (item.action == 'confirm') {
+          //request.data 参数支持读取当前行的数据
           return (
             <Confirm
               key={key}
               dataId={record?.id}
+              record={record}
               trigger={dom}
               url={item.request?.url}
               data={{ ...paramExtra, ...item.request?.data }}

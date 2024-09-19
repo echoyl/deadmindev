@@ -5,6 +5,7 @@ import { SaContext } from '../posts/table';
 import cache from '../helper/cache';
 import { SaDevContext } from '../dev';
 import { MessageInstance } from 'antd/es/message/interface';
+import { tplComplie } from '../helpers';
 
 interface actionConfirm {
   msg?: string | React.ReactNode;
@@ -18,6 +19,7 @@ interface actionConfirm {
   trigger?: JSX.Element;
   title?: string;
   afterActionType?: 'reload' | 'goback' | 'none';
+  record?: Record<string, any>;
 }
 
 export const ConfirmTriggerClick = (
@@ -31,21 +33,27 @@ export const ConfirmTriggerClick = (
     method = 'post',
     url = '',
     data = {},
+    record,
     dataId = 0,
     callback,
     title,
     afterActionType = 'reload',
   } = props;
   const values = searchFormRef?.current?.getFieldsFormatValue();
+  const newData: Record<string, any> = {};
+  Object.keys(data).map((k) => {
+    const tplc = tplComplie(data[k], { record });
+    newData[k] = tplc ? tplc : '';
+  });
   return {
     title: title ? title : '温馨提示！',
     content: msg,
     onOk: async () => {
       const requestProps =
         method == 'get'
-          ? { params: { ...data, id: dataId, ...values }, messageApi }
+          ? { params: { ...newData, id: dataId, ...values }, messageApi }
           : {
-              data: { ...data, id: dataId, ...values },
+              data: { ...newData, id: dataId, ...values },
               messageApi,
             };
       const ret = await request[method](url, requestProps);
@@ -96,7 +104,7 @@ const Confirm: FC<actionConfirm> = (props) => {
   // const click = () => {
   //   ConfirmTriggerClick(props, modal, actionRef, searchFormRef);
   // };
-
+  //console.log('props.record', props.record);
   const triggerDom = useMemo(() => {
     if (!trigger) {
       return null;
@@ -130,7 +138,7 @@ const Confirm: FC<actionConfirm> = (props) => {
 // }
 
 export const ConfirmRender = (text, props) => {
-  //log('confirm props', props.fieldProps);
+  //console.log('confirm props', props.fieldProps, text);
   return <Confirm {...props.fieldProps} dataId={props.record.id} />;
 };
 
