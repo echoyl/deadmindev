@@ -484,21 +484,28 @@ const Login: React.FC = () => {
               ) : null
             }
           >
-            <Tabs
-              centered
-              activeKey={loginType}
-              onChange={(activeKey) => {
-                setLoginType(activeKey);
-                setIsQrcode(activeKey == 'phone');
-              }}
-              items={setting.adminSetting?.loginType?.map((v) => {
-                return loginTypeItems.find((item) => item.key == v);
-              })}
-            />
+            {setting.adminSetting?.loginType?.length > 1 ? (
+              <Tabs
+                centered
+                activeKey={loginType}
+                onChange={(activeKey) => {
+                  setLoginType(activeKey);
+                  setIsQrcode(activeKey == 'phone');
+                }}
+                items={setting.adminSetting?.loginType?.map((v) => {
+                  return loginTypeItems.find((item) => item.key == v);
+                })}
+              />
+            ) : (
+              loginTypeItems.find((item) => item.key == setting.adminSetting?.loginType?.[0])
+                ?.children
+            )}
+
             <div
               style={{
                 marginBottom: 24,
               }}
+              key="login_bottom"
             >
               <ProFormCheckbox noStyle name="autoLogin">
                 {t('pages.login.rememberMe', intl)}
