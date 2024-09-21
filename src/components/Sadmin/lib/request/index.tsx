@@ -67,6 +67,10 @@ export async function requestHeaders() {
 }
 
 export function getFullUrl(url: string) {
+  //检测url是否有http or https
+  if (url.indexOf('http') >= 0 || url.indexOf('https') >= 0) {
+    return url;
+  }
   return request_prefix + url;
 }
 

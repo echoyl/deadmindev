@@ -280,7 +280,10 @@ export default () => {
                     valueType: 'checkbox',
                     dataIndex: 'loginActions',
                     fieldProps: {
-                      options: [{ label: '微信公众号', value: 'wechat' }],
+                      options: [
+                        { label: '微信公众号', value: 'wechat' },
+                        { label: '快捷登录', value: 'thunder' },
+                      ],
                     },
                     colProps: { span: 12 },
                   },
@@ -297,9 +300,10 @@ export default () => {
                 name: ['loginActions'],
                 columns: ({ loginActions }) => {
                   //console.log('loginActions', loginActions);
-                  if (loginActions && inArray('wechat', loginActions) > -1) {
-                    return [
-                      {
+                  const _columns = [];
+                  if (loginActions) {
+                    if (inArray('wechat', loginActions) > -1) {
+                      _columns.push({
                         valueType: 'group',
                         columns: [
                           {
@@ -313,10 +317,28 @@ export default () => {
                             colProps: { span: 12 },
                           },
                         ],
-                      },
-                    ];
+                      });
+                    }
+                    if (inArray('thunder', loginActions) > -1) {
+                      _columns.push({
+                        valueType: 'group',
+                        columns: [
+                          {
+                            title: '请求url',
+                            dataIndex: ['loginThunder', 'url'],
+                            colProps: { span: 12 },
+                            tooltip: '请求url请注意是否跨域',
+                          },
+                          {
+                            title: 'Tooltip文字',
+                            dataIndex: ['loginThunder', 'desc'],
+                            colProps: { span: 12 },
+                          },
+                        ],
+                      });
+                    }
                   }
-                  return [];
+                  return _columns;
                 },
               },
             ],

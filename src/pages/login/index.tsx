@@ -1,13 +1,10 @@
 import CaptchaInput from '@/components/CaptchInput';
 import Footer from '@/components/Footer';
 import ButtonModal from '@/components/Sadmin/action/buttonModal';
-import WebSocketProvider, {
-  WebSocketContext,
-  WebSocketListen,
-} from '@/components/Sadmin/hooks/websocket';
+import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
 import { parseAdminSeting, saGetSetting } from '@/components/Sadmin/components/refresh';
-import request, { adminTokenName, setAdminToken } from '@/components/Sadmin/lib/request';
-import { LockOutlined, UserOutlined, WechatOutlined } from '@ant-design/icons';
+import request, { setAdminToken } from '@/components/Sadmin/lib/request';
+import { LockOutlined, ThunderboltOutlined, UserOutlined, WechatOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import {
   LoginForm,
@@ -17,10 +14,9 @@ import {
   ProFormDependency,
   ProFormInstance,
   ProFormText,
-  setAlpha,
 } from '@ant-design/pro-components';
 import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
-import { Tabs, QRCode, Space, theme, GetProp, message, notification } from 'antd';
+import { Tabs, QRCode, Space, theme, GetProp, Tooltip } from 'antd';
 import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import cache from '@/components/Sadmin/helper/cache';
@@ -79,11 +75,7 @@ const Lang = () => {
 };
 
 const LoginComponent: React.FC = () => {
-  return (
-    <WebSocketProvider>
-      <Login />
-    </WebSocketProvider>
-  );
+  return <Login />;
 };
 
 const Login: React.FC = () => {
@@ -96,10 +88,8 @@ const Login: React.FC = () => {
 
   const [searchParams] = useSearchParams();
 
-  const [messageApi, messageHolder] = message.useMessage();
-  const [notificationApi, notificationHolder] = notification.useNotification();
-
   const { clientId, messageData, bind } = useContext(WebSocketContext);
+  const { messageApi, notificationApi } = useContext(SaDevContext);
   const [setting, setSetting] = useState<any>();
   const { styles } = useStyles();
   const [loginType, setLoginType] = useState();
@@ -146,7 +136,7 @@ const Login: React.FC = () => {
       //重新设置messagedata，如果这个时候退出登录而没有清空 messagedata的话会一直重复这个动作 服务器发送退出登录的消息 这里可以不用设置messagedata
       //setMessageData?.(false);
       setAdminToken(data.access_token).then(() => {
-        messageApi.success({
+        messageApi?.success({
           content: data.msg,
           duration: 1,
           onClose: () => {
@@ -171,7 +161,7 @@ const Login: React.FC = () => {
       then: (res) => {
         const { code, msg, data } = res;
         if (res.code) {
-          notificationApi.error({ description: msg, message: '提示' });
+          notificationApi?.error({ description: msg, message: '提示' });
           if (loginType == 'phone' && res.code == 3) {
             setCaptchaPhoneReload(captchaReload + 1);
           }
@@ -189,7 +179,7 @@ const Login: React.FC = () => {
             cache.set('Sa-Remember', 0);
           }
           setAdminToken(res.data.access_token).then(() => {
-            messageApi.success({
+            messageApi?.success({
               content: msg,
               duration: 1,
               onClose: () => {
@@ -368,6 +358,26 @@ const Login: React.FC = () => {
   } else {
     containerStyle.background = token.colorBgBase;
   }
+
+  const ThunderLogin = (props) => {
+    const { styles } = props;
+    const { url, desc } = setting?.adminSetting?.loginThunder;
+    const click = async () => {
+      await request.post(url, { data: { client_id: clientId } });
+      return;
+    };
+    return (
+      <Tooltip title={desc}>
+        <ThunderboltOutlined
+          key="thunderlogin"
+          className={styles.action}
+          style={{ fontSize: 22 }}
+          onClick={click}
+        />
+      </Tooltip>
+    );
+  };
+
   const ActionLogin = (props) => {
     const { type } = props;
     const [timestamp, setTimestamp] = useState<number>(0);
@@ -404,33 +414,28 @@ const Login: React.FC = () => {
       return () => clearTimeout(tout);
     }, []);
 
-    if (type == 'wechat') {
-      const { url, desc } = setting?.adminSetting?.loginWechat;
-      const qrcodeUrl = url + '?client_id=' + clientId + '&timestamp=' + timestamp;
-      console.log('qrcodeUrl', qrcodeUrl);
-      return (
-        <div style={{ textAlign: 'center' }}>
-          {timestamp ? (
-            <QRCode
-              style={{ margin: '0 auto' }}
-              value={qrcodeUrl}
-              status={status}
-              onRefresh={refresh}
-            />
-          ) : null}
-          <div style={{ marginTop: 20 }}>{desc}</div>
-        </div>
-      );
-    }
-    return null;
+    const { url, desc } = setting?.adminSetting?.loginWechat;
+    const qrcodeUrl = url + '?client_id=' + clientId + '&timestamp=' + timestamp;
+    console.log('qrcodeUrl', qrcodeUrl);
+    return (
+      <div style={{ textAlign: 'center' }}>
+        {timestamp ? (
+          <QRCode
+            style={{ margin: '0 auto' }}
+            value={qrcodeUrl}
+            status={status}
+            onRefresh={refresh}
+          />
+        ) : null}
+        <div style={{ marginTop: 20 }}>{desc}</div>
+      </div>
+    );
   };
   return setting ? (
     <div className={styles.container} style={{ ...containerStyle }}>
       <Helmet>
         <title>登录 - {setting?.title}</title>
       </Helmet>
-      {messageHolder}
-      {notificationHolder}
       {setting?.adminSetting?.lang ? <Lang /> : null}
       <div style={{ flex: '1', padding: '48px 0' }}>
         <ProCard
@@ -471,15 +476,24 @@ const Login: React.FC = () => {
               setting?.adminSetting?.loginActions ? (
                 <Space>
                   {t('pages.login.loginWith', intl)}
-                  <ButtonModal
-                    trigger={<WechatOutlined className={styles.action} />}
-                    width={350}
-                    title="扫码登录"
-                  >
-                    {setting?.adminSetting?.loginActions?.map((ac, index) => {
-                      return <ActionLogin key={index} type={ac} />;
-                    })}
-                  </ButtonModal>
+                  {setting?.adminSetting?.loginActions?.map((ac, index) => {
+                    if (ac == 'wechat') {
+                      return (
+                        <ButtonModal
+                          trigger={<WechatOutlined className={styles.action} />}
+                          width={350}
+                          title="扫码登录"
+                          key="wechatlogin"
+                        >
+                          <ActionLogin key={index} type={ac} />
+                        </ButtonModal>
+                      );
+                    } else if (ac == 'thunder') {
+                      return <ThunderLogin key="thunderlogin" styles={styles} />;
+                    } else {
+                      return <></>;
+                    }
+                  })}
                 </Space>
               ) : null
             }
@@ -515,7 +529,7 @@ const Login: React.FC = () => {
                   float: 'right',
                 }}
                 onClick={() => {
-                  messageApi.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
+                  messageApi?.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
                 }}
               >
                 {t('pages.login.forgotPassword', intl)}

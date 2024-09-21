@@ -170,7 +170,7 @@ export function rootContainer(container: JSX.Element, args) {
               <WebSocketListen />
               {props.children}
             </WebSocketProvider> */}
-            {props.children}
+            <WebSocketProvider>{props.children}</WebSocketProvider>
             {messageHolder}
             {modalHolder}
             {notificationHolder}
@@ -256,10 +256,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     childrenRender: (children, props) => {
       return (
         <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
-          <WebSocketProvider>
-            <WebSocketListen />
-            {children}
-          </WebSocketProvider>
+          <WebSocketListen />
+          {children}
           {adminSetting.dev && (
             <>
               <DevLinks />
