@@ -444,7 +444,7 @@ const Login: React.FC = () => {
             margin: '0px auto',
             // padding: '20px 0',
             background: setting?.adminSetting?.loginBgCardColor,
-            width: 376,
+            width: 380,
           }}
           bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
           className={styles.card}
