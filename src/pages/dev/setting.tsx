@@ -408,8 +408,10 @@ export default () => {
             ],
           },
         ]}
-        msgcls={async () => {
-          await reload();
+        msgcls={async ({ code }) => {
+          if (!code) {
+            await reload();
+          }
           return;
         }}
       />
