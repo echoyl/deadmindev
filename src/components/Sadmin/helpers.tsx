@@ -18,7 +18,7 @@ import CustomerColumnRender from './action/customerColumn';
 import CustomerColumnRenderDev from './action/customerColumn/dev';
 import ModalJson from './action/modalJson';
 import CarBrand from './carBrand';
-import { isObj, isStr } from './checkers';
+import { getJson, isObj, isStr } from './checkers';
 import { FormCalendarRender } from './formCalendar';
 import { Guiges } from './guige';
 import JsonEditor from './jsonEditor';
@@ -147,9 +147,7 @@ export declare type saTableColumnsType = Array<
 export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   uploader: {
     render: (image, props) => {
-      if (typeof image != 'object') {
-        image = image ? JSON.parse(image) : [];
-      }
+      image = getJson(image, image);
       return <UploaderRender {...props.fieldProps} value={image} buttonType="table" readonly />;
     },
     renderFormItem: (text, props) => {
@@ -209,9 +207,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   tmapShow: {
     render: (text) => {
       //console.log(text);
-      if (isStr(text)) {
-        text = text ? JSON.parse(text) : {};
-      }
+      text = getJson(text, {});
       return <TampShow {...text} />;
     },
   },
@@ -223,10 +219,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   },
   bmapShow: {
     render: (text) => {
-      console.log(text);
-      if (isStr(text)) {
-        text = text ? JSON.parse(text) : {};
-      }
+      text = getJson(text, {});
       return <BampShow {...text} />;
     },
   },
@@ -244,9 +237,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       delete props.fieldProps.topCode;
 
       if (props.fieldProps.value) {
-        if (isJsonString(props.fieldProps.value)) {
-          props.fieldProps.value = JSON.parse(props.fieldProps.value);
-        }
+        props.fieldProps.value = getJson(props.fieldProps.value, []);
         if (Array.isArray(props.fieldProps.value)) {
           if (props.fieldProps.multiple) {
             //支持多选
@@ -541,20 +532,6 @@ export const shenheSwitchProps = {
   checkedChildren: '审核通过',
   unCheckedChildren: '审核中',
 };
-
-export function isJsonString(str) {
-  try {
-    const toObj = JSON.parse(str); // json字符串转对象
-    /*
-        判断条件 1. 排除null可能性 
-                 2. 确保数据是对象或数组
-    */
-    if (toObj && typeof toObj === 'object') {
-      return true;
-    }
-  } catch {}
-  return false;
-}
 
 export const isDev = () => {
   const { initialState } = useModel('@@initialState');

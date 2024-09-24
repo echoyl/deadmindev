@@ -68,7 +68,7 @@ const formMoreType = [
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {
   const select_data = allModels?.find((v) => v.id == id);
-  //console.log(foreign_model_id, allModels, select_data);
+  //console.log(allModels, select_data);
   const fields: Array<TreeNodeProps> = select_data?.columns?.map((v) => ({
     label: v.label ? v.label : [v.title, v.name].join(' - '),
     value: v.name,
@@ -119,7 +119,7 @@ export const getModelRelations = (model_id: number, dev: { [key: string]: any })
     ?.filter((v) => v.type == 'one' || v.type == 'many')
     .map((v) => {
       //读取关联模型的字段信息
-      //const foreign_model_columns = JSON.parse(v.foreign_model.columns);
+      //const foreign_model_columns = getJson(v.foreign_model.columns,[]);
       // const children = foreign_model_columns.map((v) => ({
       //   label: [v.title, v.name].join(' - '),
       //   value: v.name,

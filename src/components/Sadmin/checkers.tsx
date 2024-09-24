@@ -41,3 +41,25 @@ export interface Subscription<S> {
   notify?: (payload: S) => void | boolean;
   filter?: (payload: S) => any;
 }
+
+export const getJson = (jsonStr: any, defaultValue: any = []) => {
+  if (isObj(jsonStr)) {
+    return jsonStr;
+  }
+
+  if (!isStr(jsonStr)) {
+    return defaultValue;
+  }
+
+  try {
+    const val = jsonStr ? JSON.parse(jsonStr) : defaultValue;
+    return val;
+  } catch (e) {
+    //console.log('json format is valid return default value', defaultValue);
+    return defaultValue;
+  }
+};
+
+export const isHttpLink = (url: string) => {
+  return url.indexOf('http') >= 0 || url.indexOf('https') >= 0;
+};

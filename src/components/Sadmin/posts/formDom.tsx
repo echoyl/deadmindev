@@ -3,7 +3,7 @@ import { BetaSchemaForm, ProFormColumnsType, ProFormInstance } from '@ant-design
 import dayjs from 'dayjs';
 import { cloneDeep, isString } from 'lodash';
 import React, { ReactNode } from 'react';
-import { inArray, isArr, isStr } from '../checkers';
+import { getJson, inArray, isArr, isStr } from '../checkers';
 import { FormColumnTitle } from '../dev/table/title';
 import { getFromObject, getMenuDataById, saFormColumnsType, tplComplie } from '../helpers';
 export const defaultColumnsLabel = {
@@ -256,7 +256,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
 
             //v.valueType = 'dependency';
           } else {
-            const new_column = JSON.parse(JSON.stringify(v));
+            const new_column = getJson(JSON.stringify(v), {});
             v = {
               valueType: 'dependency',
               name: names,

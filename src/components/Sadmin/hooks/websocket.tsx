@@ -1,12 +1,12 @@
 import { getAdminToken, rememberName } from '@/components/Sadmin/lib/request';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../dev';
-import { isJsonString } from '../helpers';
 
 import ConfirmForm from '../action/confirmForm';
 import ButtonModal from '../action/buttonModal';
 import TableFromBread from '../tableFromBread';
 import cache from '../helper/cache';
+import { getJson } from '../checkers';
 
 // 创建WebSocket上下文
 export const WebSocketContext = React.createContext<{
@@ -119,14 +119,11 @@ const WebSocketProvider = (props) => {
   useEffect(() => {
     if (socket) {
       socket.onmessage = (e) => {
-        if (isJsonString(e.data)) {
-          const data = JSON.parse(e.data);
-          //console.log('on message', data);
-          const { type } = data;
-          setMessageData(data);
-          if (type == 'init') {
-            setClientId(data.data);
-          }
+        const data = getJson(e.data, {});
+        const { type } = data;
+        setMessageData(data);
+        if (type == 'init') {
+          setClientId(data.data);
         }
       };
     }

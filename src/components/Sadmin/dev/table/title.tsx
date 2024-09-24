@@ -30,6 +30,7 @@ import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
 import { ColumnsSelector, ToolBarMenu } from './toolbar';
 import { tplComplie } from '../../helpers';
 import DevSwitch from '../switch';
+import { getJson } from '../../checkers';
 export const designerCss = css`
   position: relative;
   min-width: 60px;
@@ -90,13 +91,14 @@ const getValue = (uid, pageMenu, type) => {
     type == 'table' || type == 'toolbar'
       ? pageMenu?.schema?.table_config
       : pageMenu?.schema?.form_config;
+  const pconfig = getJson(config, []);
   if (type == 'table' || type == 'toolbar') {
-    return JSON.parse(config)?.find((v) => v.uid == uid);
+    return pconfig?.find((v) => v.uid == uid);
   } else {
     //form获取组或列信息
     let value = {};
     //console.log('config', config);
-    JSON.parse(config)?.tabs?.map((tab) => {
+    pconfig?.tabs?.map((tab) => {
       if (tab.uid == uid) {
         //tab支持编辑修改其属性
         value = tab;

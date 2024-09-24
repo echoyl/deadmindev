@@ -9,7 +9,7 @@ import { FooterToolbar, ProTable } from '@ant-design/pro-components';
 import { history, useModel, useSearchParams } from '@umijs/max';
 import { Modal } from 'antd';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { inArray, isArr, isFn, isObj, isStr, isUndefined } from '../checkers';
+import { getJson, inArray, isArr, isFn, isObj, isStr, isUndefined } from '../checkers';
 import { TableForm } from '../dev/table/form';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
@@ -20,7 +20,6 @@ import { DndContext } from '../dev/dnd-context';
 import { tableDesignerInstance, useTableDesigner } from '../dev/table/designer';
 import {
   getFromObject,
-  isJsonString,
   saFormColumnsType,
   saFormTabColumnsType,
   saTableColumnsType,
@@ -476,26 +475,23 @@ const SaTable: React.FC<saTableProps> = (props) => {
                         }
                       }
                       for (var i in values) {
-                        if (isJsonString(values[i])) {
-                          let jval = JSON.parse(values[i]);
-                          // if (!Array.isArray(jval)) {
-                          //   values[i] = jval;
-                          // }
+                        let jval = getJson(values[i], '');
+                        if (isObj(jval)) {
                           values[i] = jval;
                         } else {
                           //检测 是否是逗号拼接的数组
                           if (isStr(values[i]) && values[i].indexOf(',') > -1) {
                             values[i] = values[i].split(',');
                           }
-                          if (isArr(values[i])) {
-                            //数组的话检测里面的数据是否是数字，系统会默认将同一名字的query参数整合到数组中 并且数字变成了字符串
-                            values[i] = values[i].map((v) => {
-                              if (isStr(v) && /^\d+$/.test(v)) {
-                                v = parseInt(v);
-                              }
-                              return v;
-                            });
-                          }
+                        }
+                        if (isArr(values[i])) {
+                          //数组的话检测里面的数据是否是数字，系统会默认将同一名字的query参数整合到数组中 并且数字变成了字符串
+                          values[i] = values[i].map((v) => {
+                            if (isStr(v) && /^\d+$/.test(v)) {
+                              v = parseInt(v);
+                            }
+                            return v;
+                          });
                         }
                       }
                       const ret = { ...values };

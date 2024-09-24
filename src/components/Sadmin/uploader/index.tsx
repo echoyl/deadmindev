@@ -10,11 +10,12 @@ import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { css } from '@emotion/css';
 import { SaDevContext } from '../dev';
+import { isArr, isHttpLink, isStr } from '../checkers';
 
 interface Props {
   max?: number;
   type?: string;
-  value?: UploadFile[];
+  value?: UploadFile[] | string | string[]; //支持单图字符串 和多图符串显示
   onChange?: (value: any) => void;
   size?: object | number;
   fieldProps?: UploadProps;
@@ -69,11 +70,7 @@ const DraggableUploadListItem = ({ originNode, file }: DraggableUploadListItemPr
 
 const Uploader: React.FC<Props> = (props) => {
   const [headers, setHeaders] = useState();
-  useEffect(() => {
-    requestHeaders().then((v) => {
-      setHeaders(v);
-    });
-  }, []);
+
   const {
     max = 1,
     type = 'image',
@@ -88,17 +85,51 @@ const Uploader: React.FC<Props> = (props) => {
     buttonType = 'card',
     readonly = false,
   } = props;
-  //console.log('value', value);
-  const [fileList, setFileList] = useState<UploadFile[]>(
-    value && typeof value !== 'string' ? value : [],
-  );
-  const { notificationApi } = useContext(SaDevContext);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const { notificationApi, setting } = useContext(SaDevContext);
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(false);
   fieldProps.maxCount = max;
   fieldProps.multiple = max > 1 ? true : false;
   fieldProps.accept = accept;
+
+  const parseImageUrl = (url: string): UploadFile => {
+    if (isHttpLink(url)) {
+      return { url, value: url };
+    } else {
+      return { url: [setting?.adminSetting?.fileImagePrefix, url].join(''), value: url };
+    }
+  };
+
+  useEffect(() => {
+    requestHeaders().then((v) => {
+      setHeaders(v);
+    });
+  }, []);
+  useEffect(() => {
+    //解析传入的数据
+    const newFileList: UploadFile[] = [];
+    if (isStr(value)) {
+      //单图字符串
+      newFileList.push(parseImageUrl(value));
+      setFileList(newFileList);
+    } else if (isArr(value)) {
+      //数组格式
+      if (value.length < 1) {
+        return;
+      }
+      value.map((v) => {
+        if (isStr(v)) {
+          //多图字符串
+          newFileList.push(parseImageUrl(v));
+        } else {
+          newFileList.push(v);
+        }
+      });
+      setFileList(newFileList);
+    }
+  }, [value]);
 
   const handlePreview = async (file: UploadFile) => {
     //console.log(fileList, file);
@@ -128,7 +159,7 @@ const Uploader: React.FC<Props> = (props) => {
       <PlusOutlined />
       <div style={{ marginTop: 4 }}>{type == 'image' ? '选图片' : '选文件'}</div>
       <div>
-        {fileList.length}/{max}
+        {fileList?.length}/{max}
       </div>
     </div>
   );
@@ -228,16 +259,16 @@ const Uploader: React.FC<Props> = (props) => {
             buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
           }
           showUploadList={
-            fileList.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
+            fileList?.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
           }
           action={action}
-          fileList={fileList.length ? [fileList[0]] : []}
+          fileList={fileList?.length ? [fileList[0]] : []}
           onChange={fileChange}
           itemRender={(originNode) => {
             return (
               <Badge
                 color={token.colorPrimary}
-                count={fileList.length > 1 && readonly ? fileList.length : 0}
+                count={fileList?.length > 1 && readonly ? fileList?.length : 0}
                 size="small"
                 offset={[-10, 10]}
                 styles={{ root: { height: '100%', width: '100%' } }}
@@ -247,12 +278,12 @@ const Uploader: React.FC<Props> = (props) => {
             );
           }}
         >
-          {(fileList.length && !loading) || readonly ? null : uploadButtonOne}
+          {(fileList?.length && !loading) || readonly ? null : uploadButtonOne}
         </Upload>
       ) : (
         <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
           <SortableContext
-            items={fileList.map((i) => i.uid)}
+            items={fileList?.map((i) => i.uid)}
             //strategy={horizontalListSortingStrategy}
           >
             <Upload
@@ -269,12 +300,12 @@ const Uploader: React.FC<Props> = (props) => {
               fileList={fileList}
               onChange={fileChange}
             >
-              {fileList.length && fileList.length == max && !loading ? null : uploadButton}
+              {fileList?.length && fileList.length == max && !loading ? null : uploadButton}
             </Upload>
           </SortableContext>
         </DndContext>
       )}
-      {fileList.length > 0 && (
+      {fileList?.length > 0 && (
         <div style={{ display: 'none' }}>
           <Image.PreviewGroup
             preview={{
@@ -287,7 +318,7 @@ const Uploader: React.FC<Props> = (props) => {
                 setCurrent(current);
               },
             }}
-            items={fileList.map((file) => {
+            items={fileList?.map((file) => {
               if (file.url) {
                 const [url] = file.url.split('?');
                 return url;

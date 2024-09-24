@@ -17,7 +17,7 @@ import {
 import { App, Button, ConfigProvider, Flex, InputNumber, Space, Switch, Tooltip } from 'antd';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import ButtonDrawer from '../action/buttonDrawer';
-import { isStr } from '../checkers';
+import { getJson, isStr } from '../checkers';
 import { saFormColumnsType, uid } from '../helpers';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
@@ -524,11 +524,8 @@ const GuigePanel: FC<{
 export const Guiges = (props) => {
   //const [tableFormRef] = Form.useForm();
   const [openValue, setOpenValue] = useState(false);
-  const value = props.value
-    ? typeof props.value == 'string'
-      ? JSON.parse(props.value)
-      : props.value
-    : { items: [{ name: '', items: [{ name: '', id: uid() }], id: uid() }] };
+  const dvalue = { items: [{ name: '', items: [{ name: '', id: uid() }], id: uid() }] };
+  const value = getJson(props.value, dvalue);
   //log('inner value is', value);
   const [hidden, setHidden] = useState(value.open ? false : true);
   const { columns = [] } = props;
