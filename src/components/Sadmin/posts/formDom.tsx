@@ -6,6 +6,9 @@ import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
 import { FormColumnTitle } from '../dev/table/title';
 import { getFromObject, getMenuDataById, saFormColumnsType, tplComplie } from '../helpers';
+import { GlobalOutlined } from '@ant-design/icons';
+import { Space } from 'antd';
+import TranslationModal from '../dev/form/translation';
 export const defaultColumnsLabel = {
   id: '序号',
   category_id: '分类选择',
@@ -47,6 +50,8 @@ interface formFieldsProps {
   user?: any; //后台用户信息
   formRef?: ProFormInstance;
   devEnable?: boolean;
+  devSetting?: Record<string, any>;
+  intl?: any;
 }
 
 export const GetFormFields: React.FC<{
@@ -67,6 +72,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     user,
     devEnable = true,
     intl,
+    devSetting,
   } = props;
   if (!initRequest) return [];
   const allLabels = { ...defaultColumnsLabel, ...labels };
@@ -76,7 +82,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     typeof columns == 'function' ? columns(detail) : isArr(columns) ? cloneDeep(columns) : [];
   //console.log(detail);
   //const { initialState } = useModel('@@initialState');
-
+  const hiddenColumns: any = [];
   const defaulColumns: { [key: string]: any } = {
     id: {
       dataIndex: 'id',
@@ -358,6 +364,22 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       } else {
         v.title = tplComplie(v.title);
       }
+      if (v.fieldProps?.localesopen) {
+        v.title = (
+          <Space>
+            {v.title}
+            <TranslationModal column={{ ...v }} />
+          </Space>
+        );
+        //插入隐藏字段
+        devSetting?.adminSetting?.locales.map((lo) => {
+          hiddenColumns.push({
+            dataIndex: [v?.dataIndex, lo.name].join('_'),
+            formItemProps: { hidden: true },
+          });
+          return lo;
+        });
+      }
 
       if (v.fieldProps?.placeholder) {
         v.fieldProps.placeholder = tplComplie(v.fieldProps.placeholder, { intl });
@@ -374,5 +396,5 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       return c !== false;
     });
   //console.log('_columns', _columns);
-  return _columns;
+  return [..._columns, ...hiddenColumns];
 };

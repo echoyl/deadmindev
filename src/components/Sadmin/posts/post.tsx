@@ -85,7 +85,7 @@ export const SaForm: FC<saFormProps> = (props) => {
   const [devEnable, setDevEnable] = useState(
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev,
   );
-  const { messageApi } = useContext(SaDevContext);
+  const { messageApi, setting: devSetting } = useContext(SaDevContext);
   const intl = useIntl();
   //提交数据
   const post = async (base: any, callback?: (value: any) => void, then?: any) => {
@@ -177,6 +177,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         user: initialState?.currentUser,
         devEnable,
         intl,
+        devSetting,
       });
     });
   };
@@ -264,7 +265,7 @@ export const SaForm: FC<saFormProps> = (props) => {
               },
             }}
           >
-            {tabs.map((cl, index) => {
+            {tabs?.map((cl, index) => {
               //console.log('cl', cl);
               return (
                 <StepsForm.StepForm

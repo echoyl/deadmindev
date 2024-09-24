@@ -298,6 +298,12 @@ const fieldColumns: saFormColumnsType = [
                   columns: [
                     { title: 'swtich开启', dataIndex: 'open', colProps: { span: 8 } },
                     { title: 'swtich关闭', dataIndex: 'close', colProps: { span: 8 } },
+                    {
+                      title: '多语言',
+                      dataIndex: 'locale',
+                      colProps: { span: 8 },
+                      valueType: 'switch',
+                    },
                   ],
                 },
                 {
