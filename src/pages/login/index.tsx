@@ -4,7 +4,13 @@ import ButtonModal from '@/components/Sadmin/action/buttonModal';
 import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
 import { parseAdminSeting, saGetSetting } from '@/components/Sadmin/components/refresh';
 import request, { setAdminToken } from '@/components/Sadmin/lib/request';
-import { LockOutlined, ThunderboltOutlined, UserOutlined, WechatOutlined } from '@ant-design/icons';
+import {
+  LoadingOutlined,
+  LockOutlined,
+  ThunderboltOutlined,
+  UserOutlined,
+  WechatOutlined,
+} from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import {
   LoginForm,
@@ -361,19 +367,21 @@ const Login: React.FC = () => {
 
   const ThunderLogin = (props) => {
     const { styles } = props;
+    const [loading, setLoading] = useState<boolean>(false);
     const { url, desc } = setting?.adminSetting?.loginThunder;
     const click = async () => {
+      setLoading(true);
       await request.post(url, { data: { client_id: clientId } });
+      setLoading(false);
       return;
     };
     return (
       <Tooltip title={desc}>
-        <ThunderboltOutlined
-          key="thunderlogin"
-          className={styles.action}
-          style={{ fontSize: 22 }}
-          onClick={click}
-        />
+        {loading ? (
+          <LoadingOutlined className={styles.action} style={{ fontSize: 22 }} />
+        ) : (
+          <ThunderboltOutlined className={styles.action} style={{ fontSize: 22 }} onClick={click} />
+        )}
       </Tooltip>
     );
   };

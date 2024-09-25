@@ -46,14 +46,22 @@ export default () => {
           {
             title: '基础配置',
             formColumns: [
-              { title: '系统名称', dataIndex: 'title' },
-              { title: '技术支持', dataIndex: 'tech' },
               {
                 valueType: 'group',
                 columns: [
-                  { title: '子标题', dataIndex: 'subtitle', colProps: { span: 12 } },
-                  { title: '后台前缀', dataIndex: 'baseurl', colProps: { span: 12 } },
+                  { title: '系统名称', dataIndex: 'title', colProps: { span: 12 } },
+                  {
+                    title: '后台前缀',
+                    dataIndex: 'baseurl',
+                    colProps: { span: 12 },
+                    tooltip: '后台文件路径，因为构建有运行配置必须写死，所以这里默认为antadmin',
+                  },
                 ],
+              },
+              { title: '技术支持', dataIndex: 'tech' },
+              {
+                valueType: 'group',
+                columns: [{ title: '子标题', dataIndex: 'subtitle', valueType: 'textarea' }],
               },
               {
                 valueType: 'group',
@@ -84,25 +92,13 @@ export default () => {
                     colProps: { span: 12 },
                   },
                   {
-                    title: 'favicons',
-                    tooltip: '自行覆盖目录下的favicon.ico 文件',
-                    readonly: true,
-                    dataIndex: 'favicons',
-                    colProps: { span: 12 },
-                  },
-                ],
-              },
-              {
-                valueType: 'group',
-                columns: [
-                  {
                     title: '开发模式',
                     valueType: 'switch',
                     dataIndex: 'dev',
                     fieldProps: {
                       defaultChecked: true,
                     },
-                    colProps: { span: 12 },
+                    colProps: { span: 6 },
                   },
                   {
                     title: '多语言',
@@ -111,7 +107,7 @@ export default () => {
                     fieldProps: {
                       defaultChecked: true,
                     },
-                    colProps: { span: 12 },
+                    colProps: { span: 6 },
                   },
                 ],
               },
@@ -122,22 +118,23 @@ export default () => {
                 columns: [
                   {
                     title: '短信平台',
+                    tooltip: '仅用于后台验证码登录',
                     valueType: 'select',
                     dataIndex: 'sms_type',
                     fieldProps: {
                       options: [{ label: '阿里云', value: 'aliyun' }],
                     },
-                    colProps: { span: 8 },
+                    colProps: { span: 12 },
                   },
                   {
                     title: '验证码模板id',
                     dataIndex: 'sms_code_id',
-                    colProps: { span: 8 },
+                    colProps: { span: 6 },
                   },
                   {
                     title: '签名名称',
                     dataIndex: 'sms_name',
-                    colProps: { span: 8 },
+                    colProps: { span: 6 },
                   },
                 ],
               },
