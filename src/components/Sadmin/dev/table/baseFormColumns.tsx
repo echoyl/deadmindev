@@ -106,7 +106,7 @@ export const getModelRelationSelect = (id: number, allModels, level = 1) => {
 };
 
 export const getModelById = (model_id: number, models: any[]) => {
-  return models.find((v) => v.id == model_id);
+  return models?.find((v) => v.id == model_id);
 };
 
 export const getModelRelations = (model_id: number, dev: { [key: string]: any }): any[] => {

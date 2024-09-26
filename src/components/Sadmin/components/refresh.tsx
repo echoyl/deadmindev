@@ -1,14 +1,18 @@
 import { SyncOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { FloatButton, Space } from 'antd';
+import { FloatButton } from 'antd';
 import { useContext, useState } from 'react';
 import defaultSettings, { lightDefaultToken } from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
 import { message } from '@/components/Sadmin/message';
 import { getTheme } from '../themeSwitch';
-import cache from '../helper/cache';
-import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
+import request, {
+  currentUser,
+  getAdminSetting,
+  messageLoadingKey,
+  setAdminSetting,
+} from '@/components/Sadmin/lib/request';
 export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   const theme = getTheme(localsetting);
   const navTheme: { [key: string]: any } =
@@ -44,12 +48,11 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   };
 };
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
-  const cacheKey = 'adminSetting';
-  let localsetting = await cache.get(cacheKey);
+  let localsetting = await getAdminSetting();
   if (force || !localsetting) {
     const { data } = await request.get('setting');
     localsetting = data;
-    cache.set(cacheKey, data, 3600);
+    setAdminSetting(data);
   }
   if (!localsetting) {
     return {};

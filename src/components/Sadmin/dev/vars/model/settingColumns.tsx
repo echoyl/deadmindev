@@ -226,6 +226,24 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
             },
           ],
         },
+        {
+          valueType: 'group',
+          columns: [
+            {
+              dataIndex: 'has_uuids',
+              title: '开启HasUuids',
+              tooltip:"是否开启自动插入uuid",
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
+            {
+              dataIndex: 'has_uuids_name',
+              title: 'UUID字段名',
+              tooltip:'默认为sys_admin_uuid',
+              colProps: { span: 12 },
+            },
+          ],
+        },
       ],
     },
     {

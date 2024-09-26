@@ -55,6 +55,15 @@ export async function setAdminToken(data: string) {
   return cache.set(adminTokenName, data);
 }
 
+export async function getAdminSetting() {
+  const adminSetting = await cache.get(settingName);
+  return adminSetting;
+}
+
+export async function setAdminSetting(data: string) {
+  return cache.set(settingName, data, 3600);
+}
+
 const request = extend({ errorHandler });
 export async function requestHeaders() {
   const token = await getAdminToken();

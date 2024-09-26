@@ -3,7 +3,7 @@ import Footer from '@/components/Footer';
 import ButtonModal from '@/components/Sadmin/action/buttonModal';
 import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
 import { parseAdminSeting, saGetSetting } from '@/components/Sadmin/components/refresh';
-import request, { setAdminToken } from '@/components/Sadmin/lib/request';
+import request, { setAdminSetting, setAdminToken } from '@/components/Sadmin/lib/request';
 import {
   LoadingOutlined,
   LockOutlined,
@@ -109,6 +109,7 @@ const Login: React.FC = () => {
 
   const doLogin = (data) => {
     bind?.();
+    setAdminSetting(data.setting);
     const adminSetting = parseAdminSeting(data.setting);
     setInitialState((s) => ({
       ...s,
