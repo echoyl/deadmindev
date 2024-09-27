@@ -218,7 +218,7 @@ export const getTableColumns = (props) => {
 
   const parseColumns = (v) => {
     //加入if条件控制
-    if (v.fieldProps?.if) {
+    if (v.fieldProps?.if && !devEnable) {
       const show = tplComplie(v.fieldProps?.if, { record: enums, user: initialState?.currentUser });
       //console.log('v.fieldProps?.if', v.fieldProps?.if, show);
       if (!show) {

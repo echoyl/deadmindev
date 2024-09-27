@@ -493,6 +493,8 @@ export const toolBarRender = (props) => {
     url,
     paramExtra,
     enums,
+    initRequest,
+    initialState,
     table_menu_key,
     tableMenuId,
     selectedRowKeys,
@@ -501,6 +503,7 @@ export const toolBarRender = (props) => {
     sort,
     afterFormPost,
   } = props;
+  if (!initRequest) return null;
   const createButton = (
     <Button type="primary" key="primary">
       <Space>
@@ -509,7 +512,6 @@ export const toolBarRender = (props) => {
       </Space>
     </Button>
   );
-  const { initialState, setInitialState } = useModel('@@initialState');
   const devEnable =
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev;
   const values = { ...paramExtra, ids: selectedRowKeys, sort };
@@ -517,7 +519,8 @@ export const toolBarRender = (props) => {
     values[table_menu_key] = tableMenuId;
   }
 
-  const _btns = cloneDeep(toolBarButton);
+  //const _btns = cloneDeep(toolBarButton);
+  const _btns: any[] = [];
   if (devEnable) {
     _btns.push({
       valueType: 'devcolumns',
@@ -540,7 +543,7 @@ export const toolBarRender = (props) => {
   const render = () => {
     const btns = [];
     const defaultTitle = { export: '导出', import: '导入', toolbar: '配置' };
-    _btns?.forEach((btn, index) => {
+    [...toolBarButton, ..._btns]?.forEach((btn, index) => {
       //console.log('btn', btn);
       if (devEnable && (isString(btn.title) || !btn.title)) {
         btn.title = (
@@ -589,12 +592,13 @@ export const toolBarRender = (props) => {
             </Button>,
           );
         }
+        //这里如果后台没有传入enums的话 dom会返回空
         btns.push(
           <CustomerColumnRender
             key={'ccrender_' + index}
             items={btn.fieldProps?.items}
             paramExtra={values}
-            record={enums}
+            record={{ ...enums, type: 'toolbar' }}
           />,
         );
       }

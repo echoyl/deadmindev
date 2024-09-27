@@ -163,7 +163,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   } = props;
   //console.log('tableprops', props);
   const [tbColumns, setTbColumns] = useState([]);
-  const [enums, setEnums] = useState({ categorys: [] });
+  const [enums, setEnums] = useState();
   const [summary, setSummary] = useState();
   const [columnData, setColumnData] = useState({});
   const [data, setData] = useState([]);
@@ -512,6 +512,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
             handleModalVisible,
             paramExtra,
             enums,
+            initRequest,
+            initialState,
             tableMenuId,
             table_menu_key,
             selectedRowKeys,

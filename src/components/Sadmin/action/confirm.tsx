@@ -6,6 +6,7 @@ import cache from '../helper/cache';
 import { SaDevContext } from '../dev';
 import { MessageInstance } from 'antd/es/message/interface';
 import { tplComplie } from '../helpers';
+import { isArr } from '../checkers';
 
 interface actionConfirm {
   msg?: string | React.ReactNode;
@@ -49,15 +50,26 @@ export const ConfirmTriggerClick = (
     title: title ? title : '温馨提示！',
     content: msg,
     onOk: async () => {
+      const pdata =
+        method == 'get'
+          ? { ...newData, id: dataId, ...values }
+          : { ...newData, id: dataId, ...values };
+      //如果是get请求 检测values是数组的话修改name
+      if (method == 'get') {
+        Object.keys(pdata).map((k) => {
+          if (isArr(pdata[k])) {
+            pdata[k + '[]'] = pdata[k];
+            delete pdata[k];
+          }
+        });
+      }
       const requestProps =
         method == 'get'
-          ? { params: { ...newData, id: dataId, ...values }, messageApi, drawer: true }
+          ? { params: pdata }
           : {
-              data: { ...newData, id: dataId, ...values },
-              messageApi,
-              drawer: true,
+              data: pdata,
             };
-      const ret = await request[method](url, requestProps);
+      const ret = await request[method](url, { ...requestProps, messageApi, drawer: true });
       if (callback) {
         const cbret = callback(ret);
         if (cbret == true) {
