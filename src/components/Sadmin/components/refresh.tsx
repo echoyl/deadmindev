@@ -81,6 +81,23 @@ export const saReload = async (initialState, setInitialState, setSetting) => {
   return;
 };
 
+export const saReloadSetting = async (initialState, setInitialState, setSetting) => {
+  message?.loading({ key: messageLoadingKey, content: '刷新开发数据中' });
+  //const msg = await cuser();
+  const setting = await saGetSetting(true);
+  setInitialState((s) => ({
+    ...s,
+    settings: setting,
+  })).then(() => {
+    setSetting?.({
+      ...initialState?.settings,
+      ...setting,
+    });
+    message?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
+  });
+  return;
+};
+
 export const saReloadMenu = async (initialState, setInitialState) => {
   message?.loading({ key: messageLoadingKey, content: '刷新配置中' });
   const msg = await currentUser();

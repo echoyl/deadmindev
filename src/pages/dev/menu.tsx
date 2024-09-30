@@ -113,6 +113,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
                 { label: '面板 - 将移除', value: 'panel' },
                 { label: '面板2', value: 'panel2' },
                 { label: '仅列表 - 指向控制器方法', value: 'justTable' },
+                { label: 'API - 只使用子权限，无页面使用', value: 'api' },
               ],
               defaultValue: 'table',
             },

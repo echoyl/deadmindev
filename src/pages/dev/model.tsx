@@ -1,31 +1,37 @@
 import { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
-import { CopyOutlined, FileOutlined, FolderOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { CopyOutlined, FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { ActionType, ProFormInstance } from '@ant-design/pro-components';
-import { Button, Space } from 'antd';
+import { Space } from 'antd';
 import { useContext, useRef, useState } from 'react';
 import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
-import fieldColumns, { SchemaToJsonButton } from '@/components/Sadmin/dev/vars/model/fieldColumns';
+import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
+import tagOptions from '@/components/Sadmin/helper/tagOptions';
+import { saReloadSetting } from '@/components/Sadmin/components/refresh';
+import { useModel } from '@umijs/max';
 /**
  * 默认数据库有的字段
  */
-export const devDefaultFields = [
-  { label: '创建时间 - created_at', value: 'created_at' },
-  { label: '最后更新时间 - updated_at', value: 'updated_at' },
-  { label: '排序权重 - displayorder', value: 'displayorder' },
-  { label: '自定义字段 - customer_field', value: 'customer_field' },
-];
+export const devDefaultFields = tagOptions([
+  { label: '创建时间 - created_at', value: 'created_at', color: 'processing' },
+  { label: '最后更新时间 - updated_at', value: 'updated_at', color: 'processing' },
+  { label: '软删除时间 - deleted_at', value: 'deleted_at', color: 'processing' },
+  { label: '排序权重 - displayorder', value: 'displayorder', color: 'processing' },
+  { label: '自定义字段 - customer_field', value: 'customer_field', color: 'processing' },
+  { label: '系统用户ID - sys_admin_id', value: 'sys_admin_id', color: 'processing' },
+  { label: '系统UUID - sys_admin_uuid', value: 'sys_admin_uuid', color: 'processing' },
+]);
 
 /**
  * 默认table列表中预设的字段列名
  */
-export const devTabelFields = [
-  { label: 'option - 操作栏', title: 'option - 操作栏', value: 'option' },
+export const devTabelFields = tagOptions([
+  { label: 'option - 操作栏', title: 'option - 操作栏', value: 'option', color: 'processing' },
   //{ label: 'coption - 分类操作栏', value: 'coption' },
-];
+]);
 
 export const modelFormColumns = (
   detail: Record<string, any>,
@@ -94,7 +100,7 @@ export const modelFormColumns = (
           title: '字段配置',
           dataIndex: 'columns',
           valueType: 'confirmForm',
-          colProps: { span: 4 },
+          colProps: { span: 3 },
           fieldProps: {
             btn: {
               title: '配置',
@@ -117,7 +123,7 @@ export const modelFormColumns = (
           title: '设置',
           dataIndex: 'setting',
           valueType: 'confirmForm',
-          colProps: { span: 4 },
+          colProps: { span: 3 },
           fieldProps: {
             btn: {
               title: '设置',
@@ -130,12 +136,12 @@ export const modelFormColumns = (
         },
         {
           title: '提交后',
-          dataIndex: 'createModelSchema',
+          dataIndex: 'afterPostOptions',
           valueType: 'checkbox',
-          colProps: { span: 4 },
+          colProps: { span: 6 },
           tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
           fieldProps: {
-            options: [{ label: '生成表', value: 1 }],
+            options: [{ label: '生成表', value: 'createModelSchema' }],
           },
         },
       ],
@@ -240,7 +246,9 @@ export const modelFormColumns = (
 
 export default () => {
   const [allData, setAllData] = useState();
-  const actionRef = useRef<ActionType>();
+  // const actionRef = useRef<ActionType>();
+  // const { initialState, setInitialState } = useModel('@@initialState');
+  // const { setSetting } = useContext(SaDevContext);
 
   const tableColumns: saTableColumnsType = [
     {
@@ -340,16 +348,17 @@ export default () => {
   const formRef = useRef<ProFormInstance<any>>({} as any);
 
   const { setting } = useContext(SaDevContext);
-  const reData = async () => {
-    actionRef?.current?.reload();
-    return true;
-  };
+  // const reData = async () => {
+  //   actionRef?.current?.reload();
+  //   saReloadSetting(initialState, setInitialState, setSetting);
+  //   return true;
+  // };
 
   return (
     <>
       <Category
         formRef={formRef}
-        actionRef={actionRef}
+        //actionRef={actionRef}
         tableTitle={false}
         table_menu_key="admin_type"
         table_menu_all={false}
@@ -358,8 +367,8 @@ export default () => {
           //console.log('beforeTableGet', data);
           setAllData(data);
         }}
-        afterFormPost={reData}
-        afterDelete={reData}
+        // afterFormPost={reData}
+        // afterDelete={reData}
         devEnable={false}
         tableProps={{
           scroll: { y: 600 },

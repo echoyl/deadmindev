@@ -1,7 +1,12 @@
 import SaTable from '@/components/Sadmin/posts/table';
 import { TreeNodeProps, TreeSelect } from 'antd';
-import { useState } from 'react';
+import { useContext, useRef } from 'react';
+import { ActionType } from '@ant-design/pro-components';
 import { devDefaultFields } from './model';
+import { SaDevContext } from '@/components/Sadmin/dev';
+import { getModelColumns } from '@/components/Sadmin/dev/table/baseFormColumns';
+import { useModel } from '@umijs/max';
+import { saReloadSetting } from '@/components/Sadmin/components/refresh';
 
 //生成关联模型的字段及其管理模型
 export const getModelColumnsTree = (id: number, allModels, pid: string = '', level = 1) => {
@@ -33,26 +38,26 @@ export const getModelColumnsTree = (id: number, allModels, pid: string = '', lev
 
 export default (props) => {
   const { model, contentRender } = props;
+  const { setting } = useContext(SaDevContext);
+  // const actionRef = useRef<ActionType>();
+  // const { initialState, setInitialState } = useModel('@@initialState');
   //console.log('props', props);
-  const [allModels, setAllModels] =
-    useState<[{ id?: number; columns?: Array<any>; relations?: Array<any> }]>();
   const relationType = ['one', 'many', 'cascaders', 'cascader'];
+  // const reData = async () => {
+  //   actionRef?.current?.reload();
+  //   saReloadSetting(initialState, setInitialState, setSetting);
+  //   return true;
+  // };
   //const [toolbar, setToolbar] = useState();
-  const getModelColumns = (foreign_model_id: number) => {
-    const select_data = allModels?.find((v) => v.id == foreign_model_id);
-    //console.log(foreign_model_id, allModels, select_data);
-    return select_data?.columns?.map((v) => ({
-      label: [v.title, v.name].join(' - '),
-      value: v.name,
-    }));
-  };
-
   return (
     <SaTable
       name="relation"
       url="dev/relation"
       devEnable={false}
+      //actionRef={actionRef}
       tableProps={{ params: { model_id: model?.id }, search: false }}
+      // afterFormPost={reData}
+      // afterDelete={reData}
       //toolBarRender={false}
       tableColumns={[
         { dataIndex: 'title', title: '名称' },
@@ -60,12 +65,6 @@ export default (props) => {
         { dataIndex: 'type', title: '类型' },
         'option',
       ]}
-      beforeTableGet={(data) => {
-        //data.columns = data.columns ? JSON.parse(data.columns) : [];
-        //console.log(data);
-        setAllModels(data.search.allModels);
-        // data.perms = data.perms ? JSON.parse(data.perms) : {};
-      }}
       paramExtra={{ model_id: model?.id }}
       postExtra={{ model_id: model?.id }}
       // beforePost={(data) => {
@@ -92,7 +91,10 @@ export default (props) => {
                   dataIndex: 'local_key',
                   title: '本地字段',
                   valueType: 'select',
-                  requestDataName: 'columns',
+                  fieldProps: {
+                    showSearch: true,
+                    options: getModelColumns(model?.id, setting?.adminSetting?.dev, true),
+                  },
                   colProps: { span: 12 },
                 },
                 {
@@ -131,7 +133,12 @@ export default (props) => {
                         title: '关联模型字段',
                         valueType: 'select',
                         fieldProps: {
-                          options: getModelColumns(foreign_model_id),
+                          options: getModelColumns(
+                            foreign_model_id,
+                            setting?.adminSetting?.dev,
+                            true,
+                          ),
+                          showSearch: true,
                         },
                         colProps: { span: 12 },
                       },
@@ -164,7 +171,11 @@ export default (props) => {
                         valueType: 'select',
                         colProps: { span: 12 },
                         fieldProps: {
-                          options: getModelColumns(foreign_model_id),
+                          options: getModelColumns(
+                            foreign_model_id,
+                            setting?.adminSetting?.dev,
+                            true,
+                          ),
                           mode: 'multiple',
                         },
                       },
@@ -195,7 +206,11 @@ export default (props) => {
                           valueType: 'select',
                           colProps: { span: 12 },
                           fieldProps: {
-                            options: getModelColumns(foreign_model_id),
+                            options: getModelColumns(
+                              foreign_model_id,
+                              setting?.adminSetting?.dev,
+                              true,
+                            ),
                             mode: 'multiple',
                           },
                         },
@@ -234,7 +249,10 @@ export default (props) => {
                         valueType: 'treeSelect',
                         colProps: { span: 12 },
                         fieldProps: {
-                          options: getModelColumnsTree(foreign_model_id, allModels),
+                          options: getModelColumnsTree(
+                            foreign_model_id,
+                            setting?.adminSetting?.dev?.allModels,
+                          ),
                           multiple: true,
                           treeLine: { showLeafIcon: false },
                           showCheckedStrategy: TreeSelect.SHOW_PARENT,
@@ -275,7 +293,11 @@ export default (props) => {
                           valueType: 'select',
                           colProps: { span: 12 },
                           fieldProps: {
-                            options: getModelColumns(foreign_model_id),
+                            options: getModelColumns(
+                              foreign_model_id,
+                              setting?.adminSetting?.dev,
+                              true,
+                            ),
                             mode: 'multiple',
                             multiple: true,
                           },

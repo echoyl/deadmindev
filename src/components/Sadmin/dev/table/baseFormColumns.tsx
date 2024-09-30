@@ -153,38 +153,40 @@ export const getModelRelations = (model_id: number, dev: { [key: string]: any })
 export const getModelColumns = (
   model_id: number,
   dev: { [key: string]: any } = { allModels: [] },
+  justTop: boolean = false,
 ) => {
   const { allModels = [] } = dev;
   //console.log('model_id', model_id, allModels);
   const model = getModelById(model_id, allModels);
-  const allColumns = getModelColumnsSelect(model_id, allModels);
+  const allColumns = getModelColumnsSelect(model_id, allModels, justTop ? 3 : 1);
 
   //检测模型关系 提供给table列选择字段
   const foreignOptions = model?.columns?.map((v) => ({
     label: [v.title, v.name].join(' - '),
     value: v.name,
   }));
-  model?.relations?.forEach((v) => {
-    if (v.type == 'many') {
-      if (v.with_count) {
-        foreignOptions.push({
-          label: [v.title, 'count'].join(' - '),
-          value: [v.name, 'count'].join('_'),
-        });
-      }
-      if (v.with_sum) {
-        v.with_sum.split(',').forEach((vs) => {
+  if (!justTop) {
+    model?.relations?.forEach((v) => {
+      if (v.type == 'many') {
+        if (v.with_count) {
           foreignOptions.push({
-            label: [v.title, 'sum', vs].join(' - '),
-            value: [v.name, 'sum', vs].join('_'),
+            label: [v.title, 'count'].join(' - '),
+            value: [v.name, 'count'].join('_'),
           });
-        });
+        }
+        if (v.with_sum) {
+          v.with_sum.split(',').forEach((vs) => {
+            foreignOptions.push({
+              label: [v.title, 'sum', vs].join(' - '),
+              value: [v.name, 'sum', vs].join('_'),
+            });
+          });
+        }
       }
-    }
-  });
-
+    });
+  }
   //检测模型搜索设置 提供给table列选择字段 20230904 可能存在重复键值导致组件错误，暂时不要这个功能
-  const existColumns = foreignOptions ? [...foreignOptions, ...devDefaultFields] : [];
+  const existColumns = foreignOptions && !justTop ? [...foreignOptions, ...devDefaultFields] : [];
   const search_columns = model?.search_columns ? model.search_columns : [];
   const searchColumn = search_columns
     .filter((v) => {
@@ -194,8 +196,12 @@ export const getModelColumns = (
       label: [v.name, '搜索字段'].join(' - '),
       value: v.name,
     }));
-
-  return [...allColumns, ...devDefaultFields, ...devTabelFields, ...searchColumn];
+  return [
+    ...(allColumns ? allColumns : []),
+    ...devDefaultFields,
+    ...devTabelFields,
+    ...searchColumn,
+  ];
 };
 
 type devTabelFieldsProps = {
