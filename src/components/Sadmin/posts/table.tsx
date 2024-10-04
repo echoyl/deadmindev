@@ -376,7 +376,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
     return getTableColumns({
       setData,
       data,
-      post,
+      //post,
+      url,
       enums,
       initRequest,
       columns,

@@ -205,6 +205,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   }
   if (initialState?.settings?.navTheme == 'light') {
     classNames.push('deadmin-light');
+  } else {
+    classNames.push('deadmin-dark');
   }
 
   return {

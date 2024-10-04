@@ -707,6 +707,24 @@ export const devBaseTableFormColumns = (props: devTabelFieldsProps): saFormColum
           title: '行合并',
           colProps: { span: 6 },
         },
+        {
+          dataIndex: 'editable',
+          valueType: 'switch',
+          title: '表中编辑',
+          colProps: { span: 6 },
+        },
+        {
+          dataIndex: 'editable_type',
+          valueType: 'select',
+          title: '编辑类型',
+          colProps: { span: 6 },
+          fieldProps: {
+            options: [
+              { lable: 'number', value: 'number' },
+              { lable: 'string', value: 'string' },
+            ],
+          },
+        },
       ],
     },
   ];

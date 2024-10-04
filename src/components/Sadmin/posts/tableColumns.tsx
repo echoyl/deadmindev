@@ -133,12 +133,44 @@ const DeleteActionRender = (props) => {
   );
 };
 
+export const onCell = (props) => {
+  const { record, index, setData, data, url, dataIndex, type = 'number' } = props;
+  const ret = {
+    record,
+    editable: true,
+    dataIndex,
+    type,
+    handleSave: async (row) => {
+      const oldV = record[dataIndex];
+      const newV = row[dataIndex];
+      if (newV == oldV) {
+        return;
+      }
+
+      record[dataIndex] = newV;
+      setData([...data]);
+      const ret = await request.post(url, {
+        data: { base: { id: row.id, [dataIndex]: newV } },
+      });
+
+      //const success = true;
+      if (ret.code) {
+        //失败后将数据设置回去
+        record[dataIndex] = oldV;
+        setData([...data]);
+      }
+    },
+  };
+  return ret;
+};
+
 export const getTableColumns = (props) => {
   const {
     setData,
     data,
     initRequest = false,
-    post,
+    //post,
+    url,
     enums,
     openType = 'page',
     columns,
@@ -156,41 +188,14 @@ export const getTableColumns = (props) => {
   if (!initRequest) return [];
   const allLabels = { ...defaultColumnsLabel, ...labels };
   const defaulColumns = {
-    displayorder: {
-      title: allLabels.displayorder,
-      dataIndex: 'displayorder',
-      search: false,
-      sorter: (a, b) => a.displayorder - b.displayorder,
-      width: 120,
-      onCell: (record, index) => ({
-        record,
-        editable: true,
-        dataIndex: 'displayorder',
-        title: '排序',
-        width: 120,
-        handleSave: async (row) => {
-          if (row.displayorder == record.displayorder) {
-            return;
-          }
-          const oldV = record.displayorder;
-          record.displayorder = row.displayorder;
-          setData([...data]);
-          const ret = await post(
-            { id: row.id },
-            { actype: 'displayorder', displayorder: row.displayorder },
-          );
-
-          //const success = true;
-          if (ret.code) {
-            //失败后将数据设置回去
-            record.displayorder = oldV;
-            setData([...data]);
-          } else {
-            //actionRef?.current?.reload();
-          }
-        },
-      }),
-    },
+    // displayorder: {
+    //   title: allLabels.displayorder,
+    //   dataIndex: 'displayorder',
+    //   search: false,
+    //   sorter: (a, b) => a.displayorder - b.displayorder,
+    //   onCell: (record, index) =>
+    //     onCell({ record, url, setData, data, dataIndex: 'displayorder', type: 'number' }),
+    // },
 
     option: {
       title: allLabels.option,
@@ -226,6 +231,24 @@ export const getTableColumns = (props) => {
       }
     }
 
+    if (v.editable || v.valueType == 'displayorder') {
+      //delete v.valueType;
+      if (!v.title) {
+        v.title = allLabels?.[v.valueType];
+      }
+      if (!v.dataIndex) {
+        v.dataIndex = v.valueType;
+      }
+      v.onCell = (record, index) =>
+        onCell({
+          record,
+          url: v.fieldProps?.url ? v.fieldProps?.url : url,
+          setData,
+          data,
+          dataIndex: v.dataIndex,
+          type: v.editable?.type,
+        });
+    }
     const df = v.valueType ? defaulColumnsRender(v.valueType) : false;
     if (df) {
       df.uid = v.uid;

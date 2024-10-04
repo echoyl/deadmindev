@@ -2,7 +2,7 @@ import { saFormColumnsType } from '@/components/Sadmin/helpers';
 import { useContext, useRef, useState } from 'react';
 import { SaDevContext } from '../..';
 import request from '@/components/Sadmin/lib/request';
-import { Button, Input, Space } from 'antd';
+import { Badge, Button, Input, Space } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { SaContext } from '@/components/Sadmin/posts/table';
 
@@ -317,23 +317,38 @@ const fieldColumns: saFormColumnsType = [
                     {
                       valueType: 'group',
                       columns: [
-                        { title: 'Value - id', dataIndex: 'id', colProps: { span: 6 } },
+                        { title: 'Value - id', dataIndex: 'id', colProps: { span: 5 } },
                         {
                           title: 'Label - title',
                           dataIndex: 'title',
-                          colProps: { span: 6 },
+                          colProps: { span: 5 },
                         },
                         {
                           title: 'Icon',
                           dataIndex: 'icon',
                           valueType: 'iconSelect',
-                          colProps: { span: 6 },
+                          colProps: { span: 5 },
                         },
                         {
                           title: 'Color',
                           dataIndex: 'color',
                           valueType: 'colorPicker',
-                          colProps: { span: 6 },
+                          colProps: { span: 5 },
+                        },
+                        {
+                          title: 'Badge',
+                          dataIndex: 'status',
+                          valueType: 'select',
+                          colProps: { span: 4 },
+                          fieldProps: {
+                            options: [
+                              { label: <Badge status="success" />, value: 'success' },
+                              { label: <Badge status="error" />, value: 'error' },
+                              { label: <Badge status="processing" />, value: 'processing' },
+                              { label: <Badge status="warning" />, value: 'warning' },
+                              { label: <Badge status="default" />, value: 'default' },
+                            ],
+                          },
                         },
                       ],
                     },

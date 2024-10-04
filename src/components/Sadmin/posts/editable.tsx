@@ -1,6 +1,7 @@
 import { Form, Input, InputRef } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { isNum, isNumberLike } from '../checkers';
 
 interface EditableRowProps {
   index: number;
@@ -25,6 +26,7 @@ interface EditableCellProps {
   dataIndex: string;
   record: object;
   handleSave: (record: object) => void;
+  type: string;
 }
 
 export const EditableCell: React.FC<EditableCellProps> = ({
@@ -34,12 +36,12 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   dataIndex,
   record,
   handleSave,
+  type,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<InputRef>(null);
-  const form = useContext(EditableContext)!;
-
+  const form = useContext(EditableContext);
   useEffect(() => {
     if (editing) {
       inputRef.current!.focus();
@@ -74,6 +76,14 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           {
             required: true,
             message: <></>,
+          },
+          {
+            validator: (_, value) => {
+              if (type == 'number') {
+                return isNumberLike(value) ? Promise.resolve() : Promise.reject(new Error());
+              }
+              return Promise.resolve();
+            },
           },
         ]}
       >
