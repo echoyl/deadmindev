@@ -193,12 +193,27 @@ export default () => {
               {
                 valueType: 'group',
                 columns: [
+                  // {
+                  //   title: '侧边栏暗黑模式',
+                  //   dataIndex: 'siderDark',
+                  //   valueType: 'switch',
+                  //   tooltip: '只有导航模式为侧边菜单布局(layout:side)模式下该设置才会生效',
+                  //   colProps: { span: 12 },
+                  // },
                   {
-                    title: '侧边栏暗黑模式',
-                    dataIndex: 'siderDark',
-                    valueType: 'switch',
-                    tooltip: '只有导航模式为侧边菜单布局(layout:side)模式下该设置才会生效',
+                    title: '侧边栏背景',
+                    dataIndex: 'siderColor',
+                    valueType: 'radioButton',
+                    tooltip: '只有导航模式为侧边菜单布局(layout:side)模式下dark设置才会生效',
                     colProps: { span: 12 },
+                    fieldProps: {
+                      buttonStyle: 'solid',
+                      options: [
+                        { label: '透明', value: 'transparent' },
+                        { label: '黑色', value: 'dark' },
+                        { label: '白色', value: 'white' },
+                      ],
+                    },
                   },
                   {
                     title: '主题色',

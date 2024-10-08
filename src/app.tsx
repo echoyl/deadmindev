@@ -197,8 +197,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   };
 
   const classNames = [];
-  if (initialState?.settings?.adminSetting?.siderDark) {
+  if (initialState?.settings?.adminSetting?.siderColor == 'dark') {
     classNames.push('deadmin-sider-dark');
+  }
+  if (initialState?.settings?.adminSetting?.siderColor == 'white') {
+    classNames.push('deadmin-sider-white');
   }
   if (initialState?.settings?.layout == 'side') {
     classNames.push('deadmin-layout-side');
@@ -247,7 +250,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     menuRender: (props, dom) => {
       if (
-        initialState?.settings?.adminSetting?.siderDark &&
+        initialState?.settings?.adminSetting?.siderColor == 'dark' &&
         initialState?.settings?.layout == 'side'
       ) {
         return <ProConfigProvider dark={true}>{dom}</ProConfigProvider>;
