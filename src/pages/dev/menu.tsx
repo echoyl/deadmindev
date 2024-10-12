@@ -331,7 +331,11 @@ export default () => {
       dataIndex: 'path',
       key: 'path',
     },
-    'displayorder',
+    {
+      title: '排序',
+      dataIndex: 'displayorder',
+      valueType: 'displayorder',
+    },
     {
       title: '操作',
       dataIndex: 'type',
@@ -520,6 +524,7 @@ export default () => {
         level={setting?.adminSetting?.menu_max_level ? setting?.adminSetting?.menu_max_level : 4}
         tableProps={{
           scroll: { y: 600 },
+          size: 'small',
         }}
         afterFormPost={reload}
         afterDelete={reload}
