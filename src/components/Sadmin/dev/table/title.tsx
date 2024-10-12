@@ -214,7 +214,7 @@ const BaseForm = (props) => {
     <div
       onClick={(e) => {
         //e.preventDefault();
-        e.preventDefault();
+        //e.preventDefault();//20241012 - 这里去掉阻止冒泡 导致 checkbox点击label失效。忘记了为什么之前要加这个 记录下
       }}
     >
       <ConfirmForm
@@ -306,7 +306,7 @@ export const AddEmptyGroup = (props) => {
 };
 
 export const DevTableColumnTitle = (props) => {
-  const { title, uid, devData, data } = props;
+  const { title, uid, devData, data, style = {} } = props;
   //console.log('title is title', title);
   //const designable = true;
   const { type } = devData;
@@ -467,7 +467,7 @@ export const DevTableColumnTitle = (props) => {
               deleteitem,
             ];
   //表单的话 加一个最小宽度
-  const styles = {
+  const styles: Record<string, any> = {
     form: {
       minWidth: 80,
     },
@@ -480,7 +480,7 @@ export const DevTableColumnTitle = (props) => {
       id={uid}
       eid={uid}
       devData={devData}
-      style={styles[devData?.type]}
+      style={{ ...styles[devData?.type], ...style }}
     >
       <div className={classNames('general-schema-designer', overrideAntdCSS)}>
         <div className={'general-schema-designer-icons'}>

@@ -3,8 +3,22 @@ import { saFormColumnsType } from '@/components/Sadmin/helpers';
 const tableSet: saFormColumnsType = [
   {
     valueType: 'group',
-    title: '表格设置',
+    title: '列表设置',
     columns: [
+      {
+        dataIndex: ['showType'],
+        title: '显示类型',
+        valueType: 'radioButton',
+        fieldProps: {
+          buttonStyle: 'solid',
+          defaultValue: 'table',
+          options: [
+            { label: 'table', value: 'table' },
+            { label: 'card', value: 'card' },
+          ],
+        },
+        colProps: { span: 24 },
+      },
       {
         dataIndex: ['table', 'scroll', 'y'],
         title: '滚动高度',
@@ -50,6 +64,52 @@ const tableSet: saFormColumnsType = [
         dataIndex: 'checkDisable',
         title: '禁用勾选',
         valueType: 'switch',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    title: '卡片列表设置',
+    columns: [
+      {
+        dataIndex: ['card', 'grid', 'column'],
+        title: '列数',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 6,
+        },
+        width: '100%',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['card', 'grid', 'gutter'],
+        title: '间隔',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 16,
+        },
+        width: '100%',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['card', 'grid', 'coverImageHeight'],
+        title: '封面图高度',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 180,
+        },
+        width: '100%',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['card', 'grid', 'descriptionRows'],
+        title: '描述行数',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 2,
+        },
+        width: '100%',
         colProps: { span: 12 },
       },
     ],

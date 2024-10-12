@@ -1,15 +1,14 @@
 import request from '@/components/Sadmin/lib/request';
-import type {
+import {
   ActionType,
   ProFormInstance,
   ProFormProps,
   ProTableProps,
+  FooterToolbar,
 } from '@ant-design/pro-components';
-import { FooterToolbar, ProTable } from '@ant-design/pro-components';
 import { history, useModel, useSearchParams } from '@umijs/max';
-import { Modal } from 'antd';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { getJson, inArray, isArr, isFn, isObj, isStr, isUndefined } from '../checkers';
+import { getJson, isArr, isFn, isObj, isStr, isUndefined } from '../checkers';
 import { TableForm } from '../dev/table/form';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
@@ -30,6 +29,7 @@ import { EditableCell, EditableRow } from './editable';
 import './style.less';
 import { getTableColumns } from './tableColumns';
 import { SaDevContext } from '../dev';
+import TableRender from './tableRender';
 export interface saTableProps {
   url?: string;
   name?: string;
@@ -233,7 +233,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     if (!initRequest) {
       setEnums({ ...ret.search });
       //设置查询form的初始值
-      if (ret.search.values) {
+      if (!isArr(ret.search) && ret.search.values) {
         searchFormRef.current?.setFieldsValue(ret.search.values);
       }
 
@@ -265,8 +265,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
     }
   }, [table_menu_key, enums, table_menu_all]);
-  const [modalApi, modalHolder] = Modal.useModal();
-  const { messageApi } = useContext(SaDevContext);
+  const { messageApi, modalApi } = useContext(SaDevContext);
   const post = async (base: any, extra: any, requestRes: any) => {
     return await request.post(url, {
       data: { base: { ...base }, ...extra },
@@ -276,14 +275,14 @@ const SaTable: React.FC<saTableProps> = (props) => {
   };
 
   const remove = (id, msg: string) => {
-    const modals = modalApi.confirm({
+    const modals = modalApi?.confirm({
       title: '温馨提示！',
       content: msg,
       onOk: async () => {
         const ret = await request.delete(url + '/1', {
           data: { id },
         });
-        modals.destroy();
+        modals?.destroy();
         if (!ret) {
           return;
         }
@@ -385,6 +384,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       initialState,
       devEnable,
       viewable: setting?.viewable,
+      checkDisable: !checkEnable || setting?.checkDisable,
       ...props,
     });
   };
@@ -421,8 +421,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }}
     >
       <>
-        {modalHolder}
-        <ProTable
+        <TableRender
+          tableColumns={tableColumns}
+          devEnable={devEnable}
+          allProps={{ ...props, setSelectedRowKeys, selectedRowKeys }}
           components={components}
           className="sa-pro-table"
           rowClassName={() => 'editable-row'}
@@ -459,7 +461,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
                   syncToInitialValues: false,
                   style: { padding: 16 },
                   syncToUrl: (values, type) => {
-                    //console.log('syncToUrl', values, type);
                     if (pageType != 'page') {
                       //只有在页面显示的table 搜索数据才会同步到url中
                       return false;
@@ -521,6 +522,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             devEnable,
             pageMenu,
             sort,
+            actionRef,
             ...props,
           })}
           rowSelection={

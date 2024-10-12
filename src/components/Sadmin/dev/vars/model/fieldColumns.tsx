@@ -144,6 +144,7 @@ const formType = [
   { label: '下拉选择- select', value: 'select' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
   { label: '下拉多选 -selects', value: 'selects' },
+  { label: 'checkbox - checkbox', value: 'checkbox' },
   { label: '图片上传 - image', value: 'image' },
   { label: '文件上传 - file', value: 'file' },
   { label: '阿里云视频上传 - aliyunVideo', value: 'aliyunVideo' },

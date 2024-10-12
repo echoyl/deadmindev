@@ -9,6 +9,7 @@ import {
   EditOutlined,
   LoadingOutlined,
   PlusOutlined,
+  ReloadOutlined,
   SettingOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
@@ -502,6 +503,8 @@ export const toolBarRender = (props) => {
     pageMenu,
     sort,
     afterFormPost,
+    actionRef,
+    setting,
   } = props;
   if (!initRequest) return null;
   const createButton = (
@@ -623,6 +626,20 @@ export const toolBarRender = (props) => {
           </Link>,
         );
       }
+    }
+    if (setting?.showType == 'card') {
+      //卡片模式需要手动添加刷新按钮
+      btns.push(
+        <Button
+          icon={<ReloadOutlined />}
+          onClick={() => {
+            actionRef?.current?.reload();
+            return;
+          }}
+          type="text"
+          key="card_reload"
+        />,
+      );
     }
     return [<DndContext key="toolbar">{btns}</DndContext>];
   };

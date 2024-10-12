@@ -61,18 +61,26 @@ const formMoreType = [
   { label: 'AutoComplete', value: 'saAutoComplete' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
   { label: '省市区 - pca', value: 'pca' },
-  { label: '时间 - datetime', value: 'datetime' },
   { label: '日期 - date', value: 'date' },
-  { label: 'Time - time', value: 'time' },
+  { label: '日期年 - dateYear', value: 'dateYear' },
+  { label: '日期季度 - dateQuarter', value: 'dateQuarter' },
+  { label: '日期月 - dateMonth', value: 'dateMonth' },
+  { label: '日期周 - dateWeek', value: 'dateWeek' },
+  { label: '日期时间 - datetime', value: 'datetime' },
+  { label: '时间 - time', value: 'time' },
 ];
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {
   const select_data = allModels?.find((v) => v.id == id);
   //console.log(allModels, select_data);
-  const fields: Array<TreeNodeProps> = select_data?.columns?.map((v) => ({
-    label: v.label ? v.label : [v.title, v.name].join(' - '),
-    value: v.name,
-  }));
+  const fields: Array<TreeNodeProps> = select_data?.columns
+    ?.map((v) => ({
+      label: v.label ? v.label : [v.title, v.name].join(' - '),
+      value: v.name,
+    }))
+    .filter((v) => {
+      return !devDefaultFields.find((_v) => _v.value == v.value);
+    });
   level += 1;
 
   if (level > 3) {

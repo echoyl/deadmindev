@@ -1,7 +1,7 @@
 import request, { messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { TableDropdown } from '@ant-design/pro-components';
 import { history, Link, useModel } from '@umijs/max';
-import { Button, Space } from 'antd';
+import { Button, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 import { useContext } from 'react';
@@ -11,7 +11,7 @@ import { getFromObject, t, tplComplie } from '../helpers';
 import { defaultColumnsLabel } from './formDom';
 import { SaContext } from './table';
 
-const SaTableAction = (props) => {
+export const SaTableAction = (props) => {
   const { openType } = props;
   return openType == 'drawer' || openType == 'modal' ? (
     <DrawerAction {...props} />
@@ -48,6 +48,7 @@ const LinkAction = (props) => {
 const DrawerAction = (props) => {
   const { record, editable, deleteable, level, openType, viewable } = props;
   const { saTableContext } = useContext(SaContext);
+  const { Link } = Typography;
   const items: Array<'view' | 'edit' | 'delete' | ''> = [
     viewable ? 'view' : '',
     editable ? 'edit' : '',
@@ -68,15 +69,14 @@ const DrawerAction = (props) => {
             openType={openType}
           />
         ) : (
-          <Button
-            type="link"
+          <Link
             key={item}
             onClick={async (e: any) => {
               saTableContext?.[item](record);
             }}
           >
             {t(item)}
-          </Button>
+          </Link>
         );
       })}
     </Space>
@@ -87,19 +87,18 @@ const DeleteActionRender = (props) => {
   const { record, level, deleteable, openType } = props;
   const { saTableContext } = useContext(SaContext);
   const { initialState } = useModel('@@initialState');
+  const { Link, Text } = Typography;
   //console.log('level and record', level, record);
   return isUndefined(record?._level) || record?._level + 1 >= level ? (
     deleteable ? (
-      <Button
-        type="link"
-        danger
+      <Link
         key="deleteItem"
         onClick={async (e: any) => {
           saTableContext?.delete(record);
         }}
       >
-        {t('delete')}
-      </Button>
+        <Text type="danger">{t('delete')}</Text>
+      </Link>
     ) : null
   ) : (
     <TableDropdown
@@ -183,6 +182,7 @@ export const getTableColumns = (props) => {
     initialState,
     devEnable = true,
     viewable = false,
+    checkDisable = false,
   } = props;
 
   if (!initRequest) return [];
@@ -359,7 +359,11 @@ export const getTableColumns = (props) => {
     })
     .filter((c) => {
       //return typeof c != 'undefined' && c.dataIndex != 'id';
-      return typeof c != 'undefined' && (c.dataIndex != 'id' || c.valueType);
+      return (
+        typeof c != 'undefined' &&
+        (checkDisable || (!checkDisable && (c.dataIndex != 'id' || c.valueType)))
+      );
+      //return typeof c != 'undefined' && (c.dataIndex != 'id' || c.valueType);
     });
   //console.log('_columns is', _columns);
   return _columns;

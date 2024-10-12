@@ -27,6 +27,7 @@ import Print from '../print';
 import RequestComponent from '../request';
 import ItemTags from './items/tag';
 import DropdownAction from '../../valueTypeMap/dropdownAction';
+import dayjs from 'dayjs';
 const CustomerColumnRender = (props) => {
   const {
     items = [],
@@ -75,7 +76,6 @@ const CustomerColumnRender = (props) => {
 
     const { fieldProps = {}, modal } = item;
     const { value = {} } = fieldProps;
-
     if (item.domtype == 'divider') {
       return <Divider key={i} type="vertical" />;
     } else if (item.domtype == 'timeline') {
@@ -219,6 +219,8 @@ const CustomerColumnRender = (props) => {
           width={'100%'}
         />
       );
+    } else if (item.domtype == 'dayjsfrom') {
+      return dayjs(text).fromNow();
     }
     return '';
   };

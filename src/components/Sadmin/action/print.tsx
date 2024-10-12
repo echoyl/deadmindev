@@ -4,6 +4,7 @@ import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { uid } from '../helpers';
 import { SaContext } from '../posts/table';
+import { SaDevContext } from '../dev';
 interface actionConfirm {
   btn?: ButtonProps;
   url?: string;
@@ -36,7 +37,7 @@ const Print: FC<actionConfirm> = (props) => {
   const click = () => {
     setOpen(true);
   };
-  const { message } = App.useApp();
+  const { messageApi } = useContext(SaDevContext);
   useEffect(() => {
     const init = async () => {
       setLoading(true);
@@ -51,7 +52,7 @@ const Print: FC<actionConfirm> = (props) => {
       if (!ret.code) {
         setInner(ret.data.html);
       } else {
-        message.error(ret.msg);
+        messageApi?.error(ret.msg);
         //关闭modal
         setOpen(false);
       }
@@ -71,14 +72,14 @@ const Print: FC<actionConfirm> = (props) => {
 
   const id = uid();
 
-  const componentRef = useRef(null);
+  const contentRef = useRef(null);
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onBeforeGetContent: () => {
-      message.loading('加载打印内容中...', 0);
+    contentRef,
+    onBeforePrint: async () => {
+      messageApi?.loading('加载打印内容中...', 0);
     },
     onAfterPrint: () => {
-      message.destroy();
+      messageApi?.destroy();
       if (callbackUrl) {
         //请求url
         request.post(callbackUrl, {
@@ -97,7 +98,9 @@ const Print: FC<actionConfirm> = (props) => {
       {dom}
       <Modal
         open={open}
-        onOk={handlePrint}
+        onOk={() => {
+          handlePrint();
+        }}
         onCancel={() => {
           setOpen(false);
         }}
@@ -113,7 +116,7 @@ const Print: FC<actionConfirm> = (props) => {
           <div
             id={id}
             style={{ minHeight: 200 }}
-            ref={componentRef}
+            ref={contentRef}
             dangerouslySetInnerHTML={{ __html: inner }}
           ></div>
         </Spin>
