@@ -1,4 +1,4 @@
-import { Card, Flex, List, Space, Typography, theme } from 'antd';
+import { Card, Flex, Image, List, Space, Typography, theme } from 'antd';
 import useStyles from './style.style';
 import { getJson, inArray, isObj, isStr } from '../../checkers';
 import { TableColumnTitle } from '../../dev/table/title';
@@ -82,10 +82,13 @@ export default (props) => {
     } else {
       if (type == 'image') {
         value = (
-          <img
+          <Image
             className="card_cover_image"
-            style={{ height: coverImageHeight }}
+            height={coverImageHeight}
+            width="100%"
             src={isStr(value) ? value : value?.[0]?.url}
+            placeholder={true}
+            preview={false}
           />
         );
       } else {

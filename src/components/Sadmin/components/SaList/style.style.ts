@@ -50,7 +50,7 @@ const useStyles = createStyles(({ token }) => {
       },
       '& img.card_cover_image': {
         objectFit: 'cover',
-        display: 'block',
+        display: 'inline-block',
         width: '100%',
         borderRadius: '8px 8px 0 0',
       },
