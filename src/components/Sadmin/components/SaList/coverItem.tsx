@@ -1,9 +1,8 @@
-import { Card, Flex, Image, List, Space, Typography, theme } from 'antd';
+import { Card, Flex, Image, Typography } from 'antd';
 import useStyles from './style.style';
-import { getJson, inArray, isObj, isStr } from '../../checkers';
+import { inArray, isObj, isStr } from '../../checkers';
 import { TableColumnTitle } from '../../dev/table/title';
 import { useEffect, useState } from 'react';
-import { useModel } from '@umijs/max';
 import { DndContext } from '../../dev/dnd-context';
 import { SaTableAction } from '../../posts/tableColumns';
 import CustomerColumnRender from '../../action/customerColumn';
@@ -37,8 +36,11 @@ export default (props) => {
   useEffect(() => {
     setCheckIds(allProps?.selectedRowKeys);
   }, [allProps?.selectedRowKeys]);
+
   const getContent = (index: number, type = 'text', inDiv = false) => {
     const column = tableColumns?.[index];
+
+    if (!column) return;
 
     const field = column?.dataIndex;
     const { valueType } = column;
@@ -113,53 +115,51 @@ export default (props) => {
   //console.log('devEnable', devEnable);
   return (
     <DndContext>
-      <List.Item>
-        <CardRender
-          checkDisable={setting?.checkDisable}
-          className={[styles.card, 'ant-card']}
-          value={record?.id}
-          checked={inArray(record.id, checkIds) > -1}
-          onChange={(v: boolean) => {
-            let oldkeys = allProps?.selectedRowKeys;
-            const index = inArray(record.id, oldkeys);
-            if (v) {
-              if (index < 0) {
-                oldkeys?.push(record.id);
-              }
-            } else {
-              if (index > -1) {
-                oldkeys?.splice(index, 1);
-              }
+      <CardRender
+        checkDisable={setting?.checkDisable}
+        className={[styles.card, 'ant-card']}
+        value={record?.id}
+        checked={inArray(record.id, checkIds) > -1}
+        onChange={(v: boolean) => {
+          let oldkeys = allProps?.selectedRowKeys;
+          const index = inArray(record.id, oldkeys);
+          if (v) {
+            if (index < 0) {
+              oldkeys?.push(record.id);
             }
-            //setCheckIds([...oldkeys]);
-            allProps?.setSelectedRowKeys?.([...oldkeys]);
-          }}
-          cover={getContent(0, 'image')}
-        >
-          <Card.Meta
-            title={<a>{getContent(1)}</a>}
-            description={
-              <Paragraph
-                ellipsis={{
-                  rows: descriptionRows,
-                }}
-              >
-                {getContent(2)}
-              </Paragraph>
+          } else {
+            if (index > -1) {
+              oldkeys?.splice(index, 1);
             }
-          />
-          <Flex className={styles.cardItemContent} justify="space-between" align="center">
-            {tableColumns
-              ?.map((v, i) => {
-                if (i > 2) {
-                  return getContent(i, 'text', true);
-                }
-                return false;
-              })
-              .filter((v) => v !== false)}
-          </Flex>
-        </CardRender>
-      </List.Item>
+          }
+          //setCheckIds([...oldkeys]);
+          allProps?.setSelectedRowKeys?.([...oldkeys]);
+        }}
+        cover={getContent(0, 'image')}
+      >
+        <Card.Meta
+          title={<a>{getContent(1)}</a>}
+          description={
+            <Paragraph
+              ellipsis={{
+                rows: descriptionRows,
+              }}
+            >
+              {getContent(2)}
+            </Paragraph>
+          }
+        />
+        <Flex className={styles.cardItemContent} justify="space-between" align="center">
+          {tableColumns
+            ?.map((v, i) => {
+              if (i > 2) {
+                return getContent(i, 'text', true);
+              }
+              return false;
+            })
+            .filter((v) => v !== false)}
+        </Flex>
+      </CardRender>
     </DndContext>
   );
 };

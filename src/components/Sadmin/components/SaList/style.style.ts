@@ -8,6 +8,7 @@ const useStyles = createStyles(({ token }) => {
       borderColor: '#f0f0f0',
       borderRadius: '8px',
       overflow: 'inherit',
+      marginBlockEnd: 0,
       '.ant-pro-checkcard-cover': {
         marginTop: '-1px',
         marginInlineStart: '-1px',
