@@ -5,7 +5,7 @@ const useStyles = createStyles(({ token }) => {
     card: {
       width: '100%',
       cursor: 'pointer',
-      borderColor: '#f0f0f0',
+      borderColor: token.colorBorderSecondary,
       borderRadius: '8px',
       overflow: 'inherit',
       marginBlockEnd: 0,
