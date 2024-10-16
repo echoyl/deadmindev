@@ -452,6 +452,8 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                               { label: '查看', value: 'view' },
                               { label: '编辑', value: 'edit' },
                               { label: '删除', value: 'delete' },
+                              { label: '导入', value: 'import' },
+                              { label: '导出', value: 'export' },
                             ],
                             size: 'small',
                           },
@@ -581,6 +583,8 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                 'dropdown',
                                 'print',
                                 'request',
+                                'import',
+                                'export',
                               ]) >= 0
                             ) {
                               action_ret.push({

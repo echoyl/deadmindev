@@ -68,16 +68,20 @@ export const modelFormColumns = (
           title: '模型所属',
           colProps: { span: 12 },
           dataIndex: 'admin_type',
-          valueType: 'select',
-          requestDataName: 'admin_types',
+          valueType: 'radioButton',
+          fieldProps: {
+            buttonStyle: 'solid',
+            requestDataName: 'admin_types',
+          },
         },
         {
           title: '类型',
           dataIndex: 'type',
-          valueType: 'select',
+          valueType: 'radioButton',
           colProps: { span: 12 },
           fieldProps: {
             placeholder: '请选择类型',
+            buttonStyle: 'solid',
             options: [
               { label: '文件夹', value: 0 },
               { label: '模型', value: 1 },
@@ -92,9 +96,12 @@ export const modelFormColumns = (
         {
           title: '模型类型',
           dataIndex: 'leixing',
-          valueType: 'select',
+          valueType: 'radioButton',
           colProps: { span: 12 },
-          fieldProps: { options: modelType.map((v) => ({ label: v, value: v })) },
+          fieldProps: {
+            buttonStyle: 'solid',
+            options: modelType.map((v) => ({ label: v, value: v })),
+          },
         },
         {
           title: '字段配置',

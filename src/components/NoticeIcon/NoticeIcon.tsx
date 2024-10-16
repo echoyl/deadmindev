@@ -1,16 +1,12 @@
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Spin, Tabs, theme } from 'antd';
-import classNames from 'classnames';
 import useMergedState from 'rc-util/es/hooks/useMergedState';
 import React from 'react';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import type { NoticeIconTabProps } from './NoticeList';
 import NoticeList from './NoticeList';
-import { createStyles } from 'antd-style';
 import { useStyle } from './style';
-import { actionDefaultStyle } from '../RightContent';
-const { TabPane } = Tabs;
 
 export type NoticeIconProps = {
   count?: number;

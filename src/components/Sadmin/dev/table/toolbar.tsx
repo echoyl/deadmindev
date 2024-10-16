@@ -19,7 +19,7 @@ import { cloneDeep, isString } from 'lodash';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import ButtonDrawer from '../../action/buttonDrawer';
 import CustomerColumnRender from '../../action/customerColumn';
-import { t, uid } from '../../helpers';
+import { parseIcon, t, tplComplie, uid } from '../../helpers';
 import { SaForm } from '../../posts/post';
 import { SaContext } from '../../posts/table';
 import { DndContext } from '../dnd-context';
@@ -28,10 +28,11 @@ import { ToolbarColumnTitle } from './title';
 import { SaDevContext } from '..';
 import { saReload, saReloadMenu } from '../../components/refresh';
 import ButtonModal from '../../action/buttonModal';
-import { isStr } from '../../checkers';
+import { isStr, isUndefined } from '../../checkers';
 import { modelFormColumns } from '@/pages/dev/model';
 import { ProFormInstance } from '@ant-design/pro-components';
 import ModelRelation from '@/pages/dev/modelRelation';
+import RequestButton, { RequestButtonProps } from '../../components/requestButton';
 
 export const ToolBarDom = (props) => {
   const {
@@ -118,51 +119,56 @@ export const ToolBarDom = (props) => {
   );
 };
 
-const ExportButton = ({
+export const ExportButton = ({
   title = '导出',
-  fieldProps = { post: {}, button: {} },
-  values = {},
-  url = '',
+  request: requestParam,
   requestUrl = '', //新增手动设定导出
-}) => {
-  const { searchFormRef } = useContext(SaContext);
-  const [modalApi, modalHolder] = Modal.useModal();
-  const { post = {}, button = {} } = fieldProps;
+  btn = {},
+  ...restProps
+}: RequestButtonProps) => {
+  const { url = '', data = {} } = requestParam || {};
+  const { searchFormRef, url: propsUrl } = useContext(SaContext);
+  const { modalApi } = useContext(SaDevContext);
+  const purl = requestUrl ? requestUrl : url ? url : propsUrl + '/export';
+  const onClick = async () => {
+    modalApi?.confirm({
+      title: '温馨提示！',
+      content: '确定要导出吗？',
+      onOk: async () => {
+        const search = searchFormRef?.current?.getFieldsFormatValue();
+        await request.post(purl, { data: { ...data, ...search } });
+      },
+    });
+  };
   return (
-    <>
-      <Button
-        key="exportButton"
-        icon={<CloudDownloadOutlined />}
-        onClick={async () => {
-          modalApi.confirm({
-            title: '温馨提示！',
-            content: '确定要导出吗？',
-            onOk: async () => {
-              const search = searchFormRef?.current?.getFieldsFormatValue();
-              const purl = requestUrl ? requestUrl : url + '/export';
-              await request.post(purl, { data: { ...values, ...post, ...search } });
-            },
-          });
-        }}
-        {...button}
-      >
-        {title}
-      </Button>
-      {modalHolder}
-    </>
+    <RequestButton
+      btn={{ icon: <CloudDownloadOutlined />, onClick, text: title, ...btn }}
+      {...restProps}
+    />
   );
 };
 
 //导入按钮
 
-const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {}, afterAction }) => {
+export const ImportButton = ({
+  title = '导入',
+  request: requestParam,
+  uploadProps: ups = {},
+  afterAction = false,
+  btn = {},
+  ...restProps
+}: RequestButtonProps) => {
   const [headers, setHeaders] = useState();
-
+  const { url: propsUrl } = useContext(SaContext);
+  const { url = '', data: rdata } = requestParam || {};
+  const { data } = ups;
+  const upData = data || rdata;
   const uploadProps = {
     name: 'file',
-    action: getFullUrl(url + '/import'),
+    action: getFullUrl(url ? url : propsUrl + '/import'),
     itemRender: () => '',
     ...ups,
+    data: upData,
   };
   const [loading, setLoading] = useState(false);
   const { messageApi } = useContext(SaDevContext);
@@ -172,6 +178,7 @@ const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {}, after
       setHeaders(v);
     });
   }, []);
+  const icon = btn?.icon ? parseIcon(btn?.icon) : <CloudUploadOutlined />;
   return (
     <Upload
       key="importButton"
@@ -187,7 +194,6 @@ const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {}, after
           setLoading(false);
           const { code, msg, data } = info.file.response;
           if (!code) {
-            //设置预览图片路径未服务器路径
             messageApi?.success(`${info.file.name} ${msg}`);
             if (afterAction) {
               afterAction?.(info.file.response).then((v) => {
@@ -208,7 +214,10 @@ const ImportButton = ({ title = '导入', url = '', uploadProps: ups = {}, after
         }
       }}
     >
-      <Button icon={loading ? <LoadingOutlined /> : <CloudUploadOutlined />}>{title}</Button>
+      <RequestButton
+        btn={{ icon: <CloudDownloadOutlined />, loading, text: title, ...btn }}
+        {...restProps}
+      />
     </Upload>
   );
 };
@@ -371,10 +380,7 @@ export const ToolBarMenu = (props) => {
           {
             key: 'export',
             label: (
-              <ExportButton
-                url="dev/menu"
-                fieldProps={{ post: { ids: [pageMenu?.id] }, button: { type: 'link' } }}
-              />
+              <ExportButton request={{ data: { ids: [pageMenu?.id] } }} btn={{ type: 'link' }} />
             ),
           },
         ],
@@ -559,10 +565,10 @@ export const toolBarRender = (props) => {
       }
 
       if (btn.valueType == 'export') {
-        btns.push(<ExportButton key="export" {...btn} url={url} values={values} />);
+        btns.push(<ExportButton key={index} {...btn} request={{ data: values }} />);
       }
       if (btn.valueType == 'import') {
-        btns.push(<ImportButton key="import" {...btn} url={url} afterAction={afterFormPost} />);
+        btns.push(<ImportButton key={index} {...btn} afterAction={afterFormPost} />);
       }
       if (btn.valueType == 'devadd') {
         btns.push(
@@ -573,13 +579,13 @@ export const toolBarRender = (props) => {
       }
       if (btn.valueType == 'devsetting') {
         btns.push(
-          <ToolBarMenu key="devsetting" trigger={<Button icon={btn.icon} />} pageMenu={pageMenu} />,
+          <ToolBarMenu key={index} trigger={<Button icon={btn.icon} />} pageMenu={pageMenu} />,
         );
       }
       if (btn.valueType == 'devcolumns') {
         btns.push(
           <ColumnsSelector
-            key="devcolumns"
+            key={index}
             trigger={<Button title="快速选择" icon={btn.icon} />}
             dev={initialState?.settings?.adminSetting?.dev}
           />,

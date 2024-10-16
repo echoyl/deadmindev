@@ -28,6 +28,8 @@ import RequestComponent from '../request';
 import ItemTags from './items/tag';
 import DropdownAction from '../../valueTypeMap/dropdownAction';
 import dayjs from 'dayjs';
+import { ExportButton, ImportButton } from '../../dev/table/toolbar';
+import RequestButton, { RequestButtonRender } from '../../components/requestButton';
 const CustomerColumnRender = (props) => {
   const {
     items = [],
@@ -42,6 +44,7 @@ const CustomerColumnRender = (props) => {
   const { initialState } = useModel('@@initialState');
   //console.log('props ', props);
   const { actionRef, formRef, columnData, url, saTableContext } = useContext(SaContext);
+
   //const formValue = formRef?.current?.getFieldsValue?.(true);
   const [record, setRecord] = useState(orecord);
   const [modalApi, modalHolder] = Modal.useModal();
@@ -74,8 +77,8 @@ const CustomerColumnRender = (props) => {
       return '';
     }
 
-    const { fieldProps = {}, modal } = item;
-    const { value = {} } = fieldProps;
+    //const { fieldProps = {}, modal } = item;
+    //const { value = {} } = fieldProps;
     if (item.domtype == 'divider') {
       return <Divider key={i} type="vertical" />;
     } else if (item.domtype == 'timeline') {
@@ -91,78 +94,18 @@ const CustomerColumnRender = (props) => {
       return <Timeline style={{ paddingTop: 10 }} key={i} items={items} />;
     } else if (item.domtype == 'button' || item.domtype == 'text') {
       //tooltip也支持变量读取
-
       if (item.btn) {
-        const tooltip = item.btn.tooltip
-          ? tplComplie(item.btn.tooltip, { record, user: initialState?.currentUser })
-          : false;
-        //console.log('tplComplie', item, record);
-        if (React.isValidElement(item.btn)) {
-          return item.btn;
-        }
-        if (item.btn.errorLevel) {
-          delete item.btn.errorLevel;
-        }
-        const tpl = tplComplie(item.btn.text, { record, user: initialState?.currentUser });
-        //console.log('tpl is ', tpl);
-        if (item.domtype == 'button') {
-          //添加检测连接类型
-          const btnProps: { [key: string]: any } = {};
-          if (value?.btn?.href) {
-            btnProps.href = tplComplie(value.btn.href, {
-              record,
-              user: initialState?.currentUser,
-            });
-            //console.log('value.btn.href', href, record);
-          }
-          const icon = parseIcon(item.btn.icon);
-          const styleProps = percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {};
-          if (tooltip) {
-            return (
-              <Tooltip key={i} title={tooltip}>
-                <Button {...styleProps} {...item.btn} {...value?.btn} {...btnProps} icon={icon}>
-                  {tpl}
-                </Button>
-              </Tooltip>
-            );
-          } else {
-            return (
-              <Button
-                key={i}
-                {...styleProps}
-                {...item.btn}
-                {...value?.btn}
-                {...btnProps}
-                icon={icon}
-              >
-                {tpl}
-              </Button>
-            );
-          }
-        } else {
-          //文字展示
-          //是否支持复制
-          if (!tpl) {
-            return null;
-          }
-          const textCopyable = item?.btn?.copyable ? (
-            <Typography.Paragraph key="text_copyable" copyable>
-              {tpl}
-            </Typography.Paragraph>
-          ) : (
-            tpl
-          );
-          if (tooltip) {
-            return (
-              <Tooltip key={i} title={tooltip}>
-                {textCopyable}
-              </Tooltip>
-            );
-          } else {
-            //console.log('i am text ', tpl, item, record);
-            return <span key={i}>{textCopyable}</span>;
-          }
-        }
+        //return <span onClick={() => console.log('777')}>test</span>;
+        const styleProps = percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {};
+        return RequestButtonRender({ record, ...item, styleProps, initialState });
+        return (
+          <RequestButton
+            //key={i}
+            {...item}
+            record={record}
+            styleProps={percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {}}
+          />
+        );
       } else {
         return text;
       }
@@ -228,9 +171,10 @@ const CustomerColumnRender = (props) => {
     return items
       ?.map((item, i) => {
         const dom = parseDom(item, i, percentNum);
+        const styleProps = percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {};
         //key为固定值，之前用动态uid后导致一些bug
         const key = item.action + '.' + i;
-        //console.log('dom', dom);
+        //console.log('dom', dom, item);
         if (dom === '') return '';
         const { fieldProps = {}, modal } = item;
         const { value = {} } = fieldProps;
@@ -275,6 +219,7 @@ const CustomerColumnRender = (props) => {
               dataId={record?.id}
               record={record}
               trigger={dom}
+              //trigger={false}
               url={item.request?.url}
               data={{ ...paramExtra, ...item.request?.data }}
               method={item.request?.method ? item.request?.method : 'post'}
@@ -407,6 +352,30 @@ const CustomerColumnRender = (props) => {
                 },
               })
             : null;
+        } else if (item.action == 'import') {
+          return (
+            <ImportButton
+              key={key}
+              {...item}
+              uploadProps={{
+                ...item.uploadProps,
+                data: { ...item.request?.data, ...item.uploadProps?.data, id: record?.id || 0 },
+              }}
+              styleProps={styleProps}
+            />
+          );
+        } else if (item.action == 'export') {
+          return (
+            <ExportButton
+              key={key}
+              {...item}
+              request={{
+                ...item.request,
+                data: { ...item.request?.data, ids: record?.id ? [record?.id] : [], ...paramExtra },
+              }}
+              styleProps={styleProps}
+            />
+          );
         } else {
           return dom;
         }

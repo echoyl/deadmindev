@@ -196,21 +196,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     }
   };
 
-  const classNames = [];
-  if (initialState?.settings?.adminSetting?.siderColor == 'dark') {
-    classNames.push('deadmin-sider-dark');
-  }
-  if (initialState?.settings?.adminSetting?.siderColor == 'white') {
-    classNames.push('deadmin-sider-white');
-  }
-  if (initialState?.settings?.layout == 'side') {
-    classNames.push('deadmin-layout-side');
-  }
-  if (initialState?.settings?.navTheme == 'light') {
-    classNames.push('deadmin-light');
-  } else {
-    classNames.push('deadmin-dark');
-  }
+  const classNames = [
+    initialState?.settings?.adminSetting?.siderColor == 'dark' ? 'deadmin-sider-dark' : '',
+    initialState?.settings?.adminSetting?.siderColor == 'white' ? 'deadmin-sider-white' : '',
+    initialState?.settings?.adminSetting?.headerColor == 'dark' ? 'deadmin-header-dark' : '',
+    initialState?.settings?.adminSetting?.headerColor == 'white' ? 'deadmin-header-white' : '',
+    initialState?.settings?.layout == 'side' ? 'deadmin-layout-side' : '',
+    initialState?.settings?.navTheme == 'light' ? 'deadmin-light' : 'deadmin-dark',
+  ];
 
   return {
     actionsRender: actionsRender,
@@ -249,13 +242,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       locale: false,
     },
     menuRender: (props, dom) => {
-      if (
-        initialState?.settings?.adminSetting?.siderColor == 'dark' &&
-        initialState?.settings?.layout == 'side'
-      ) {
+      if (initialState?.settings?.adminSetting?.siderColor == 'dark') {
         return <ProConfigProvider dark={true}>{dom}</ProConfigProvider>;
       }
-
+      return dom;
+    },
+    headerRender: (props, dom) => {
+      if (initialState?.settings?.adminSetting?.headerColor == 'dark') {
+        return <ProConfigProvider dark={true}>{dom}</ProConfigProvider>;
+      }
       return dom;
     },
     childrenRender: (children, props) => {
@@ -283,7 +278,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       );
     },
     siderWidth: 208,
-    className: classNames,
+    className: classNames.filter((v) => v),
     ...initialState?.settings,
   };
 };

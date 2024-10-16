@@ -128,6 +128,7 @@ export const SaContext = createContext<{
   tableDesigner?: tableDesignerInstance;
   saTableContext?: saTableContextProps;
   searchFormRef?: any;
+  selectedRowKeys?: any[];
 }>({});
 
 const SaTable: React.FC<saTableProps> = (props) => {
@@ -418,6 +419,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
         url,
         saTableContext,
         tableDesigner,
+        selectedRowKeys,
       }}
     >
       <>

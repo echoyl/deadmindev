@@ -204,10 +204,25 @@ export default () => {
                     title: '侧边栏背景',
                     dataIndex: 'siderColor',
                     valueType: 'radioButton',
-                    tooltip: '只有导航模式为侧边菜单布局(layout:side)模式下dark设置才会生效',
-                    colProps: { span: 12 },
+                    colProps: { span: 6 },
                     fieldProps: {
                       buttonStyle: 'solid',
+                      defaultValue: 'transparent',
+                      options: [
+                        { label: '透明', value: 'transparent' },
+                        { label: '黑色', value: 'dark' },
+                        { label: '白色', value: 'white' },
+                      ],
+                    },
+                  },
+                  {
+                    title: '头部背景',
+                    dataIndex: 'headerColor',
+                    valueType: 'radioButton',
+                    colProps: { span: 6 },
+                    fieldProps: {
+                      buttonStyle: 'solid',
+                      defaultValue: 'transparent',
                       options: [
                         { label: '透明', value: 'transparent' },
                         { label: '黑色', value: 'dark' },
@@ -228,7 +243,8 @@ export default () => {
                 title: 'AntdPro配置',
                 dataIndex: 'antdpro',
                 valueType: 'jsonEditor',
-                tooltip: '请将右侧设置按钮中的配置点击拷贝设置后粘贴到这里保存',
+                tooltip:
+                  '请将右侧设置按钮中的配置点击拷贝设置后粘贴到这里保存,{"layout": "side | mix","splitMenus": true | false}',
               },
               { title: 'Antd主题配置', dataIndex: 'theme', valueType: 'jsonEditor' },
             ],

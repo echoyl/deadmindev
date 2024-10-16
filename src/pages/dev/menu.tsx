@@ -1,10 +1,10 @@
 import { saFormTabColumnsType, tplComplie, uid } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
-import { CopyOutlined, RollbackOutlined } from '@ant-design/icons';
+import { CopyOutlined, ImportOutlined, RollbackOutlined, SyncOutlined } from '@ant-design/icons';
 import { ActionType } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Space } from 'antd';
+import { Space, Tooltip } from 'antd';
 import { useRef, useContext } from 'react';
 import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
@@ -418,6 +418,16 @@ export default () => {
             // ),
             btn: { text: '', size: 'small', icon: <RollbackOutlined />, tooltip: '移动至' },
           },
+          {
+            domtype: 'button',
+            request: { url: 'dev/menu/import' },
+            action: 'import',
+            btn: { size: 'small', tooltip: '导入至', icon: <ImportOutlined />, text: '' },
+            uploadProps: {
+              accept: '.sql',
+            },
+            afterAction: reload,
+          },
         ],
       },
     },
@@ -496,6 +506,7 @@ export default () => {
             uploadProps: {
               accept: '.sql',
             },
+            afterAction: reload,
           },
           {
             valueType: 'toolbar',

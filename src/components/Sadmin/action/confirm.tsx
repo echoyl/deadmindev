@@ -1,6 +1,6 @@
 import request from '@/components/Sadmin/lib/request';
 import { Button, ButtonProps, Modal } from 'antd';
-import React, { FC, useContext, useMemo } from 'react';
+import React, { FC, ReactElement, useContext, useMemo } from 'react';
 import { SaContext } from '../posts/table';
 import cache from '../helper/cache';
 import { SaDevContext } from '../dev';
@@ -17,18 +17,13 @@ interface actionConfirm {
   dataId?: number;
   callback?: (value: any) => void;
   //trigger?: (value: any) => ReactNode;
-  trigger?: JSX.Element;
+  trigger?: JSX.Element | boolean;
   title?: string;
   afterActionType?: 'reload' | 'goback' | 'none';
   record?: Record<string, any>;
 }
 
-export const ConfirmTriggerClick = (
-  props: actionConfirm,
-  actionRef,
-  searchFormRef?: any,
-  messageApi?: MessageInstance,
-) => {
+export const ConfirmTriggerClick = (props: actionConfirm, actionRef, searchFormRef?: any) => {
   const {
     msg,
     method = 'post',
@@ -69,7 +64,7 @@ export const ConfirmTriggerClick = (
           : {
               data: pdata,
             };
-      const ret = await request[method](url, { ...requestProps, messageApi, drawer: true });
+      const ret = await request[method](url, { ...requestProps, drawer: true });
       if (callback) {
         const cbret = callback(ret);
         if (cbret == true) {
@@ -112,34 +107,33 @@ export const ConfirmTriggerClick = (
 
 const Confirm: FC<actionConfirm> = (props) => {
   const { btn = { title: '操作', type: 'primary', danger: false }, trigger } = props;
-  const [modalApi, modalHolder] = Modal.useModal();
+  const { modalApi } = useContext(SaDevContext);
   const { actionRef, searchFormRef } = useContext(SaContext);
-  // const click = () => {
-  //   ConfirmTriggerClick(props, modal, actionRef, searchFormRef);
-  // };
-  //console.log('props.record', props.record);
-  const triggerDom = useMemo(() => {
+  const onClick = (e?: any) => {
+    modalApi?.confirm(ConfirmTriggerClick(props, actionRef, searchFormRef));
+  };
+  const triggerDom: JSX.Element | null = useMemo(() => {
     if (!trigger) {
       return null;
     }
 
-    return React.cloneElement(trigger, {
+    //onClick();
+    const newDom = React.cloneElement(trigger as ReactElement, {
       key: 'trigger',
-      ...trigger.props,
-      onClick: async (e: any) => {
-        modalApi.confirm(ConfirmTriggerClick(props, actionRef, searchFormRef));
-        trigger.props?.onClick?.(e);
+      onClick: (e: any) => {
+        onClick(e);
+        trigger?.props?.onClick?.(e);
       },
     });
+    return newDom;
   }, [trigger]);
 
   return (
     <>
-      {modalHolder}
       {trigger ? (
-        <>{triggerDom}</>
+        triggerDom
       ) : (
-        <Button size="small" onClick={click} type={btn.type} danger={btn.danger}>
+        <Button size="small" onClick={onClick} type={btn.type} danger={btn.danger}>
           {btn.title}
         </Button>
       )}
