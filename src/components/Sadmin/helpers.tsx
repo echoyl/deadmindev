@@ -621,7 +621,11 @@ export const getBread = (path: string) => {
   const { breadcrumb } = getMenuData(initialState?.currentUser?.menuData);
   if (path == '/') {
     //首页默认跳转第一个菜单
-    path = initialState?.currentUser?.menuData[0]?.path;
+    if (initialState?.currentUser?.redirect && initialState?.currentUser?.redirect != path) {
+      path = initialState?.currentUser?.redirect;
+    } else {
+      path = initialState?.currentUser?.menuData[0]?.path;
+    }
   }
 
   if (path.substring(0, 1) == '/') {

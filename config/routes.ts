@@ -1,5 +1,3 @@
-import { appRoutes } from './route/default';
-
 export default [
   {
     path: '/login',
@@ -38,7 +36,6 @@ export default [
     path: '403',
     component: './403',
   },
-  ...appRoutes,
   { path: '/', component: './404' },
   { path: '/*', component: './404' },
 ];

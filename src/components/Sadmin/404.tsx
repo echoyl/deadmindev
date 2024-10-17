@@ -36,27 +36,27 @@ const NoFoundPage: React.FC = () => (
 
 export const Page: React.FC = () => {
   const localtion = useLocation();
-  //log('data', localtion, param, breadcrumb);
   let pathname = localtion.pathname;
   const match = pathname.match(/\/(\d+)$/);
-  //const { initialState } = useModel('@@initialState');
 
   //检测路由是否包含数字
   if (match) {
-    //log('has number', match[1]);
     pathname = localtion.pathname.replace(match[0], '');
-  } else {
-    //log('dont has number');
   }
 
   const menu = getBread(pathname);
   if (!menu) {
     return <NoFoundPage />;
   }
+
   useEffect(() => {
-    //console.log('404 menu change', menu);
     if (menu.data?.redirect) {
       history.push(menu.data?.redirect);
+    } else {
+      if (menu.path != pathname) {
+        //如果有跳转页面 和当前页面路径不一样，则跳转路由
+        history.push(menu.path as string);
+      }
     }
   }, [menu]);
 
