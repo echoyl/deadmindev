@@ -45,11 +45,12 @@ export const Page: React.FC = () => {
   }
 
   const menu = getBread(pathname);
-  if (!menu) {
-    return <NoFoundPage />;
-  }
 
   useEffect(() => {
+    if (!menu) {
+      return;
+    }
+
     if (menu.data?.redirect) {
       history.push(menu.data?.redirect);
     } else {
@@ -58,7 +59,11 @@ export const Page: React.FC = () => {
         history.push(menu.path as string);
       }
     }
-  }, [menu]);
+  }, [localtion]);
+
+  if (!menu) {
+    return <NoFoundPage />;
+  }
 
   return (
     <>

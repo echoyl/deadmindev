@@ -38,6 +38,20 @@ export default function DebounceSelect<
   const [thisValue, setThisValue] = useState(props.value);
   const [isInit, setIsInit] = useState(false);
   const fetchRef = useRef(0);
+
+  useEffect(() => {
+    if (isInit) {
+      //console.log('set init', record);
+      setFetching(true);
+      debounceFetcher('reload');
+      //如果已经初始化 那么每次变动后都修改组件的value
+      setThisValue(null);
+    } else {
+      //console.log('set init', record);
+      setIsInit(true);
+    }
+  }, [record]);
+
   if (isStr(fetchOptions)) {
     const url = fetchOptions;
     const { pathname } = useLocation();
@@ -80,18 +94,6 @@ export default function DebounceSelect<
     return debounce(loadOptions, debounceTimeout);
   }, [fetchOptions, debounceTimeout, options]);
 
-  useEffect(() => {
-    if (isInit) {
-      //console.log('set init', record);
-      setFetching(true);
-      debounceFetcher('reload');
-      //如果已经初始化 那么每次变动后都修改组件的value
-      setThisValue(null);
-    } else {
-      //console.log('set init', record);
-      setIsInit(true);
-    }
-  }, [record]);
   const fieldProps = {
     fieldNames: props.fieldNames
       ? props.fieldNames

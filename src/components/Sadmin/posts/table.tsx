@@ -164,7 +164,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   } = props;
   //console.log('tableprops', props);
   const [tbColumns, setTbColumns] = useState([]);
-  const [enums, setEnums] = useState();
+  const [enums, setEnums] = useState<Record<string,any>>();
   const [summary, setSummary] = useState();
   const [columnData, setColumnData] = useState({});
   const [data, setData] = useState([]);
@@ -257,7 +257,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     return Promise.resolve({ data: ret.data, success: ret.success, total: ret.total });
   };
   useEffect(() => {
-    if (enums && enums.table_menu && table_menu_key) {
+    if (enums && enums.table_menu && table_menu_key && enums.table_menu[table_menu_key]) {
       if (table_menu_all) {
         setTableMenu([{ label: t('all'), value: 'all' }, ...enums.table_menu[table_menu_key]]);
       } else {

@@ -380,7 +380,10 @@ export const ToolBarMenu = (props) => {
           {
             key: 'export',
             label: (
-              <ExportButton request={{ data: { ids: [pageMenu?.id] } }} btn={{ type: 'link' }} />
+              <ExportButton
+                request={{ data: { ids: [pageMenu?.id] }, url: 'dev/menu/export' }}
+                btn={{ type: 'link' }}
+              />
             ),
           },
         ],

@@ -22,6 +22,7 @@ export const columnType = [
   { label: '拾色器 - colorPicker', value: 'colorPicker' },
   { label: '下拉操作 - dropdownAction', value: 'dropdownAction' },
   { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
+  { label: '评分 - rate', value: 'rate' },
 ];
 
 const formMoreType = [
@@ -68,6 +69,7 @@ const formMoreType = [
   { label: '日期周 - dateWeek', value: 'dateWeek' },
   { label: '日期时间 - datetime', value: 'datetime' },
   { label: '时间 - time', value: 'time' },
+  { label: '评分 - rate', value: 'rate' },
 ];
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {
