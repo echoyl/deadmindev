@@ -98,14 +98,6 @@ const CustomerColumnRender = (props) => {
         //return <span onClick={() => console.log('777')}>test</span>;
         const styleProps = percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {};
         return RequestButtonRender({ record, ...item, styleProps, initialState });
-        return (
-          <RequestButton
-            //key={i}
-            {...item}
-            record={record}
-            styleProps={percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {}}
-          />
-        );
       } else {
         return text;
       }
@@ -377,7 +369,7 @@ const CustomerColumnRender = (props) => {
             />
           );
         } else {
-          return dom;
+          return <span key={key}>{dom}</span>;
         }
       })
       .filter((v) => v);

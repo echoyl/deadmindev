@@ -1,6 +1,6 @@
-import { PageLoading } from '@ant-design/pro-components';
 import { lazy, Suspense } from 'react';
 import { tplComplie } from '../helpers';
+import Loading from '@/components/Loading';
 
 const AliyunVideo = lazy(() => import('@/components/Sadmin/uploader/video'));
 const Uploader = lazy(() => import('@/components/Sadmin/uploader'));
@@ -9,7 +9,7 @@ const ConfirmForm = lazy(() => import('@/components/Sadmin/action/confirmForm'))
 const MDEditorReal = lazy(() => import('@/components/Sadmin/valueTypeMap/mdEditor'));
 export const AliyunVideoRender = (props) => {
   return (
-    <Suspense fallback={<PageLoading />}>
+    <Suspense fallback={<Loading />}>
       <AliyunVideo {...props} />
     </Suspense>
   );
@@ -44,7 +44,7 @@ export const ConfirmFormRender = (props) => {
     show = tplComplie(props.if, props);
   }
   return (
-    <Suspense fallback={<PageLoading />}>
+    <Suspense fallback={<Loading />}>
       {show ? <ConfirmForm dataId={props.record?.id} {...props} /> : null}
     </Suspense>
   );
@@ -53,7 +53,7 @@ export const ConfirmFormRender = (props) => {
 export const MDEditorRender = (_, props) => {
   const { fieldProps } = props;
   return (
-    <Suspense fallback={<PageLoading />}>
+    <Suspense fallback={<Loading />}>
       <MDEditorReal {...fieldProps} style={{ margin: '0 1px' }} />
     </Suspense>
   );

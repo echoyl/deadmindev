@@ -2,7 +2,7 @@ import { saUpload } from '@/components/Sadmin/lib/request';
 import { FC, useContext, useRef, lazy, Suspense } from 'react';
 import './style.less';
 import { SaDevContext } from '../dev';
-import { PageLoading } from '@ant-design/pro-components';
+import Loading from '@/components/Loading';
 
 const Editor = lazy(() =>
   import('@tinymce/tinymce-react').then((module) => ({
@@ -21,7 +21,7 @@ const TinyEditor: FC<{
 
   const { setting } = useContext(SaDevContext);
   return (
-    <Suspense fallback={<PageLoading />}>
+    <Suspense fallback={<Loading />}>
       <Editor
         tinymceScriptSrc={setting?.adminSetting?.baseurl + 'tinymce/tinymce.min.js'}
         onInit={(evt, editor) => (editorRef.current = editor)}

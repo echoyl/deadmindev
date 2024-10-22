@@ -1,9 +1,10 @@
 import { SaDevContext } from '@/components/Sadmin/dev';
 import { SaBreadcrumbRender, getBread } from '@/components/Sadmin/helpers';
-import { PageContainer, PageLoading } from '@ant-design/pro-components';
-import { history, useLocation } from '@umijs/max';
+import { PageContainer } from '@ant-design/pro-components';
+import { history, useLocation, useNavigate } from '@umijs/max';
 import { Button, Result } from 'antd';
 import React, { useContext, useEffect, lazy, Suspense } from 'react';
+import Loading from '../Loading';
 
 const PagePanel = lazy(() => import('@/components/Sadmin/pagePanel'));
 const PostsList = lazy(() => import('@/components/Sadmin/posts'));
@@ -45,6 +46,7 @@ export const Page: React.FC = () => {
   }
 
   const menu = getBread(pathname);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!menu) {
@@ -52,7 +54,8 @@ export const Page: React.FC = () => {
     }
 
     if (menu.data?.redirect) {
-      history.push(menu.data?.redirect);
+      //history.push(menu.data?.redirect);
+      navigate(menu.data?.redirect, { replace: true });
     } else {
       if (menu.path != pathname) {
         //如果有跳转页面 和当前页面路径不一样，则跳转路由
@@ -70,7 +73,11 @@ export const Page: React.FC = () => {
       {!menu.data?.redirect ? (
         <PageTypes menu={menu} match={match} pathname={pathname} />
       ) : (
-        <PageLoading />
+        <PageContainer404>
+          <div style={{ height: 400, width: '100%' }}>
+            <Loading />
+          </div>
+        </PageContainer404>
       )}
     </>
   );
@@ -107,7 +114,7 @@ const PageTypes = ({ menu, match, pathname }) => {
         ? (data.postUrl ? data.postUrl : data.url + '/show') + (match ? '?id=' + match?.[1] : '')
         : '';
     return (
-      <Suspense fallback={<PageLoading />}>
+      <Suspense fallback={<Loading />}>
         <PostsForm
           formTitle={false}
           key={pathname}
@@ -133,7 +140,7 @@ const PageTypes = ({ menu, match, pathname }) => {
     switch (page_type) {
       case 'category':
         return (
-          <Suspense fallback={<PageLoading />}>
+          <Suspense fallback={<Loading />}>
             <Category
               pageMenu={menu}
               key={pathname}
@@ -147,7 +154,7 @@ const PageTypes = ({ menu, match, pathname }) => {
       case 'table':
       case 'justTable':
         return (
-          <Suspense fallback={<PageLoading />}>
+          <Suspense fallback={<Loading />}>
             <PostsList
               key={pathname}
               path={pathname}
@@ -160,13 +167,13 @@ const PageTypes = ({ menu, match, pathname }) => {
         );
       case 'panel':
         return (
-          <Suspense fallback={<PageLoading />}>
+          <Suspense fallback={<Loading />}>
             <PagePanel key={pathname} pageMenu={menu} {...data} path={pathname} />
           </Suspense>
         );
       case 'panel2':
         return (
-          <Suspense fallback={<PageLoading />}>
+          <Suspense fallback={<Loading />}>
             <SaPanel key={pathname} pageMenu={menu} {...data} path={pathname} />
           </Suspense>
         );

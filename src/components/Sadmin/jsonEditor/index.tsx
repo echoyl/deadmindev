@@ -2,7 +2,7 @@ import { useContext, useState, lazy, Suspense } from 'react';
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 import { theme } from 'antd';
 import { SaDevContext } from '../dev';
-import { PageLoading } from '@ant-design/pro-components';
+import Loading from '@/components/Loading';
 
 const VanillaJSONEditor = lazy(() => import('./VanillaJSONEditor'));
 
@@ -33,7 +33,7 @@ const JsonEditor = (props) => {
       className={`'my-editor' ${setting?.navTheme != 'light' ? 'jse-theme-dark' : ''}`}
       style={{ '--jse-theme-color': token.colorPrimary }}
     >
-      <Suspense fallback={<PageLoading />}>
+      <Suspense fallback={<Loading />}>
         <VanillaJSONEditor content={content} onChange={onChangeR} />
       </Suspense>
     </div>
