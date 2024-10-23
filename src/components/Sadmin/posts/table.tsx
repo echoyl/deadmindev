@@ -8,7 +8,7 @@ import {
 } from '@ant-design/pro-components';
 import { history, useModel, useSearchParams } from '@umijs/max';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { getJson, isArr, isFn, isObj, isStr, isUndefined } from '../checkers';
+import { getJson, inArray, isArr, isFn, isObj, isStr, isUndefined } from '../checkers';
 import { TableForm } from '../dev/table/form';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
@@ -164,7 +164,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   } = props;
   //console.log('tableprops', props);
   const [tbColumns, setTbColumns] = useState([]);
-  const [enums, setEnums] = useState<Record<string,any>>();
+  const [enums, setEnums] = useState<Record<string, any>>();
   const [summary, setSummary] = useState();
   const [columnData, setColumnData] = useState({});
   const [data, setData] = useState([]);
@@ -173,6 +173,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   //记录当前的排序规则
   const [sort, setSort] = useState({});
+  //跳转链接带参数后，保持多余的参数
+  const [exceptUrlParam, setExceptUrlParam] = useState<Record<string, any>>({});
 
   //const actionRef = props.actionRef ? props.actionRef : useRef<ActionType>();
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -208,7 +210,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   );
   // const [enumNames, setEnumNames] = useState<any[]>([]);
   // const [search_config, setSearch_config] = useState<any[]>([]);
-  const rq = async (params = {}, sort: any, filter: any) => {
+  const rq = async (params: Record<string, any> = {}, sort: any, filter: any) => {
     if (!url) {
       return [];
     }
@@ -218,7 +220,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
     }
     setSort(sort);
-    const ret = await request.get(url, { params: { ...params, sort, filter } });
+    const ret = await request.get(url, { params: { ...params, ...exceptUrlParam, sort, filter } });
     if (!ret) {
       return;
     }
@@ -239,6 +241,26 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
 
       setColumnData({ ...ret.search }); //做成context 换一个名字
+
+      //这里需要检测url参数 和 form表单的参数是否有不一致，如果有的话需要将多余的参数设置到paramExtra 中
+      //因为点击search后会将这些参数过滤掉（通过带参数链接跳转的页面如果参数不在form中再搜索会导致参数丢失）
+      //只在第一次初始化请求时计算
+
+      const exceptNames = ['current', 'pageSize', ...Object.keys(paramExtra)];
+
+      for (var i in search_config) {
+        exceptNames.push(search_config[i].dataIndex);
+      }
+      const nowName = Object.keys(params).filter((v) => {
+        return inArray(v, exceptNames) < 0;
+      });
+      if (nowName.length > 0) {
+        const newExceptUrlParam: Record<string, any> = {};
+        nowName.forEach((v) => {
+          newExceptUrlParam[v] = params[v];
+        });
+        setExceptUrlParam(newExceptUrlParam);
+      }
     }
 
     //log('setEnums', ret.search);
@@ -462,6 +484,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                   ignoreRules: false,
                   syncToInitialValues: false,
                   style: { padding: 16 },
+                  extraUrlParams: exceptUrlParam,
                   syncToUrl: (values, type) => {
                     if (pageType != 'page') {
                       //只有在页面显示的table 搜索数据才会同步到url中

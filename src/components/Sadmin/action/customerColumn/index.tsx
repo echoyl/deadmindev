@@ -1,4 +1,4 @@
-import { useModel } from '@umijs/max';
+import { Link, useModel } from '@umijs/max';
 import {
   App,
   Badge,
@@ -367,6 +367,20 @@ const CustomerColumnRender = (props) => {
               }}
               styleProps={styleProps}
             />
+          );
+        } else if (item.action == 'link') {
+          const to = tplComplie(value?.to, { record, user: initialState?.currentUser });
+          return (
+            <Link key={key} to={to}>
+              {dom}
+            </Link>
+          );
+        } else if (item.action == 'alink') {
+          const to = tplComplie(value?.href, { record, user: initialState?.currentUser });
+          return (
+            <a key={key} href={to} target="_blank">
+              {dom}
+            </a>
           );
         } else {
           return <span key={key}>{dom}</span>;

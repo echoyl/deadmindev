@@ -550,7 +550,7 @@ export const getFromObject = (record, dataIndex) => {
   return value;
 };
 
-export function search2Obj(unsetNames: string[]): { [key: string]: any } {
+export function search2Obj(unsetNames: string[] = []): { [key: string]: any } {
   let search = window.location.search;
   if (search) {
     //console.log('search is', decodeURIComponent(search));

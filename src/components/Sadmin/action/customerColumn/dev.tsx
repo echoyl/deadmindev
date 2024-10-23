@@ -454,6 +454,8 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                               { label: '删除', value: 'delete' },
                               { label: '导入', value: 'import' },
                               { label: '导出', value: 'export' },
+                              { label: '站内链接', value: 'link' },
+                              { label: '外链接', value: 'alink' },
                             ],
                             size: 'small',
                           },

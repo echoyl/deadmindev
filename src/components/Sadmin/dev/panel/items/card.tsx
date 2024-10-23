@@ -27,21 +27,22 @@ const PanelItemCard = (props) => {
   };
 
   const getFooter = (config, data) => {
-    if (!config.open?.footer || !config.footer) {
+    const configFooter = config.footer || { type: 'text' };
+    if (!config.open?.footer) {
       //未开启底部设置
       return null;
     }
     let footerContent;
-    if (config.footer.type == 'trend') {
+    if (configFooter.type == 'trend') {
       //趋势显示
       if (!data.trend) {
         //无趋势数据
         return null;
       }
-      footerContent = getTrends(data.trend, config.footer?.layout);
+      footerContent = getTrends(data.trend, configFooter?.layout);
     } else {
       //文本显示
-      const text = data.footer ? data.footer : config.footer.text;
+      const text = data.footer ? data.footer : configFooter.text;
       if (!text) {
         return null;
       }
