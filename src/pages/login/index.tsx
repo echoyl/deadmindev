@@ -32,8 +32,6 @@ import { t } from '@/components/Sadmin/helpers';
 import { SaDevContext } from '@/components/Sadmin/dev';
 
 const useStyles = () => {
-  const { setting } = useContext(SaDevContext);
-  const login_bg = setting?.adminSetting?.baseurl;
   return createStyles(({ token, css }) => {
     return {
       action: {
@@ -63,7 +61,6 @@ const useStyles = () => {
         flexDirection: 'column',
         height: '100vh',
         overflow: 'auto',
-        backgroundImage: login_bg ? `url('${login_bg}/login_bg.png')` : '',
         backgroundSize: '100% 100%',
       },
     };
@@ -359,8 +356,10 @@ const Login: React.FC = () => {
   const { token } = theme.useToken();
   const containerStyle: CSSProperties = {};
   if (setting?.navTheme == 'light') {
-    if (setting?.adminSetting?.loginBgImgage) {
-      containerStyle.backgroundImage = 'url("' + setting?.adminSetting?.loginBgImgage + '")';
+    if (setting?.adminSetting?.loginBgImage) {
+      containerStyle.backgroundImage = `url("${setting?.adminSetting?.loginBgImage}")`;
+    } else {
+      containerStyle.backgroundImage = `url("${setting?.adminSetting?.baseurl}/login_bg.png")`;
     }
   } else {
     containerStyle.background = token.colorBgBase;

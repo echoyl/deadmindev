@@ -258,7 +258,7 @@ export default () => {
                   {
                     title: '登录页背景图',
                     valueType: 'uploader',
-                    dataIndex: 'loginBgImgage',
+                    dataIndex: 'loginBgImage',
                     colProps: { span: 12 },
                   },
                   {

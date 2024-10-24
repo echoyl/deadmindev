@@ -99,7 +99,8 @@ const CustomerColumnRender = (props) => {
         const styleProps = percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {};
         return RequestButtonRender({ record, ...item, styleProps, initialState });
       } else {
-        return text;
+        //未设置dataindex时 返回的时record导致报错
+        return dataindex ? text : '';
       }
     } else if (item.domtype == 'actions') {
       //console.log('actions', record);
