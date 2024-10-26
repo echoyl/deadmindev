@@ -168,6 +168,14 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const [summary, setSummary] = useState();
   const [columnData, setColumnData] = useState({});
   const [data, setData] = useState([]);
+  //当前数据总量
+  const [total, setTotal] = useState<number>(0);
+  //分页设置
+  const [currentPageSize, setCurrentPageSize] = useState<number>(
+    setting?.pagination?.pageSize ? setting?.pagination?.pageSize : 10,
+  );
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
   const [initRequest, setInitRequest] = useState(false);
   //const url = 'posts/posts';
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -211,6 +219,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
   // const [enumNames, setEnumNames] = useState<any[]>([]);
   // const [search_config, setSearch_config] = useState<any[]>([]);
   const rq = async (params: Record<string, any> = {}, sort: any, filter: any) => {
+    const { pageSize, current } = params;
+    setCurrentPageSize(pageSize);
+    setCurrentPage(current);
+    const pageIsChange = currentPage != current || pageSize != currentPageSize;
     if (!url) {
       return [];
     }
@@ -220,6 +232,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
     }
     setSort(sort);
+    //检测分页信息，如果已全部返回数据 分页或修改pagesize后不再请后接口数据
+    if (pageIsChange && data && data.length > 0 && data.length == total) {
+      return Promise.resolve({ data, success: true, total });
+    }
     const ret = await request.get(url, { params: { ...params, ...exceptUrlParam, sort, filter } });
     if (!ret) {
       return;
@@ -276,6 +292,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
     }
     setData([...ret.data]);
+    setTotal(ret.total);
     return Promise.resolve({ data: ret.data, success: ret.success, total: ret.total });
   };
   useEffect(() => {
@@ -611,6 +628,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             showSizeChanger: true,
             showQuickJumper: true,
             ...setting?.pagination,
+            pageSize: currentPageSize,
           }}
           {...tableProps}
           {...setting?.table}

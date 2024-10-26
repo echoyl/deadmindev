@@ -175,9 +175,13 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         }
 
         //console.log('has requestName is', requestName, enums, detail, options);
+        // if (options && !isArr(options)) {
+        //   console.log('not arr', requestName, v, options);
+        // }
         v.fieldProps = {
           ...v.fieldProps,
-          options: options ? options : [],
+          //options: [],
+          options: options && isArr(options) ? options : [],
         };
         delete v.fieldProps.requestDataName;
       }
