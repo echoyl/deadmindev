@@ -22,7 +22,7 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
-import { Tabs, QRCode, Space, theme, GetProp, Tooltip } from 'antd';
+import { Tabs, QRCode, Space, theme, GetProp, Tooltip, Flex } from 'antd';
 import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import cache from '@/components/Sadmin/helper/cache';
@@ -445,108 +445,112 @@ const Login: React.FC = () => {
         <title>登录 - {setting?.title}</title>
       </Helmet>
       {setting?.adminSetting?.lang ? <Lang /> : null}
-      <div style={{ flex: '1', padding: '48px 0' }}>
-        <ProCard
-          style={{
-            //maxWidth: 440,
-            margin: '0px auto',
-            // padding: '20px 0',
-            background: setting?.adminSetting?.loginBgCardColor,
-            width: 380,
-          }}
-          bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
-          className={styles.card}
-        >
-          <LoginForm
-            contentStyle={{
-              minWidth: 280,
-              maxWidth: '75vw',
+      <div style={{ flex: '1' }}>
+        <Flex align="center" justify="center" style={{ height: '100%' }}>
+          <ProCard
+            style={{
+              //maxWidth: 440,
+              //margin: '0px auto',
+              // padding: '20px 0',
+              background: setting?.adminSetting?.loginBgCardColor,
+              width: 380,
+              marginTop: -72,
             }}
-            containerStyle={{
-              paddingInline: 0,
-            }}
-            formRef={formRef}
-            logo={setting?.logo}
-            title={setting?.title}
-            subTitle={
-              setting?.adminSetting?.subtitle ? (
-                <span dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}></span>
-              ) : null
-            }
-            initialValues={{
-              autoLogin: true,
-            }}
-            onFinish={async (values) => {
-              await handleSubmit(values as API.LoginParams);
-            }}
-            //submitter={isQrcode ? false : undefined}
-            actions={
-              setting?.adminSetting?.loginActions ? (
-                <Space>
-                  {t('pages.login.loginWith', intl)}
-                  {setting?.adminSetting?.loginActions?.map((ac, index) => {
-                    if (ac == 'wechat') {
-                      return (
-                        <ButtonModal
-                          trigger={<WechatOutlined className={styles.action} />}
-                          width={350}
-                          title="扫码登录"
-                          key="wechatlogin"
-                        >
-                          <ActionLogin key={index} type={ac} />
-                        </ButtonModal>
-                      );
-                    } else if (ac == 'thunder') {
-                      return <ThunderLogin key="thunderlogin" styles={styles} />;
-                    } else {
-                      return <></>;
-                    }
-                  })}
-                </Space>
-              ) : null
-            }
+            bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
+            className={styles.card}
           >
-            {setting.adminSetting?.loginType?.length > 1 ? (
-              <Tabs
-                centered
-                activeKey={loginType}
-                onChange={(activeKey) => {
-                  setLoginType(activeKey);
-                  setIsQrcode(activeKey == 'phone');
-                }}
-                items={setting.adminSetting?.loginType?.map((v) => {
-                  return loginTypeItems.find((item) => item.key == v);
-                })}
-              />
-            ) : (
-              loginTypeItems.find((item) => item.key == setting.adminSetting?.loginType?.[0])
-                ?.children
-            )}
-
-            <div
-              style={{
-                marginBottom: 24,
+            <LoginForm
+              contentStyle={{
+                minWidth: 280,
+                maxWidth: '75vw',
               }}
-              key="login_bottom"
+              containerStyle={{
+                paddingInline: 0,
+              }}
+              formRef={formRef}
+              logo={setting?.logo}
+              title={setting?.title}
+              subTitle={
+                setting?.adminSetting?.subtitle ? (
+                  <span
+                    dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}
+                  ></span>
+                ) : null
+              }
+              initialValues={{
+                autoLogin: true,
+              }}
+              onFinish={async (values) => {
+                await handleSubmit(values as API.LoginParams);
+              }}
+              //submitter={isQrcode ? false : undefined}
+              actions={
+                setting?.adminSetting?.loginActions ? (
+                  <Space>
+                    {t('pages.login.loginWith', intl)}
+                    {setting?.adminSetting?.loginActions?.map((ac, index) => {
+                      if (ac == 'wechat') {
+                        return (
+                          <ButtonModal
+                            trigger={<WechatOutlined className={styles.action} />}
+                            width={350}
+                            title="扫码登录"
+                            key="wechatlogin"
+                          >
+                            <ActionLogin key={index} type={ac} />
+                          </ButtonModal>
+                        );
+                      } else if (ac == 'thunder') {
+                        return <ThunderLogin key="thunderlogin" styles={styles} />;
+                      } else {
+                        return <></>;
+                      }
+                    })}
+                  </Space>
+                ) : null
+              }
             >
-              <ProFormCheckbox noStyle name="autoLogin">
-                {t('pages.login.rememberMe', intl)}
-              </ProFormCheckbox>
-              <a
-                style={{
-                  float: 'right',
-                }}
-                onClick={() => {
-                  messageApi?.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
-                }}
-              >
-                {t('pages.login.forgotPassword', intl)}
-              </a>
-            </div>
-          </LoginForm>
-        </ProCard>
-      </div>
+              {setting.adminSetting?.loginType?.length > 1 ? (
+                <Tabs
+                  centered
+                  activeKey={loginType}
+                  onChange={(activeKey) => {
+                    setLoginType(activeKey);
+                    setIsQrcode(activeKey == 'phone');
+                  }}
+                  items={setting.adminSetting?.loginType?.map((v) => {
+                    return loginTypeItems.find((item) => item.key == v);
+                  })}
+                />
+              ) : (
+                loginTypeItems.find((item) => item.key == setting.adminSetting?.loginType?.[0])
+                  ?.children
+              )}
 
+              <div
+                style={{
+                  marginBottom: 24,
+                }}
+                key="login_bottom"
+              >
+                <ProFormCheckbox noStyle name="autoLogin">
+                  {t('pages.login.rememberMe', intl)}
+                </ProFormCheckbox>
+                <a
+                  style={{
+                    float: 'right',
+                  }}
+                  onClick={() => {
+                    messageApi?.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
+                  }}
+                >
+                  {t('pages.login.forgotPassword', intl)}
+                </a>
+              </div>
+            </LoginForm>
+          </ProCard>
+        </Flex>
+      </div>
       <Footer />
     </div>
   ) : null;
