@@ -78,7 +78,13 @@ const ItemCol = (props) => {
           <PagePanelHeader flash={getData} />
         </ProCard>
       ) : type == 'StatisticCard' ? (
-        <PanelItemCard title={itemTitle} data={idata?.data} config={config} height={height} />
+        <PanelItemCard
+          title={itemTitle}
+          data={idata?.data}
+          label={idata?.label}
+          config={config}
+          height={height}
+        />
       ) : null}
     </Col>
   ) : null;

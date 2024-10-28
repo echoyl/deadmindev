@@ -617,7 +617,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
             return summary ? (
               <tr>
                 <td
-                  colSpan={tableColumns.length}
+                  colSpan={
+                    tableColumns?.filter((v) => {
+                      return !v.hideInTable;
+                    }).length
+                  }
                   dangerouslySetInnerHTML={{ __html: summary }}
                 ></td>
               </tr>

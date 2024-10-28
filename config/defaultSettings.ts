@@ -18,7 +18,7 @@ const Settings: ProLayoutProps & {
   fixedHeader: true,
   fixSiderbar: true,
   colorWeak: false,
-  title: '',
+  title: 'Admin',
   pwa: false,
   logo: '',
   iconfontUrl: '',

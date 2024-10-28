@@ -5,7 +5,7 @@ import { Divider, Progress, Space } from 'antd';
 import PanelItemChart from './chart';
 
 const PanelItemCard = (props) => {
-  const { title, data, config = {}, height } = props;
+  const { title, data, config = {}, height, label } = props;
   const { open } = config;
 
   const getDescription = (config: Record<string, any>, data: Record<string, any>) => {
@@ -61,9 +61,10 @@ const PanelItemCard = (props) => {
         ...config?.statistic,
         value: isObj(data) ? data?.value : data,
         description: getDescription(config, data),
+        title: config?.statistic?.title ? config?.statistic?.title : label,
       }
     : false;
-  //console.log('PanelItemCard config ', statistic);
+  //console.log('PanelItemCard config ', config?.statistic, label);
   const getChart = (config, data) => {
     //console.log('getChart ', config, data);
     const { chart = {}, open } = config;

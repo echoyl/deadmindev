@@ -113,6 +113,9 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
               dataIndex: 'width',
               valueType: 'digit',
               colProps: { span: 3 },
+              fieldProps: {
+                defaultValue: '15',
+              },
               width: '100%',
             },
             {
