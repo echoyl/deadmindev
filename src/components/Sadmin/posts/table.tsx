@@ -172,7 +172,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const [total, setTotal] = useState<number>(0);
   //分页设置
   const [currentPageSize, setCurrentPageSize] = useState<number>(
-    setting?.pagination?.pageSize ? setting?.pagination?.pageSize : 10,
+    setting?.pagination?.pageSize ? setting?.pagination?.pageSize : 20,
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -262,7 +262,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       //因为点击search后会将这些参数过滤掉（通过带参数链接跳转的页面如果参数不在form中再搜索会导致参数丢失）
       //只在第一次初始化请求时计算
 
-      const exceptNames = ['current', 'pageSize', ...Object.keys(paramExtra)];
+      const exceptNames = ['current', 'pageSize', ...Object.keys(paramExtra), table_menu_key];
 
       for (var i in search_config) {
         exceptNames.push(search_config[i].dataIndex);
@@ -632,6 +632,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             showSizeChanger: true,
             showQuickJumper: true,
             ...setting?.pagination,
+            defaultPageSize: currentPageSize,
             pageSize: currentPageSize,
           }}
           {...tableProps}

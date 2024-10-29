@@ -206,7 +206,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   ];
 
   return {
-    actionsRender: actionsRender,
+    actionsRender,
     avatarProps: {
       src: initialState?.currentUser?.avatar,
       title: initialState?.currentUser?.name,

@@ -2,7 +2,7 @@ import { SaDevContext } from '@/components/Sadmin/dev';
 import { SaBreadcrumbRender, getBread } from '@/components/Sadmin/helpers';
 import { PageContainer } from '@ant-design/pro-components';
 import { history, useLocation, useNavigate } from '@umijs/max';
-import { Button, Result } from 'antd';
+import { Button, Result, theme } from 'antd';
 import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import Loading from '../Loading';
 
@@ -86,13 +86,28 @@ export const Page: React.FC = () => {
 export const PageContainer404 = (props) => {
   const { title = false, match = false, path } = props;
   const { setting } = useContext(SaDevContext);
+  const { useToken } = theme;
+  const { token } = useToken();
+  const style = {
+    backgroundColor: token.colorBgContainer,
+    transition: 'background-color 0.3s',
+    boxShadow: token.boxShadowTertiary,
+  };
   return (
     <PageContainer
       title={title}
       fixedHeader={setting?.fixedHeader}
       className="saContainer"
-      affixProps={setting?.layout == 'side' ? { offsetTop: 0, style: { marginTop: -1 } } : {}}
+      affixProps={
+        setting?.layout == 'side' && setting?.fixedHeader
+          ? {
+              offsetTop: 0,
+              style: { marginTop: -1 },
+            }
+          : {}
+      }
       header={{
+        style: setting?.layout == 'side' && setting?.fixedHeader ? style : {},
         breadcrumbRender: (_, dom) => {
           return <SaBreadcrumbRender match={match} path={path} />;
         },
