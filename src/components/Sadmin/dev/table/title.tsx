@@ -8,7 +8,6 @@ import {
   SettingOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { css } from '@emotion/css';
 import { useModel } from '@umijs/max';
 import { Button, Space } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
@@ -31,56 +30,54 @@ import { ColumnsSelector, ToolBarMenu } from './toolbar';
 import { tplComplie } from '../../helpers';
 import DevSwitch from '../switch';
 import { getJson } from '../../checkers';
-export const designerCss = css`
-  position: relative;
-  min-width: 60px;
-  &:hover {
-    > .general-schema-designer {
-      display: block;
-    }
-  }
-  > .general-schema-designer {
-    position: absolute;
-    top: 0;
-    /*top: -16px !important;*/
-    right: 0;
-    /*right: -16px !important;*/
-    bottom: 0;
-    /*bottom: -16px !important;*/
-    left: 0;
-    /*left: -16px !important;*/
-    z-index: 999;
-    display: none;
-    background: rgba(241, 139, 98, 0.12) !important;
-    border: 0 !important;
-    pointer-events: none;
-    > .general-schema-designer-icons {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      line-height: 16px;
-      pointer-events: all;
-      .ant-space-item {
-        align-self: stretch;
-        width: 16px;
-        color: #fff;
-        line-height: 16px;
-        text-align: center;
-        background-color: rgb(241, 139, 98);
-      }
-    }
-  }
-`;
-
-const overrideAntdCSS = css`
-  & .ant-space-item .anticon {
-    margin: 0;
-  }
-
-  &:hover {
-    display: block !important;
-  }
-`;
+import { createStyles } from 'antd-style';
+export const useDesignerCss = createStyles(({ token }) => {
+  return {
+    saSortItem: {
+      position: 'relative',
+      minWidth: 60,
+      '&:hover > .general-schema-designer': {
+        display: 'block',
+      },
+      '& > .general-schema-designer': {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        zIndex: 999,
+        display: 'none',
+        background: 'rgba(22, 119, 255, 0.12) !important',
+        //background: `${token.colorPrimaryBgHover} !important`,
+        border: '0 !important',
+        pointerEvents: 'none',
+        '& > .general-schema-designer-icons': {
+          position: 'absolute',
+          top: 2,
+          right: 2,
+          lineHeight: '16px',
+          pointerEvents: 'all',
+          '& .ant-space-item': {
+            alignSelf: 'stretch',
+            width: 16,
+            color: '#fff',
+            lineHeight: '16px',
+            textAlign: 'center',
+            backgroundColor: token.colorPrimaryTextHover,
+          },
+        },
+      },
+    },
+    overrideAntdCSS: {
+      '& .ant-space-item .anticon': {
+        margin: 0,
+      },
+      '&:hover': {
+        display: 'block !important',
+      },
+    },
+  };
+});
 
 const getValue = (uid, pageMenu, type) => {
   //无uid表示插入列
@@ -474,15 +471,16 @@ export const DevTableColumnTitle = (props) => {
     table: {},
     toolbar: { display: 'inline-block' },
   };
+  const { styles: dstyles } = useDesignerCss();
   return (
     <SortableItem
-      className={designerCss}
+      className={dstyles.saSortItem}
       id={uid}
       eid={uid}
       devData={devData}
       style={{ ...styles[devData?.type], ...style }}
     >
-      <div className={classNames('general-schema-designer', overrideAntdCSS)}>
+      <div className={classNames('general-schema-designer', dstyles.overrideAntdCSS)}>
         <div className={'general-schema-designer-icons'}>
           <Space size={3} align={'center'}>
             <DragHandler>

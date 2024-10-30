@@ -16,18 +16,8 @@ import ConfirmForm from '../../action/confirmForm';
 import { SaContext } from '../../posts/table';
 import { DragHandler, SortableItem } from '../dnd-context/SortableItem';
 import { SchemaSettingsContext, SchemaSettingsDropdown } from '../table/designer';
-import { DeleteColumn, designerCss } from '../table/title';
+import { DeleteColumn, useDesignerCss } from '../table/title';
 import baseFormColumns, { baseRowColumns } from './vars/base';
-
-const overrideAntdCSS = css`
-  & .ant-space-item .anticon {
-    margin: 0;
-  }
-
-  &:hover {
-    display: block !important;
-  }
-`;
 
 const BaseForm = (props) => {
   const { title, uid, data, type = 'col', extpost } = props;
@@ -198,15 +188,16 @@ export const DevPanelColumnTitle = (props) => {
           },
           deleteItem('col'),
         ];
+  const { styles } = useDesignerCss();
   return devEnable ? (
     <SortableItem
-      className={designerCss}
+      className={styles.saSortItem}
       id={uid}
       eid={uid}
       devData={{ type: 'panel', ...devData }}
       style={style}
     >
-      <div className={classNames('general-schema-designer', overrideAntdCSS)}>
+      <div className={classNames('general-schema-designer', styles.overrideAntdCSS)}>
         <div className={'general-schema-designer-icons'}>
           <Space size={3} align={'center'}>
             <DragHandler>

@@ -1,5 +1,6 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { cx } from '@emotion/css';
+import { theme } from 'antd';
 import React, { HTMLAttributes, createContext, useContext } from 'react';
 
 export const DraggableContext = createContext(null);
@@ -25,9 +26,9 @@ export const Sortable = (props: any) => {
   const { draggable, droppable } = useContext(SortableContext);
   const { isOver, setNodeRef } = droppable;
   const droppableStyle = { ...style };
-  //const { token } = theme.useToken();
+  const { token } = theme.useToken();
   if (isOver && draggable?.active?.id !== droppable?.over?.id) {
-    droppableStyle[component === 'a' ? 'color' : 'background'] = '#e6f7ff';
+    droppableStyle[component === 'a' ? 'color' : 'background'] = token.colorPrimaryBgHover;
     Object.assign(droppableStyle, overStyle);
   }
 
