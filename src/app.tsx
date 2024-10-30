@@ -237,7 +237,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     menu: {
       params: initialState?.currentUser?.uidx,
       request: async (params, defaultMenuData) => {
-        return loopMenuItem(initialState?.currentUser?.menuData);
+        return loopMenuItem(
+          initialState?.currentUser?.menuData,
+          initialState?.settings?.adminSetting?.iconfont,
+        );
       },
       locale: false,
     },

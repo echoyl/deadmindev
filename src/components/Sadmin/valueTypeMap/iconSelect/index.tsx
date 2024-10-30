@@ -3,11 +3,15 @@ import * as Icon from '@ant-design/icons';
 import { css } from '@emotion/css';
 import { Card, Flex, Segmented, Select } from 'antd';
 import { isFunction } from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { SaDevContext } from '../../dev';
 // 编写生成ReactNode的方法
 
-export const iconToElement = (name: string, style = {}) => {
+export const iconToElement = (name: string, style = {}, iconfontUrl?: any[]) => {
   //做一个map兼容之前的设置
+  const IconFont = Icon.createFromIconfontCN({
+    scriptUrl: iconfontUrl?.map((v: Record<string, any>) => v.url),
+  });
   const map = {
     dashboard: 'DashboardOutlined',
     table: 'TableOutlined',
@@ -46,12 +50,14 @@ export const iconToElement = (name: string, style = {}) => {
   if (map[name]) {
     name = map[name];
   }
-  return Icon[name]
-    ? React.createElement(Icon[name], {
-        style,
-        key: name,
-      })
-    : null;
+  return Icon[name] ? (
+    React.createElement(Icon[name], {
+      style,
+      key: name,
+    })
+  ) : name ? (
+    <IconFont type={name} />
+  ) : null;
 };
 
 const getIcons = () => {
@@ -69,6 +75,11 @@ const getIcons = () => {
     {
       value: 'TwoTone',
       label: '双色风格',
+      icons: [],
+    },
+    {
+      value: 'IconFont',
+      label: 'IconFont',
       icons: [],
     },
   ];
@@ -110,11 +121,17 @@ const IconSelectPanel = (props) => {
   }, [keyword, icons]);
   const getIconsByCate = (cate: string | number) => {
     const ics = icons.find((v) => v.value == cate);
+    //console.log('getIconsByCate', ics);
     if (ics) {
       if (keyword) {
-        return ics?.icons.filter((v) => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+        if (cate == 'IconFont') {
+          //console.log('IconFont', [keyword]);
+          return [keyword];
+        } else {
+          return ics?.icons.filter((v) => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+        }
       } else {
-        return ics?.icons;
+        return cate == 'IconFont' ? (selectName ? [selectName] : []) : ics?.icons;
       }
     } else {
       return [];

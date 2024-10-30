@@ -247,6 +247,17 @@ export default () => {
                   '请将右侧设置按钮中的配置点击拷贝设置后粘贴到这里保存,{"layout": "side | mix","splitMenus": true | false}',
               },
               { title: 'Antd主题配置', dataIndex: 'theme', valueType: 'jsonEditor' },
+              {
+                title: '自定义图标库',
+                valueType: 'formList',
+                columns: [
+                  {
+                    valueType: 'group',
+                    columns: [{ title: 'iconfont远程地址', dataIndex: 'url' }],
+                  },
+                ],
+                dataIndex: 'iconfont',
+              },
             ],
           },
           {
