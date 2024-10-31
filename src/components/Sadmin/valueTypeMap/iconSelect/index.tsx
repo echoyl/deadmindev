@@ -1,17 +1,15 @@
 // 导入图标库
 import * as Icon from '@ant-design/icons';
 import { css } from '@emotion/css';
-import { Card, Flex, Segmented, Select } from 'antd';
+import { Card, Flex, Segmented, Select, theme } from 'antd';
 import { isFunction } from 'lodash';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../../dev';
 // 编写生成ReactNode的方法
 
-export const iconToElement = (name: string, style = {}, iconfontUrl?: any[]) => {
+export const iconToElement = (name: string, style = {}) => {
   //做一个map兼容之前的设置
-  const IconFont = Icon.createFromIconfontCN({
-    scriptUrl: iconfontUrl?.map((v: Record<string, any>) => v.url),
-  });
+  const IconFont = Icon.createFromIconfontCN();
   const map = {
     dashboard: 'DashboardOutlined',
     table: 'TableOutlined',
@@ -60,7 +58,7 @@ export const iconToElement = (name: string, style = {}, iconfontUrl?: any[]) => 
   ) : null;
 };
 
-const getIcons = () => {
+const getIcons = (iconfont: Record<string, any> | undefined) => {
   const icons = [
     {
       value: 'Outlined',
@@ -77,11 +75,6 @@ const getIcons = () => {
       label: '双色风格',
       icons: [],
     },
-    {
-      value: 'IconFont',
-      label: 'IconFont',
-      icons: [],
-    },
   ];
   for (var name in Icon) {
     if (!isFunction(Icon[name]) && name != 'default') {
@@ -92,20 +85,35 @@ const getIcons = () => {
       }
     }
   }
+  if (iconfont?.json) {
+    icons.push({
+      value: 'IconFont',
+      label: 'IconFont',
+      icons: iconfont?.json?.glyphs?.map((v) =>
+        [iconfont?.json.css_prefix_text, v.font_class].join(''),
+      ),
+    });
+  }
+
   //console.log('get icons once');
   return icons;
 };
 
 const IconSelectPanel = (props) => {
+  const { token } = theme.useToken();
   const iconSelectItem = css`
     text-align: center;
     font-size: 18px;
     cursor: pointer;
+    height: 24px;
+    width: 24px;
+    line-height: 24px;
     &:hover {
-      color: rgba(241, 139, 98);
+      color: ${token.colorPrimaryActive};
     }
     &.hover {
-      color: rgba(241, 139, 98);
+      color: ${token.colorPrimary};
+      background: ${token.colorPrimaryBg};
     }
   `;
   const { keyword, onChange, value, inputRef } = props;
@@ -113,9 +121,10 @@ const IconSelectPanel = (props) => {
   const [icons, setAllIcons] = useState([]);
   const [showIcons, setShowIcons] = useState<Array<any>>([]);
   const [selectName, setSelectName] = useState(value);
+  const { setting } = useContext(SaDevContext);
   useEffect(() => {
     if (icons.length < 1) {
-      setAllIcons(getIcons());
+      setAllIcons(getIcons(setting?.adminSetting?.iconfont));
     }
     setShowIcons(getIconsByCate(type));
   }, [keyword, icons]);
@@ -124,14 +133,9 @@ const IconSelectPanel = (props) => {
     //console.log('getIconsByCate', ics);
     if (ics) {
       if (keyword) {
-        if (cate == 'IconFont') {
-          //console.log('IconFont', [keyword]);
-          return [keyword];
-        } else {
-          return ics?.icons.filter((v) => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
-        }
+        return ics?.icons?.filter((v) => v.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
       } else {
-        return cate == 'IconFont' ? (selectName ? [selectName] : []) : ics?.icons;
+        return ics?.icons;
       }
     } else {
       return [];

@@ -23,6 +23,7 @@ import { Locale } from 'antd/es/locale';
 import { actionsRender } from './components/RightContent';
 import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
 import defaultSettings from '../config/defaultSettings';
+import { createFromIconfontCN } from '@ant-design/icons';
 
 //const isDev = process.env.NODE_ENV === 'development';
 // export default defineConfig({
@@ -111,6 +112,9 @@ export function rootContainer(container: JSX.Element, args) {
         setSetting(v);
         v?.adminSetting?.locales?.map((lo) => {
           addLocale(lo.name, lo.configs);
+        });
+        createFromIconfontCN({
+          scriptUrl: v?.adminSetting?.iconfont?.urls?.map((v: Record<string, any>) => v.url),
         });
 
         var element = document.querySelector('#rootLoading');
@@ -237,10 +241,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     menu: {
       params: initialState?.currentUser?.uidx,
       request: async (params, defaultMenuData) => {
-        return loopMenuItem(
-          initialState?.currentUser?.menuData,
-          initialState?.settings?.adminSetting?.iconfont,
-        );
+        return loopMenuItem(initialState?.currentUser?.menuData);
       },
       locale: false,
     },
