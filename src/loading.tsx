@@ -1,4 +1,4 @@
-import { PageLoading } from '@ant-design/pro-components';
+import LoadingFullHeight from './components/LoadingFullHeight';
 export default () => {
-  return <PageLoading size="default" />;
+  return <LoadingFullHeight />;
 };

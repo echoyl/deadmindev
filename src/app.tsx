@@ -59,7 +59,7 @@ export async function getInitialState(): Promise<{
   //获取后台基础配置信息
   const settings = await saGetSetting();
   //const { data: adminSetting } = await request.get('setting');
-
+  // console.log('settings', settings);
   // 如果是登录页面，不执行
   //const location = useLocation();
   // console.log(
@@ -281,7 +281,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         </ProConfigProvider>
       );
     },
-    siderWidth: 208,
+    siderWidth: 200,
     className: classNames.filter((v) => v),
     ...initialState?.settings,
   };

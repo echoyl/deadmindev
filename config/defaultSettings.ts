@@ -41,10 +41,11 @@ const Settings: ProLayoutProps & {
     //   colorTextMenuSelected: '#1890ff',
     //   colorBgMenuItemHover: 'rgba(90, 75, 75, 0.03)',
     // },
-    pageContainer: {
-      paddingInlinePageContainerContent: 20,
-      //paddingBlockPageContainerContent: 0,
-    },
+    header: { heightLayoutHeader: 46 },
+    // pageContainer: {
+    //   paddingInlinePageContainerContent: 20,
+    //   //paddingBlockPageContainerContent: 0,
+    // },
   },
 };
 

@@ -1,7 +1,7 @@
 import { SaDevContext } from '@/components/Sadmin/dev';
 import { SaBreadcrumbRender, getBread } from '@/components/Sadmin/helpers';
 import { PageContainer } from '@ant-design/pro-components';
-import { history, useLocation, useNavigate } from '@umijs/max';
+import { history, useLocation, useModel, useNavigate } from '@umijs/max';
 import { Button, Result, theme } from 'antd';
 import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import Loading from '../Loading';
@@ -74,9 +74,7 @@ export const Page: React.FC = () => {
         <PageTypes menu={menu} match={match} pathname={pathname} />
       ) : (
         <PageContainer404>
-          <div style={{ height: 400, width: '100%' }}>
-            <Loading />
-          </div>
+          <Loading />
         </PageContainer404>
       )}
     </>
@@ -86,6 +84,7 @@ export const Page: React.FC = () => {
 export const PageContainer404 = (props) => {
   const { title = false, match = false, path } = props;
   const { setting } = useContext(SaDevContext);
+  const { initialState } = useModel('@@initialState');
   const { useToken } = theme;
   const { token } = useToken();
   const style = {
@@ -104,7 +103,9 @@ export const PageContainer404 = (props) => {
               offsetTop: 0,
               style: { marginTop: -1 },
             }
-          : {}
+          : {
+              offsetTop: initialState?.settings?.token?.header?.heightLayoutHeader,
+            }
       }
       header={{
         style: setting?.layout == 'side' && setting?.fixedHeader ? style : {},

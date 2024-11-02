@@ -13,12 +13,11 @@ import request, {
   messageLoadingKey,
   setAdminSetting,
 } from '@/components/Sadmin/lib/request';
+import { merge } from 'lodash';
 export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   const theme = getTheme(localsetting);
   const navTheme: { [key: string]: any } =
-    theme == 'light'
-      ? { navTheme: theme, token: { ...lightDefaultToken } }
-      : { navTheme: theme, token: { sider: {}, header: {} } };
+    theme == 'light' ? { navTheme: theme } : { navTheme: theme };
   //之后会将adpro的设置 存到一个字段下面，
 
   if (localsetting.title) {
@@ -30,6 +29,7 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   //解析后台配置的antdpro配置
   const { antdpro = {} } = localsetting;
   const { title, logo, navTheme: onavTheme, colorPrimary, token, ...antdproRest } = antdpro;
+  const newToken = merge(defaultSettings?.token, token);
   //console.log('localsetting',localsetting);
   if (localsetting.colorPrimary) {
     navTheme.colorPrimary = localsetting.colorPrimary;
@@ -45,6 +45,7 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
     ...navTheme,
     ...antdproRest,
     logo: localsetting.logo,
+    token: newToken,
   };
 };
 export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {

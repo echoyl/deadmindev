@@ -21,7 +21,7 @@ export default defineConfig({
   },
   request: {},
   initialState: {
-    loading: '@/components/Loading',
+    loading: '@/components/LoadingFullHeight',
   },
   //favicons: env.favicons,
   model: {},
