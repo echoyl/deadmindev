@@ -8,6 +8,7 @@ import { SaTableAction } from '../../posts/tableColumns';
 import CustomerColumnRender from '../../action/customerColumn';
 import { uid } from '../../helpers';
 import { CheckCard } from '@ant-design/pro-components';
+import { urlAddQuery } from '../../helper/functions';
 
 const CardRender = (props) => {
   const { checkDisable = false, ...restProps } = props;
@@ -43,7 +44,7 @@ export default (props) => {
     if (!column) return;
 
     const field = column?.dataIndex;
-    const { valueType } = column;
+    const { valueType, fieldProps } = column;
     let value = record?.[field];
 
     if (inArray(valueType, ['option', 'customerColumn']) >= 0) {
@@ -83,12 +84,13 @@ export default (props) => {
       );
     } else {
       if (type == 'image') {
+        const image_url = urlAddQuery(isStr(value) ? value : value?.[0]?.url, fieldProps?.query);
         value = (
           <Image
             className="card_cover_image"
             height={coverImageHeight}
             width="100%"
-            src={isStr(value) ? value : value?.[0]?.url}
+            src={image_url}
             placeholder={true}
             preview={false}
           />
