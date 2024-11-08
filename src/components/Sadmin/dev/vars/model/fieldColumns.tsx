@@ -310,9 +310,12 @@ const fieldColumns: saFormColumnsType = [
                 {
                   title: 'json可选数据',
                   dataIndex: 'json',
-                  valueType: 'formList',
+                  valueType: 'saFormList',
                   rowProps: {
                     gutter: 0,
+                  },
+                  fieldProps: {
+                    showtype: 'table',
                   },
                   columns: [
                     {
