@@ -12,10 +12,12 @@ import { saReloadSetting } from '@/components/Sadmin/components/refresh';
 export const getModelColumnsTree = (id: number, allModels, pid: string = '', level = 1) => {
   const select_data = allModels?.find((v) => v.id == id);
   //console.log(foreign_model_id, allModels, select_data);
-  const fields: Array<TreeNodeProps> = [...select_data?.columns, ...devDefaultFields].map((v) => ({
-    title: v.label ? v.label : [v.title, v.name].join(' - '),
-    value: pid ? [pid, v.name ? v.name : v.value].join('-') : v.name ? v.name : v.value,
-  }));
+  const fields: Array<TreeNodeProps> = select_data
+    ? [...select_data?.columns, ...devDefaultFields].map((v) => ({
+        title: v.label ? v.label : [v.title, v.name].join(' - '),
+        value: pid ? [pid, v.name ? v.name : v.value].join('-') : v.name ? v.name : v.value,
+      }))
+    : [];
   level += 1;
 
   if (level > 3) {
