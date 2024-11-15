@@ -169,6 +169,7 @@ const formType = [
   { label: '拾色器 - colorPicker', value: 'colorPicker' },
   { label: '图标选择器 - iconSelect', value: 'iconSelect' },
   { label: 'markdown编辑器 - mdEditor', value: 'mdEditor' },
+  { label: '滑动条 - slider', value: 'saSlider' },
 ];
 const fieldColumns: saFormColumnsType = [
   {

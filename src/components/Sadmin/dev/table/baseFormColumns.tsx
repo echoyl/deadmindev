@@ -14,15 +14,15 @@ export const columnType = [
   { label: '导入 - import', value: 'import' },
   { label: '头部操作栏 - toolbar', value: 'toolbar' },
   { label: '底部选择操作栏 - selectbar', value: 'selectbar' },
-  { label: 'slider', value: 'slider' },
   { label: '省市区 - pca', value: 'pca' },
   { label: '用户权限 - userPerm', value: 'userPerm' },
   { label: 'html', value: 'html' },
-  { label: 'select', value: 'select' },
+  { label: 'Select选择器', value: 'select' },
   { label: '拾色器 - colorPicker', value: 'colorPicker' },
   { label: '下拉操作 - dropdownAction', value: 'dropdownAction' },
   { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
   { label: '评分 - rate', value: 'rate' },
+  { label: '滑动条 - slider', value: 'saSlider' },
 ];
 
 const formMoreType = [
@@ -30,7 +30,7 @@ const formMoreType = [
   { label: '自定义显示 - customerColumn', value: 'customerColumn' },
   { label: '属性配置 - jsonForm', value: 'jsonForm' },
   { label: '多行编辑 - formList', value: 'formList' },
-  { label: 'select', value: 'select' },
+  { label: 'Select选择器', value: 'select' },
   { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
   { label: 'json编辑器 - jsonEditor', value: 'jsonEditor' },
   { label: 'jsonCode', value: 'jsonCode' },
@@ -70,6 +70,7 @@ const formMoreType = [
   { label: '日期时间 - datetime', value: 'datetime' },
   { label: '时间 - time', value: 'time' },
   { label: '评分 - rate', value: 'rate' },
+  { label: '滑动条 - slider', value: 'saSlider' },
 ];
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {

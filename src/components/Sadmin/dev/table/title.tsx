@@ -391,7 +391,7 @@ export const DevTableColumnTitle = (props) => {
         title={
           <Space>
             <InsertRowRightOutlined />
-            <span>快速插入组</span>
+            <span>插入行</span>
           </Space>
         }
         uid={uid}
@@ -438,7 +438,7 @@ export const DevTableColumnTitle = (props) => {
         ? [
             baseform,
             addCol,
-            addGroup,
+            //addGroup,
             addEmptyGroup,
             {
               type: 'divider',
@@ -536,8 +536,7 @@ export const FormColumnTitle: FC = (props) => {
   const { initialState } = useModel('@@initialState');
   const dev = initialState?.settings?.adminSetting?.dev ? true : false;
 
-  const title =
-    props.valueType == 'group' && !props.title ? ['分组', props.uid].join(' - ') : props.title;
+  const title = props.valueType == 'group' && !props.title ? [props.uid].join(' - ') : props.title;
   const devType = props.valueType == 'group' ? 'formGroup' : 'form';
   return dev ? (
     <DevTableColumnTitle {...props} title={title} devData={{ type: devType }} />

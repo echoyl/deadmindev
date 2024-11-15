@@ -224,6 +224,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     setCurrentPage(current);
     const pageIsChange = currentPage != current || pageSize != currentPageSize;
     if (!url) {
+      setInitRequest(true);
       return [];
     }
     for (let i in params) {

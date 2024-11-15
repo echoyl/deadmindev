@@ -45,6 +45,7 @@ import {
   ConfirmFormRender,
   MDEditorRender,
 } from './valueTypeMap';
+import SaSliderMap from './valueTypeMap/saSlider';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -132,6 +133,7 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'mdEditor'
   | 'iconSelect'
   | 'dropdownAction'
+  | 'saSlider'
 >;
 type saFormColumnsTypeFn<T> = (d: T) => saFormColumnsType;
 export declare type saFormTabColumnsType = Array<{
@@ -433,6 +435,10 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   dropdownAction: {
     render: DropdownActionMap,
     renderFormItem: DropdownActionMap,
+  },
+  saSlider: {
+    render: SaSliderMap,
+    renderFormItem: SaSliderMap,
   },
 };
 export const t = (id?: string, intl?: any) => {

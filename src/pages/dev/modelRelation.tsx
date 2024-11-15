@@ -238,9 +238,9 @@ export default (props) => {
                 },
                 {
                   valueType: 'dependency',
-                  name: ['foreign_model_id', 'is_with'],
-                  columns: ({ foreign_model_id, is_with }: any) => {
-                    if (!foreign_model_id || !is_with) {
+                  name: ['foreign_model_id'],
+                  columns: ({ foreign_model_id }: any) => {
+                    if (!foreign_model_id) {
                       return [];
                     }
                     return [

@@ -52,6 +52,7 @@ export async function getAdminToken() {
 }
 
 export async function setAdminToken(data: string) {
+  localStorage.setItem(adminTokenName, data);
   return cache.set(adminTokenName, data);
 }
 
