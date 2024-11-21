@@ -257,6 +257,13 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
               valueType: 'switch',
               colProps: { span: 12 },
             },
+            {
+              dataIndex: 'justControllerFile',
+              title: '仅生成控制器文件',
+              tooltip: '勾选后只生成控制器文件，即只是一个虚拟模型没有字段信息',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
           ],
         },
       ],

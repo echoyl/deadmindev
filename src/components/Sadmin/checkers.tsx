@@ -1,3 +1,5 @@
+import { isUrl } from "@ant-design/pro-components";
+
 const toString = Object.prototype.toString;
 const isType =
   <T,>(type: string | string[]) =>
@@ -61,5 +63,5 @@ export const getJson = (jsonStr: any, defaultValue: any = []) => {
 };
 
 export const isHttpLink = (url: string) => {
-  return url.indexOf('http') >= 0 || url.indexOf('https') >= 0;
+  return isUrl(url);
 };

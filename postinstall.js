@@ -5,11 +5,11 @@ const filePaths = [
     search: "if (compareVersions(getVersion(), '5.6.0') < 0) return token;",
     replace: 'return {};',
   },
-  {
-    path: 'node_modules/@ant-design/pro-layout/es/components/SiderMenu/style/index.js',
-    search: '-menu-item:hover',
-    replace: '-menu-item:not(.ant-menu-item-selected):hover',
-  },
+  // {
+  //   path: 'node_modules/@ant-design/pro-layout/es/components/SiderMenu/style/index.js',
+  //   search: '-menu-item:hover',
+  //   replace: '-menu-item:not(.ant-menu-item-selected):hover',
+  // },
 ];
 filePaths.map((file) => {
   fs.readFile(file.path, 'utf8', (err, data) => {
