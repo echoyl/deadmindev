@@ -30,6 +30,7 @@ import './style.less';
 import { getTableColumns } from './tableColumns';
 import { SaDevContext } from '../dev';
 import TableRender from './tableRender';
+import { tplToDate } from '../helper/functions';
 export interface saTableProps {
   url?: string;
   name?: string;
@@ -205,12 +206,17 @@ const SaTable: React.FC<saTableProps> = (props) => {
       : [...tableColumns]
     : [];
   const enumNames = _tableColumns?.filter((v) => v.valueEnum).map((v) => v.dataIndex);
-  const search_config = _tableColumns?.filter(
-    (v) =>
+  const searchDefaultValues = {};
+  const search_config = _tableColumns?.filter((v) => {
+    const is_search =
       isObj(v) &&
       (isUndefined(v.search) || v.search) &&
-      !['displayorder', 'option'].includes(v.valueType),
-  );
+      !['displayorder', 'option'].includes(v.valueType);
+    if (is_search && !isUndefined(v.initialValue)) {
+      searchDefaultValues[v.dataIndex] = tplToDate(v.initialValue);
+    }
+    return is_search;
+  });
 
   const { initialState } = useModel('@@initialState');
   const [devEnable, setDevEnable] = useState(
@@ -254,7 +260,15 @@ const SaTable: React.FC<saTableProps> = (props) => {
       setEnums({ ...ret.search });
       //设置查询form的初始值
       if (!isArr(ret.search) && ret.search.values) {
-        searchFormRef.current?.setFieldsValue(ret.search.values);
+        // const getfieldsValue = searchFormRef.current?.getFieldsValue();
+        // searchFormRef.current?.setFieldsValue({ ...ret.search.values, ...getfieldsValue });
+        //有初始值需要同步到url中
+        //const url_search = search2Obj();
+        //setUrlSearch({ ...ret.search.values, ...url_search });
+      }
+      if (Object.keys(searchDefaultValues).length > 0) {
+        const url_search = search2Obj();
+        setUrlSearch({ ...searchDefaultValues, ...url_search });
       }
 
       setColumnData({ ...ret.search }); //做成context 换一个名字
@@ -535,14 +549,18 @@ const SaTable: React.FC<saTableProps> = (props) => {
                             if (isStr(v) && /^\d+$/.test(v)) {
                               v = parseInt(v);
                             }
+                            if (isStr(v)) {
+                              //这里日期格式中空格会被转义成+号，这里需要转回来 只在日期区间才做该处理
+                              v = v.replace('+', ' ');
+                            }
                             return v;
                           });
                         }
                       }
-                      const ret = { ...values };
+                      //将columns配置中设置了defaultvalue的搜索项的默认值添加到request参数中
+                      const ret = { ...searchDefaultValues, ...values };
                       return ret;
                     }
-
                     for (var i in values) {
                       if (typeof values[i] == 'object') {
                         values[i] = JSON.stringify(values[i]);

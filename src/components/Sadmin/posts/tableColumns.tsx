@@ -10,6 +10,7 @@ import { TableColumnTitle } from '../dev/table/title';
 import { getFromObject, t, tplComplie } from '../helpers';
 import { defaultColumnsLabel } from './formDom';
 import { SaContext } from './table';
+import { tplToDate } from '../helper/functions';
 
 export const SaTableAction = (props) => {
   const { openType } = props;
@@ -318,6 +319,10 @@ export const getTableColumns = (props) => {
         const vall = v.fieldProps.showTime.defaultValue;
         return dayjs(vall.value, vall.format ? vall.format : 'HH:mm:ss');
       }
+    }
+    //添加初始值的日期格式化操作
+    if (v.initialValue) {
+      v.initialValue = tplToDate(v.initialValue);
     }
 
     v.fieldProps = {
