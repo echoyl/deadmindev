@@ -3,6 +3,8 @@ import { Button, Input, Space, Spin, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { captcha } from '@/components/Sadmin/lib/request';
+import { useIntl } from '@umijs/max';
+import { t } from './Sadmin/helpers';
 
 interface CaptchaInputValue {
   captchaCode?: string;
@@ -11,7 +13,7 @@ interface CaptchaInputValue {
 
 interface CaptchaInputProps {
   value?: CaptchaInputValue;
-  onChange?: (value: CaptchaInputValue) => void;
+  onChange?: (value: CaptchaInputValue | null) => void;
   reload?: number;
   placeholder?: string;
 }
@@ -20,9 +22,9 @@ const CaptchaInput: React.FC<CaptchaInputProps> = ({
   value = {},
   onChange,
   reload = 0,
-  placeholder = '请输入验证码',
+  placeholder,
 }) => {
-  //const intl = useIntl();
+  const intl = useIntl();
   const [captchaCode, setCaptchaCode] = useState<string>('');
   const [captchaKey, setCaptchaKey] = useState<string>('');
   const [imageData, setImageData] = useState<string>('');
@@ -38,17 +40,19 @@ const CaptchaInput: React.FC<CaptchaInputProps> = ({
         return data.data;
       }
     } catch (error) {
-      message.error('获取部门树失败,请重试');
+      message.error('获取失败,请重试');
       return [];
     }
-    message.error('获取部门树失败,请重试');
+    message.error('获取失败,请重试');
     return [];
   };
 
   // 触发改变
   const triggerChange = (changedValue: { captchaCode?: string; captchaKey?: string }) => {
     if (onChange) {
-      onChange({ captchaCode, captchaKey, ...value, ...changedValue });
+      onChange(
+        changedValue.captchaCode ? { captchaCode, captchaKey, ...value, ...changedValue } : null,
+      );
     }
   };
 
@@ -94,7 +98,7 @@ const CaptchaInput: React.FC<CaptchaInputProps> = ({
       <Input
         prefix={<SafetyCertificateOutlined />}
         size="large"
-        placeholder={placeholder}
+        placeholder={placeholder ? placeholder : t('pages.login.captcha.placeholder', intl)}
         onChange={onChangeInput}
       />
 

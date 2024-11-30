@@ -22,7 +22,7 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
-import { Tabs, QRCode, Space, theme, GetProp, Tooltip, Flex } from 'antd';
+import { Tabs, QRCode, Space, theme, GetProp, Tooltip, Flex, Form, Input } from 'antd';
 import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import cache from '@/components/Sadmin/helper/cache';
@@ -102,10 +102,15 @@ const Login: React.FC = () => {
       setSetting(v);
       setLoginType(v?.adminSetting?.loginTypeDefault);
     });
+    cache.get('Sa-ShowCaptcha').then((v) => {
+      setShowCaptcha(v ? true : false);
+    });
   }, []);
 
   const doLogin = (data) => {
     bind?.();
+    //删除showCaptcha
+    cache.remove('Sa-ShowCaptcha');
     setAdminSetting(data.setting);
     const adminSetting = parseAdminSeting(data.setting);
     setInitialState((s) => ({
@@ -175,6 +180,8 @@ const Login: React.FC = () => {
           if (res.code == 3 || res.code == 2) {
             //需要输入图形验证码了
             setShowCaptcha(true);
+            //设置一个缓存，如果刷新页面后初始化读取这个缓存的值
+            cache.set('Sa-ShowCaptcha', 1);
           }
         } else {
           if (values.autoLogin) {
@@ -208,13 +215,8 @@ const Login: React.FC = () => {
       children:
         loginType != 'phone' ? null : (
           <>
-            <ProFormText
+            <Form.Item
               name="mobile"
-              fieldProps={{
-                size: 'large',
-                prefix: <UserOutlined />,
-              }}
-              placeholder={t('pages.login.phoneNumber.placeholder', intl)}
               rules={[
                 {
                   required: true,
@@ -225,8 +227,14 @@ const Login: React.FC = () => {
                   message: t('pages.login.phoneNumber.invalid', intl),
                 },
               ]}
-            />
-            <ProForm.Item
+            >
+              <Input
+                size="large"
+                prefix={<UserOutlined />}
+                placeholder={t('pages.login.phoneNumber.placeholder', intl)}
+              />
+            </Form.Item>
+            <Form.Item
               name="captchaPhone"
               rules={[
                 {
@@ -239,7 +247,7 @@ const Login: React.FC = () => {
                 reload={captchaPhoneReload}
                 placeholder={t('pages.login.captcha.placeholder', intl)}
               />
-            </ProForm.Item>
+            </Form.Item>
             <ProFormDependency name={['captchaPhone']}>
               {({ captchaPhone }) => {
                 return (
@@ -286,7 +294,7 @@ const Login: React.FC = () => {
               }}
             </ProFormDependency>
             {showCaptcha && (
-              <ProForm.Item
+              <Form.Item
                 name="captcha"
                 rules={[
                   {
@@ -296,7 +304,7 @@ const Login: React.FC = () => {
                 ]}
               >
                 <CaptchaInput reload={captchaReload} />
-              </ProForm.Item>
+              </Form.Item>
             )}
           </>
         ),
@@ -307,37 +315,30 @@ const Login: React.FC = () => {
       children:
         loginType != 'password' ? null : (
           <>
-            <ProFormText
+            <Form.Item
               name="username"
-              fieldProps={{
-                size: 'large',
-                prefix: <UserOutlined />,
-              }}
-              placeholder={t('pages.login.username.placeholder', intl)}
-              rules={[
-                {
-                  required: true,
-                  message: t('pages.login.username.required', intl),
-                },
-              ]}
-            />
-            <ProFormText.Password
+              rules={[{ required: true, message: t('pages.login.username.required', intl) }]}
+            >
+              <Input
+                size="large"
+                prefix={<UserOutlined />}
+                placeholder={t('pages.login.username.placeholder', intl)}
+              />
+            </Form.Item>
+            <Form.Item
               name="password"
-              fieldProps={{
-                size: 'large',
-                prefix: <LockOutlined />,
-                autoComplete: '',
-              }}
-              placeholder={t('pages.login.password.placeholder', intl)}
-              rules={[
-                {
-                  required: true,
-                  message: t('pages.login.password.required', intl),
-                },
-              ]}
-            />
+              rules={[{ required: true, message: t('pages.login.password.required', intl) }]}
+            >
+              <Input
+                size="large"
+                autoComplete=""
+                prefix={<LockOutlined />}
+                type="password"
+                placeholder={t('pages.login.password.placeholder', intl)}
+              />
+            </Form.Item>
             {showCaptcha && (
-              <ProForm.Item
+              <Form.Item
                 name="captcha"
                 rules={[
                   {
@@ -347,7 +348,7 @@ const Login: React.FC = () => {
                 ]}
               >
                 <CaptchaInput reload={captchaReload} />
-              </ProForm.Item>
+              </Form.Item>
             )}
           </>
         ),

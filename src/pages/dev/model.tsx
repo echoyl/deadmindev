@@ -117,7 +117,7 @@ export const modelFormColumns = (
             //tabs: settingColumns(detail.id, setting?.dev),
             saFormProps: { devEnable: false, grid: true },
             initValue: (v) => {
-              return { columns: v };
+              return { columns: v, add_customer_columns: detail?.add_customer_columns };
             },
             onChange: (v: Record<string, any[]>) => {
               formRef?.current?.setFieldValue('columns', v.columns);
@@ -252,7 +252,7 @@ export const modelFormColumns = (
 };
 
 export default () => {
-  const [allData, setAllData] = useState();
+  const { setting } = useContext(SaDevContext);
   // const actionRef = useRef<ActionType>();
   // const { initialState, setInitialState } = useModel('@@initialState');
   // const { setSetting } = useContext(SaDevContext);
@@ -330,7 +330,7 @@ export default () => {
                   title: '复制到文件夹',
                   valueType: 'treeSelect',
                   fieldProps: {
-                    options: allData?.search.foldermodels,
+                    options: setting?.adminSetting?.dev?.folderModelsTree,
                     treeLine: { showLeafIcon: true },
                     treeDefaultExpandAll: true,
                   },
@@ -354,7 +354,6 @@ export default () => {
 
   const formRef = useRef<ProFormInstance<any>>({} as any);
 
-  const { setting } = useContext(SaDevContext);
   // const reData = async () => {
   //   actionRef?.current?.reload();
   //   saReloadSetting(initialState, setInitialState, setSetting);
@@ -370,10 +369,6 @@ export default () => {
         table_menu_key="admin_type"
         table_menu_all={false}
         tableColumns={tableColumns}
-        beforeTableGet={(data) => {
-          //console.log('beforeTableGet', data);
-          setAllData(data);
-        }}
         // afterFormPost={reData}
         // afterDelete={reData}
         devEnable={false}
@@ -395,9 +390,9 @@ export default () => {
           return (
             <>
               <QuickCreate
-                menus={allData?.search.menus}
-                models={allData?.search.models}
-                foldermodels={allData?.search.foldermodels}
+                menus={setting?.adminSetting?.dev?.allMenus}
+                models={setting?.adminSetting?.dev?.allModelsTree}
+                foldermodels={setting?.adminSetting?.dev?.folderModelsTree}
               />
             </>
           );

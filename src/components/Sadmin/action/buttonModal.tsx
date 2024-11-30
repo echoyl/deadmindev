@@ -19,7 +19,7 @@ const ButtonModal: FC<actionConfirm> = (props) => {
   //const [open, setOpen] = useState(false);
   const {
     trigger,
-    title = '弹层',
+    title = '信息',
     open = false,
     onOk,
     width = 1200,

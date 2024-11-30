@@ -28,7 +28,6 @@ import { ModalSelectRender } from './modalSelect';
 import SaOptions, { SaEditorTable } from './options';
 import { PcaRender, getPca } from './pca';
 import PermGroup from './perm/group';
-import UserPerm from './perm/user';
 import TinyEditor from './tinyEditor';
 import { SaTransferRender } from './transfer';
 import IconSelect, { iconToElement, IconSelectRender } from './valueTypeMap/iconSelect';
@@ -108,7 +107,6 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'bmapShow'
   | 'pca'
   | 'permGroup'
-  | 'userPerm'
   | 'debounceSelect'
   | 'jsonForm'
   | 'carBrand'
@@ -364,11 +362,6 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       return <ModalJson {...props.fieldProps} />;
     },
     render: (text) => text,
-  },
-  userPerm: {
-    render: (text, props) => {
-      return <UserPerm dataId={props.record.id} {...props.fieldProps} />;
-    },
   },
   modalSelect: {
     render: ModalSelectRender,

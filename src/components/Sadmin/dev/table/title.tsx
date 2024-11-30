@@ -332,7 +332,7 @@ export const DevTableColumnTitle = (props) => {
         title={
           <Space>
             <EditOutlined />
-            <span>向后插入Tab</span>
+            <span>插入Tab</span>
           </Space>
         }
         uid={uid}

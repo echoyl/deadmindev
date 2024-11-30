@@ -1,5 +1,5 @@
 import { saFormColumnsType } from '@/components/Sadmin/helpers';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../..';
 import request from '@/components/Sadmin/lib/request';
 import { Badge, Button, Input, Space } from 'antd';
@@ -11,10 +11,17 @@ export const SchemaToJsonButton = (props) => {
   const [schemaloading, setSchemaloading] = useState(false);
   const { messageApi } = useContext(SaDevContext);
   const [name, setName] = useState<string>();
+  const [formValues, setFormValues] = useState<any>();
 
-  const setTableColumns = (type: string) => {
+  useEffect(() => {
+    if (!formValues && formRef) {
+      setFormValues(formRef?.current?.getFieldsValue());
+    }
+  }, [formRef]);
+
+  const setTableColumns = (type: 'category' | 'normal' | 'user') => {
     //console.log(type);
-    const cateColumns = [
+    const category = [
       { title: 'id', name: 'id', type: 'int' },
       { title: '名称', name: 'title', type: 'vachar' },
       { title: '描述', name: 'desc', type: 'vachar', form_type: 'textarea' },
@@ -43,7 +50,7 @@ export const SchemaToJsonButton = (props) => {
       },
     ];
 
-    const normalColumns = [
+    const normal = [
       { title: 'id', name: 'id', type: 'int' },
       { title: '名称', name: 'title', type: 'vachar' },
       {
@@ -69,12 +76,40 @@ export const SchemaToJsonButton = (props) => {
         table_menu: true,
       },
     ];
-    clickSetColumns(type == 'category' ? [...cateColumns] : [...normalColumns]);
+    const user = [
+      { title: 'id', name: 'id', type: 'int' },
+      { title: '用户名', name: 'username', type: 'vachar' },
+      { title: '昵称', name: 'nickname', type: 'vachar' },
+      {
+        title: '头像',
+        name: 'titlepic',
+        type: 'vachar',
+        form_type: 'image',
+        setting: {
+          image_count: 1,
+        },
+      },
+      { title: '手机号码', name: 'mobile', type: 'vachar' },
+      { title: '描述', name: 'desc', type: 'vachar', form_type: 'textarea' },
+      {
+        title: '状态',
+        name: 'state',
+        type: 'int',
+        form_type: 'switch',
+        default: 1,
+        setting: {
+          open: '启用',
+          close: '禁用',
+        },
+        table_menu: true,
+      },
+    ];
+    const columns = { category, user, normal };
+    clickSetColumns(columns[type]);
   };
 
   const click = async () => {
     const parent_id = formRef?.current?.getFieldValue('parent_id');
-
     if (!name) {
       messageApi?.error('请输入检测表名');
       return;
@@ -87,6 +122,11 @@ export const SchemaToJsonButton = (props) => {
     if (!code) {
       clickSetColumns([...data]);
     }
+  };
+  const AddCustomerColumns = () => {
+    const formvalue = formRef?.current?.getFieldsValue();
+    const columns = formvalue.columns ? formvalue.columns : [];
+    clickSetColumns([...columns, ...formvalue.add_customer_columns]);
   };
   const clickSetColumns = (v: any) => {
     formRef.current?.setFieldsValue({
@@ -103,7 +143,7 @@ export const SchemaToJsonButton = (props) => {
         key="category"
         type="text"
       >
-        分类模型结构
+        分类
       </Button>
       <Button
         onClick={() => setTableColumns('normal')}
@@ -112,8 +152,28 @@ export const SchemaToJsonButton = (props) => {
         key="normal"
         type="text"
       >
-        普通模型结构
+        普通
       </Button>
+      <Button
+        onClick={() => setTableColumns('user')}
+        size="small"
+        icon={<PlusCircleOutlined />}
+        key="user"
+        type="text"
+      >
+        前台用户
+      </Button>
+      {formValues?.add_customer_columns && (
+        <Button
+          onClick={AddCustomerColumns}
+          size="small"
+          icon={<PlusCircleOutlined />}
+          key="add_customer_columns"
+          type="text"
+        >
+          增加自定义列
+        </Button>
+      )}
       <Button
         loading={schemaloading}
         onClick={click}
@@ -175,6 +235,7 @@ const fieldColumns: saFormColumnsType = [
   {
     title: '快捷操作',
     readonly: true,
+    dataIndex: 'add_customer_columns',
     render: () => <SchemaToJsonButton />,
   },
   {

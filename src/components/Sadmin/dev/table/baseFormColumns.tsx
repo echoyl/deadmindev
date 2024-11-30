@@ -201,7 +201,10 @@ export const getModelColumns = (
   const search_columns = model?.search_columns ? model.search_columns : [];
   const searchColumn = search_columns
     .filter((v) => {
-      return existColumns.findIndex((val) => val.value == v.name) < 0;
+      return (
+        existColumns.findIndex((val) => val.value == v.name) < 0 &&
+        allColumns?.findIndex((val) => val.value == v.name) < 0
+      );
     })
     .map((v) => ({
       label: [v.name, '搜索字段'].join(' - '),

@@ -1,12 +1,10 @@
 import SaTable from '@/components/Sadmin/posts/table';
 import { TreeNodeProps, TreeSelect } from 'antd';
-import { useContext, useRef } from 'react';
-import { ActionType } from '@ant-design/pro-components';
+import { useContext, useState } from 'react';
 import { devDefaultFields } from './model';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import { getModelColumns } from '@/components/Sadmin/dev/table/baseFormColumns';
-import { useModel } from '@umijs/max';
-import { saReloadSetting } from '@/components/Sadmin/components/refresh';
+import { CopyOutlined } from '@ant-design/icons';
 
 //生成关联模型的字段及其管理模型
 export const getModelColumnsTree = (id: number, allModels, pid: string = '', level = 1) => {
@@ -65,6 +63,39 @@ export default (props) => {
         { dataIndex: 'title', title: '名称' },
         { dataIndex: 'name', title: 'name' },
         { dataIndex: 'type', title: '类型' },
+        {
+          title: '额外操作',
+          dataIndex: 'type',
+          valueType: 'customerColumn',
+          search: false,
+          readonly: true,
+          fieldProps: {
+            items: [
+              {
+                domtype: 'button',
+                modal: {
+                  msg: '请选择复制到',
+                  formColumns: [
+                    {
+                      dataIndex: 'toid',
+                      width: 'md',
+                      title: '复制到模型',
+                      valueType: 'treeSelect',
+                      fieldProps: {
+                        options: setting?.adminSetting?.dev?.allModelsTree,
+                        treeLine: { showLeafIcon: true },
+                        treeDefaultExpandAll: true,
+                      },
+                    },
+                  ],
+                },
+                request: { url: 'dev/relation/copyToModel' },
+                action: 'confirmForm',
+                btn: { text: '', size: 'small', icon: <CopyOutlined />, tooltip: '复制关联' },
+              },
+            ],
+          },
+        },
         'option',
       ]}
       paramExtra={{ model_id: model?.id }}
@@ -115,8 +146,8 @@ export default (props) => {
                   dataIndex: 'foreign_model_id',
                   title: '关联模型',
                   valueType: 'treeSelect',
-                  requestDataName: 'models',
                   fieldProps: {
+                    options: setting?.adminSetting?.dev?.allModelsTree,
                     treeLine: { showLeafIcon: true },
                     treeDefaultExpandAll: true,
                   },
