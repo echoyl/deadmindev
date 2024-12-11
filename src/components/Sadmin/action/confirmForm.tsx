@@ -25,6 +25,7 @@ interface actionConfirm {
   initValue?: (value: any) => any;
   trigger?: ReactNode | JSX.Element;
   width?: number;
+  height?: number;
   page?: string;
   readonly?: boolean;
   xkey?: string;
@@ -120,7 +121,7 @@ const InnerForm = (props) => {
       actionRef={actionRef}
       postExtra={{ id: dataid, ...data }}
       paramExtra={{ id: dataid }}
-      showTabs={tabs?.length <= 1 ? false : true}
+      // showTabs={tabs?.length <= 1 ? false : true}
       formProps={{
         contentRender,
         initialValues: value,
@@ -185,6 +186,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     tabs,
     trigger,
     width = 800,
+    height = 450,
     page,
     onChange,
     readonly = false,
@@ -241,6 +243,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
         onOpen?.(open);
       }}
       modalProps={modalProps}
+      minHeight={height}
     >
       {inner}
     </ButtonModal>

@@ -1,5 +1,6 @@
 import request from '@/components/Sadmin/lib/request';
 import {
+  CopyOutlined,
   DeleteColumnOutlined,
   DragOutlined,
   EditOutlined,
@@ -31,6 +32,7 @@ import { tplComplie } from '../../helpers';
 import DevSwitch from '../switch';
 import { getJson } from '../../checkers';
 import { createStyles } from 'antd-style';
+import FormCodePhp from '../formCodePhp';
 export const useDesignerCss = createStyles(({ token }) => {
   return {
     saSortItem: {
@@ -180,15 +182,29 @@ const BaseForm = (props) => {
                 colProps: { span: 12 },
               },
             ]
-          : type == 'table'
-            ? devBaseTableFormColumns({
-                model_id: pageMenu?.model_id,
-                dev: setting?.adminSetting?.dev,
-              })
-            : devBaseFormFormColumns({
-                model_id: pageMenu?.model_id,
-                dev: setting?.adminSetting?.dev,
-              });
+          : ctype == 'copyToMenu'
+            ? [
+                {
+                  dataIndex: ['props', 'toMenuId'],
+                  title: '复制到',
+                  valueType: 'treeSelect',
+                  fieldProps: {
+                    options: setting?.adminSetting?.dev?.allMenus,
+                    treeLine: { showLeafIcon: true },
+                    treeDefaultExpandAll: true,
+                    showSearch: true,
+                  },
+                },
+              ]
+            : type == 'table'
+              ? devBaseTableFormColumns({
+                  model_id: pageMenu?.model_id,
+                  dev: setting?.adminSetting?.dev,
+                })
+              : devBaseFormFormColumns({
+                  model_id: pageMenu?.model_id,
+                  dev: setting?.adminSetting?.dev,
+                });
 
     setColumns(columns);
     setColumnsMore(getCustomerColumn(relations, allMenus, modelColumns));
@@ -313,7 +329,7 @@ export const DevTableColumnTitle = (props) => {
         title={
           <Space>
             <EditOutlined />
-            <span>设置</span>
+            <span>编辑</span>
           </Space>
         }
         uid={uid}
@@ -353,7 +369,7 @@ export const DevTableColumnTitle = (props) => {
         title={
           <Space>
             <InsertRowRightOutlined />
-            <span>插入列</span>
+            <span>插入</span>
           </Space>
         }
         uid={uid}
@@ -366,21 +382,21 @@ export const DevTableColumnTitle = (props) => {
       domEvent.stopPropagation();
     },
   };
-  const addGroup: ItemType = {
+  const copyToMenu: ItemType = {
     label: (
       <BaseForm
         title={
           <Space>
-            <InsertRowRightOutlined />
-            <span>插入组</span>
+            <CopyOutlined />
+            <span>复制</span>
           </Space>
         }
         uid={uid}
-        ctype="formGroup"
-        extpost={{ actionType: 'addGroup' }}
+        ctype="copyToMenu"
+        extpost={{ actionType: 'copyToMenu' }}
       />
     ),
-    key: 'addGroup',
+    key: 'copyToMenu',
     onClick: ({ domEvent }) => {
       domEvent.stopPropagation();
     },
@@ -458,6 +474,7 @@ export const DevTableColumnTitle = (props) => {
           : [
               baseform,
               addCol,
+              copyToMenu,
               {
                 type: 'divider',
               },
@@ -493,7 +510,9 @@ export const DevTableColumnTitle = (props) => {
           </Space>
         </div>
       </div>
-      <div role="button">{title ? tplComplie(title) : 'dev'}</div>
+      <div role="button">
+        {title ? tplComplie(title) : 'dev'} {props?.dataIndex}
+      </div>
     </SortableItem>
   );
 };
@@ -523,6 +542,7 @@ export const FormAddTab = (props) => {
         pageMenu={pageMenu}
       />
       <DevSwitch key="DevSwitch" type="button" />
+      <FormCodePhp key="FormCodePhp" pageMenu={pageMenu} />
     </Space>
   );
 };

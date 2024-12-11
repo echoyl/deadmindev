@@ -1,5 +1,5 @@
-import Table from './test/table';
+import FormCodePhp from './test/formCodePhp';
 
 export default function App() {
-  return <Table />;
+  return <FormCodePhp />;
 }

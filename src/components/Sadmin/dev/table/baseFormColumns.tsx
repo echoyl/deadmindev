@@ -86,8 +86,8 @@ export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) =
     });
   level += 1;
 
-  if (level > 3) {
-    //3层迭代后 直接终止 防止出现无限循环
+  if (level > 4) {
+    //4层迭代后 直接终止 防止出现无限循环
     return fields;
   }
   //关联模型
@@ -169,7 +169,7 @@ export const getModelColumns = (
   const { allModels = [] } = dev;
   //console.log('model_id', model_id, allModels);
   const model = getModelById(model_id, allModels);
-  const allColumns = getModelColumnsSelect(model_id, allModels, justTop ? 3 : 1);
+  const allColumns = getModelColumnsSelect(model_id, allModels, justTop ? 100 : 1);
 
   //检测模型关系 提供给table列选择字段
   const foreignOptions = model?.columns?.map((v) => ({

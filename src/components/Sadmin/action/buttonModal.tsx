@@ -8,6 +8,7 @@ interface actionConfirm {
   onOk?: () => boolean | void;
   width?: number;
   height?: number; //modal的最大高度
+  minHeight?: number; //modal的最小高度
   modalProps?: ModalProps;
   children?: ReactNode;
   confirmLoading?: boolean;
@@ -24,6 +25,7 @@ const ButtonModal: FC<actionConfirm> = (props) => {
     onOk,
     width = 1200,
     height = 650,
+    minHeight = 0,
     modalProps,
     afterOpenChange,
     confirmLoading = false,
@@ -124,7 +126,7 @@ const ButtonModal: FC<actionConfirm> = (props) => {
         }}
         maskClosable={false}
         styles={{
-          body: { maxHeight: height, overflowY: 'auto', overflowX: 'hidden' },
+          body: { maxHeight: height, minHeight, overflowY: 'auto', overflowX: 'hidden' },
           ...modalProps?.styles,
         }}
       >

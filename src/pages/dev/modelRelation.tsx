@@ -18,14 +18,14 @@ export const getModelColumnsTree = (id: number, allModels, pid: string = '', lev
     : [];
   level += 1;
 
-  if (level > 3) {
-    //3层迭代后 直接终止 防止出现无限循环
+  if (level > 4) {
+    //4层迭代后 直接终止 防止出现无限循环
     return fields;
   }
   //关联模型
   const guanlian: Array<TreeNodeProps> = select_data?.relations?.map((v) => ({
     title: [v.title, v.name].join(' - '),
-    value: pid ? [pid, v.name].join('-') : [v.name, ''].join('-'),
+    value: pid ? [pid, v.name, ''].join('-') : [v.name, ''].join('-'),
     children: getModelColumnsTree(
       v.foreign_model_id,
       allModels,
@@ -73,19 +73,44 @@ export default (props) => {
             items: [
               {
                 domtype: 'button',
+                fieldProps: {
+                  value: {
+                    saFormProps: { devEnable: false, grid: true },
+                  },
+                },
                 modal: {
                   msg: '请选择复制到',
                   formColumns: [
                     {
-                      dataIndex: 'toid',
-                      width: 'md',
-                      title: '复制到模型',
-                      valueType: 'treeSelect',
-                      fieldProps: {
-                        options: setting?.adminSetting?.dev?.allModelsTree,
-                        treeLine: { showLeafIcon: true },
-                        treeDefaultExpandAll: true,
-                      },
+                      valueType: 'group',
+                      columns: [
+                        {
+                          dataIndex: 'toid',
+                          title: '复制到模型',
+                          valueType: 'treeSelect',
+                          fieldProps: {
+                            options: setting?.adminSetting?.dev?.allModelsTree,
+                            treeLine: { showLeafIcon: true },
+                            treeDefaultExpandAll: true,
+                          },
+                          colProps: { span: 12 },
+                        },
+                        {
+                          dataIndex: 'type',
+                          title: '方式',
+                          valueType: 'radioButton',
+                          fieldProps: {
+                            options: [
+                              { label: '插入', value: 'create' },
+                              { label: '覆盖', value: 'update' },
+                              { label: '复制', value: 'copy' },
+                            ],
+                            buttonStyle: 'solid',
+                            defaultValue: 'create',
+                          },
+                          colProps: { span: 12 },
+                        },
+                      ],
                     },
                   ],
                 },

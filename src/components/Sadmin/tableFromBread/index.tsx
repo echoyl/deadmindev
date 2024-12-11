@@ -11,6 +11,8 @@ const TableFromBread: FC<{
   readonly?: string | boolean; //支持条件判断
   alwaysenable?: boolean; //是否一直可用 默认false 当是表单是 如果无主数据表格不会展示，true 都会展示
   type?: 'drawer' | 'page'; //列表所在页面类型.如果是drawer selectdom会设置在footer
+  scrollHeight?: number | string; //外部高度
+  contentRender?: any;
 }> = (props) => {
   const {
     fieldProps = { props: {} },
@@ -19,6 +21,7 @@ const TableFromBread: FC<{
     alwaysenable = false,
     type = 'page',
     contentRender,
+    scrollHeight = 400,
   } = props;
   //console.log('fieldProps', fieldProps);
   const { formRef } = useContext(SaContext);
@@ -100,7 +103,7 @@ const TableFromBread: FC<{
         }}
         {...fieldProps.props}
         tableProps={{
-          scroll: { y: 400 },
+          scroll: { y: scrollHeight },
           size: 'small',
           className: 'sa-modal-table sa-form-table',
           ...fieldProps.props.tableProps,

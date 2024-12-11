@@ -242,6 +242,9 @@ const fieldColumns: saFormColumnsType = [
     title: '字段详情',
     valueType: 'formList',
     dataIndex: 'columns',
+    fieldProps: {
+      creatorRecord:{type:'varchar'}
+    },
     columns: [
       {
         valueType: 'group',

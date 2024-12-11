@@ -266,8 +266,14 @@ const CustomerColumnRender = (props) => {
               onCancel={() => {
                 actionRef.current?.reload();
               }}
+              minHeight={650}
             >
-              <TableFromBread key={key} fieldProps={fieldProps} record={record} />
+              <TableFromBread
+                scrollHeight={450}
+                key={key}
+                fieldProps={fieldProps}
+                record={record}
+              />
             </ButtonModal>
           );
         } else if (item.action == 'drawerTable') {
@@ -282,12 +288,14 @@ const CustomerColumnRender = (props) => {
               trigger={dom}
               title={tplComplie(modal?.title, { record })}
               drawerProps={modal?.drawerProps}
+              width={1000}
             >
               <TableFromBread
                 readonly={false}
                 fieldProps={fieldProps}
                 record={record}
                 type="drawer"
+                scrollHeight="calc(100vh - 330px)"
               />
             </ButtonDrawer>
           );
