@@ -1,6 +1,11 @@
 import { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
-import { CopyOutlined, FileOutlined, FolderOutlined } from '@ant-design/icons';
+import {
+  CopyOutlined,
+  FileOutlined,
+  FolderOutlined,
+  InsertRowLeftOutlined,
+} from '@ant-design/icons';
 import { ActionType, ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
 import { useContext, useRef, useState } from 'react';
@@ -149,6 +154,7 @@ export const modelFormColumns = (
           tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
           fieldProps: {
             options: [{ label: '生成表', value: 'createModelSchema' }],
+            defaultValue: ['createModelSchema'],
           },
         },
       ],
@@ -283,22 +289,6 @@ export default () => {
           {
             if: '{{record.type == 1}}',
             domtype: 'button',
-            modal: { msg: '确定要生成数据表吗？' },
-            request: { url: 'dev/model/createModelSchema', afterActionType: 'none' },
-            action: 'confirm',
-            btn: { text: '生成表', size: 'small' },
-          },
-          // {
-          //   if: '{{record.type == 1}}',
-          //   domtype: 'button',
-          //   modal: { msg: '确定要生成model及controller的php文件吗？' },
-          //   request: { url: 'dev/model/createModelFile' },
-          //   action: 'confirm',
-          //   btn: { text: '生成php文件', size: 'small' },
-          // },
-          {
-            if: '{{record.type == 1}}',
-            domtype: 'button',
             modal: {
               title: '{{record.title + " - 关联管理"}}',
               drawerProps: {
@@ -307,17 +297,8 @@ export default () => {
               childrenRender: (record) => <ModelRelation model={record} />,
             },
             action: 'drawer',
-            btn: { text: '关联管理', size: 'small' },
+            btn: { text: '', icon: <InsertRowLeftOutlined />, tooltip: '模型关联', size: 'small' },
           },
-
-          // {
-          //   if: '{{record.type == 1}}',
-          //   domtype: 'button',
-          //   modal: { msg: '确定要生成controller文件吗？' },
-          //   request: { url: 'dev/model/createControllerFile' },
-          //   action: 'confirm',
-          //   btn: { text: '生成controller文件', size: 'small' },
-          // },
           {
             domtype: 'button',
             if: '{{record.type == 1}}',
