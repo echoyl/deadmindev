@@ -82,7 +82,7 @@ export const DevPanelColumnTitle = (props) => {
           title={
             <Space>
               {level == 0 ? <PlusOutlined /> : <InsertRowRightOutlined />}
-              <span>{level == 0 ? '插入列' : '向后添加列'}</span>
+              <span>+ 列</span>
             </Space>
           }
           uid={uid}
@@ -99,7 +99,7 @@ export const DevPanelColumnTitle = (props) => {
           title={
             <Space>
               {level == 0 ? <PlusOutlined /> : <InsertRowRightOutlined />}
-              <span>{level == 0 ? '插入行' : '向后添加行'}</span>
+              <span>+ 行</span>
             </Space>
           }
           uid={uid}

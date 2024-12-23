@@ -320,8 +320,8 @@ const Uploader: React.FC<Props> = (props) => {
             }}
             items={fileList?.map((file) => {
               if (file.url) {
-                const [url] = file.url.split('?');
-                return url;
+                const [url,par] = file.url.split('?');
+                return [url,par].join('?') + '&p=ori';
               } else {
                 return '';
               }

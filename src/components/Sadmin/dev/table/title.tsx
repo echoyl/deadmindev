@@ -348,7 +348,7 @@ export const DevTableColumnTitle = (props) => {
         title={
           <Space>
             <EditOutlined />
-            <span>插入Tab</span>
+            <span>+ Tab</span>
           </Space>
         }
         uid={uid}
@@ -369,7 +369,7 @@ export const DevTableColumnTitle = (props) => {
         title={
           <Space>
             <InsertRowRightOutlined />
-            <span>插入</span>
+            <span>+ 列</span>
           </Space>
         }
         uid={uid}
@@ -407,7 +407,7 @@ export const DevTableColumnTitle = (props) => {
         title={
           <Space>
             <InsertRowRightOutlined />
-            <span>插入行</span>
+            <span>+ 行</span>
           </Space>
         }
         uid={uid}
@@ -444,6 +444,7 @@ export const DevTableColumnTitle = (props) => {
           baseform,
           baseAddTab,
           addEmptyGroup,
+          copyToMenu,
           {
             type: 'divider',
           },
@@ -454,8 +455,8 @@ export const DevTableColumnTitle = (props) => {
         ? [
             baseform,
             addCol,
-            //addGroup,
             addEmptyGroup,
+            copyToMenu,
             {
               type: 'divider',
             },

@@ -26,6 +26,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
     title: 'fieldProps',
     valueType: 'confirmForm',
     fieldProps: {
+      saFormProps: { devEnable: false },
       width: 1200,
       btn: {
         title: 'fieldProps',
@@ -474,6 +475,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                 width: 120,
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  saFormProps: { devEnable: false },
                                   width: 1200,
                                   btn: {
                                     title: 'modal配置',
@@ -504,6 +506,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                 width: 120,
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  saFormProps: { devEnable: false },
                                   width: 1200,
                                   btn: {
                                     title: 'modal配置',
@@ -528,6 +531,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                 width: 120,
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  saFormProps: { devEnable: false },
                                   width: 1200,
                                   btn: {
                                     title: 'modal配置',
