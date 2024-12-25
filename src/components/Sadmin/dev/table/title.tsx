@@ -10,7 +10,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { Button, Space } from 'antd';
+import { Button, Space, Switch } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import classNames from 'classnames';
 import { FC, useContext, useEffect, useState } from 'react';
@@ -125,7 +125,6 @@ const BaseForm = (props) => {
     tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' },
   } = useContext(SaContext);
   const { setting } = useContext(SaDevContext);
-  const { setVisible } = uid ? useContext(SchemaSettingsContext) : { setVisible: undefined };
 
   const [value, setValue] = useState(data);
   const [columns, setColumns] = useState([]);
@@ -231,16 +230,7 @@ const BaseForm = (props) => {
       }}
     >
       <ConfirmForm
-        trigger={
-          <div
-            style={{ width: '100%' }}
-            onClick={(e) => {
-              setVisible?.(false);
-            }}
-          >
-            {title}
-          </div>
-        }
+        trigger={<div style={{ width: '100%' }}>{title}</div>}
         tabs={[
           { title: '基础', formColumns: columns },
           { title: '更多', formColumns: columnsMore },
@@ -263,30 +253,9 @@ export const DeleteColumn = (props) => {
   const {
     tableDesigner: { pageMenu, reflush, deleteUrl = '' },
   } = useContext(SaContext);
-  const { setVisible } = useContext(SchemaSettingsContext);
-  // const trigger = React.cloneElement(title, {
-  //   key: 'trigger',
-  //   ...title.props,
-  //   onClick: async (e: any) => {
-  //     setVisible(false);
-  //     e.preventDefault();
-  //     //e.stopPropagation();
-  //   },
-  // });
   return (
     <Confirm
-      trigger={
-        <div
-          style={{ width: '100%' }}
-          onClick={(e) => {
-            setVisible(false);
-            //e.stopPropagation();
-            //e.preventDefault();
-          }}
-        >
-          {title}
-        </div>
-      }
+      trigger={<div style={{ width: '100%' }}>{title}</div>}
       url={deleteUrl}
       data={{ base: { id: pageMenu?.id, uid, ...extpost } }}
       msg="确定要删除吗"
@@ -297,12 +266,59 @@ export const DeleteColumn = (props) => {
     />
   );
 };
+
+/**
+ * form项快捷swtich操作 用于只读和必填
+ * @param props
+ * @returns
+ */
+const MenuItemSwtich = (props) => {
+  const { title, uid, extpost, name } = props;
+  const {
+    tableDesigner: { pageMenu, reflush, editUrl = '' },
+  } = useContext(SaContext);
+  const [value, setValue] = useState<Record<string, any>>({});
+  useEffect(() => {
+    const value = getValue(uid, pageMenu, 'form');
+    setValue(value);
+  }, [pageMenu]);
+
+  const onChange = (checked: boolean) => {
+    setValue({
+      ...value,
+      [name]: checked,
+    });
+    request
+      .post(editUrl, {
+        data: { base: { id: pageMenu?.id, uid, ...value, [name]: checked } },
+      })
+      .then(({ data, code }) => {
+        if (code) {
+          //失败后设置回去
+          setValue({
+            ...value,
+            [name]: !checked,
+          });
+        } else {
+          reflush(data);
+        }
+      });
+  };
+  return (
+    <Switch
+      checkedChildren={title}
+      checked={value?.[name]}
+      unCheckedChildren={title}
+      onChange={onChange}
+    />
+  );
+};
+
 export const AddEmptyGroup = (props) => {
   const { title, uid, extpost } = props;
   const {
     tableDesigner: { pageMenu, reflush, editUrl = '' },
   } = useContext(SaContext);
-  const { setVisible } = useContext(SchemaSettingsContext);
 
   const add = async () => {
     const { data } = await request.post(editUrl, {
@@ -318,106 +334,115 @@ export const AddEmptyGroup = (props) => {
   );
 };
 
+const MenuLabel = (props) => {
+  const { setVisible } = useContext(SchemaSettingsContext);
+  return (
+    <div
+      onClick={() => {
+        setVisible(false);
+      }}
+    >
+      {props?.children}
+    </div>
+  );
+};
+
 export const DevTableColumnTitle = (props) => {
   const { title, uid, devData, data, style = {} } = props;
   //console.log('title is title', title);
   //const designable = true;
   const { type } = devData;
+
   const baseform: ItemType = {
     label: (
-      <BaseForm
-        title={
-          <Space>
-            <EditOutlined />
-            <span>编辑</span>
-          </Space>
-        }
-        uid={uid}
-        ctype={type}
-        data={data}
-      />
+      <MenuLabel>
+        <BaseForm
+          title={
+            <Space>
+              <EditOutlined />
+              <span>编辑</span>
+            </Space>
+          }
+          uid={uid}
+          ctype={type}
+          data={data}
+        />
+      </MenuLabel>
     ),
     key: 'base',
-    onClick: ({ domEvent }) => {
-      domEvent.stopPropagation();
-    },
   };
   const baseAddTab: ItemType = {
     label: (
-      <BaseForm
-        title={
-          <Space>
-            <EditOutlined />
-            <span>+ Tab</span>
-          </Space>
-        }
-        uid={uid}
-        ctype={type}
-        data={data}
-        extpost={{ actionType: 'addTab' }}
-      />
+      <MenuLabel>
+        <BaseForm
+          title={
+            <Space>
+              <EditOutlined />
+              <span>+ Tab</span>
+            </Space>
+          }
+          uid={uid}
+          ctype={type}
+          data={data}
+          extpost={{ actionType: 'addTab' }}
+        />
+      </MenuLabel>
     ),
     key: 'addtab',
-    onClick: ({ domEvent }) => {
-      domEvent.stopPropagation();
-    },
   };
 
   const addCol: ItemType = {
     label: (
-      <BaseForm
-        title={
-          <Space>
-            <InsertRowRightOutlined />
-            <span>+ 列</span>
-          </Space>
-        }
-        uid={uid}
-        extpost={{ actionType: 'add' }}
-        actionType="add"
-      />
+      <MenuLabel>
+        <BaseForm
+          title={
+            <Space>
+              <InsertRowRightOutlined />
+              <span>+ 列</span>
+            </Space>
+          }
+          uid={uid}
+          extpost={{ actionType: 'add' }}
+          actionType="add"
+        />
+      </MenuLabel>
     ),
     key: 'addCol',
-    onClick: ({ domEvent }) => {
-      domEvent.stopPropagation();
-    },
   };
   const copyToMenu: ItemType = {
     label: (
-      <BaseForm
-        title={
-          <Space>
-            <CopyOutlined />
-            <span>复制</span>
-          </Space>
-        }
-        uid={uid}
-        ctype="copyToMenu"
-        extpost={{ actionType: 'copyToMenu' }}
-      />
+      <MenuLabel>
+        <BaseForm
+          title={
+            <Space>
+              <CopyOutlined />
+              <span>复制</span>
+            </Space>
+          }
+          uid={uid}
+          ctype="copyToMenu"
+          extpost={{ actionType: 'copyToMenu' }}
+        />
+      </MenuLabel>
     ),
     key: 'copyToMenu',
-    onClick: ({ domEvent }) => {
-      domEvent.stopPropagation();
-    },
   };
   const addEmptyGroup: ItemType = {
     label: (
-      <AddEmptyGroup
-        title={
-          <Space>
-            <InsertRowRightOutlined />
-            <span>+ 行</span>
-          </Space>
-        }
-        uid={uid}
-        extpost={{ actionType: 'addGroup' }}
-      />
+      <MenuLabel>
+        <AddEmptyGroup
+          title={
+            <Space>
+              <InsertRowRightOutlined />
+              <span>+ 行</span>
+            </Space>
+          }
+          uid={uid}
+          extpost={{ actionType: 'addGroup' }}
+        />
+      </MenuLabel>
     ),
     key: 'addEmptyGroup',
-    onClick: ({ domEvent }) => {
-      domEvent.stopPropagation();
-    },
   };
   const deleteitem: ItemType = {
     label: (
@@ -433,9 +458,14 @@ export const DevTableColumnTitle = (props) => {
     ),
     key: 'deleteitem',
     danger: true,
-    onClick: ({ domEvent }) => {
-      domEvent.stopPropagation();
-    },
+  };
+  const formItemReadOnly: ItemType = {
+    label: <MenuItemSwtich name="readonly" title="只读" uid={uid} />,
+    key: 'formItemReadOnly',
+  };
+  const formItemRequired: ItemType = {
+    label: <MenuItemSwtich name="required" title="必填" uid={uid} />,
+    key: 'formItemRequired',
   };
 
   const items: ItemType[] =
@@ -480,6 +510,8 @@ export const DevTableColumnTitle = (props) => {
                 type: 'divider',
               },
               deleteitem,
+              type == 'form' ? formItemReadOnly : null,
+              type == 'form' ? formItemRequired : null,
             ];
   //表单的话 加一个最小宽度
   const styles: Record<string, any> = {

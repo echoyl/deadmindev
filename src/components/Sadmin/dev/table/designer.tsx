@@ -146,28 +146,27 @@ export const SchemaSettingsDropdown: React.FC<SchemaSettingsProps> = (props) => 
     // 在 v5.11.0 版本中增加了一个 info.source，可以通过这个来判断一下，如果是点击的是菜单项就不关闭菜单，
     // 这样就可以和之前的行为保持一致了。
     // 下面是模仿官方文档示例做的修改：https://ant.design/components/dropdown-cn
-    // if (info.source === 'trigger' || nextOpen) {
-    //   // 当鼠标快速滑过时，终止菜单的渲染，防止卡顿
-    //   startTransition(() => {
-    //     setVisible(nextOpen);
-    //   });
-    // }
+    //console.log('info', info, nextOpen);
+    if (info.source === 'trigger' || nextOpen) {
+      // 当鼠标快速滑过时，终止菜单的渲染，防止卡顿
+      startTransition(() => {
+        setVisible(nextOpen);
+      });
+    }
   };
 
   return (
     <SchemaSettingsProvider visible={visible} setVisible={setVisible} {...others}>
       <Dropdown
-        // open={visible}
-        // onOpenChange={(open, info) => {
-        //   changeMenu(open, info);
-        // }}
+        open={visible}
+        onOpenChange={changeMenu}
         trigger={['click']}
-        overlayClassName={css`
-          .ant-dropdown-menu-item-group-list {
-            max-height: 300px;
-            overflow-y: auto;
-          }
-        `}
+        // overlayClassName={css`
+        //   .ant-dropdown-menu-item-group-list {
+        //     max-height: 300px;
+        //     overflow-y: auto;
+        //   }
+        // `}
         menu={{ items }}
       >
         <span
