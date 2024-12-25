@@ -208,6 +208,23 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     initialState?.settings?.layout == 'side' ? 'deadmin-layout-side' : '',
     initialState?.settings?.navTheme == 'light' ? 'deadmin-light' : 'deadmin-dark',
   ];
+  const menuRender = (props, dom) => {
+    return pRender(props, dom, 'siderColor');
+  };
+  const headerRender = (props, dom) => {
+    return pRender(props, dom, 'headerColor');
+  };
+
+  const pRender = (props, dom, type) => {
+    if (initialState?.settings?.adminSetting?.[type] == 'dark') {
+      return (
+        <ProConfigProvider dark={true} token={props.token}>
+          {dom}
+        </ProConfigProvider>
+      );
+    }
+    return dom;
+  };
 
   return {
     actionsRender,
@@ -245,18 +262,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       },
       locale: false,
     },
-    menuRender: (props, dom) => {
-      if (initialState?.settings?.adminSetting?.siderColor == 'dark') {
-        return <ProConfigProvider dark={true}>{dom}</ProConfigProvider>;
-      }
-      return dom;
-    },
-    headerRender: (props, dom) => {
-      if (initialState?.settings?.adminSetting?.headerColor == 'dark') {
-        return <ProConfigProvider dark={true}>{dom}</ProConfigProvider>;
-      }
-      return dom;
-    },
+    menuRender,
+    headerRender,
     childrenRender: (children, props) => {
       return (
         <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>

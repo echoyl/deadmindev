@@ -67,7 +67,7 @@ const ThemeSwitch = (props) => {
   const [realTheme, setRealTheme] = useState(setting?.navTheme);
 
   const setTheme = (theme: 'realDark' | 'light' | undefined) => {
-    const token = theme == 'light' ? { ...lightDefaultToken } : { sider: {}, header: {} };
+    const token = theme == 'light' ? { ...lightDefaultToken } : { sider: {} };
     const cal_theme = getTheme(initialState?.settings?.adminSetting, theme);
     setInitialState((s) => ({
       ...s,
