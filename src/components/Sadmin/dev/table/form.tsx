@@ -130,6 +130,7 @@ export const TableForm = (
           afterOpenChange={(open) => {
             handleModalVisible(open);
           }}
+          minHeight={450}
         >
           {inner}
         </ButtonModal>
