@@ -6,17 +6,15 @@ import {
   FolderOutlined,
   InsertRowLeftOutlined,
 } from '@ant-design/icons';
-import { ActionType, ProFormInstance } from '@ant-design/pro-components';
+import { ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useRef } from 'react';
 import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
-import { saReloadSetting } from '@/components/Sadmin/components/refresh';
-import { useModel } from '@umijs/max';
 /**
  * 默认数据库有的字段
  */

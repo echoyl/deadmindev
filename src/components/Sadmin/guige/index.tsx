@@ -533,7 +533,7 @@ export const Guiges = (props) => {
   return (
     <>
       {hidden && (
-        <ProForm.Group rowProps={{ gutter: 16 }}>
+        <ProForm.Group rowProps={{ gutter: 0 }}>
           {columnsName.map((item) => {
             return (
               <ProForm.Item

@@ -51,7 +51,13 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
             title: '是否边框',
             dataIndex: getname('border', name),
             valueType: 'switch',
-            colProps: { span: 24 },
+            colProps: { span: 12 },
+          },
+          {
+            title: '是否加粗',
+            dataIndex: getname('bold', name),
+            valueType: 'switch',
+            colProps: { span: 12 },
           },
         ],
       },
@@ -186,7 +192,7 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
       ],
     },
     {
-      title: '数据显示',
+      title: '默认样式',
       formColumns: [...styleColumns('data')],
     },
   ];

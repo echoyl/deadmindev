@@ -1,6 +1,7 @@
 import { devDefaultFields, devTabelFields } from '@/pages/dev/model';
 import { TreeNodeProps } from 'antd';
 import { saFormColumnsType, saTableColumnsType } from '../../helpers';
+import { uniqBy } from 'lodash';
 export const columnType = [
   { label: '日期 - date', value: 'date' },
   { label: '日期区间 - dateRange', value: 'dateRange' },
@@ -210,12 +211,10 @@ export const getModelColumns = (
       label: [v.name, '搜索字段'].join(' - '),
       value: v.name,
     }));
-  return [
-    ...(allColumns ? allColumns : []),
-    ...devDefaultFields,
-    ...devTabelFields,
-    ...searchColumn,
-  ];
+  return uniqBy(
+    [...(allColumns ? allColumns : []), ...devDefaultFields, ...devTabelFields, ...searchColumn],
+    'value',
+  );
 };
 
 type devTabelFieldsProps = {
@@ -423,23 +422,29 @@ export const devBaseFormFormColumns = (props: devTabelFieldsProps) => {
           dataIndex: 'readonly',
           title: '是否只读',
           valueType: 'switch',
+          formItemProps: {
+            hidden: true,
+          },
           fieldProps: {
             checkedChildren: 'readonly',
             unCheckedChildren: 'readonly',
             defaultChecked: false,
           },
-          colProps: { span: 6 },
+          // colProps: { span: 6 },
         },
         {
           dataIndex: 'required',
           title: '是否必填',
           valueType: 'switch',
+          formItemProps: {
+            hidden: true,
+          },
           fieldProps: {
             checkedChildren: 'required',
             unCheckedChildren: 'required',
             defaultChecked: false,
           },
-          colProps: { span: 6 },
+          // colProps: { span: 6 },
         },
         {
           dataIndex: 'hidden',
@@ -450,7 +455,7 @@ export const devBaseFormFormColumns = (props: devTabelFieldsProps) => {
             unCheckedChildren: 'hidden',
             defaultChecked: false,
           },
-          colProps: { span: 6 },
+          colProps: { span: 12 },
         },
         {
           dataIndex: 'disabled',
@@ -461,7 +466,7 @@ export const devBaseFormFormColumns = (props: devTabelFieldsProps) => {
             unCheckedChildren: 'disabled',
             defaultChecked: false,
           },
-          colProps: { span: 6 },
+          colProps: { span: 12 },
         },
       ],
     },
