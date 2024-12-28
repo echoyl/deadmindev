@@ -28,6 +28,14 @@
 }
 .sa-upload-list-table .ant-upload-list-item-container,
 .sa-upload-list-table .ant-upload-select {
-  width: 50px !important;
-  height: 50px !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+.sa-upload-list-table .ant-upload-list-item {
+  padding: 3px !important;
+  border-radius: 4px !important;
+}
+.sa-upload-list-table .ant-upload-list-item::before {
+  width: calc(100% - 6px) !important;
+  height: calc(100% - 6px) !important;
 }

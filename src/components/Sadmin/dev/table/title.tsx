@@ -30,7 +30,7 @@ import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
 import { ColumnsSelector, ToolBarMenu } from './toolbar';
 import { tplComplie } from '../../helpers';
 import DevSwitch from '../switch';
-import { getJson } from '../../checkers';
+import { getJson, isArr } from '../../checkers';
 import { createStyles } from 'antd-style';
 import FormCodePhp from '../formCodePhp';
 export const useDesignerCss = createStyles(({ token }) => {
@@ -137,6 +137,7 @@ const BaseForm = (props) => {
     setRelations(getModelRelations(pageMenu?.model_id, setting?.adminSetting?.dev));
     setModelColumns(getModelColumns(pageMenu?.model_id, setting?.adminSetting?.dev));
   }, []);
+  const noMore = ctype == 'copyToMenu';
   //console.log('title pageMenu is', pageMenu);
   useEffect(() => {
     //setValue(getValue(uid, pageMenu, ctype ? ctype : type));
@@ -184,15 +185,36 @@ const BaseForm = (props) => {
           : ctype == 'copyToMenu'
             ? [
                 {
-                  dataIndex: ['props', 'toMenuId'],
-                  title: '复制到',
-                  valueType: 'treeSelect',
-                  fieldProps: {
-                    options: setting?.adminSetting?.dev?.allMenus,
-                    treeLine: { showLeafIcon: true },
-                    treeDefaultExpandAll: true,
-                    showSearch: true,
-                  },
+                  valueType: 'group',
+                  columns: [
+                    {
+                      dataIndex: ['props', 'toMenuId'],
+                      title: '复制到',
+                      valueType: 'treeSelect',
+                      fieldProps: {
+                        options: setting?.adminSetting?.dev?.allMenus,
+                        treeLine: { showLeafIcon: true },
+                        treeDefaultExpandAll: true,
+                        showSearch: true,
+                      },
+                      colProps: { span: 12 },
+                    },
+                    {
+                      dataIndex: ['props', 'type'],
+                      title: '类型',
+                      valueType: 'radioButton',
+                      fieldProps: {
+                        buttonStyle: 'solid',
+                        defaultValue: 'updateOrInsert',
+                        options: [
+                          { label: '覆盖', value: 'updateOrInsert' },
+                          { label: '新增', value: 'insert' },
+                        ],
+                      },
+                      tooltip: '覆盖会删除原有的配置,新增不会检测是否之前有过记录，直接新增',
+                      colProps: { span: 12 },
+                    },
+                  ],
                 },
               ]
             : type == 'table'
@@ -206,7 +228,7 @@ const BaseForm = (props) => {
                 });
 
     setColumns(columns);
-    setColumnsMore(getCustomerColumn(relations, allMenus, modelColumns));
+    noMore || setColumnsMore(getCustomerColumn(relations, allMenus, modelColumns));
     //console.log('base value is ', value, uid);
   }, [pageMenu, data, modelColumns]);
   //console.log('tableDesigner?.pageMenu', setTbColumns, getTableColumnsRender);
@@ -233,8 +255,8 @@ const BaseForm = (props) => {
         trigger={<div style={{ width: '100%' }}>{title}</div>}
         tabs={[
           { title: '基础', formColumns: columns },
-          { title: '更多', formColumns: columnsMore },
-        ]}
+          !noMore ? { title: '更多', formColumns: columnsMore } : null,
+        ].filter((v) => v)}
         value={value}
         postUrl={editUrl}
         data={{ id: pageMenu?.id, uid, ...extpost }}
@@ -544,7 +566,8 @@ export const DevTableColumnTitle = (props) => {
         </div>
       </div>
       <div role="button">
-        {title ? tplComplie(title) : 'dev'} {props?.dataIndex}
+        {title ? tplComplie(title) : 'dev'}{' '}
+        {isArr(props?.dataIndex) ? props?.dataIndex.join('.') : props?.dataIndex}
       </div>
     </SortableItem>
   );

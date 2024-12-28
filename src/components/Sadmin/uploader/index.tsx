@@ -270,7 +270,7 @@ const Uploader: React.FC<Props> = (props) => {
                 color={token.colorPrimary}
                 count={fileList?.length > 1 && readonly ? fileList?.length : 0}
                 size="small"
-                offset={[-10, 10]}
+                offset={[-2, 2]}
                 styles={{ root: { height: '100%', width: '100%' } }}
               >
                 {originNode}
@@ -320,8 +320,8 @@ const Uploader: React.FC<Props> = (props) => {
             }}
             items={fileList?.map((file) => {
               if (file.url) {
-                const [url,par] = file.url.split('?');
-                return [url,par].join('?') + '&p=ori';
+                const [url, par] = file.url.split('?');
+                return [url, par].join('?') + '&p=ori';
               } else {
                 return '';
               }
