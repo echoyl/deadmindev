@@ -92,7 +92,7 @@ const Login: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const { clientId, messageData, bind } = useContext(WebSocketContext);
-  const { messageApi, notificationApi } = useContext(SaDevContext);
+  const { messageApi, notificationApi, setSetting: setSettingDev } = useContext(SaDevContext);
   const [setting, setSetting] = useState<any>();
   const { styles } = useStyles();
   const [loginType, setLoginType] = useState();
@@ -118,6 +118,7 @@ const Login: React.FC = () => {
       currentUser: data.userinfo,
       settings: adminSetting,
     })).then(() => {
+      setSettingDev?.(adminSetting);
       //const redirect = searchParams.get('redirect') || '/';
       const redirect = '/';
       let goUrl = '/';
