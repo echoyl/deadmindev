@@ -167,7 +167,9 @@ const Uploader: React.FC<Props> = (props) => {
     buttonType == 'card' || buttonType == 'table' ? (
       <div>
         {loading ? <LoadingOutlined /> : <PlusOutlined />}
-        <div style={{ marginTop: 8 }}>{type == 'image' ? '选图片' : '选文件'}</div>
+        {buttonType == 'card' && (
+          <div style={{ marginTop: 8 }}>{type == 'image' ? '选图片' : '选文件'}</div>
+        )}
       </div>
     ) : (
       <Button icon={<PlusOutlined />}>{type == 'image' ? '选图片' : '选文件'}</Button>
@@ -255,9 +257,7 @@ const Uploader: React.FC<Props> = (props) => {
           {...fieldProps}
           headers={headers}
           listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
-          className={
-            buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
-          }
+          className={`sa-upload-list sa-upload-list-${buttonType} sa-upload-list-${readonly ? 'readonly' : 'edit'}`}
           showUploadList={
             fileList?.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
           }
