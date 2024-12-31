@@ -73,7 +73,7 @@ export function findParents(array, id, fieldNames = { id: 'id', children: 'child
   return parentArray;
 }
 
-export const loopMenuItem = (menus: MenuDataItem[], iconfont?: any[]): MenuDataItem[] =>
+export const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] =>
   menus.map(({ icon, routes, ...item }) => {
     //const msg = saFormattedMessage(item.name);
     const msg = tplComplie(item.name);
@@ -83,8 +83,8 @@ export const loopMenuItem = (menus: MenuDataItem[], iconfont?: any[]): MenuDataI
     return {
       ...item,
       name: msg,
-      icon: icon && iconToElement(icon, {}, iconfont),
-      routes: routes && loopMenuItem(routes, iconfont),
+      icon: icon && iconToElement(icon as string, {}),
+      routes: routes && loopMenuItem(routes),
     };
   });
 

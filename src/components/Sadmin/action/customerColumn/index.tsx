@@ -16,7 +16,7 @@ import {
 } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr } from '../../checkers';
-import { getMenuDataById, parseIcon, tplComplie } from '../../helpers';
+import { getFromObject, getMenuDataById, parseIcon, tplComplie } from '../../helpers';
 import { SaContext } from '../../posts/table';
 import TableFromBread from '../../tableFromBread';
 import ButtonDrawer from '../buttonDrawer';
@@ -175,6 +175,7 @@ const CustomerColumnRender = (props) => {
         if (item.action == 'confirmForm') {
           //console.log('confirmForm', record);
           const { idName = 'id' } = value;
+          const dataId = getFromObject(record, idName);
           return (
             <ConfirmForm
               key={key}
@@ -186,7 +187,7 @@ const CustomerColumnRender = (props) => {
               postUrl={item.request?.postUrl}
               data={item.request?.data}
               afterActionType={item.request?.afterActionType}
-              dataId={record?.[idName]}
+              dataId={dataId}
               {...value}
               callback={(ret) => {
                 //location.reload();

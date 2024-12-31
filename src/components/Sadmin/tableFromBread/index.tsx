@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React, { FC, useCallback, useContext, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isBool } from '../checkers';
-import { getBread, tplComplie } from '../helpers';
+import { getBread, getFromObject, tplComplie } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
 
 const TableFromBread: FC<{
@@ -38,7 +38,7 @@ const TableFromBread: FC<{
       : { addable: true, editable: true, deleteable: true, checkEnable: true };
     //console.log('readonlyProps is', readonly_result, readonlyProps, readonly, record);
   }
-  const post_key = record?.[fieldProps.local_key] ? record?.[fieldProps.local_key] : 0;
+  const post_key = getFromObject(record, fieldProps.local_key);
   //console.log('getBread', fieldProps.path);
   const bread = getBread(fieldProps.path);
   //console.log('fieldProps.props is', JSON.stringify(fieldProps.props), bread);
@@ -49,13 +49,16 @@ const TableFromBread: FC<{
       ...v_data,
       ...readonlyProps,
       //paramExtra: { [fieldProps.foreign_key]: post_key },
-      postExtra: { [fieldProps.foreign_key]: post_key },
+      //postExtra: { [fieldProps.foreign_key]: post_key ? post_key : 0 },
       pageMenu: bread,
     };
     //log('saformtabolex', v);
   }
 
-  const paramExtra = { ...fieldProps.props?.paramExtra, [fieldProps.foreign_key]: post_key };
+  const paramExtra = {
+    ...fieldProps.props?.paramExtra,
+    [fieldProps.foreign_key]: post_key ? post_key : 0,
+  };
   fieldProps.props.paramExtra = paramExtra;
 
   //以下是点击table的checkbox后需要将里面的toolbar栏展示到外面 直接用usestate后会报错，使用和buttonDrawer中参考drawerForm组件一样的设置
@@ -86,7 +89,7 @@ const TableFromBread: FC<{
   }, []);
   //console.log('alwaysenable', props, alwaysenable, post_key);
   return !alwaysenable && !post_key ? (
-    '-x'
+    '-'
   ) : (
     <>
       <SaTable

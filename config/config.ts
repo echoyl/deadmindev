@@ -19,6 +19,12 @@ export default defineConfig({
     // configProvider
     //configProvider: {},
   },
+  //多tab 不适合
+  // keepalive: [/./],
+  // tabsLayout: {
+  //   hasDropdown: true,
+  //   hasFixedHeader: true,
+  // },
   request: {},
   initialState: {
     loading: '@/components/LoadingFullHeight',
