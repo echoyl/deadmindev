@@ -60,24 +60,27 @@ const InnerForm = (props) => {
   const formRef = useRef<ProFormInstance>();
   const { actionRef, formRef: topFormRef } = useContext(SaContext);
   //console.log('innner form value', value, formColumns);
-  let tabs = [];
-  let url = ourl;
-  let setting = {};
-  let pageMenu = {};
-  let editable = true;
-  if (page) {
-    const bread = getBread(page);
-    if (bread) {
-      tabs = bread?.data.tabs;
-      url = bread?.data.postUrl ? bread?.data.postUrl : bread?.data.url + '/show';
-      //console.log('bread', bread);
-      setting = bread?.data.setting;
-      pageMenu = bread;
-      editable = bread?.data.editable ? bread?.data.editable : false;
+  const [url, setUrl] = useState<string>(ourl);
+  const [tabs, setTabs] = useState<any[]>([]);
+  const [setting, setSetting] = useState<Record<string, any>>({});
+  const [pageMenu, setPageMenu] = useState<Record<string, any>>({});
+  const [editable, setEditable] = useState<boolean>(true);
+  useEffect(() => {
+    if (page) {
+      const bread = getBread(page);
+      if (bread) {
+        setTabs(bread?.data.tabs);
+        setUrl(bread?.data.postUrl ? bread?.data.postUrl : bread?.data.url + '/show');
+        setSetting(bread?.data.setting);
+        setPageMenu(bread);
+        setEditable(bread?.data.editable ? bread?.data.editable : false);
+      }
+    } else {
+      setTabs(
+        utabs ? utabs : [{ title: '基础信息', formColumns: formColumns ? [...formColumns] : [] }],
+      );
     }
-  } else {
-    tabs = utabs ? utabs : [{ title: '基础信息', formColumns: [...formColumns] }];
-  }
+  }, [page, utabs]);
 
   const afterAction = (ret: any) => {
     setOpen(false);

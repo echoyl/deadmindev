@@ -532,11 +532,6 @@ export const shenheSwitchProps = {
   unCheckedChildren: '审核中',
 };
 
-export const isDev = () => {
-  const { initialState } = useModel('@@initialState');
-  return initialState?.settings?.adminSetting?.dev;
-};
-
 export function log(...data: any) {
   console.log(data);
 }

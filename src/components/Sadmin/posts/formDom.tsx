@@ -197,7 +197,12 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       }
 
       //将name设置到属性当中 因为 valueTypeMap 中会丢失name 先在这里添加修改下
-      v.fieldProps = { ...v.fieldProps, dataindex: v.dataIndex, olddataindex: v.dataIndex };
+      v.fieldProps = {
+        ...v.fieldProps,
+        dataindex: v.dataIndex,
+        olddataindex: v.dataIndex,
+        uid: v.uid,
+      };
       if (v.valueType == 'modalSelect' && !v.fieldProps.name) {
         //将name设置到属性当中 因为 valueTypeMap 中会丢失name 先在这里添加修改下
         v.fieldProps = { ...v.fieldProps, name: v.dataIndex };

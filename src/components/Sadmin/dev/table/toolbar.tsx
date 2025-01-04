@@ -33,6 +33,7 @@ import { modelFormColumns } from '@/pages/dev/model';
 import { ProFormInstance } from '@ant-design/pro-components';
 import ModelRelation from '@/pages/dev/modelRelation';
 import RequestButton, { RequestButtonProps } from '../../components/requestButton';
+import { DevJsonContext } from '../../jsonForm';
 
 export const ToolBarDom = (props) => {
   const {
@@ -224,6 +225,7 @@ export const ImportButton = ({
 
 export const ToolMenuForm = (props) => {
   const { setInitialState, initialState } = useModel('@@initialState');
+  const { json = {} } = useContext(DevJsonContext);
   const { pageMenu = { id: 0 }, trigger } = props;
   const MenuForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
@@ -256,6 +258,7 @@ export const ToolMenuForm = (props) => {
               ];
             },
           },
+          initialValues: Object.keys(pageMenu).length > 0 ? false : json?.config,
         }}
       />
     );
@@ -325,7 +328,7 @@ export const ToolModelForm = (props) => {
  */
 export const ToolBarMenu = (props) => {
   const { trigger, pageMenu = { id: 0, model_id: 0 } } = props;
-  //console.log('pageMenu', pageMenu);
+  // console.log('pageMenu', pageMenu);
   return (
     <Dropdown
       trigger={['click']}
@@ -377,15 +380,17 @@ export const ToolBarMenu = (props) => {
                 ),
               }
             : null,
-          {
-            key: 'export',
-            label: (
-              <ExportButton
-                request={{ data: { ids: [pageMenu?.id] }, url: 'dev/menu/export' }}
-                btn={{ type: 'link' }}
-              />
-            ),
-          },
+          pageMenu.model_id
+            ? {
+                key: 'export',
+                label: (
+                  <ExportButton
+                    request={{ data: { ids: [pageMenu?.id] }, url: 'dev/menu/export' }}
+                    btn={{ type: 'link' }}
+                  />
+                ),
+              }
+            : null,
         ],
       }}
     >

@@ -4,6 +4,7 @@ import { useModel } from '@umijs/max';
 import { Dropdown, DropdownProps } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import React, { ReactNode, createContext, useContext, useState, useTransition } from 'react';
+import { DevJsonContext } from '../../jsonForm';
 
 export type tableDesignerInstance = {
   type?: 'table' | 'form' | 'panel';
@@ -26,6 +27,7 @@ export type tableDesignerInstance = {
 export function useTableDesigner(props: tableDesignerInstance) {
   const { setColumns, getColumnsRender, pageMenu = {}, type = 'table', devEnable = true } = props;
   const { setInitialState } = useModel('@@initialState');
+  const { json = {}, setJson } = useContext(DevJsonContext); //读取本地化的配置信息
   const config: { [key: string]: { [key: string]: string } } = {
     form: {
       deleteUrl: 'dev/menu/deleteFormColumn',
@@ -59,24 +61,26 @@ export function useTableDesigner(props: tableDesignerInstance) {
   //const sortUrl = config[type].sortUrl;
   const reflush = (data: any) => {
     //重新设置列表列
-    setColumns?.(getColumnsRender?.(data.columns));
+    setColumns?.(getColumnsRender?.(data.columns)); //设置这个可以快速响应 排序tab可能会卡一点
     //更新schema
     //pageMenu.schema = data.schema;
     //pageMenu.data = { ...pageMenu.data, ...data.data };
-    setInitialState((s) => ({
-      ...s,
-      currentUser: { ...s.currentUser, ...data.currentUser },
-    }));
+    if (data.currentUser) {
+      setInitialState((s) => ({
+        ...s,
+        currentUser: { ...s.currentUser, ...data.currentUser },
+      }));
+    }
   };
   const post = async (url, data: { [key: string]: any }) => {
     //后台请求
-    await request.post(url, {
-      data,
+    const ret = await request.post(url, {
+      data: { ...data, ...json },
       msgcls: ({ data }) => {
         reflush(data);
       },
     });
-    return;
+    return ret;
   };
   return {
     ...props,
@@ -88,7 +92,11 @@ export function useTableDesigner(props: tableDesignerInstance) {
       //后台请求
       //setColumns(getColumnsRender(columns));
       const url = config[type].sortUrl;
-      post(url, { columns, id });
+      post(url, { columns, id }).then(({ code, data }) => {
+        if (!code) {
+          setJson?.(data?.data);
+        }
+      });
       return;
     },
     edit: async (data: { [key: string]: any }) => {

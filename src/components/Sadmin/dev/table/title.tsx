@@ -33,6 +33,7 @@ import DevSwitch from '../switch';
 import { getJson, isArr } from '../../checkers';
 import { createStyles } from 'antd-style';
 import FormCodePhp from '../formCodePhp';
+import { DevJsonContext } from '../../jsonForm';
 export const useDesignerCss = createStyles(({ token }) => {
   return {
     saSortItem: {
@@ -138,7 +139,8 @@ const BaseForm = (props) => {
     setModelColumns(getModelColumns(pageMenu?.model_id, setting?.adminSetting?.dev));
   }, []);
   const noMore = ctype == 'copyToMenu';
-  //console.log('title pageMenu is', pageMenu);
+  const { json = {}, setJson } = useContext(DevJsonContext);
+
   useEffect(() => {
     //setValue(getValue(uid, pageMenu, ctype ? ctype : type));
     //setValue(data);
@@ -154,7 +156,12 @@ const BaseForm = (props) => {
         //   pageMenu,
         //   getValue(uid, pageMenu, ctype ? ctype : type),
         // );
-        setValue(getValue(uid, pageMenu, ctype ? ctype : type));
+        const pageMenuData =
+          Object.keys(pageMenu)?.length > 0
+            ? pageMenu
+            : { schema: { form_config: json?.config?.form_config } };
+        //console.log('pageMenuData', pageMenuData);
+        setValue(getValue(uid, pageMenuData, ctype ? ctype : type));
       }
     }
 
@@ -259,9 +266,10 @@ const BaseForm = (props) => {
         ].filter((v) => v)}
         value={value}
         postUrl={editUrl}
-        data={{ id: pageMenu?.id, uid, ...extpost }}
+        data={{ id: pageMenu?.id, uid, ...extpost, ...json }}
         callback={({ data }) => {
           reflush(data);
+          setJson?.(data?.data);
         }}
         saFormProps={{ devEnable: false }}
         width={1000}
@@ -272,6 +280,7 @@ const BaseForm = (props) => {
 
 export const DeleteColumn = (props) => {
   const { title, uid, extpost } = props;
+  const { json = {}, setJson } = useContext(DevJsonContext);
   const {
     tableDesigner: { pageMenu, reflush, deleteUrl = '' },
   } = useContext(SaContext);
@@ -279,10 +288,11 @@ export const DeleteColumn = (props) => {
     <Confirm
       trigger={<div style={{ width: '100%' }}>{title}</div>}
       url={deleteUrl}
-      data={{ base: { id: pageMenu?.id, uid, ...extpost } }}
+      data={{ base: { id: pageMenu?.id, uid, ...extpost, ...json } }}
       msg="确定要删除吗"
       callback={({ data }) => {
         reflush(data);
+        setJson?.(data?.data);
         return true;
       }}
     />
@@ -296,12 +306,17 @@ export const DeleteColumn = (props) => {
  */
 const MenuItemSwtich = (props) => {
   const { title, uid, extpost, name } = props;
+  const { json = {}, setJson } = useContext(DevJsonContext);
   const {
     tableDesigner: { pageMenu, reflush, editUrl = '' },
   } = useContext(SaContext);
   const [value, setValue] = useState<Record<string, any>>({});
   useEffect(() => {
-    const value = getValue(uid, pageMenu, 'form');
+    const pageMenuData =
+      Object.keys(pageMenu)?.length > 0
+        ? pageMenu
+        : { schema: { form_config: json?.config?.form_config } };
+    const value = getValue(uid, pageMenuData, 'form');
     setValue(value);
   }, [pageMenu]);
 
@@ -312,7 +327,7 @@ const MenuItemSwtich = (props) => {
     });
     request
       .post(editUrl, {
-        data: { base: { id: pageMenu?.id, uid, ...value, [name]: checked } },
+        data: { base: { id: pageMenu?.id, uid, ...value, [name]: checked, ...json } },
       })
       .then(({ data, code }) => {
         if (code) {
@@ -323,6 +338,7 @@ const MenuItemSwtich = (props) => {
           });
         } else {
           reflush(data);
+          setJson?.(data.data);
         }
       });
   };
@@ -338,15 +354,17 @@ const MenuItemSwtich = (props) => {
 
 export const AddEmptyGroup = (props) => {
   const { title, uid, extpost } = props;
+  const { json = {}, setJson } = useContext(DevJsonContext);
   const {
     tableDesigner: { pageMenu, reflush, editUrl = '' },
   } = useContext(SaContext);
 
   const add = async () => {
     const { data } = await request.post(editUrl, {
-      data: { base: { id: pageMenu?.id, uid, ...extpost } },
+      data: { base: { id: pageMenu?.id, uid, ...extpost, ...json } },
     });
     reflush(data);
+    setJson?.(data.data);
   };
 
   return (
@@ -603,36 +621,42 @@ export const FormAddTab = (props) => {
   );
 };
 
-export const TableColumnTitle: FC = (props) => {
+const DevContain = (props) => {
+  const { children, title } = props;
   const { initialState } = useModel('@@initialState');
   const dev = initialState?.settings?.adminSetting?.dev ? true : false;
-  return dev ? <DevTableColumnTitle {...props} devData={{ type: 'table' }} /> : <>{props.title}</>;
+  return dev ? <>{children}</> : title;
+};
+
+export const TableColumnTitle: FC = (props) => {
+  return (
+    <DevContain {...props}>
+      <DevTableColumnTitle {...props} devData={{ type: 'table' }} />
+    </DevContain>
+  );
 };
 export const FormColumnTitle: FC = (props) => {
-  const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
-
   const title = props.valueType == 'group' && !props.title ? [props.uid].join(' - ') : props.title;
   const devType = props.valueType == 'group' ? 'formGroup' : 'form';
-  return dev ? (
-    <DevTableColumnTitle {...props} title={title} devData={{ type: devType }} />
-  ) : (
-    props.title
+  return (
+    <DevContain {...props}>
+      <DevTableColumnTitle {...props} title={title} devData={{ type: devType }} />
+    </DevContain>
   );
 };
 
 export const ToolbarColumnTitle: FC = (props) => {
-  const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
-  return dev ? (
-    <DevTableColumnTitle {...props} devData={{ type: 'toolbar' }} />
-  ) : (
-    <>{props.title}</>
+  return (
+    <DevContain {...props}>
+      <DevTableColumnTitle {...props} devData={{ type: 'toolbar' }} />
+    </DevContain>
   );
 };
 
 export const TabColumnTitle: FC = (props) => {
-  const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
-  return dev ? <DevTableColumnTitle {...props} devData={{ type: 'tab' }} /> : <>{props.title}</>;
+  return (
+    <DevContain {...props}>
+      <DevTableColumnTitle {...props} devData={{ type: 'tab' }} />
+    </DevContain>
+  );
 };
