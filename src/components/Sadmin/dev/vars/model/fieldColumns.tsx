@@ -230,6 +230,7 @@ const formType = [
   { label: '图标选择器 - iconSelect', value: 'iconSelect' },
   { label: 'markdown编辑器 - mdEditor', value: 'mdEditor' },
   { label: '滑动条 - slider', value: 'saSlider' },
+  { label: '页面配置 - Config', value: 'config' },
 ];
 const fieldColumns: saFormColumnsType = [
   {
@@ -243,7 +244,7 @@ const fieldColumns: saFormColumnsType = [
     valueType: 'formList',
     dataIndex: 'columns',
     fieldProps: {
-      creatorRecord:{type:'varchar'}
+      creatorRecord: { type: 'varchar' },
     },
     columns: [
       {
