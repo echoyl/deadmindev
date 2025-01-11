@@ -80,7 +80,7 @@ const InnerForm = (props) => {
         setEditable(bread?.data.editable ? bread?.data.editable : false);
       }
     } else {
-      console.log('formColumns', formColumns);
+      //console.log('formColumns', formColumns);
       setTabs(
         utabs ? utabs : [{ title: '基础信息', formColumns: formColumns ? [...formColumns] : [] }],
       );
