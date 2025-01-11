@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
 import FormFromBread from '../formFromBread';
 import { getBread } from '../helpers';
+import { useModel } from '@umijs/max';
 
 const FormCalendar: React.FC<{
   width?: number;
@@ -39,7 +40,8 @@ const FormCalendar: React.FC<{
     onlyFuture = true,
     path = '',
   } = props;
-  const bread = getBread(path);
+  const { initialState } = useModel('@@initialState');
+  const bread = getBread(path, initialState?.currentUser);
   const url = bread?.data?.url ? bread?.data.url : '';
   //这里可能需要再抽一层 ButtonModalForm 出来
   const [allData, setAllData] = useState<Array<Record<string, any>>>();

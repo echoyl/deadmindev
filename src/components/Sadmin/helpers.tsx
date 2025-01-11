@@ -580,9 +580,10 @@ export const SaBreadcrumbRender = (props) => {
   const detail = match ? [{ title: '详情' }] : [];
   const value = useContext(RouteContext);
   const { route } = useRouteData();
+  const { initialState } = useModel('@@initialState');
   const { items: bitem } = value?.breadcrumb;
   let items = bitem ? bitem : [];
-  const bread = getBread(path);
+  const bread = getBread(path, initialState?.currentUser);
   if (!bitem) {
     //没有的话 读取
     if (bread?.data?.names) {
@@ -606,19 +607,18 @@ export const SaBreadcrumbRender = (props) => {
   return <ProBreadcrumb items={_items} />;
 };
 
-export const getBread = (path: string) => {
+export const getBread = (path: string, currentUser?: Record<string, any>) => {
   if (!path) {
     return null;
   }
-  const { initialState } = useModel('@@initialState');
   //const { admin } = useContext(SaDevContext);
-  const { breadcrumb } = getMenuData(initialState?.currentUser?.menuData);
+  const { breadcrumb } = getMenuData(currentUser?.menuData);
   if (path == '/') {
     //首页默认跳转第一个菜单
-    if (initialState?.currentUser?.redirect && initialState?.currentUser?.redirect != path) {
-      path = initialState?.currentUser?.redirect;
+    if (currentUser?.redirect && currentUser?.redirect != path) {
+      path = currentUser?.redirect;
     } else {
-      path = initialState?.currentUser?.menuData[0]?.path;
+      path = currentUser?.menuData[0]?.path;
     }
   }
 

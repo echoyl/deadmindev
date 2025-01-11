@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { inArray, isArr, isUndefined } from '../checkers';
 import { getBread, getFromObject } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
+import { useModel } from '@umijs/max';
 
 const ModalSelect = (props) => {
   const defaultFieldNames = {
@@ -31,9 +32,9 @@ const ModalSelect = (props) => {
   let breadTableColumns = [];
   let breadUrl = '';
   const { message } = App.useApp();
-
+  const { initialState } = useModel('@@initialState');
   if (page) {
-    const bread = getBread(page.path);
+    const bread = getBread(page.path, initialState?.currentUser);
     if (bread) {
       breadTableColumns = bread?.data?.tableColumns?.filter((v) => {
         if (page?.columns) {

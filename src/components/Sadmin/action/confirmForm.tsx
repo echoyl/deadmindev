@@ -2,11 +2,13 @@ import { ProFormInstance } from '@ant-design/pro-components';
 import { Button, ButtonProps, Drawer, GetProps, Modal } from 'antd';
 import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
+import { useModel } from '@umijs/max';
 import { getBread, saFormColumnsType, saFormTabColumnsType, t } from '../helpers';
 import { SaForm, saFormProps } from '../posts/post';
 import { SaContext } from '../posts/table';
 import ButtonModal from './buttonModal';
 import ButtonDrawer from './buttonDrawer';
+import Loading from '@/components/Loading';
 
 interface actionConfirm {
   msg?: string;
@@ -65,9 +67,11 @@ const InnerForm = (props) => {
   const [setting, setSetting] = useState<Record<string, any>>({});
   const [pageMenu, setPageMenu] = useState<Record<string, any>>({});
   const [editable, setEditable] = useState<boolean>(true);
+  const { initialState } = useModel('@@initialState');
+  const [formOpen, setFormOpen] = useState<boolean>(false);
   useEffect(() => {
     if (page) {
-      const bread = getBread(page);
+      const bread = getBread(page, initialState?.currentUser);
       if (bread) {
         setTabs(bread?.data.tabs);
         setUrl(bread?.data.postUrl ? bread?.data.postUrl : bread?.data.url + '/show');
@@ -76,10 +80,12 @@ const InnerForm = (props) => {
         setEditable(bread?.data.editable ? bread?.data.editable : false);
       }
     } else {
+      console.log('formColumns', formColumns);
       setTabs(
         utabs ? utabs : [{ title: '基础信息', formColumns: formColumns ? [...formColumns] : [] }],
       );
     }
+    setFormOpen(true);
   }, [page, utabs]);
 
   const afterAction = (ret: any) => {
@@ -108,7 +114,7 @@ const InnerForm = (props) => {
     return;
   };
 
-  return (
+  return formOpen ? (
     <SaForm
       {...saFormProps}
       pageMenu={pageMenu}
@@ -172,6 +178,8 @@ const InnerForm = (props) => {
         }
       }}
     />
+  ) : (
+    <Loading />
   );
 };
 

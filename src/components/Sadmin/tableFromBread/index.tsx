@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { isBool } from '../checkers';
 import { getBread, getFromObject, tplComplie } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
+import { useModel } from '@umijs/max';
 
 const TableFromBread: FC<{
   fieldProps?: any;
@@ -40,7 +41,8 @@ const TableFromBread: FC<{
   }
   const post_key = getFromObject(record, fieldProps.local_key);
   //console.log('getBread', fieldProps.path);
-  const bread = getBread(fieldProps.path);
+  const { initialState } = useModel('@@initialState');
+  const bread = getBread(fieldProps.path, initialState?.currentUser);
   //console.log('fieldProps.props is', JSON.stringify(fieldProps.props), bread);
   if (bread) {
     const { data: v_data } = bread;

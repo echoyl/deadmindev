@@ -44,8 +44,8 @@ export const Page: React.FC = () => {
   if (match) {
     pathname = localtion.pathname.replace(match[0], '');
   }
-
-  const menu = getBread(pathname);
+  const { initialState } = useModel('@@initialState');
+  const menu = getBread(pathname, initialState?.currentUser);
   const navigate = useNavigate();
 
   useEffect(() => {
