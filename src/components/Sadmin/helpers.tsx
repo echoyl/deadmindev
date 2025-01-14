@@ -277,7 +277,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
     render: (text) => {
       //console.log(text);
-      return <span>{text?.label}</span>;
+      return <span>{text?.label ? text?.label : text?.value}</span>;
     },
   },
   jsonForm: {

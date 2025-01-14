@@ -15,6 +15,27 @@ const PanelItemChart = (props: any) => {
     });
   };
   delete config.type;
+  //1.支持config.label.text的模板写法 json不支持函数格式
+  const getCode = (str: string) => {
+    const exp = /{{\s*([^{}]*)\s*}}/g;
+    const matches = [];
+    let match;
+    while ((match = exp.exec(str)) !== null) {
+      matches.push(match[1].trim());
+    }
+    return matches;
+  };
+  const tpls: { labelText?: any } = {};
+  if (config.label?.text) {
+    const match = getCode(config.label.text);
+    try {
+      tpls.labelText = (d) => {
+        return new Function('$root', `with($root) { return (${match}); }`)({ d });
+      };
+    } catch (error) {
+      console.log('exp error', match);
+    }
+  }
   if (type == 'pie') {
     const x = config.colorField;
     const y = config.angleField;
@@ -78,18 +99,23 @@ const PanelItemChart = (props: any) => {
     const x = config.xField;
     const y = config.yField;
     const field = getField(y);
+    const { label, ...leftConfig } = config;
     return (
       <Column
         data={data}
         scale={{ x: { paddingInner: 0.4 } }}
-        label={{ text: (d: any) => d?.[y], textBaseline: 'bottom' }}
+        label={{
+          textBaseline: 'bottom',
+          ...label,
+          text: tpls.labelText ? tpls.labelText : (d: any) => d?.[y],
+        }}
         style={{
           // 圆角样式
           radiusTopLeft: 10,
           radiusTopRight: 10,
         }}
         tooltip={{ name: field?.label, field: y }}
-        {...config}
+        {...leftConfig}
       />
     );
   } else if (type == 'area') {

@@ -302,6 +302,7 @@ export const getTableColumns = (props) => {
           rowSpan: _[rowSpanKey],
         };
       };
+      delete v.rowSpan;
     }
 
     if (v.fieldProps?.showTime?.defaultValue) {
