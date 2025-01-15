@@ -111,6 +111,7 @@ const TableFromBread: FC<{
           scroll: { y: scrollHeight },
           size: 'small',
           className: 'sa-modal-table sa-form-table',
+          cardBordered: true,
           ...fieldProps.props.tableProps,
         }}
         //readonly={readonly}

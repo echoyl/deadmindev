@@ -510,9 +510,9 @@ const SaTable: React.FC<saTableProps> = (props) => {
           revalidateOnFocus={false}
           form={
             pageType != 'page'
-              ? false
+              ? { variant: setting?.form?.variant ? setting?.form?.variant : 'filled' }
               : {
-                  variant: 'filled',
+                  variant: setting?.form?.variant ? setting?.form?.variant : 'filled',
                   ignoreRules: false,
                   syncToInitialValues: false,
                   style: { padding: 16 },

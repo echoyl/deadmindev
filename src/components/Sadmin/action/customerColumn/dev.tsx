@@ -567,7 +567,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                     },
                                     {
                                       dataIndex: 'drawerProps',
-                                      title: 'drawer配置',
+                                      title: 'drawer或modal配置',
                                       valueType: 'jsonEditor',
                                     },
                                   ],

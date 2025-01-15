@@ -263,7 +263,7 @@ const CustomerColumnRender = (props) => {
               key={key}
               trigger={dom}
               title={modal?.title}
-              modalProps={{ footer: null }}
+              modalProps={{ footer: null, ...modal?.drawerProps }}
               onCancel={() => {
                 actionRef.current?.reload();
               }}

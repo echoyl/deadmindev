@@ -126,7 +126,12 @@ const ButtonModal: FC<actionConfirm> = (props) => {
         }}
         maskClosable={false}
         styles={{
-          body: { maxHeight: height, minHeight, overflowY: 'auto', overflowX: 'hidden' },
+          body: {
+            maxHeight: height,
+            minHeight,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+          },
           ...modalProps?.styles,
         }}
       >
