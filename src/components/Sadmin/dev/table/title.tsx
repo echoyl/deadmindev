@@ -252,29 +252,22 @@ const BaseForm = (props) => {
   //   },
   // });
   return (
-    <div
-      onClick={(e) => {
-        //e.preventDefault();
-        //e.preventDefault();//20241012 - 这里去掉阻止冒泡 导致 checkbox点击label失效。忘记了为什么之前要加这个 记录下
+    <ConfirmForm
+      trigger={<div style={{ width: '100%' }}>{title}</div>}
+      tabs={[
+        { title: '基础', formColumns: columns },
+        !noMore ? { title: '更多', formColumns: columnsMore } : null,
+      ].filter((v) => v)}
+      value={value}
+      postUrl={editUrl}
+      data={{ id: pageMenu?.id, uid, ...extpost, ...json }}
+      callback={({ data }) => {
+        reflush(data);
+        setJson?.(data?.data);
       }}
-    >
-      <ConfirmForm
-        trigger={<div style={{ width: '100%' }}>{title}</div>}
-        tabs={[
-          { title: '基础', formColumns: columns },
-          !noMore ? { title: '更多', formColumns: columnsMore } : null,
-        ].filter((v) => v)}
-        value={value}
-        postUrl={editUrl}
-        data={{ id: pageMenu?.id, uid, ...extpost, ...json }}
-        callback={({ data }) => {
-          reflush(data);
-          setJson?.(data?.data);
-        }}
-        saFormProps={{ devEnable: false }}
-        width={1000}
-      />
-    </div>
+      saFormProps={{ devEnable: false }}
+      width={1000}
+    />
   );
 };
 
@@ -378,8 +371,10 @@ const MenuLabel = (props) => {
   const { setVisible } = useContext(SchemaSettingsContext);
   return (
     <div
-      onClick={() => {
+      onClick={(e) => {
         setVisible(false);
+        e.stopPropagation(); //20250116 当工具栏是confirm时点击dev按钮时阻住继续冒泡
+        //e.preventDefault();//20241012 - 这里去掉阻止冒泡 导致 checkbox点击label失效。忘记了为什么之前要加这个 记录下
       }}
     >
       {props?.children}
@@ -486,15 +481,17 @@ export const DevTableColumnTitle = (props) => {
   };
   const deleteitem: ItemType = {
     label: (
-      <DeleteColumn
-        title={
-          <Space>
-            <DeleteColumnOutlined />
-            <span>删除</span>
-          </Space>
-        }
-        uid={uid}
-      />
+      <MenuLabel>
+        <DeleteColumn
+          title={
+            <Space>
+              <DeleteColumnOutlined />
+              <span>删除</span>
+            </Space>
+          }
+          uid={uid}
+        />
+      </MenuLabel>
     ),
     key: 'deleteitem',
     danger: true,

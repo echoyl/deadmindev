@@ -125,19 +125,21 @@ export const ExportButton = ({
   request: requestParam,
   requestUrl = '', //新增手动设定导出
   btn = {},
+  fieldProps = {},
   ...restProps
 }: RequestButtonProps) => {
   const { url = '', data = {} } = requestParam || {};
   const { searchFormRef, url: propsUrl } = useContext(SaContext);
   const { modalApi } = useContext(SaDevContext);
   const purl = requestUrl ? requestUrl : url ? url : propsUrl + '/export';
+  const { post = {} } = fieldProps; //导出按钮自定义请求传输数据
   const onClick = async () => {
     modalApi?.confirm({
       title: '温馨提示！',
       content: '确定要导出吗？',
       onOk: async () => {
         const search = searchFormRef?.current?.getFieldsFormatValue();
-        await request.post(purl, { data: { ...data, ...search } });
+        await request.post(purl, { data: { ...data, ...search, ...post } });
       },
     });
   };
