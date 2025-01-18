@@ -288,11 +288,10 @@ const CustomerColumnRender = (props) => {
               key={key}
               trigger={dom}
               title={tplComplie(modal?.title, { record })}
-              drawerProps={modal?.drawerProps}
+              drawerProps={{ ...modal?.drawerProps, styles: { body: { padding: 16 } } }}
               width={1000}
             >
               <TableFromBread
-                readonly={false}
                 fieldProps={fieldProps}
                 record={record}
                 type="drawer"

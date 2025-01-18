@@ -53,7 +53,7 @@ const JsonForm: FC<{
   //console.log('json form init props', props);
   const { initialState } = useModel('@@initialState');
   const dev = initialState?.settings?.adminSetting?.dev ? true : false;
-  const trigger = <Button icon={<SettingOutlined />}>点击配置页面</Button>;
+  const trigger = <Button icon={<SettingOutlined />}>详情</Button>;
   const {
     tableDesigner: { pageMenu, reflush, editUrl = '' },
   } = useContext(SaContext);

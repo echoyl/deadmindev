@@ -125,9 +125,6 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
             padding: 0,
             border: 'none',
           },
-          body: {
-            padding: 16,
-          },
           ...drawerProps?.styles,
         }}
         loading={loading}

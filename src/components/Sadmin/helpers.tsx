@@ -284,7 +284,9 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     renderFormItem: (text, props) => {
       return <JsonForm {...props.fieldProps} />;
     },
-    render: (text) => text,
+    render: (text, props) => {
+      return <JsonForm {...props.fieldProps} />;
+    },
   },
   carBrand: {
     renderFormItem: (text, props) => {
