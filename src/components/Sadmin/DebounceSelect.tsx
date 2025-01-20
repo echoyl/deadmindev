@@ -35,19 +35,25 @@ export default function DebounceSelect<
   //console.log('record', record);
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState<ValueType[]>([]);
-  const [thisValue, setThisValue] = useState(props.value);
+  const [thisValue, setThisValue] = useState<any>();
   const [isInit, setIsInit] = useState(false);
   const fetchRef = useRef(0);
-
+  const { fieldNames = { label: 'label', value: 'id', children: 'children' } } = props;
+  const { label = 'label' } = fieldNames;
   useEffect(() => {
     if (isInit) {
-      //console.log('set init', record);
+      //这里是当组件需要dependenceOn的时候 表单其它值变动后重新渲染这里需要重新请求获取一次数据信息，因为设置当前值的时候也会触发，所以在onchange的时候设置了isInit的状态
       setFetching(true);
       debounceFetcher('reload');
       //如果已经初始化 那么每次变动后都修改组件的value
       setThisValue(null);
     } else {
-      //console.log('set init', record);
+      //初始化处理一次label 如果label可能是模板
+      const value = props.value;
+      if (value && !value.label) {
+        value.label = tplComplie(label, { record: value });
+      }
+      setThisValue(value);
       setIsInit(true);
     }
   }, [record]);
@@ -59,7 +65,13 @@ export default function DebounceSelect<
       const { data } = await request.get(url, {
         params: { pageSize: 50, search: 1, from_path: pathname, ...requestParam },
       });
-      return data;
+      //处理label显示 可以支持模板显示
+      return data.map((item: any) => {
+        if (!item[label]) {
+          item[label] = tplComplie(label, { record: item });
+        }
+        return item;
+      });
     };
   }
 
@@ -95,9 +107,7 @@ export default function DebounceSelect<
   }, [fetchOptions, debounceTimeout, options]);
 
   const fieldProps = {
-    fieldNames: props.fieldNames
-      ? props.fieldNames
-      : { label: 'name', value: 'id', children: 'children' },
+    fieldNames,
     onSearch: debounceFetcher,
     notFoundContent: fetching ? <Spin size="small" /> : <Empty />,
     showSearch: true,
@@ -115,25 +125,18 @@ export default function DebounceSelect<
   }, []);
   //console.log(props, fieldProps, props.fieldProps);
   // props.fieldProps = { ...fieldProps, ...props.fieldProps };
-
+  const onChange = (v) => {
+    setIsInit(false); //这里设置为false 因为设置值后 record就变动，但是我们当前值变动时不能触发重新请求的
+    setThisValue(v);
+    props?.onChange?.(v);
+  };
   return type == 'select' ? (
     <ProFormSelect
       noStyle
       {...props}
       // value={thisValue}
-      // onChange={(v) => {
-      //   console.log('change v', v);
-      //   // if (v.value) {
-      //   //   v.id = v.value;
-      //   // }
-      //   setIsInit(false);
-      //   setThisValue(v);
-      //   props?.onChange?.(v);
-      // }}
-      //labelInValue
+      onChange={onChange}
       fieldProps={{ ...fieldProps, labelInValue: true, filterOption: false }}
-      // filterOption={false}
-      // {...fieldProps}
       options={options}
     />
   ) : (
@@ -141,12 +144,7 @@ export default function DebounceSelect<
       //noStyle={true}
       {...props}
       value={thisValue}
-      onChange={(v) => {
-        //console.log('change v', v);
-        setIsInit(false);
-        setThisValue(v);
-        props?.onChange?.(v);
-      }}
+      onChange={onChange}
       {...fieldProps}
       options={options}
     />
