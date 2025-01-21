@@ -5,7 +5,7 @@ import { Cascader, Empty, Select, Spin } from 'antd';
 import type { SelectProps } from 'antd/es/select';
 import debounce from 'lodash/debounce';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { isStr } from './checkers';
+import { isObj, isStr } from './checkers';
 import { tplComplie } from './helpers';
 import { SaContext } from './posts/table';
 export interface DebounceSelectProps<ValueType = any>
@@ -25,7 +25,7 @@ export default function DebounceSelect<
   } = any,
 >({
   fetchOptions,
-  debounceTimeout = 400,
+  debounceTimeout = 800,
   params = {},
   type = 'select',
   ...props
@@ -50,7 +50,7 @@ export default function DebounceSelect<
     } else {
       //初始化处理一次label 如果label可能是模板
       const value = props.value;
-      if (value && !value.label) {
+      if (value && isObj(value) && !value.label) {
         value.label = tplComplie(label, { record: value });
       }
       setThisValue(value);

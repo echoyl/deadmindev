@@ -33,6 +33,7 @@ const formMoreType = [
   { label: '多行编辑 - formList', value: 'formList' },
   { label: 'Select选择器', value: 'select' },
   { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
+  { label: '搜索select', value: 'searchSelect' },
   { label: 'json编辑器 - jsonEditor', value: 'jsonEditor' },
   { label: 'jsonCode', value: 'jsonCode' },
   { label: '头像显示 - avatar', value: 'avatar' },

@@ -200,7 +200,8 @@ const schemaType = [
   { label: 'enum - 枚举', value: 'enum' },
 ];
 const formType = [
-  { label: '搜索下拉 - search_select', value: 'search_select' },
+  { label: '搜索cascader', value: 'search_select' },
+  { label: '搜索select', value: 'searchSelect' },
   { label: '下拉选择- select', value: 'select' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
   { label: '下拉多选 -selects', value: 'selects' },

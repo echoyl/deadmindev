@@ -45,6 +45,7 @@ import {
   MDEditorRender,
 } from './valueTypeMap';
 import SaSliderMap from './valueTypeMap/saSlider';
+import SearchSelect from './valueTypeMap/search/select';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -108,6 +109,7 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'pca'
   | 'permGroup'
   | 'debounceSelect'
+  | 'searchSelect'
   | 'jsonForm'
   | 'carBrand'
   | 'link'
@@ -273,10 +275,19 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   debounceSelect: {
     renderFormItem: (text, props) => {
       //console.log('debounceSelect', props, 'text');
+      //return <SearchSelect {...props.fieldProps} />;
       return <DebounceSelect {...props.fieldProps} />;
     },
     render: (text) => {
       //console.log(text);
+      return <span>{text?.label ? text?.label : text?.value}</span>;
+    },
+  },
+  searchSelect: {
+    renderFormItem: (text, props) => {
+      return <SearchSelect {...props.fieldProps} />;
+    },
+    render: (text) => {
       return <span>{text?.label ? text?.label : text?.value}</span>;
     },
   },
