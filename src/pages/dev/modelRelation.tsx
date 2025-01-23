@@ -6,6 +6,7 @@ import { SaDevContext } from '@/components/Sadmin/dev';
 import { getModelColumns } from '@/components/Sadmin/dev/table/baseFormColumns';
 import { CopyOutlined } from '@ant-design/icons';
 import { uniqBy } from 'lodash';
+import settingColumns from '@/components/Sadmin/dev/vars/relation/settingColumns';
 
 //生成关联模型的字段及其管理模型
 export const getModelColumnsTree = (id: number, allModels, pid: string = '', level = 1) => {
@@ -376,6 +377,21 @@ export default (props) => {
         {
           tab: { title: '其它设置' },
           formColumns: [
+            {
+              title: '设置',
+              dataIndex: 'setting',
+              valueType: 'confirmForm',
+              colProps: { span: 3 },
+              fieldProps: {
+                btn: {
+                  title: '设置',
+                  size: 'middle',
+                },
+                tabs: settingColumns,
+                saFormProps: { devEnable: false, grid: true },
+                //showType: 'drawer',
+              },
+            },
             { dataIndex: 'with_default', title: 'withDefault', valueType: 'jsonEditor' },
             { dataIndex: 'filter', title: '筛选条件', valueType: 'jsonEditor' },
             { dataIndex: 'order_by', title: '排序', valueType: 'jsonEditor' },

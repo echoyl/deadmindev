@@ -10,6 +10,7 @@ export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
   fetchOptions: (search: { [key: string]: any }) => Promise<ValueType[]> | string;
   params?: object;
+  readonly?: boolean;
 }
 
 export default function SearchSelect<
@@ -17,30 +18,46 @@ export default function SearchSelect<
     key?: string;
     label: React.ReactNode;
     value: string | number;
+    readonly: boolean;
   } = any,
->({ fetchOptions, params = {}, ...props }: DebounceSelectProps) {
+>({ fetchOptions, params = {}, readonly = false, ...props }: DebounceSelectProps) {
   //console.log('record', record);
   const [options, setOptions] = useState<ValueType[]>([]);
   const { fieldNames = { label: 'label', value: 'id', children: 'children' } } = props;
-  const { label = 'label' } = fieldNames;
+  const { label = 'label', value: valueField = 'id' } = fieldNames;
   const { pathname } = useLocation();
   const [reloadKey, setReloadKey] = useState<string>('init');
   const [recordParams, setRecordParams] = useState<Record<string, any>>({});
   const [change, setChange] = useState(false);
   const [init, setInit] = useState<any>(false);
+  const [readLabel, setReadLabel] = useState<any>(null);
   useEffect(() => {
     //初始化处理一次label 如果label可能是模板
     const { value } = props;
     if (value && isObj(value) && !value.label) {
       value.label = tplComplie(label, { record: value });
     }
-  }, []);
+  }, [props.value]);
+  useEffect(() => {
+    //只读模式下的 label 处理
+    const { value } = props;
+    if (value && isObj(value)) {
+      if (!value.label) {
+        const _readLabel = tplComplie(label, { record: value });
+        setReadLabel(_readLabel);
+      } else {
+        setReadLabel(value.label);
+      }
+    } else {
+      setReadLabel(value);
+    }
+  }, [props.value]);
   useEffect(() => {
     //依赖项数据发生变化后 清空当前值
     setInit(true); //第一次不渲染
     if (init) {
       props?.onChange?.(null);
-      console.log('recordParams', recordParams);
+      //console.log('recordParams', recordParams);
     }
   }, [recordParams]);
 
@@ -95,7 +112,10 @@ export default function SearchSelect<
       if (!item[label]) {
         item[label] = tplComplie(label, { record: item });
       }
-      return item;
+      return {
+        [valueField]: item[valueField],
+        [label]: item[label],
+      };
     });
     setOptions(optionsx);
     return optionsx;
@@ -105,7 +125,9 @@ export default function SearchSelect<
     setChange(!isUndefined(v)); //选中选项设置true后 请求不会发出
     reload();
   };
-  return (
+  return readonly ? (
+    <>{readLabel}</>
+  ) : (
     <ProFormSelect
       noStyle
       {...props}

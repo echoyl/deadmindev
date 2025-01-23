@@ -287,8 +287,8 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     renderFormItem: (text, props) => {
       return <SearchSelect {...props.fieldProps} />;
     },
-    render: (text) => {
-      return <span>{text?.label ? text?.label : text?.value}</span>;
+    render: (text, props) => {
+      return <SearchSelect {...props.fieldProps} value={text} readonly={true} />;
     },
   },
   jsonForm: {

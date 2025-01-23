@@ -126,7 +126,7 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
           label={{
             position: 'spider',
             text: (item: any) => {
-              console.log('item is ', item);
+              //console.log('item is ', item);
               return `${item[x]}: ${numeral(item[y]).format('0,0')}`;
             },
           }}
