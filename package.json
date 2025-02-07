@@ -51,6 +51,7 @@
     "antd-style": "^3.6.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.10",
+    "es-toolkit": "^1.32.0",
     "immutability-helper": "^3.1.1",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",

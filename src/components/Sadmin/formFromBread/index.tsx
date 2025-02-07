@@ -44,6 +44,7 @@ const FormFromBread: FC<{
       ..._readonlyProps,
       url,
       formProps: { ...fieldProps.props?.formProps, contentRender },
+      pageMenu: bread,
       //paramExtra: { [fieldProps.foreign_key]: record[fieldProps.local_key] },
     };
     //log('saformtabolex', v);

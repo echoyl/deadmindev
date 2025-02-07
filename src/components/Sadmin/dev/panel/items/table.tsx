@@ -38,7 +38,7 @@ const PanelItemTable: React.FC<{ [key: string]: any }> = (props) => {
         })}
         dataSource={data?.data}
         //title={title ? () => title : false}
-        rowKey="id"
+        rowKey={columns?.[0]?.dataIndex}
         {...retConfig}
       />
     </ProCard>

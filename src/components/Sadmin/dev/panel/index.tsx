@@ -111,8 +111,9 @@ const ItemForm = (props) => {
   const _columns = config?.columns?.map((v) => {
     //获取是否有设置
     const ps = idata?.data?.find((ida) => ida.name == v.dataIndex);
+    //select使用了label 但是 form item是使用title
     if (ps) {
-      v = { ...v, ...ps.props };
+      v = { title: ps.label, ...v, ...ps.props };
     }
     return v;
   });

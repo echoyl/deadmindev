@@ -4,6 +4,7 @@ import {
   DeleteColumnOutlined,
   DragOutlined,
   EditOutlined,
+  InsertRowBelowOutlined,
   InsertRowRightOutlined,
   MenuOutlined,
   SettingOutlined,
@@ -157,7 +158,7 @@ const BaseForm = (props) => {
         //   getValue(uid, pageMenu, ctype ? ctype : type),
         // );
         const pageMenuData =
-          Object.keys(pageMenu)?.length > 0
+          pageMenu && Object.keys(pageMenu)?.length > 0
             ? pageMenu
             : { schema: { form_config: json?.config?.form_config } };
         //console.log('pageMenuData', pageMenuData);
@@ -468,7 +469,7 @@ export const DevTableColumnTitle = (props) => {
         <AddEmptyGroup
           title={
             <Space>
-              <InsertRowRightOutlined />
+              <InsertRowBelowOutlined />
               <span>+ 行</span>
             </Space>
           }

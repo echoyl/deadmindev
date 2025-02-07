@@ -125,7 +125,6 @@ const FormCalendar: React.FC<{
 };
 
 export const FormCalendarRender = (text, props) => {
-  console.log(props);
   return <FormCalendar {...props.fieldProps} />;
 };
 

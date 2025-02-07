@@ -16,19 +16,32 @@ const AreaMap = (props: any) => {
       }),
     });
     // 数据绑定
-    const colors = [
-      '#0A3663',
-      // '#1558AC',
-      '#3771D9',
-      '#4D89E5',
-      '#64A5D3',
-      '#72BED6',
-      '#83CED6',
-      '#A6E1E0',
-      '#B8EFE2',
-      '#D7F9F0',
-    ].reverse();
-    const { field, domain_min = 0, domain_max = 100 } = config;
+    const {
+      field,
+      colors = [
+        '#D7F9F0',
+        '#B8EFE2',
+        '#A6E1E0',
+        '#83CED6',
+        '#72BED6',
+        '#64A5D3',
+        '#4D89E5',
+        '#3771D9',
+        '#0A3663',
+      ],
+    } = config;
+
+    //获取数的最大值和最小值 不再通过设置获取
+    let domain_min = 0;
+    let domain_max = 0;
+    data.features.forEach((item) => {
+      if (item.properties[field] > domain_max) {
+        domain_max = item.properties[field];
+      }
+      if (item.properties[field] < domain_min) {
+        domain_min = item.properties[field];
+      }
+    });
 
     const chinaPolygonLayer = new PolygonLayer({
       autoFit: true,
