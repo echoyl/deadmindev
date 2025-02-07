@@ -4,6 +4,7 @@ import {
   ProConfigProvider,
   ProProvider,
   SettingDrawer,
+  useBreakpoint,
 } from '@ant-design/pro-components';
 import { RunTimeLayoutConfig, history, getLocale, addLocale } from '@umijs/max';
 
@@ -12,7 +13,7 @@ import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import zhTW from 'antd/locale/zh_TW';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { DevLinks, SaDevContext } from './components/Sadmin/dev';
 import { loopMenuItem, saValueTypeMap } from './components/Sadmin/helpers';
 import WebSocketProvider, { WebSocketListen } from './components/Sadmin/hooks/websocket';
@@ -21,7 +22,7 @@ import { saGetSetting } from './components/Sadmin/components/refresh';
 import { loginPath, currentUser as queryCurrentUser } from '@/components/Sadmin/lib/request';
 import { Locale } from 'antd/es/locale';
 import { actionsRender } from './components/RightContent';
-import { AvatarDropdown, AvatarName } from './components/RightContent/AvatarDropdown';
+import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
 import defaultSettings from '../config/defaultSettings';
 import { createFromIconfontCN } from '@ant-design/icons';
 
@@ -105,6 +106,11 @@ export function rootContainer(container: JSX.Element, args) {
       'zh-CN': zhCN,
       'zh-TW': zhTW,
     };
+    const colSize = useBreakpoint();
+
+    const isMobile = useMemo(() => {
+      return colSize === 'sm' || colSize === 'xs';
+    }, [colSize]);
     useEffect(() => {
       //console.log('root get');
       //dayjs.locale(currentLocale.toLocaleLowerCase());
@@ -168,6 +174,7 @@ export function rootContainer(container: JSX.Element, args) {
               messageApi,
               modalApi,
               notificationApi,
+              isMobile,
             }}
           >
             {/* <WebSocketProvider>

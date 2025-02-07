@@ -27,6 +27,7 @@ export const SaDevContext = createContext<{
   messageApi?: MessageInstance;
   modalApi?: HookAPI;
   notificationApi?: NotificationInstance;
+  isMobile?: Boolean;
 }>({});
 
 export const DevLinks = () => {

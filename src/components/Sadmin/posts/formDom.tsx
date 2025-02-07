@@ -6,7 +6,6 @@ import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
 import { FormColumnTitle } from '../dev/table/title';
 import { getFromObject, getMenuDataById, saFormColumnsType, tplComplie } from '../helpers';
-import { GlobalOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import TranslationModal from '../dev/form/translation';
 export const defaultColumnsLabel = {
@@ -52,6 +51,7 @@ interface formFieldsProps {
   devEnable?: boolean;
   devSetting?: Record<string, any>;
   intl?: any;
+  isMobile?: Boolean; //是否是移动端
 }
 
 export const GetFormFields: React.FC<{
@@ -64,7 +64,6 @@ export const GetFormFields: React.FC<{
 
 export const getFormFieldColumns = (props: formFieldsProps) => {
   const {
-    labels = {},
     detail = {},
     columns = [],
     enums = {},
@@ -73,9 +72,9 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     devEnable = true,
     intl,
     devSetting,
+    isMobile,
   } = props;
   if (!initRequest) return [];
-  const allLabels = { ...defaultColumnsLabel, ...labels };
 
   //console.log('inner detail', detail);
   const customerColumns =
@@ -366,6 +365,9 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       }
       if (v.valueType == 'group') {
         v.rowProps = { gutter: 16 };
+      } else {
+        //新增如果是手机端下item项的宽度设置
+        v.colProps = { span: isMobile ? 24 : v.colProps?.span ? v.colProps?.span : 12 };
       }
 
       if (devEnable && deep <= 1 && !React.isValidElement(v.title)) {

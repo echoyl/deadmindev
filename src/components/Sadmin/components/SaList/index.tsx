@@ -1,7 +1,8 @@
 import { ProList } from '@ant-design/pro-components';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import CoverItem from './coverItem';
 import { List } from 'antd';
+import { SaDevContext } from '../../dev';
 
 const SaList: React.FC<any> = (props) => {
   const { tableColumns, devEnable, allProps, ...restProps } = props;
@@ -10,7 +11,7 @@ const SaList: React.FC<any> = (props) => {
   const {
     setting: { card: { grid: { gutter = 16, column = 6 } = {} } = {} },
   } = allProps;
-
+  const { isMobile } = useContext(SaDevContext);
   useEffect(() => {
     if (!columns || columns.length < 1) {
       return;
@@ -30,7 +31,7 @@ const SaList: React.FC<any> = (props) => {
   return (
     <ProList<any>
       {...restProps}
-      grid={{ gutter, column }}
+      grid={{ gutter, column: isMobile ? 1 : column }}
       metas={metas}
       itemCardProps={{
         ghost: true,

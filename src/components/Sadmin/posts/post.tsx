@@ -85,7 +85,7 @@ export const SaForm: FC<saFormProps> = (props) => {
   const [devEnable, setDevEnable] = useState(
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev,
   );
-  const { messageApi, setting: devSetting } = useContext(SaDevContext);
+  const { messageApi, setting: devSetting, isMobile } = useContext(SaDevContext);
   const intl = useIntl();
   //提交数据
   const post = async (base: any, callback?: (value: any) => void, then?: any) => {
@@ -179,6 +179,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         devEnable,
         intl,
         devSetting,
+        isMobile,
       });
     });
   };

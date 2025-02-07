@@ -33,7 +33,7 @@ const ItemCol = (props) => {
     getData,
     show_condition: showCondition,
   } = props;
-
+  const { isMobile } = useContext(SaDevContext);
   const idata = data?.find((v) => v.value == sourceDataName);
   const {
     tableDesigner: { devEnable },
@@ -58,7 +58,7 @@ const ItemCol = (props) => {
   //console.log('cititle', ctitle);
   const itemTitle = devEnable ? ctitle(title) : title ? title : false;
   return show ? (
-    <Col span={span}>
+    <Col span={isMobile ? 24 : span}>
       {type == 'tab' ? (
         <ItemTab {...props} />
       ) : type == 'table' ? (

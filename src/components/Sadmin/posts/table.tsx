@@ -320,7 +320,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
     }
   }, [table_menu_key, enums, table_menu_all]);
-  const { messageApi, modalApi } = useContext(SaDevContext);
+  const { messageApi, modalApi, isMobile } = useContext(SaDevContext);
   const post = async (base: any, extra: any, requestRes: any) => {
     return await request.post(url, {
       data: { base: { ...base }, ...extra },
@@ -501,7 +501,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
           search={
             search_config.length > 0
               ? {
-                  span: 6,
+                  span: isMobile ? 24 : 6, //手机端占满一行
                   className: 'posts-table posts-table-' + pageType,
                   labelWidth: 'auto',
                 }
