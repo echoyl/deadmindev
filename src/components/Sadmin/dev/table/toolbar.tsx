@@ -382,17 +382,15 @@ export const ToolBarMenu = (props) => {
                 ),
               }
             : null,
-          pageMenu.model_id
-            ? {
-                key: 'export',
-                label: (
-                  <ExportButton
-                    request={{ data: { ids: [pageMenu?.id] }, url: 'dev/menu/export' }}
-                    btn={{ type: 'link' }}
-                  />
-                ),
-              }
-            : null,
+          {
+            key: 'export',
+            label: (
+              <ExportButton
+                request={{ data: { ids: [pageMenu?.id] }, url: 'dev/menu/export' }}
+                btn={{ type: 'link' }}
+              />
+            ),
+          },
         ],
       }}
     >
