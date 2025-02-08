@@ -1,11 +1,12 @@
 import request from '@/components/Sadmin/lib/request';
-import { Calendar, CalendarProps } from 'antd';
+import { Badge, Calendar, CalendarProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
 import FormFromBread from '../formFromBread';
 import { getBread } from '../helpers';
 import { useModel } from '@umijs/max';
+import { isArr } from '../checkers';
 
 const FormCalendar: React.FC<{
   width?: number;
@@ -15,10 +16,10 @@ const FormCalendar: React.FC<{
   defaultContent?: string;
   onlyFuture?: boolean; //是否只有未来日期可选
   path?: string;
+  colors?: string[];
 }> = (props) => {
   const [open, setOpen] = useState(false);
   const [selectMonth, setSelectMonth] = useState<string>();
-  const [confirmLoading, setConfirmLoading] = useState(false);
   const [selectDate, setSelectDate] = useState<string>();
   const onSelect = (date: Dayjs, { source }) => {
     //弹出配置form
@@ -39,6 +40,21 @@ const FormCalendar: React.FC<{
     defaultContent = '-',
     onlyFuture = true,
     path = '',
+    colors = [
+      'blue',
+      'orange',
+      'yellow',
+      'pink',
+      'cyan',
+      'green',
+      'purple',
+      'geekblue',
+      'magenta',
+      'volcano',
+      'gold',
+      'lime',
+      'red',
+    ],
   } = props;
   const { initialState } = useModel('@@initialState');
   const bread = getBread(path, initialState?.currentUser);
@@ -66,7 +82,31 @@ const FormCalendar: React.FC<{
 
   const dateCellRender = (value: Dayjs) => {
     const listData = getListData(value);
-    return <div dangerouslySetInnerHTML={{ __html: listData?.content }}></div>;
+    if (isArr(listData?.content)) {
+      //数组格式使用ul li展示
+      return (
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+          {listData?.content.map((item, k) => (
+            <li key={k}>
+              <Badge
+                color={colors[k] ? colors[k] : colors[0]}
+                text={item}
+                style={{
+                  width: '100%',
+                  overflow: 'hidden',
+                  fontSize: 12,
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                }}
+              />
+            </li>
+          ))}
+        </ul>
+      );
+    } else {
+      //如果是非数组，则直接显示html
+      return <div dangerouslySetInnerHTML={{ __html: listData?.content }}></div>;
+    }
   };
 
   const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
