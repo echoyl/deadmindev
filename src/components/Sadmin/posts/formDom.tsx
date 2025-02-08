@@ -367,7 +367,9 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.rowProps = { gutter: 16 };
       } else {
         //新增如果是手机端下item项的宽度设置
-        v.colProps = { span: isMobile ? 24 : v.colProps?.span ? v.colProps?.span : 12 };
+        if (isMobile) {
+          v.colProps = { span: 24 };
+        }
       }
 
       if (devEnable && deep <= 1 && !React.isValidElement(v.title)) {
