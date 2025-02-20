@@ -86,10 +86,13 @@ const InnerForm = (props) => {
       );
     }
     setFormOpen(true);
-  }, [page, utabs]);
+  }, [page, utabs, initialState?.currentUser]);
 
   const afterAction = (ret: any) => {
-    setOpen(false);
+    if (afterActionType != 'none') {
+      //不关闭 modal
+      setOpen(false);
+    }
     const rcb = callback?.(ret);
     if (callback) {
       if (actionRef || topFormRef) {
@@ -173,7 +176,11 @@ const InnerForm = (props) => {
         } else {
           //无 绑定onchange事件
           //console.log('close it', data);
-          setOpen(false);
+          if (afterActionType != 'none') {
+            //不关闭 modal
+            setOpen(false);
+          }
+
           onChange?.(data);
         }
       }}

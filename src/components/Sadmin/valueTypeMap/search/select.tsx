@@ -19,11 +19,13 @@ export default function SearchSelect<
     label: React.ReactNode;
     value: string | number;
     readonly: boolean;
+    extColumns?: string[]; //数据额外获取的列
   } = any,
 >({ fetchOptions, params = {}, readonly = false, ...props }: DebounceSelectProps) {
   //console.log('record', record);
   const [options, setOptions] = useState<ValueType[]>([]);
-  const { fieldNames = { label: 'label', value: 'id', children: 'children' } } = props;
+  const { fieldNames = { label: 'label', value: 'id', children: 'children' }, extColumns = [] } =
+    props;
   const { label = 'label', value: valueField = 'id' } = fieldNames;
   const { pathname } = useLocation();
   const [reloadKey, setReloadKey] = useState<string>('init');
@@ -112,10 +114,14 @@ export default function SearchSelect<
       if (!item[label]) {
         item[label] = tplComplie(label, { record: item });
       }
-      return {
+      const ret = {
         [valueField]: item[valueField],
         [label]: item[label],
       };
+      extColumns?.map((v) => {
+        ret[v] = item[v];
+      });
+      return ret;
     });
     setOptions(optionsx);
     return optionsx;

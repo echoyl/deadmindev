@@ -3,6 +3,7 @@ import React from 'react';
 import { parseIcon, tplComplie } from '../../helpers';
 import { Button, Tooltip, Typography } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import { isObj } from '../../checkers';
 
 export type RequestButtonProps = {
   title?: any;
@@ -45,7 +46,6 @@ export const RequestButtonRender = (props?: RequestButtonProps) => {
     delete btn.errorLevel;
   }
   const tpl = tplComplie(btn.text, { record, user: initialState?.currentUser });
-  //console.log('tpl is ', tpl);
   if (domtype == 'button') {
     //添加检测连接类型
     const btnProps: Record<string, any> = {};
@@ -76,18 +76,19 @@ export const RequestButtonRender = (props?: RequestButtonProps) => {
     if (!tpl) {
       return null;
     }
+    const showContent = isObj(tpl) ? JSON.stringify(tpl) : tpl;
     const textCopyable = btn.copyable ? (
       <Typography.Paragraph key="text_copyable" copyable>
-        {tpl}
+        {showContent}
       </Typography.Paragraph>
     ) : (
-      tpl
+      showContent
     );
     if (tooltip) {
       return <Tooltip title={tooltip}>{textCopyable}</Tooltip>;
     } else {
       //console.log('i am text ', tpl, item, record);
-      return <span>{textCopyable}</span>;
+      return <span style={{ whiteSpace: 'pre-wrap' }}>{textCopyable}</span>;
     }
   }
 };

@@ -139,7 +139,7 @@ request.interceptors.response.use(async (response, options) => {
 
   try {
     const res = await response.clone().json();
-    const { code, msg, data } = res;
+    const { code, msg, data, notification: notificationContent } = res;
 
     //存在后端错误信息未返回500状态值的
     if (isUndefined(code)) {
@@ -171,6 +171,9 @@ request.interceptors.response.use(async (response, options) => {
               duration: 1,
             });
           }
+        }
+        if (notificationContent) {
+          notification.info({ description: notificationContent, message: '提示' });
         }
 
         //添加导出跳转下载页面功能
