@@ -117,6 +117,7 @@ export default function SearchSelect<
       const ret = {
         [valueField]: item[valueField],
         [label]: item[label],
+        label: item[label],
       };
       extColumns?.map((v) => {
         ret[v] = item[v];
