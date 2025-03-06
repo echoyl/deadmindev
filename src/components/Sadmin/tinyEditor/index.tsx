@@ -72,7 +72,7 @@ const TinyEditor: FC<{
             'undo redo blocks fontfamily fontsize lineheight ' +
             'bold italic underline strikethrough forecolor backcolor | alignleft aligncenter ' +
             'alignright alignjustify | bullist numlist outdent indent indent2em | ' +
-            'removeformat | axupimgs media table',
+            'removeformat | axupimgs link media table',
           toolbar_mode: 'wrap',
           content_style: 'body { font-family:Microsoft YaHei,Arial,sans-serif; font-size:14px }',
           images_upload_handler: (blobInfo, progress) =>
@@ -111,20 +111,32 @@ const TinyEditor: FC<{
                   reject({ message: error.message, remove: true });
                 });
             }),
-          // file_picker_callback: (callback, value, meta) => {
-          //     console.log(value);
-          //     const input = document.createElement('input');
-          //     input.setAttribute('type', 'file');
-          //     input.setAttribute('accept', 'image/*');
+          file_picker_callback: (callback, value, meta) => {
+            //文件分类
+            var filetype =
+              '.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4';
+            //模拟出一个input用于添加本地文件
+            var input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', filetype);
+            input.click();
+            input.onchange = function () {
+              const fd = new FormData();
+              var file = this.files[0];
 
-          //     input.addEventListener('change', (e) => {
-          //         const file = e.target.files[0];
-          //         console.log(file);
-          //         const fd = new FormData();
+              fd.append('file', file, file.name);
+              fd.append('isFile', '1');
 
-          //     });
-          //     input.click();
-          // },
+              saUpload(fd).then(function (ret) {
+                if (ret.code) {
+                  //上传失败
+                  return;
+                } else {
+                  callback(ret.data.src, { title: file.name, text: file.name });
+                }
+              });
+            };
+          },
         }}
       />
     </Suspense>
