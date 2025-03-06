@@ -9,6 +9,7 @@ import { SaContext } from '../posts/table';
 import ButtonModal from './buttonModal';
 import ButtonDrawer from './buttonDrawer';
 import Loading from '@/components/Loading';
+import { isArr } from '../checkers';
 
 interface actionConfirm {
   msg?: string;
@@ -117,6 +118,9 @@ const InnerForm = (props) => {
     return;
   };
 
+  //参数中是否有ids 在get的时候也传给接口
+  const { ids } = data;
+
   return formOpen ? (
     <SaForm
       {...saFormProps}
@@ -132,7 +136,7 @@ const InnerForm = (props) => {
       formRef={formRef}
       actionRef={actionRef}
       postExtra={{ id: dataid, ...data }}
-      paramExtra={{ id: dataid }}
+      paramExtra={ids ? { id: dataid, ids: isArr(ids) ? ids.join('.') : ids } : { id: dataid }}
       // showTabs={tabs?.length <= 1 ? false : true}
       formProps={{
         contentRender,

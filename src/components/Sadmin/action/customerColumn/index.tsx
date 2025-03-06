@@ -185,7 +185,7 @@ const CustomerColumnRender = (props) => {
               page={item.modal?.page}
               url={item.request?.url}
               postUrl={item.request?.postUrl}
-              data={item.request?.data}
+              data={{ ...paramExtra, ...item.request?.data }}
               afterActionType={item.request?.afterActionType}
               dataId={dataId}
               {...value}
