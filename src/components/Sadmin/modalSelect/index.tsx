@@ -27,6 +27,7 @@ const ModalSelect = (props) => {
     relationname,
     page, //新增 直接读取 已有页面的配置
     max = 9,
+    value,
   } = props;
   const { formRef } = useContext(SaContext);
   let breadTableColumns = [];
@@ -84,9 +85,7 @@ const ModalSelect = (props) => {
 
   useEffect(() => {
     if (formRef?.current && !getData) {
-      const selected = relationname
-        ? formRef?.current?.getFieldValue?.(relationname)
-        : formRef?.current?.getFieldValue?.(name);
+      const selected = relationname ? formRef?.current?.getFieldValue?.(relationname) : value;
 
       //console.log('modalselect formRef name value:', name, selected, formRef);
       const parseValue = selected
@@ -298,7 +297,6 @@ export const ModalSelectRender = (text, props) => {
   //获取显示的数据
   const { fieldProps } = props;
   const { name = '', query = {}, multiple = false } = fieldProps;
-  //console.log('render', props);
   return (
     <ModalSelect
       //parseValue={selected ? (multiple ? selected : [selected]) : []}
