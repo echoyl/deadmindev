@@ -1,6 +1,6 @@
 import { CheckCircleOutlined, CloseCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { CheckCard } from '@ant-design/pro-components';
-import { App, Modal, Typography } from 'antd';
+import { App, Modal, Typography, theme } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { inArray, isArr, isUndefined } from '../checkers';
 import { getBread, getFromObject } from '../helpers';
@@ -42,7 +42,7 @@ const ModalSelect = (props) => {
           return inArray(v.dataIndex, page?.columns) > -1;
         } else {
           return (
-            inArray(v.dataIndex, ['state', 'created_at']) < 0 &&
+            inArray(v.dataIndex, ['state', 'created_at', 'option']) < 0 &&
             inArray(v, ['option', 'displayorder']) < 0
           );
         }
@@ -64,7 +64,6 @@ const ModalSelect = (props) => {
       return;
     }
     //单选和多选的话都 选择对象
-    //onChange?.(selectItems);
     if (multiple) {
       //多选的话传输数据类型为对象非id
       onChange?.(selectItems);
@@ -136,6 +135,7 @@ const ModalSelect = (props) => {
       setSelectItems([record]);
     }
   };
+  const { token } = theme.useToken();
   const radioSelect = {
     title: '操作',
     width: 120,
@@ -151,11 +151,11 @@ const ModalSelect = (props) => {
               onClick={() => {
                 checkEvent(record);
               }}
-              style={{ color: '#52c41a', fontSize: 18 }}
+              style={{ color: token.colorPrimary, fontSize: 18 }}
             />
           );
         } else {
-          return <CheckCircleOutlined style={{ color: '#52c41a', fontSize: 18 }} />;
+          return <CheckCircleOutlined style={{ color: token.colorPrimary, fontSize: 18 }} />;
         }
       } else {
         return (
@@ -236,8 +236,8 @@ const ModalSelect = (props) => {
             scroll: { y: 400 },
             size: 'small',
             className: 'sa-modal-table',
+            cardBordered: true,
           }}
-          grid={false}
           devEnable={false}
         />
       </Modal>
@@ -255,6 +255,7 @@ const ModalSelectList = (props) => {
     max,
   } = props;
   const { Paragraph } = Typography;
+  const { token } = theme.useToken();
   return (
     <>
       {items?.map((item, i) => {
@@ -272,8 +273,12 @@ const ModalSelectList = (props) => {
                 {title}
               </Typography.Text>
             }
-            avatar={avatar}
-            description={<Paragraph ellipsis={{ rows: 1 }}>{description}</Paragraph>}
+            avatar={isArr(avatar) ? avatar[0].url : avatar}
+            description={
+              <Paragraph ellipsis={{ rows: 1 }} style={{ marginBottom: 0 }}>
+                {description}
+              </Paragraph>
+            }
             extra={
               <CloseCircleOutlined
                 onClick={() => {
@@ -281,8 +286,8 @@ const ModalSelectList = (props) => {
                 }}
               />
             }
-            style={{ height: 98, marginBottom: 10 }}
-            size="small"
+            style={{ height: 98, marginBottom: 10, backgroundColor: token.colorFillQuaternary }}
+            className="sa-modal-select-item"
           />
         );
       })}
