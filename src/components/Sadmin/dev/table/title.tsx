@@ -11,8 +11,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { Button, Space, Switch } from 'antd';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { Button, Space, Switch, theme } from 'antd';
 import classNames from 'classnames';
 import { FC, useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '..';
@@ -35,6 +34,7 @@ import { getJson, isArr } from '../../checkers';
 import { createStyles } from 'antd-style';
 import FormCodePhp from '../formCodePhp';
 import { DevJsonContext } from '../../jsonForm';
+import type { GetProp, MenuProps } from 'antd';
 export const useDesignerCss = createStyles(({ token }) => {
   return {
     saSortItem: {
@@ -388,7 +388,7 @@ export const DevTableColumnTitle = (props) => {
   //console.log('title is title', title);
   //const designable = true;
   const { type } = devData;
-
+  type ItemType = GetProp<MenuProps, 'items'>[number];
   const baseform: ItemType = {
     label: (
       <MenuLabel>
@@ -560,6 +560,7 @@ export const DevTableColumnTitle = (props) => {
     toolbar: { display: 'inline-block' },
   };
   const { styles: dstyles } = useDesignerCss();
+  const { token } = theme.useToken();
   return (
     <SortableItem
       className={dstyles.saSortItem}
@@ -582,8 +583,10 @@ export const DevTableColumnTitle = (props) => {
         </div>
       </div>
       <div role="button">
-        {title ? tplComplie(title) : 'dev'}{' '}
-        {isArr(props?.dataIndex) ? props?.dataIndex.join('.') : props?.dataIndex}
+        {title ? tplComplie(title) : 'dev'}
+        <span style={{ color: token.colorTextTertiary, fontWeight: 'normal', paddingLeft: 6 }}>
+          {isArr(props?.dataIndex) ? props?.dataIndex.join('.') : props?.dataIndex}
+        </span>
       </div>
     </SortableItem>
   );
