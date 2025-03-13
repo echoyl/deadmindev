@@ -2,6 +2,7 @@ import { devDefaultFields, devTabelFields } from '@/pages/dev/model';
 import { TreeNodeProps } from 'antd';
 import { saFormColumnsType, saTableColumnsType } from '../../helpers';
 import { uniqBy } from 'lodash';
+//列表可选类型
 export const columnType = [
   { label: '日期 - date', value: 'date' },
   { label: '日期区间 - dateRange', value: 'dateRange' },
@@ -22,10 +23,11 @@ export const columnType = [
   { label: '拾色器 - colorPicker', value: 'colorPicker' },
   { label: '下拉操作 - dropdownAction', value: 'dropdownAction' },
   { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
+  { label: '搜索select', value: 'searchSelect' },
   { label: '评分 - rate', value: 'rate' },
   { label: '滑动条 - slider', value: 'saSlider' },
 ];
-
+//表单可选类型
 const formMoreType = [
   { label: '编辑表格 - saFormTable', value: 'saFormTable' },
   { label: '自定义显示 - customerColumn', value: 'customerColumn' },
