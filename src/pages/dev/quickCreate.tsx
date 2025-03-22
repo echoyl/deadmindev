@@ -43,10 +43,11 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
               fieldProps: {
                 options: [
                   { label: '内容模块', value: 'posts' },
-                  { label: '角色用户', value: 'perm' },
+                  { label: '后台用户', value: 'perm' },
                   { label: '门店', value: 'shop' },
                   { label: '商品', value: 'goods' },
                   { label: '订单', value: 'order' },
+                  { label: '普通用户', value: 'user' },
                 ],
               },
               formItemProps: {
@@ -73,6 +74,37 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
                         treeLine: { showLeafIcon: true },
                         treeDefaultExpandAll: true,
                         placeholder: '不选择的自动创建新的分类模型',
+                      },
+                      colProps: { span: 12 },
+                    },
+                  ];
+                }
+                if (inArray(type, ['order']) > -1) {
+                  return [
+                    {
+                      title: '指定商品模型',
+                      dataIndex: 'goods_id',
+                      valueType: 'treeSelect',
+                      fieldProps: {
+                        options: models,
+                        treeLine: { showLeafIcon: true },
+                        treeDefaultExpandAll: true,
+                        placeholder: '必选',
+                      },
+                      formItemProps: {
+                        rules: [{ required: true, message: '商品模型为必填' }],
+                      },
+                      colProps: { span: 12 },
+                    },
+                    {
+                      title: '用户模型',
+                      dataIndex: 'user_id',
+                      valueType: 'treeSelect',
+                      fieldProps: {
+                        options: models,
+                        treeLine: { showLeafIcon: true },
+                        treeDefaultExpandAll: true,
+                        placeholder: '不选择则不关联用户信息',
                       },
                       colProps: { span: 12 },
                     },
