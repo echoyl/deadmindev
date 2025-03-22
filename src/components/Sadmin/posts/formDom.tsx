@@ -248,13 +248,14 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
               // })(new_column.columns);
 
               if (devEnable) {
+                const vuid = v.uid;
                 v = {
                   valueType: 'dependency',
                   name: names,
                   columns: (d) => {
                     const relcol = columnsFun?.(d);
                     return relcol?.map((nv) => {
-                      nv.title = <FormColumnTitle title={nv.title} uid={v.uid} />;
+                      nv.title = <FormColumnTitle title={nv.title} uid={vuid} />;
                       return nv;
                     });
                   },
