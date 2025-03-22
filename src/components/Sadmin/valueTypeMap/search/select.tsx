@@ -33,27 +33,34 @@ export default function SearchSelect<
   const [change, setChange] = useState(false);
   const [init, setInit] = useState<any>(false);
   const [readLabel, setReadLabel] = useState<any>(null);
+
+  const parseItem = (item: Record<string, any>) => {
+    if (!item[label]) {
+      item[label] = tplComplie(label, { record: item });
+    }
+    const ret = {
+      [valueField]: item[valueField],
+      [label]: item[label],
+      label: item[label],
+      value: item[valueField],
+    };
+    extColumns?.map((v) => {
+      ret[v] = item[v];
+    });
+    return ret;
+  };
+
   useEffect(() => {
     //初始化处理一次label 如果label可能是模板
     const { value } = props;
-    if (value && isObj(value) && !value.label) {
-      value.label = tplComplie(label, { record: value });
-    }
-  }, [props.value]);
-  useEffect(() => {
-    //只读模式下的 label 处理
-    const { value } = props;
     if (value && isObj(value)) {
-      if (!value.label) {
-        const _readLabel = tplComplie(label, { record: value });
-        setReadLabel(_readLabel);
-      } else {
-        setReadLabel(value.label);
-      }
+      const newValue = parseItem({ ...value });
+      setReadLabel(newValue.label);
+      props.onChange?.(newValue);
     } else {
       setReadLabel(value);
     }
-  }, [props.value]);
+  }, []);
   useEffect(() => {
     //依赖项数据发生变化后 清空当前值
     setInit(true); //第一次不渲染
@@ -109,21 +116,7 @@ export default function SearchSelect<
       ret = await fetchOptions(get_params);
     }
     //处理label显示 可以支持模板显示
-    const optionsx = ret?.data?.map((item: any) => {
-      //const newitem: Record<string, any> = {};
-      if (!item[label]) {
-        item[label] = tplComplie(label, { record: item });
-      }
-      const ret = {
-        [valueField]: item[valueField],
-        [label]: item[label],
-        label: item[label],
-      };
-      extColumns?.map((v) => {
-        ret[v] = item[v];
-      });
-      return ret;
-    });
+    const optionsx = ret?.data?.map((item: any) => parseItem(item));
     setOptions(optionsx);
     return optionsx;
   };
