@@ -7,6 +7,7 @@ import {
   InsertRowBelowOutlined,
   InsertRowRightOutlined,
   MenuOutlined,
+  PlusOutlined,
   SettingOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
@@ -597,21 +598,21 @@ export const DevTableColumnTitle = (props) => {
     </SortableItem>
   );
 };
+export const AddTabItem = (props) => {
+  return (
+    <BaseForm
+      title={<Button type="text" icon={<PlusOutlined />} title="添加Tab" />}
+      ctype="tab"
+      extpost={{ actionType: 'addTab' }}
+    />
+  );
+};
 
 export const FormAddTab = (props) => {
   const { pageMenu, marginTop = 16 } = props;
   const { initialState, setInitialState } = useModel('@@initialState');
   return (
     <Space style={{ marginTop }}>
-      <BaseForm
-        title={
-          <Button>
-            <span> + Tab</span>
-          </Button>
-        }
-        ctype="tab"
-        extpost={{ actionType: 'addTab' }}
-      />
       <ColumnsSelector
         key="devcolumns"
         trigger={<Button icon={<UnorderedListOutlined />} />}

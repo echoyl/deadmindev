@@ -14,7 +14,7 @@ import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../dev';
 import { DndContext } from '../dev/dnd-context';
 import { useTableDesigner } from '../dev/table/designer';
-import { FormAddTab, TabColumnTitle } from '../dev/table/title';
+import { AddTabItem, FormAddTab, TabColumnTitle } from '../dev/table/title';
 
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
 import { SaContext, saTableProps } from './table';
@@ -363,6 +363,11 @@ export const SaForm: FC<saFormProps> = (props) => {
                 style={{ width: '100%' }}
                 //defaultActiveKey="0"
                 // centered={true}
+                tabBarExtraContent={
+                  initialState?.settings?.adminSetting?.dev && pdevEnable
+                    ? { right: <AddTabItem /> }
+                    : null
+                }
                 onChange={(activeKey) => {
                   onTabChange?.(activeKey);
                 }}
@@ -377,7 +382,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                     label: devEnable ? <TabColumnTitle uid={thistab?.uid} title={label} /> : label,
                     key: thistab?.uid ? thistab?.uid : index + '', //key为字符串 如果是数字造成tab过多后点击切换失败的bug
                     children: <GetFormFields columns={cl} />,
-                    forceRender: true,
+                    forceRender: true, //如果关闭，其它tab的数据不会传输
                     ...tabs?.[index]?.tab?.props,
                   };
                 })}
