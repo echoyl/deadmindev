@@ -1,7 +1,13 @@
 import { saFormTabColumnsType, tplComplie, uid } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
-import { CopyOutlined, ImportOutlined, RollbackOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CopyOutlined,
+  EyeOutlined,
+  ImportOutlined,
+  RollbackOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { ActionType } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Space, Tooltip } from 'antd';
@@ -9,6 +15,8 @@ import { useRef, useContext } from 'react';
 import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 import tableSet from '@/components/Sadmin/dev/vars/menu/set';
+import TableFromBread from '@/components/Sadmin/tableFromBread';
+import FormFromBread from '@/components/Sadmin/formFromBread';
 
 export const MenuFormColumn: saFormTabColumnsType = [
   {
@@ -435,6 +443,46 @@ export default () => {
               accept: '.sql',
             },
             afterAction: reload,
+          },
+          {
+            domtype: 'button',
+            action: 'drawer',
+            btn: { size: 'small', tooltip: '预览', icon: <EyeOutlined />, text: '' },
+            if: '{{!record?.status && record?.page_type == "table"}}',
+            modal: {
+              title: '{{record.title + " - 预览"}}',
+              drawerProps: {
+                width: 1200,
+              },
+              childrenRender: (record) => (
+                <TableFromBread type="drawer" menu_page_id={record?.id} alwaysenable={true} />
+              ),
+            },
+          },
+          {
+            domtype: 'button',
+            action: 'drawer',
+            btn: { size: 'small', tooltip: '预览', icon: <EyeOutlined />, text: '' },
+            if: '{{!record?.status && record?.page_type == "form"}}',
+            modal: {
+              title: '{{record.title + " - 预览"}}',
+              drawerProps: {
+                width: 1200,
+              },
+              childrenRender: (record) => (
+                <FormFromBread
+                  menu_page_id={record?.id}
+                  fieldProps={{
+                    props: {
+                      submitter: 'dom',
+                      msgcls: () => {
+                        return true;
+                      },
+                    },
+                  }}
+                />
+              ),
+            },
           },
         ],
       },
