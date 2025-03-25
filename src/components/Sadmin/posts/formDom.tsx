@@ -366,6 +366,10 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       }
       if (v.valueType == 'group') {
         v.rowProps = { gutter: 16 };
+        if (!v.title) {
+          //没有title的时候表示开发模式下的分组 减少向下的边距
+          v.fieldProps.titleStyle = { marginBlockEnd: 16 };
+        }
       } else {
         //新增如果是手机端下item项的宽度设置
         if (isMobile) {
