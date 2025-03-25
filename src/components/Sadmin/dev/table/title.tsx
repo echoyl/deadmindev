@@ -57,7 +57,7 @@ export const useDesignerCss = createStyles(({ token }) => {
         pointerEvents: 'none',
         '& > .general-schema-designer-icons': {
           position: 'absolute',
-          top: 2,
+          top: 3,
           right: 2,
           lineHeight: '16px',
           pointerEvents: 'all',
@@ -572,11 +572,17 @@ export const DevTableColumnTitle = (props) => {
       <div className={classNames('general-schema-designer', dstyles.overrideAntdCSS)}>
         <div className={'general-schema-designer-icons'}>
           <Space size={3} align={'center'}>
-            <DragHandler>
-              <DragOutlined role="button" aria-label={'drag-handler'} />
-            </DragHandler>
             <SchemaSettingsDropdown
-              title={<MenuOutlined role="button" style={{ cursor: 'pointer' }} />}
+              title={
+                <DragHandler>
+                  <MenuOutlined
+                    role="button"
+                    style={{ cursor: 'pointer' }}
+                    aria-label={'drag-handler'}
+                    title="右键菜单，长按拖动排序"
+                  />
+                </DragHandler>
+              }
               items={items}
             />
           </Space>
@@ -593,10 +599,10 @@ export const DevTableColumnTitle = (props) => {
 };
 
 export const FormAddTab = (props) => {
-  const { pageMenu } = props;
+  const { pageMenu, marginTop = 16 } = props;
   const { initialState, setInitialState } = useModel('@@initialState');
   return (
-    <Space style={{ marginTop: 16 }}>
+    <Space style={{ marginTop }}>
       <BaseForm
         title={
           <Button>

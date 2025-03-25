@@ -168,7 +168,7 @@ export const SchemaSettingsDropdown: React.FC<SchemaSettingsProps> = (props) => 
       <Dropdown
         open={visible}
         onOpenChange={changeMenu}
-        trigger={['click']}
+        trigger={['contextMenu']}
         // overlayClassName={css`
         //   .ant-dropdown-menu-item-group-list {
         //     max-height: 300px;
