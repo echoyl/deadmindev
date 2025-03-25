@@ -2,7 +2,7 @@ import { isUndefined } from 'lodash';
 import React, { FC, useCallback, useContext, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isBool } from '../checkers';
-import { getBread, getFromObject, tplComplie } from '../helpers';
+import { getBread, getFromObject, getMenuDataById, tplComplie } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
 import { useModel } from '@umijs/max';
 
@@ -14,6 +14,7 @@ const TableFromBread: FC<{
   type?: 'drawer' | 'page'; //列表所在页面类型.如果是drawer selectdom会设置在footer
   scrollHeight?: number | string; //外部高度
   contentRender?: any;
+  menu_page_id?: number; //引用已有菜单的id
 }> = (props) => {
   const {
     fieldProps = { props: {} },
@@ -23,6 +24,7 @@ const TableFromBread: FC<{
     type = 'page',
     contentRender,
     scrollHeight = 400,
+    menu_page_id = 0,
   } = props;
   //console.log('fieldProps', fieldProps);
   const { formRef } = useContext(SaContext);
@@ -42,19 +44,23 @@ const TableFromBread: FC<{
   const post_key = getFromObject(record, fieldProps.local_key);
   //console.log('getBread', fieldProps.path);
   const { initialState } = useModel('@@initialState');
-  const bread = getBread(fieldProps.path, initialState?.currentUser);
-  //console.log('fieldProps.props is', JSON.stringify(fieldProps.props), bread);
-  if (bread) {
-    const { data: v_data } = bread;
-    fieldProps.props = {
-      ...fieldProps.props,
-      ...v_data,
-      ...readonlyProps,
-      //paramExtra: { [fieldProps.foreign_key]: post_key },
-      //postExtra: { [fieldProps.foreign_key]: post_key ? post_key : 0 },
-      pageMenu: bread,
-    };
-    //log('saformtabolex', v);
+  if (fieldProps.path || menu_page_id) {
+    const bread = fieldProps.path
+      ? getBread(fieldProps.path, initialState?.currentUser)
+      : getMenuDataById(initialState?.currentUser?.menuData, menu_page_id);
+    //console.log('fieldProps.props is', JSON.stringify(fieldProps.props), bread);
+    if (bread) {
+      const { data: v_data } = bread;
+      fieldProps.props = {
+        ...fieldProps.props,
+        ...v_data,
+        ...readonlyProps,
+        //paramExtra: { [fieldProps.foreign_key]: post_key },
+        //postExtra: { [fieldProps.foreign_key]: post_key ? post_key : 0 },
+        pageMenu: bread,
+      };
+      //log('saformtabolex', v);
+    }
   }
 
   const paramExtra = {

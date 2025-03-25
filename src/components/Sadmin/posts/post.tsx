@@ -152,7 +152,7 @@ export const SaForm: FC<saFormProps> = (props) => {
     //   //console.log('form get no request', url, detail);
     //   return {};
     // }
-    if (props.formProps?.initialValues || !url) {
+    if (props.formProps?.initialValues || !url || url.replace('/show', '') == '') {
       //有初始化值 则不请求后台数据
       const ndetail = props.formProps?.initialValues ? props.formProps?.initialValues : {};
       //console.log('ndetail', ndetail);
@@ -246,7 +246,7 @@ export const SaForm: FC<saFormProps> = (props) => {
     >
       <DndContext>
         {initialState?.settings?.adminSetting?.dev && pdevEnable ? (
-          <FormAddTab pageMenu={pageMenu} />
+          <FormAddTab pageMenu={pageMenu} marginTop={pageType != 'page' ? 0 : 16} />
         ) : null}
         {setting?.steps_form ? (
           <StepsForm

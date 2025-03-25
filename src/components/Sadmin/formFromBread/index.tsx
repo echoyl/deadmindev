@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react';
 import { isBool, isUndefined } from '../checkers';
-import { getBread, tplComplie } from '../helpers';
+import { getBread, getMenuDataById, tplComplie } from '../helpers';
 import { SaForm } from '../posts/post';
 import { SaContext } from '../posts/table';
 import { useModel } from '@umijs/max';
@@ -11,8 +11,16 @@ const FormFromBread: FC<{
   readonly?: string | boolean; //支持条件判断
   currentRow?: { [key: string]: any };
   contentRender?: any;
+  menu_page_id?: number; //引用已有菜单的id
 }> = (props) => {
-  const { fieldProps, record, readonly, currentRow, contentRender } = props;
+  const {
+    fieldProps = { props: {} },
+    record,
+    readonly,
+    currentRow,
+    contentRender,
+    menu_page_id,
+  } = props;
   const readonly_result = isBool(readonly)
     ? readonly
     : isUndefined(readonly)
@@ -22,33 +30,37 @@ const FormFromBread: FC<{
     ? { addable: false, editable: false, deleteable: false, checkEnable: false }
     : { addable: true, editable: true, deleteable: true, checkEnable: true };
   const { initialState } = useModel('@@initialState');
-  const bread = getBread(fieldProps.path, initialState?.currentUser);
-  if (bread) {
-    const { data: v_data } = bread;
-    //如果有path的bread的话 读取菜单的设置
-    const _readonlyProps = !isUndefined(readonly)
-      ? readonlyProps
-      : {
-          addable: v_data.addable,
-          editable: v_data.editable,
-          deleteable: v_data.deleteable,
-          checkEnable: v_data.deleteable,
-        };
-    //处理url
-    const url =
-      (v_data.postUrl ? v_data.postUrl : v_data.url + '/show') +
-      (currentRow?.id ? '?id=' + currentRow?.id : '');
-    fieldProps.props = {
-      ...fieldProps.props,
-      ...v_data,
-      ..._readonlyProps,
-      url,
-      formProps: { ...fieldProps.props?.formProps, contentRender },
-      pageMenu: bread,
-      //paramExtra: { [fieldProps.foreign_key]: record[fieldProps.local_key] },
-    };
-    //log('saformtabolex', v);
-    //console.log('SaForm props', fieldProps);
+  if (fieldProps.path || menu_page_id) {
+    const bread = fieldProps.path
+      ? getBread(fieldProps.path, initialState?.currentUser)
+      : getMenuDataById(initialState?.currentUser?.menuData, menu_page_id);
+    if (bread) {
+      const { data: v_data } = bread;
+      //如果有path的bread的话 读取菜单的设置
+      const _readonlyProps = !isUndefined(readonly)
+        ? readonlyProps
+        : {
+            addable: v_data.addable,
+            editable: v_data.editable,
+            deleteable: v_data.deleteable,
+            checkEnable: v_data.deleteable,
+          };
+      //处理url
+      const url =
+        (v_data.postUrl ? v_data.postUrl : v_data.url + '/show') +
+        (currentRow?.id ? '?id=' + currentRow?.id : '');
+      fieldProps.props = {
+        ...fieldProps.props,
+        ...v_data,
+        ..._readonlyProps,
+        url,
+        formProps: { ...fieldProps.props?.formProps, contentRender },
+        pageMenu: bread,
+        //paramExtra: { [fieldProps.foreign_key]: record[fieldProps.local_key] },
+      };
+      //log('saformtabolex', v);
+      //console.log('SaForm props', fieldProps);
+    }
   }
   return <SaForm {...fieldProps.props} showTabs={false} align="left" pageType="drawer" />;
 };
