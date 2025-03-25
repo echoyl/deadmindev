@@ -200,11 +200,17 @@ export const DevPanelColumnTitle = (props) => {
       <div className={classNames('general-schema-designer', styles.overrideAntdCSS)}>
         <div className={'general-schema-designer-icons'}>
           <Space size={3} align={'center'}>
-            <DragHandler>
-              <DragOutlined role="button" aria-label={'drag-handler'} />
-            </DragHandler>
             <SchemaSettingsDropdown
-              title={<MenuOutlined role="button" style={{ cursor: 'pointer' }} />}
+              title={
+                <DragHandler>
+                  <MenuOutlined
+                    role="button"
+                    style={{ cursor: 'pointer' }}
+                    aria-label={'drag-handler'}
+                    title="右键菜单，长按拖动排序"
+                  />
+                </DragHandler>
+              }
               items={items}
             />
           </Space>
