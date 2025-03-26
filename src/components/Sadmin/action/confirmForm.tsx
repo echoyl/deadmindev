@@ -279,7 +279,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
         setOpen(open);
         onOpen?.(open);
       }}
-      drawerProps={drawerProps}
+      drawerProps={{ styles: { body: { paddingTop: 8 } }, ...drawerProps }}
     >
       {inner}
     </ButtonDrawer>

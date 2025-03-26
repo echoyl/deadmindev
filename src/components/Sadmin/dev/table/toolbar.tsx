@@ -376,6 +376,7 @@ export const ToolBarMenu = (props) => {
                     }
                     width={1000}
                     title="关联"
+                    drawerProps={{ styles: { body: { padding: 0 } } }}
                   >
                     <ModelRelation model={{ id: pageMenu.model_id }} />
                   </ButtonDrawer>
