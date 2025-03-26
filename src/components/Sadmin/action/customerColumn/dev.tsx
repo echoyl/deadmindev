@@ -263,6 +263,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                   { label: 'actions', value: 'actions' },
                   { label: 'qrcode', value: 'qrcode' },
                   { label: 'tag', value: 'tag' },
+                  { label: 'Badge', value: 'Badge' },
                   { label: 'table', value: 'table' },
                   { label: '时间长度', value: 'dayjsfrom' },
                 ],

@@ -43,7 +43,7 @@ const CustomerColumnRender = (props) => {
   } = props;
   const { initialState } = useModel('@@initialState');
   //console.log('props ', props);
-  const { actionRef, formRef, columnData, url, saTableContext } = useContext(SaContext);
+  const { actionRef, formRef, columnData, url, saTableContext, searchData } = useContext(SaContext);
 
   //const formValue = formRef?.current?.getFieldsValue?.(true);
   const [record, setRecord] = useState(orecord);
@@ -115,7 +115,7 @@ const CustomerColumnRender = (props) => {
           <QRCode key={i} value={tpl} size={sizeArr[size]} errorLevel={errorLevel} bgColor="#fff" />
         );
       }
-    } else if (item.domtype == 'tag') {
+    } else if (item.domtype == 'tag' || item.domtype == 'Badge') {
       //console.log('tag text', text, item);
       return (
         <ItemTags
@@ -126,6 +126,8 @@ const CustomerColumnRender = (props) => {
           bordered={item.bordered}
           icon={item.icon}
           ellipsis={item.ellipsis}
+          type={item.domtype}
+          data={type == 'table' ? searchData : record}
         />
       );
     } else if (item.domtype == 'table') {
