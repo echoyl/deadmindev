@@ -2,6 +2,7 @@ import ConfirmForm from '@/components/Sadmin/action/confirmForm';
 import { inArray } from '@/components/Sadmin/checkers';
 import { saReload } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
+import { tplComplie } from '@/components/Sadmin/helpers';
 import { SaContext } from '@/components/Sadmin/posts/table';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
@@ -155,6 +156,9 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
                 treeLine: { showLeafIcon: true },
                 treeDefaultExpandAll: true,
                 placeholder: '不选择的话创建到根',
+                treeTitleRender: (item) => {
+                  return item ? (item.label ? tplComplie(item.label) : item.label) : '-';
+                },
               },
             },
           ],
