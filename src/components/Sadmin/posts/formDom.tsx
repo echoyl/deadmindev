@@ -403,6 +403,13 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.fieldProps.placeholder = tplComplie(v.fieldProps.placeholder, { intl });
       }
 
+      //增加如果是date datetime digit类型没有设置width的话自动加上100%
+      if (v.valueType == 'date' || v.valueType == 'dateTime' || v.valueType == 'digit') {
+        if (!v.width) {
+          v.width = '100%';
+        }
+      }
+
       return v;
     }
 
