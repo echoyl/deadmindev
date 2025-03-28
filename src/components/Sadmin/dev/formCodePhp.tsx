@@ -12,8 +12,12 @@ const FormCodePhp = (props: Record<string, any>) => {
     request
       .get('dev/model/getFormCodeByColumns', { params: { id: pageMenu.model_id } })
       .then((res) => {
-        const { data } = res;
-        setText(data.code);
+        const { data, code, msg } = res;
+        if (!code) {
+          setText(data.code);
+        } else {
+          setText(msg);
+        }
       });
     return;
   };
