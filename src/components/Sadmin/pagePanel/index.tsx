@@ -9,7 +9,6 @@ import { Bar, Column, Line, Pie } from '@ant-design/plots';
 import { App, Avatar, Button, Col, Flex, Row, Skeleton, Table, Tabs } from 'antd';
 import dayjs from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
-import { TampShow } from '../map/tmap';
 import { getFormFieldColumns } from '../posts/formDom';
 import { getTableColumns } from '../posts/tableColumns';
 import styles from './style.less';
@@ -17,6 +16,7 @@ import AreaMap from '../dev/panel/items/areaMap';
 import { sum } from 'lodash';
 import numeral from 'numeral';
 import { PageContainer404 } from '../404';
+import { MapShow } from '../map';
 export const PagePanelHeader: FC = (props) => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState;
@@ -420,7 +420,7 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
           } else if (chart.type == 'mapDots') {
             return (
               <ProCard title={chart.title} key={k + 'mapDots'} style={{ height: '100%' }}>
-                <TampShow {...chart.props} dots={chart.data} />
+                <MapShow {...chart.props} dots={chart.data} />
               </ProCard>
             );
           } else {

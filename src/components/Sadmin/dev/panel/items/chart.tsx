@@ -1,10 +1,10 @@
 import { isArr } from '@/components/Sadmin/checkers';
-import { TampShow } from '@/components/Sadmin/map/tmap';
 import { Area, Bar, Column, Line, Pie } from '@ant-design/plots';
 
 import { cloneDeep, sum } from 'lodash';
 import numeral from 'numeral';
 import AreaMap from './areaMap';
+import { MapShow } from '@/components/Sadmin/map';
 const PanelItemChart = (props: any) => {
   const { type, data, config: oconfig, ...retProps } = props;
   //const { type } = chart;
@@ -121,7 +121,7 @@ const PanelItemChart = (props: any) => {
   } else if (type == 'area') {
     return <Area data={data} {...config} />;
   } else if (type == 'mapDots') {
-    return <TampShow {...config} dots={isArr(data) ? data : []} />;
+    return <MapShow {...config} dots={isArr(data) ? data : []} />;
   } else if (type == 'areaMap') {
     const configx = {
       map: {

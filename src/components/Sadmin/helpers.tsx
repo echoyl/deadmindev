@@ -23,7 +23,6 @@ import { FormCalendarRender } from './formCalendar';
 import { Guiges } from './guige';
 import JsonEditor from './jsonEditor';
 import JsonForm from './jsonForm';
-import { TampShow, TmapInput } from './map/tmap';
 import { ModalSelectRender } from './modalSelect';
 import SaOptions, { SaEditorTable } from './options';
 import { PcaRender, getPca } from './pca';
@@ -36,7 +35,6 @@ import { isString } from 'lodash';
 import SaAutoCompleteMap from './valueTypeMap/autoComplete';
 import { DropdownActionMap } from './valueTypeMap/dropdownAction';
 import { ColorPickerMap, ColorPickerRenderMap } from './valueTypeMap/colorPicker';
-import { BampShow, BmapInput } from './map/bmap';
 import {
   AliyunVideoRender,
   UploaderRender,
@@ -46,6 +44,7 @@ import {
 } from './valueTypeMap';
 import SaSliderMap from './valueTypeMap/saSlider';
 import SearchSelect from './valueTypeMap/search/select';
+import { MapInput, MapShow } from './map';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -106,6 +105,8 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'tmapShow'
   | 'bmapInput'
   | 'bmapShow'
+  | 'MapInput'
+  | 'MapShow'
   | 'pca'
   | 'permGroup'
   | 'debounceSelect'
@@ -203,26 +204,38 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   tmapInput: {
     render: (text) => text,
     renderFormItem: (text, props) => {
-      return <TmapInput {...props.fieldProps} />;
+      return <MapInput {...props.fieldProps} />;
     },
   },
   tmapShow: {
     render: (text) => {
       //console.log(text);
       text = getJson(text, {});
-      return <TampShow {...text} />;
+      return <MapShow {...text} />;
     },
   },
   bmapInput: {
     render: (text) => text,
     renderFormItem: (text, props) => {
-      return <BmapInput {...props.fieldProps} />;
+      return <MapInput {...props.fieldProps} />;
     },
   },
   bmapShow: {
     render: (text) => {
       text = getJson(text, {});
-      return <BampShow {...text} />;
+      return <MapShow {...text} />;
+    },
+  },
+  MapInput: {
+    render: (text) => text,
+    renderFormItem: (text, props) => {
+      return <MapInput {...props.fieldProps} />;
+    },
+  },
+  MapShow: {
+    render: (text) => {
+      text = getJson(text, {});
+      return <MapShow {...text} />;
     },
   },
   pca: {

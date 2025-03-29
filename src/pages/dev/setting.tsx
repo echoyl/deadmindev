@@ -146,8 +146,34 @@ export default () => {
               {
                 valueType: 'group',
                 columns: [
+                  {
+                    title: '地图类型',
+                    dataIndex: 'map_type',
+                    valueType: 'select',
+                    fieldProps: {
+                      options: [
+                        { label: '天地图', value: 'tianmap' },
+                        { label: '腾讯地图', value: 'tmap' },
+                        { label: '百度地图', value: 'bmap' },
+                        { label: '高德地图', value: 'amap' },
+                      ],
+                    },
+                    colProps: { span: 24 },
+                    formItemProps: {
+                      extra:
+                        '默认使用腾讯地图，如果需要使用其他地图，请先申请key，并填写到下方，建议使用天地图暂时没有授权问题',
+                    },
+                  },
+                ],
+              },
+              {
+                valueType: 'group',
+                columns: [
                   { title: '腾讯地图key', dataIndex: 'tmap_key', colProps: { span: 12 } },
                   { title: '百度地图key', dataIndex: 'bmap_key', colProps: { span: 12 } },
+                  { title: '天地图key', dataIndex: 'tianmap_key', colProps: { span: 12 } },
+                  { title: '高德地图key', dataIndex: 'amap_key', colProps: { span: 6 } },
+                  { title: '高德地图安全密钥', dataIndex: 'amap_skey', colProps: { span: 6 } },
                 ],
               },
             ],
