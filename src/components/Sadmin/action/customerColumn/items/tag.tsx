@@ -1,4 +1,4 @@
-import { isObj } from '@/components/Sadmin/checkers';
+import { isArr, isObj } from '@/components/Sadmin/checkers';
 import { getFromObject } from '@/components/Sadmin/helpers';
 import { SaContext } from '@/components/Sadmin/posts/table';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
@@ -57,7 +57,7 @@ const ItemTags: FC<{
       {tags.map((tag, i) => {
         let xtag = tag;
         if (!isObj(tag)) {
-          const opt = options?.find((v) => v.id == tag);
+          const opt = isArr(options) ? options?.find((v) => v.id == tag) : false;
           xtag = opt ? opt : { color, title: tag, icon, status: 'success' };
         }
         return xtag.title ? (
