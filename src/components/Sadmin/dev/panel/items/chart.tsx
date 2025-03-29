@@ -6,7 +6,7 @@ import numeral from 'numeral';
 import AreaMap from './areaMap';
 import { MapShow } from '@/components/Sadmin/map';
 const PanelItemChart = (props: any) => {
-  const { type, data, config: oconfig, ...retProps } = props;
+  const { type, data, config: oconfig, propsx, ...retProps } = props;
   //const { type } = chart;
   const config = cloneDeep(oconfig);
   const getField = (name: string) => {
@@ -121,7 +121,7 @@ const PanelItemChart = (props: any) => {
   } else if (type == 'area') {
     return <Area data={data} {...config} />;
   } else if (type == 'mapDots') {
-    return <MapShow {...config} dots={isArr(data) ? data : []} />;
+    return <MapShow {...config} {...propsx} dots={isArr(data) ? data : []} />;
   } else if (type == 'areaMap') {
     const configx = {
       map: {

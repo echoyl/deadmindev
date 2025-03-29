@@ -8,6 +8,7 @@ import { PushpinOutlined } from '@ant-design/icons';
 import Tmap from './tmap';
 import Bmap from './bmap';
 import Amap from './amap';
+import { getJson } from '../checkers';
 const loadScript = (url: string): Promise<void> => {
   return new Promise(function (resolve, reject) {
     //log('tmap init now');
@@ -281,6 +282,21 @@ export const MapInput: FC = (props: MapInputProps) => {
       </Modal>
     </>
   );
+};
+
+export const MapinputRender = {
+  render: (text) => text,
+  renderFormItem: (text, props) => {
+    return <MapInput {...props.fieldProps} />;
+  },
+};
+
+export const MapShowRender = {
+  render: (text) => {
+    //console.log(text);
+    text = getJson(text, {});
+    return <MapShow {...text} />;
+  },
 };
 
 export default Map;

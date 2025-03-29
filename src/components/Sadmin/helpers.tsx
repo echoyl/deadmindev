@@ -44,7 +44,7 @@ import {
 } from './valueTypeMap';
 import SaSliderMap from './valueTypeMap/saSlider';
 import SearchSelect from './valueTypeMap/search/select';
-import { MapInput, MapShow } from './map';
+import { MapShowRender, MapinputRender } from './map';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -105,8 +105,8 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'tmapShow'
   | 'bmapInput'
   | 'bmapShow'
-  | 'MapInput'
-  | 'MapShow'
+  | 'mapInput'
+  | 'mapShow'
   | 'pca'
   | 'permGroup'
   | 'debounceSelect'
@@ -201,43 +201,12 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       return <JsonEditor {...props.fieldProps} />;
     },
   },
-  tmapInput: {
-    render: (text) => text,
-    renderFormItem: (text, props) => {
-      return <MapInput {...props.fieldProps} />;
-    },
-  },
-  tmapShow: {
-    render: (text) => {
-      //console.log(text);
-      text = getJson(text, {});
-      return <MapShow {...text} />;
-    },
-  },
-  bmapInput: {
-    render: (text) => text,
-    renderFormItem: (text, props) => {
-      return <MapInput {...props.fieldProps} />;
-    },
-  },
-  bmapShow: {
-    render: (text) => {
-      text = getJson(text, {});
-      return <MapShow {...text} />;
-    },
-  },
-  MapInput: {
-    render: (text) => text,
-    renderFormItem: (text, props) => {
-      return <MapInput {...props.fieldProps} />;
-    },
-  },
-  MapShow: {
-    render: (text) => {
-      text = getJson(text, {});
-      return <MapShow {...text} />;
-    },
-  },
+  tmapInput: MapinputRender,
+  tmapShow: MapShowRender,
+  bmapInput: MapinputRender,
+  bmapShow: MapShowRender,
+  mapInput: MapinputRender,
+  mapShow: MapShowRender,
   pca: {
     render: (text, props) => {
       //console.log('pca props', props);
