@@ -1,5 +1,5 @@
-import FormCodePhp from './test/formCodePhp';
+import Map from './test/map/index';
 
 export default function App() {
-  return <FormCodePhp />;
+  return <Map />;
 }
