@@ -1,5 +1,6 @@
 import request from '@/components/Sadmin/lib/request';
 import {
+  CodeOutlined,
   CopyOutlined,
   DeleteColumnOutlined,
   DragOutlined,
@@ -84,15 +85,23 @@ export const useDesignerCss = createStyles(({ token }) => {
   };
 });
 
-const getValue = (uid, pageMenu, type) => {
+const getValue = (uid, pageMenu, type, dataName = 'schema') => {
   //无uid表示插入列
   if (!uid) {
     return {};
   }
-  const config =
-    type == 'table' || type == 'toolbar'
-      ? pageMenu?.schema?.table_config
-      : pageMenu?.schema?.form_config;
+  let config;
+  let config_name = 'config';
+  if (dataName == 'schema') {
+    config =
+      type == 'table' || type == 'toolbar'
+        ? pageMenu?.schema?.table_config
+        : pageMenu?.schema?.form_config;
+  } else {
+    config = type == 'table' || type == 'toolbar' ? pageMenu?.data?.tableColumns : pageMenu?.data;
+    config_name = 'formColumns';
+  }
+
   const pconfig = getJson(config, []);
   if (type == 'table' || type == 'toolbar') {
     return pconfig?.find((v) => v.uid == uid);
@@ -105,7 +114,7 @@ const getValue = (uid, pageMenu, type) => {
         //tab支持编辑修改其属性
         value = tab;
       } else {
-        tab.config?.map((group) => {
+        tab[config_name]?.map((group) => {
           if (group.uid == uid) {
             value = group;
           } else {
@@ -268,6 +277,33 @@ const BaseForm = (props) => {
         setJson?.(data?.data);
       }}
       saFormProps={{ devEnable: false }}
+      width={1000}
+    />
+  );
+};
+
+const ItemJson = (props) => {
+  const { title, uid, type } = props;
+  const [value, setValue] = useState<Record<string, any>>();
+  const { json = {} } = useContext(DevJsonContext);
+  const {
+    tableDesigner: { pageMenu },
+  } = useContext(SaContext);
+  useEffect(() => {
+    const pageMenuData =
+      pageMenu && Object.keys(pageMenu)?.length > 0
+        ? pageMenu
+        : { data: json?.config?.form_config };
+    setValue({ json: getValue(uid, pageMenuData, type, 'data') });
+  }, [pageMenu]);
+
+  return (
+    <ConfirmForm
+      trigger={<div style={{ width: '100%' }}>{title}</div>}
+      value={value}
+      formColumns={[{ dataIndex: 'json', valueType: 'jsonEditor' }]}
+      saFormProps={{ devEnable: false, showTabs: false }}
+      readonly={true}
       width={1000}
     />
   );
@@ -506,6 +542,23 @@ export const DevTableColumnTitle = (props) => {
     label: <MenuItemSwtich name="required" title="必填" uid={uid} />,
     key: 'formItemRequired',
   };
+  const itemJson: ItemType = {
+    label: (
+      <MenuLabel>
+        <ItemJson
+          title={
+            <Space>
+              <CodeOutlined />
+              <span>Json</span>
+            </Space>
+          }
+          uid={uid}
+          type={type}
+        />
+      </MenuLabel>
+    ),
+    key: 'itemJson',
+  };
 
   const items: ItemType[] =
     type == 'tab'
@@ -545,6 +598,7 @@ export const DevTableColumnTitle = (props) => {
               baseform,
               addCol,
               copyToMenu,
+              itemJson,
               {
                 type: 'divider',
               },

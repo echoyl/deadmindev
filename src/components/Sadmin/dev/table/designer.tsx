@@ -22,6 +22,7 @@ export type tableDesignerInstance = {
   delete?: (data: { [key: string]: any }) => void;
   devEnable?: boolean; //开启的必要条件
   sourceData?: any;
+  [key: string]: any;
 };
 
 export function useTableDesigner(props: tableDesignerInstance) {
