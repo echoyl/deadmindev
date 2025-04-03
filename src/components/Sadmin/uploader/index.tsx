@@ -11,6 +11,7 @@ import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { css } from '@emotion/css';
 import { SaDevContext } from '../dev';
 import { isArr, isHttpLink, isStr } from '../checkers';
+import ImgCrop, { ImgCropProps } from 'antd-img-crop';
 
 interface Props {
   max?: number;
@@ -21,6 +22,8 @@ interface Props {
   fieldProps?: UploadProps;
   buttonType?: 'card' | 'table' | 'text';
   readonly?: boolean;
+  crop?: boolean;
+  cropProps?: ImgCropProps;
 }
 
 interface DraggableUploadListItemProps {
@@ -84,6 +87,8 @@ const Uploader: React.FC<Props> = (props) => {
     },
     buttonType = 'card',
     readonly = false,
+    crop = false,
+    cropProps = {},
   } = props;
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const { notificationApi, setting } = useContext(SaDevContext);
@@ -249,37 +254,45 @@ const Uploader: React.FC<Props> = (props) => {
   const { useToken } = theme;
 
   const { token } = useToken();
+  const beforeCrop = () => {
+    if (type != 'image' || !crop) {
+      return false;
+    }
+    return;
+  };
 
   return (
     <>
       {max == 1 || readonly ? (
-        <Upload
-          {...fieldProps}
-          headers={headers}
-          listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
-          className={`sa-upload-list sa-upload-list-${buttonType} sa-upload-list-${readonly ? 'readonly' : 'edit'}`}
-          showUploadList={
-            fileList?.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
-          }
-          action={action}
-          fileList={fileList?.length ? [fileList[0]] : []}
-          onChange={fileChange}
-          itemRender={(originNode) => {
-            return (
-              <Badge
-                color={token.colorPrimary}
-                count={fileList?.length > 1 && readonly ? fileList?.length : 0}
-                size="small"
-                offset={[-2, 2]}
-                styles={{ root: { height: '100%', width: '100%' } }}
-              >
-                {originNode}
-              </Badge>
-            );
-          }}
-        >
-          {(fileList?.length && !loading) || readonly ? null : uploadButtonOne}
-        </Upload>
+        <ImgCrop aspectSlider={true} beforeCrop={beforeCrop} {...cropProps}>
+          <Upload
+            {...fieldProps}
+            headers={headers}
+            listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
+            className={`sa-upload-list sa-upload-list-${buttonType} sa-upload-list-${readonly ? 'readonly' : 'edit'}`}
+            showUploadList={
+              fileList?.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
+            }
+            action={action}
+            fileList={fileList?.length ? [fileList[0]] : []}
+            onChange={fileChange}
+            itemRender={(originNode) => {
+              return (
+                <Badge
+                  color={token.colorPrimary}
+                  count={fileList?.length > 1 && readonly ? fileList?.length : 0}
+                  size="small"
+                  offset={[-2, 2]}
+                  styles={{ root: { height: '100%', width: '100%' } }}
+                >
+                  {originNode}
+                </Badge>
+              );
+            }}
+          >
+            {(fileList?.length && !loading) || readonly ? null : uploadButtonOne}
+          </Upload>
+        </ImgCrop>
       ) : (
         <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
           <SortableContext
