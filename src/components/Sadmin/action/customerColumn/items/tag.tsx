@@ -58,9 +58,9 @@ const ItemTags: FC<{
         let xtag = tag;
         if (!isObj(tag)) {
           const opt = isArr(options) ? options?.find((v) => v.id == tag) : false;
-          xtag = opt ? opt : { color, title: tag, icon, status: 'success' };
+          xtag = opt ? opt : { color, title: tag == 0 ? '0' : tag, icon, status: 'success' };
         }
-        return xtag.title ? (
+        return xtag.title !== '' ? (
           type == 'tag' ? (
             <ItemTag key={i} {...xtag} bordered={bordered} ellipsis={ellipsis} />
           ) : xtag.status ? (
