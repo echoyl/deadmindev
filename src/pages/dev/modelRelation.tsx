@@ -38,7 +38,7 @@ export const getModelColumnsTree = (id: number, allModels, pid: string = '', lev
       level,
     ),
   }));
-  return [...fields, ...guanlian];
+  return [...fields, ...(guanlian || [])];
 };
 
 export default (props) => {
