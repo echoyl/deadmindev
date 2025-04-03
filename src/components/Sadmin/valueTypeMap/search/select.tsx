@@ -3,7 +3,7 @@ import { ProFormSelect } from '@ant-design/pro-components';
 import { useLocation } from '@umijs/max';
 import type { SelectProps } from 'antd/es/select';
 import React, { useEffect, useState } from 'react';
-import { isObj, isStr, isUndefined } from '../../checkers';
+import { isArr, isObj, isStr, isUndefined } from '../../checkers';
 import { tplComplie, uid } from '../../helpers';
 import _ from 'lodash';
 export interface DebounceSelectProps<ValueType = any>
@@ -53,13 +53,21 @@ export default function SearchSelect<
   useEffect(() => {
     //初始化处理一次label 如果label可能是模板
     const { value } = props;
-    if (value && isObj(value)) {
-      const newValue = parseItem({ ...value });
-      setReadLabel(newValue.label);
-      props.onChange?.(newValue);
-    } else {
-      setReadLabel(value);
+    if (value) {
+      if (isArr(value)) {
+        //当值时数组是多选
+        const newValue = value.map((item) => parseItem({ ...item }));
+        setReadLabel(newValue.map((v) => v.label).join(','));
+        props.onChange?.(newValue);
+        return;
+      } else if (isObj(value)) {
+        const newValue = parseItem({ ...value });
+        setReadLabel(newValue.label);
+        props.onChange?.(newValue);
+        return;
+      }
     }
+    setReadLabel(value);
   }, []);
   useEffect(() => {
     //依赖项数据发生变化后 清空当前值

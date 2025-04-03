@@ -201,7 +201,8 @@ const schemaType = [
 ];
 const formType = [
   { label: '搜索cascader', value: 'search_select' },
-  { label: '搜索select', value: 'searchSelect' },
+  { label: '搜索select - 单选', value: 'searchSelect' },
+  { label: '搜索selects - 多选', value: 'searchSelects' },
   { label: '下拉选择- select', value: 'select' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
   { label: '下拉多选 -selects', value: 'selects' },
@@ -368,7 +369,13 @@ const fieldColumns: saFormColumnsType = [
                     {
                       title: '多语言',
                       dataIndex: 'locale',
-                      colProps: { span: 8 },
+                      colProps: { span: 4 },
+                      valueType: 'switch',
+                    },
+                    {
+                      title: '图片裁切',
+                      dataIndex: 'image_crop',
+                      colProps: { span: 4 },
                       valueType: 'switch',
                     },
                   ],
