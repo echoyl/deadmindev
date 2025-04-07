@@ -16,6 +16,7 @@ const DropdownAction: React.FC = (props: {
   //trigger?: (value: any) => ReactNode;
   afterActionType?: 'reload' | 'goback' | 'none';
   showType?: 'badge' | 'tag' | 'string';
+  disabled?: boolean;
 }) => {
   const { actionRef, columnData, url: tableUrl } = useContext(SaContext);
   const { modalApi, messageApi } = useContext(SaDevContext);
@@ -29,6 +30,7 @@ const DropdownAction: React.FC = (props: {
     callback,
     afterActionType,
     showType = 'badge',
+    disabled = false,
   } = props;
 
   const [key = 'value', label = 'label'] = fieldNames.split(',');
@@ -69,6 +71,7 @@ const DropdownAction: React.FC = (props: {
     <Dropdown
       key={key}
       trigger={['click']}
+      disabled={disabled}
       menu={{
         items: dropdown_items,
         onClick: (event) => {
