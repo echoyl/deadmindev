@@ -28,6 +28,7 @@ const ModalSelect = (props) => {
     page, //新增 直接读取 已有页面的配置
     max = 9,
     value,
+    size = 'default',
   } = props;
   const { formRef } = useContext(SaContext);
   let breadTableColumns = [];
@@ -213,6 +214,7 @@ const ModalSelect = (props) => {
         close={closeItem}
         fieldNames={{ ...defaultFieldNames, ...fieldNames }}
         max={max}
+        size={size}
       />
       <Modal
         width={width}
@@ -253,6 +255,7 @@ const ModalSelectList = (props) => {
     dataName = 'data',
     fieldNames = { avatar: 'avatar', description: 'description', title: 'title' },
     max,
+    size = 'default',
   } = props;
   const { Paragraph } = Typography;
   const { token } = theme.useToken();
@@ -288,6 +291,7 @@ const ModalSelectList = (props) => {
             }
             style={{ height: 98, marginBottom: 10, backgroundColor: token.colorFillQuaternary }}
             className="sa-modal-select-item"
+            size={size}
           />
         );
       })}
