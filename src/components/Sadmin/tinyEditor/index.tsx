@@ -1,8 +1,9 @@
-import { saUpload } from '@/components/Sadmin/lib/request';
+import { messageLoadingKey, saUpload } from '@/components/Sadmin/lib/request';
 import { FC, useContext, useRef, lazy, Suspense } from 'react';
 import './style.less';
 import { SaDevContext } from '../dev';
 import LoadingFullHeight from '@/components/LoadingFullHeight';
+import { message } from '@/components/Sadmin/message';
 
 const Editor = lazy(() =>
   import('@tinymce/tinymce-react').then((module) => ({
@@ -126,10 +127,12 @@ const TinyEditor: FC<{
 
               fd.append('file', file, file.name);
               fd.append('isFile', '1');
-
+              //增加上传的loading
+              message?.loading({ content: '上传中...', duration: 0, key: messageLoadingKey });
               saUpload(fd).then(function (ret) {
                 if (ret.code) {
                   //上传失败
+                  message?.destroy(messageLoadingKey);
                   return;
                 } else {
                   callback(ret.data.src, { title: file.name, text: file.name });
