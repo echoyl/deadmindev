@@ -152,9 +152,9 @@ const CustomerColumnRender = (props) => {
         <Table
           key={'table_' + i}
           dataSource={dataSource}
+          rowKey="id"
           {...item.fieldProps?.value}
           columns={tableColumns}
-          width={'100%'}
         />
       );
     } else if (item.domtype == 'dayjsfrom') {

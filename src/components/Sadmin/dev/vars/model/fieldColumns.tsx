@@ -246,6 +246,8 @@ const fieldColumns: saFormColumnsType = [
     dataIndex: 'columns',
     fieldProps: {
       creatorRecord: { type: 'varchar' },
+      copyIconProps: { tooltipText: '复制' },
+      deleteIconProps: { tooltipText: '删除' },
     },
     columns: [
       {
