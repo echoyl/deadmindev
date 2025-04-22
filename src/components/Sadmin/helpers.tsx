@@ -617,7 +617,7 @@ export const getBread = (path: string, currentUser?: Record<string, any>) => {
     }
   }
 
-  if (path.substring(0, 1) == '/') {
+  if (isStr(path) && path.substring(0, 1) == '/') {
     path = path.substring(1);
   }
   if (breadcrumb['/' + path]) {
