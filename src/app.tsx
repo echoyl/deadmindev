@@ -276,21 +276,19 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
           <WebSocketListen />
           {children}
+          <DevLinks />
           {adminSetting.dev && (
-            <>
-              <DevLinks />
-              <SettingDrawer
-                disableUrlParams
-                enableDarkTheme
-                settings={rest}
-                onSettingChange={(settings) => {
-                  setInitialState((preInitialState) => ({
-                    ...preInitialState,
-                    settings: { ...preInitialState.settings, ...settings },
-                  }));
-                }}
-              />
-            </>
+            <SettingDrawer
+              disableUrlParams
+              enableDarkTheme
+              settings={rest}
+              onSettingChange={(settings) => {
+                setInitialState((preInitialState) => ({
+                  ...preInitialState,
+                  settings: { ...preInitialState.settings, ...settings },
+                }));
+              }}
+            />
           )}
         </ProConfigProvider>
       );

@@ -483,6 +483,175 @@ export default () => {
               },
             ],
           },
+          {
+            title: '悬浮按钮',
+            formColumns: [
+              {
+                dataIndex: ['floatButton', 'shape'],
+                //dataIndex: 'items',
+                title: '按钮形状',
+                valueType: 'select',
+                fieldProps: {
+                  options: [
+                    { label: '圆形', value: 'circle' },
+                    { label: '方形', value: 'square' },
+                  ],
+                },
+              },
+              {
+                dataIndex: ['floatButton', 'items'],
+                //dataIndex: 'items',
+                title: '按钮配置',
+                valueType: 'formList',
+                fieldProps: {
+                  //creatorRecord: { ...defaultBtn },
+                  showtype: 'table',
+                },
+                columns: [
+                  {
+                    valueType: 'group',
+                    columns: [
+                      {
+                        dataIndex: 'icon',
+                        title: 'Icon',
+                        valueType: 'iconSelect',
+                        colProps: { span: 6 },
+                      },
+                      {
+                        dataIndex: 'type',
+                        title: '类型',
+                        valueType: 'select',
+                        fieldProps: {
+                          options: [
+                            { label: '弹出菜单', value: 'floatmenu' },
+                            { label: '弹出图片', value: 'alertimg' },
+                            { label: '链接地址', value: 'link' },
+                          ],
+                        },
+                        colProps: { span: 3 },
+                      },
+
+                      {
+                        valueType: 'dependency',
+                        name: ['type'],
+                        columns: ({ type }: any) => {
+                          if (type == 'floatmenu') {
+                            return [
+                              {
+                                dataIndex: 'menus',
+                                //dataIndex: 'items',
+                                title: '菜单配置',
+                                valueType: 'formList',
+                                colProps: { span: 24 },
+                                columns: [
+                                  {
+                                    valueType: 'group',
+                                    columns: [
+                                      {
+                                        dataIndex: 'icon',
+                                        title: 'Icon',
+                                        valueType: 'iconSelect',
+                                        colProps: { span: 6 },
+                                      },
+                                      {
+                                        dataIndex: 'title',
+                                        title: '名称',
+                                        colProps: { span: 6 },
+                                        fieldProps: {
+                                          placeholder: '请输入名称',
+                                        },
+                                      },
+                                      {
+                                        dataIndex: 'link',
+                                        title: '链接',
+                                        colProps: { span: 6 },
+                                        fieldProps: {
+                                          placeholder: '请输入链接地址',
+                                        },
+                                      },
+                                      {
+                                        dataIndex: 'target',
+                                        title: '打开方式',
+                                        valueType: 'select',
+                                        colProps: { span: 6 },
+                                        fieldProps: {
+                                          options: [
+                                            { label: '当前窗口', value: '_self' },
+                                            { label: '新窗口', value: '_blank' },
+                                          ],
+                                        },
+                                      },
+                                    ],
+                                  },
+                                ],
+                              },
+                            ];
+                          } else if (type == 'alertimg') {
+                            return [
+                              {
+                                valueType: 'group',
+                                columns: [
+                                  {
+                                    dataIndex: 'width',
+                                    title: '宽',
+                                    valueType: 'digit',
+                                    colProps: { span: 8 },
+                                    width: '100%',
+                                  },
+                                  {
+                                    dataIndex: 'height',
+                                    title: '高',
+                                    valueType: 'digit',
+                                    colProps: { span: 8 },
+                                    width: '100%',
+                                  },
+                                  {
+                                    dataIndex: 'img',
+                                    title: '图片',
+                                    valueType: 'uploader',
+                                    fieldProps: {
+                                      buttonType: 'table',
+                                    },
+                                    colProps: { span: 8 },
+                                  },
+                                ],
+                              },
+                            ];
+                          } else if (type == 'link') {
+                            return [
+                              {
+                                valueType: 'group',
+                                columns: [
+                                  {
+                                    dataIndex: 'link',
+                                    title: '链接地址',
+                                    colProps: { span: 8 },
+                                  },
+                                  {
+                                    dataIndex: 'target',
+                                    title: '打开方式',
+                                    valueType: 'select',
+                                    colProps: { span: 8 },
+                                    fieldProps: {
+                                      options: [
+                                        { label: '当前窗口', value: '_self' },
+                                        { label: '新窗口', value: '_blank' },
+                                      ],
+                                    },
+                                  },
+                                ],
+                              },
+                            ];
+                          }
+                          return [];
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
         ]}
         msgcls={async ({ code }) => {
           if (!code) {
@@ -491,7 +660,6 @@ export default () => {
           return;
         }}
       />
-      {setting?.adminSetting?.dev ? null : <DevLinks />}
     </>
   );
 };

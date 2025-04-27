@@ -1,18 +1,12 @@
 import { saFormTabColumnsType, tplComplie, uid } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
-import {
-  CopyOutlined,
-  EyeOutlined,
-  ImportOutlined,
-  RollbackOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
+import { CopyOutlined, EyeOutlined, ImportOutlined, RollbackOutlined } from '@ant-design/icons';
 import { ActionType } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Space, Tooltip } from 'antd';
+import { Space } from 'antd';
 import { useRef, useContext } from 'react';
-import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
+import { SaDevContext } from '@/components/Sadmin/dev';
 import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 import tableSet from '@/components/Sadmin/dev/vars/menu/set';
 import TableFromBread from '@/components/Sadmin/tableFromBread';
@@ -599,7 +593,6 @@ export default () => {
         grid={true}
         devEnable={false}
       />
-      {setting?.adminSetting?.dev ? null : <DevLinks />}
     </>
   );
 };

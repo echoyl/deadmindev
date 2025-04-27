@@ -12,7 +12,7 @@ import { useContext, useRef } from 'react';
 import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
-import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
+import { SaDevContext } from '@/components/Sadmin/dev';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
 /**
@@ -384,7 +384,6 @@ export default () => {
         }}
         openType="modal"
       />
-      {setting?.adminSetting?.dev ? null : <DevLinks />}
     </>
   );
 };
