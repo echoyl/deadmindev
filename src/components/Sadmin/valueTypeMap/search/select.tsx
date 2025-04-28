@@ -101,7 +101,10 @@ export default function SearchSelect<
     const _recordParams: Record<string, any> = {};
     Object.keys(params).map((v) => {
       if (!isUndefined(requestParam[v])) {
-        _recordParams[v] = requestParam[v];
+        //_recordParams[v] = requestParam[v];
+        //console.log('params[v] and requestParam', params[v], requestParam);
+        //修复参数是模板时未渲染的问题
+        _recordParams[v] = tplComplie(params[v], { record: requestParam });
       }
     });
     if (!_.isEqual(_recordParams, recordParams)) {
@@ -113,6 +116,7 @@ export default function SearchSelect<
       from_path: pathname,
       keyword,
       ...restRequestParam,
+      ..._recordParams,
     };
     let ret;
     if (isStr(fetchOptions)) {
