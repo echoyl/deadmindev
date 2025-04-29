@@ -88,7 +88,7 @@ export default function SearchSelect<
     showSearch: true,
   };
   const getData = async (requestParam: { [key: string]: any }) => {
-    //console.log('requestParam', requestParam, change);
+    //console.log('requestParam', requestParam, params);
     const { keyWords: keyword, reloadKey, ...restRequestParam } = requestParam;
     setChange(false);
     if (change) {
@@ -99,12 +99,15 @@ export default function SearchSelect<
     }
 
     const _recordParams: Record<string, any> = {};
+    const normalParms: Record<string, any> = {}; //params中固定的参数
     Object.keys(params).map((v) => {
       if (!isUndefined(requestParam[v])) {
         //_recordParams[v] = requestParam[v];
         //console.log('params[v] and requestParam', params[v], requestParam);
         //修复参数是模板时未渲染的问题
         _recordParams[v] = tplComplie(params[v], { record: requestParam });
+      } else {
+        normalParms[v] = params[v];
       }
     });
     if (!_.isEqual(_recordParams, recordParams)) {
@@ -117,6 +120,7 @@ export default function SearchSelect<
       keyword,
       ...restRequestParam,
       ..._recordParams,
+      ...normalParms,
     };
     let ret;
     if (isStr(fetchOptions)) {
