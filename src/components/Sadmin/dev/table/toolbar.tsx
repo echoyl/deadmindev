@@ -1,25 +1,26 @@
 import { MenuFormColumn } from '@/pages/dev/menu';
-import request, { currentUser, getFullUrl, requestHeaders } from '@/components/Sadmin/lib/request';
+import request, { getFullUrl, requestHeaders } from '@/components/Sadmin/lib/request';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   CloudDownloadOutlined,
   CloudUploadOutlined,
+  DatabaseOutlined,
   DeleteOutlined,
-  EditOutlined,
-  LoadingOutlined,
+  MenuOutlined,
+  PartitionOutlined,
   PlusOutlined,
+  ProfileOutlined,
   ReloadOutlined,
   SettingOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { FormattedMessage, Link, useModel } from '@umijs/max';
-import { App, Button, Dropdown, Modal, Popover, Space, Tooltip, Tree, Upload } from 'antd';
-import { cloneDeep, isString } from 'lodash';
+import { Button, Dropdown, Popover, Space, Tree, Upload } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import ButtonDrawer from '../../action/buttonDrawer';
 import CustomerColumnRender from '../../action/customerColumn';
-import { parseIcon, t, tplComplie, uid } from '../../helpers';
+import { parseIcon, t } from '../../helpers';
 import { SaForm } from '../../posts/post';
 import { SaContext } from '../../posts/table';
 import { DndContext } from '../dnd-context';
@@ -28,12 +29,14 @@ import { ToolbarColumnTitle } from './title';
 import { SaDevContext } from '..';
 import { saReload, saReloadMenu } from '../../components/refresh';
 import ButtonModal from '../../action/buttonModal';
-import { isStr, isUndefined } from '../../checkers';
+import { isStr } from '../../checkers';
 import { modelFormColumns } from '@/pages/dev/model';
 import { ProFormInstance } from '@ant-design/pro-components';
 import ModelRelation from '@/pages/dev/modelRelation';
 import RequestButton, { RequestButtonProps } from '../../components/requestButton';
 import { DevJsonContext } from '../../jsonForm';
+import { fieldColumn } from '../vars/model/fieldColumns';
+import { isString } from 'es-toolkit';
 
 export const ToolBarDom = (props) => {
   const {
@@ -323,6 +326,73 @@ export const ToolModelForm = (props) => {
   );
 };
 
+export const ToolModelFieldsForm = (props) => {
+  const { setInitialState, initialState } = useModel('@@initialState');
+  const { pageMenu = { model_id: 0 }, trigger } = props;
+  const ModelForm = (mprops) => {
+    const { contentRender, setOpen } = mprops;
+    const formRef = useRef<ProFormInstance<any>>({} as any);
+
+    const { setting, setSetting } = useContext(SaDevContext);
+    return (
+      <SaForm
+        formRef={formRef}
+        formColumns={[
+          fieldColumn,
+          {
+            title: '提交后',
+            dataIndex: 'afterPostOptions',
+            valueType: 'checkbox',
+            tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
+            fieldProps: {
+              options: [{ label: '生成表', value: 'createModelSchema' }],
+              defaultValue: ['createModelSchema'],
+            },
+          },
+        ]}
+        url="dev/model/show"
+        dataId={pageMenu?.model_id}
+        paramExtra={{ id: pageMenu?.model_id }}
+        postExtra={{ id: pageMenu?.model_id }}
+        grid={true}
+        devEnable={false}
+        msgcls={async ({ code, data }) => {
+          if (!code) {
+            saReload(initialState, setInitialState, setSetting);
+          }
+          setOpen(false);
+          return;
+        }}
+        formProps={{
+          contentRender,
+          submitter: {
+            //移除默认的重置按钮，点击重置按钮后会重新请求一次request
+            render: (props, doms) => {
+              return [
+                <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
+                  {t('cancel')}
+                </Button>,
+                doms[1],
+              ];
+            },
+          },
+        }}
+        pageType="drawer"
+      />
+    );
+  };
+  return (
+    <ButtonDrawer
+      trigger={trigger}
+      width={1500}
+      title="模型字段"
+      drawerProps={{ styles: { body: { paddingTop: 8 } } }}
+    >
+      <ModelForm />
+    </ButtonDrawer>
+  );
+};
+
 /**
  * 打开后显示当前菜单的form表单
  * @param props
@@ -342,7 +412,7 @@ export const ToolBarMenu = (props) => {
               <ToolMenuForm
                 pageMenu={pageMenu}
                 trigger={
-                  <Button type="link" icon={<EditOutlined />}>
+                  <Button type="link" icon={<MenuOutlined />}>
                     菜单
                   </Button>
                 }
@@ -356,7 +426,7 @@ export const ToolBarMenu = (props) => {
                   <ToolModelForm
                     pageMenu={pageMenu}
                     trigger={
-                      <Button type="link" icon={<EditOutlined />}>
+                      <Button type="link" icon={<DatabaseOutlined />}>
                         模型
                       </Button>
                     }
@@ -366,11 +436,27 @@ export const ToolBarMenu = (props) => {
             : null,
           pageMenu.model_id
             ? {
+                key: 'editModelFields',
+                label: (
+                  <ToolModelFieldsForm
+                    pageMenu={pageMenu}
+                    trigger={
+                      <Button type="link" icon={<ProfileOutlined />}>
+                        字段
+                      </Button>
+                    }
+                  />
+                ),
+              }
+            : null,
+
+          pageMenu.model_id
+            ? {
                 key: 'editModelRelation',
                 label: (
                   <ButtonDrawer
                     trigger={
-                      <Button type="link" icon={<EditOutlined />}>
+                      <Button type="link" icon={<PartitionOutlined />}>
                         关联
                       </Button>
                     }
