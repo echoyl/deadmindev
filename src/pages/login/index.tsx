@@ -11,15 +11,13 @@ import {
   UserOutlined,
   WechatOutlined,
 } from '@ant-design/icons';
-import ProCard from '@ant-design/pro-card';
 import {
   LoginForm,
-  ProForm,
   ProFormCaptcha,
   ProFormCheckbox,
   ProFormDependency,
   ProFormInstance,
-  ProFormText,
+  ProCard,
 } from '@ant-design/pro-components';
 import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
 import { Tabs, QRCode, Space, theme, GetProp, Tooltip, Flex, Form, Input } from 'antd';

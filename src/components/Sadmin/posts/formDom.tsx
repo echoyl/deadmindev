@@ -1,13 +1,13 @@
 import request from '@/components/Sadmin/lib/request';
 import { BetaSchemaForm, ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import dayjs from 'dayjs';
-import { cloneDeep, isString } from 'lodash';
 import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
 import { FormColumnTitle } from '../dev/table/title';
 import { getFromObject, getMenuDataById, saFormColumnsType, tplComplie } from '../helpers';
 import { Space } from 'antd';
 import TranslationModal from '../dev/form/translation';
+import { cloneDeep, isString } from 'es-toolkit';
 export const defaultColumnsLabel = {
   id: '序号',
   category_id: '分类选择',

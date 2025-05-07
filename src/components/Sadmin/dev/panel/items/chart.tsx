@@ -1,10 +1,10 @@
 import { isArr } from '@/components/Sadmin/checkers';
 import { Area, Bar, Column, Line, Pie } from '@ant-design/plots';
 
-import { cloneDeep, sum } from 'lodash';
 import numeral from 'numeral';
 import AreaMap from './areaMap';
 import { MapShow } from '@/components/Sadmin/map';
+import { cloneDeep, sum } from 'es-toolkit';
 const PanelItemChart = (props: any) => {
   const { type, data, config: oconfig, propsx, ...retProps } = props;
   //const { type } = chart;

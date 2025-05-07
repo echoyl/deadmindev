@@ -31,7 +31,6 @@ import TinyEditor from './tinyEditor';
 import { SaTransferRender } from './transfer';
 import IconSelect, { iconToElement, IconSelectRender } from './valueTypeMap/iconSelect';
 import { wxMenuRender } from './wxMenu';
-import { isString } from 'lodash';
 import SaAutoCompleteMap from './valueTypeMap/autoComplete';
 import { DropdownActionMap } from './valueTypeMap/dropdownAction';
 import { ColorPickerMap, ColorPickerRenderMap } from './valueTypeMap/colorPicker';
@@ -45,6 +44,7 @@ import {
 import SaSliderMap from './valueTypeMap/saSlider';
 import SearchSelect from './valueTypeMap/search/select';
 import { MapShowRender, MapinputRender } from './map';
+import { isString } from 'es-toolkit';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];

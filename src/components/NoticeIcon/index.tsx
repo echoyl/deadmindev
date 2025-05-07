@@ -3,10 +3,9 @@ import { useModel } from '@umijs/max';
 import { message, Tag } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { groupBy } from 'lodash';
 import { useEffect, useState } from 'react';
-import styles from './index.less';
 import NoticeIcon from './NoticeIcon';
+import { groupBy } from 'es-toolkit';
 dayjs.extend(relativeTime);
 export type GlobalHeaderRightProps = {
   fetchingNotices?: boolean;
@@ -51,7 +50,7 @@ const getNoticeData = (notices: API.NoticeIconItem[]): Record<string, API.Notice
 
     return newNotice;
   });
-  return groupBy(newNotices, 'type');
+  return groupBy(newNotices, (item) => item.type);
 };
 
 const getUnreadData = (noticeData: Record<string, API.NoticeIconItem[]>) => {

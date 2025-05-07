@@ -2,7 +2,7 @@ import { SyncOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { FloatButton } from 'antd';
 import { useContext, useState } from 'react';
-import defaultSettings, { lightDefaultToken } from '../../../../config/defaultSettings';
+import defaultSettings from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
 import { message } from '@/components/Sadmin/message';
@@ -13,7 +13,7 @@ import request, {
   messageLoadingKey,
   setAdminSetting,
 } from '@/components/Sadmin/lib/request';
-import { merge } from 'lodash';
+import { merge } from 'es-toolkit';
 export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   const theme = getTheme(localsetting);
   const navTheme: { [key: string]: any } =
@@ -28,8 +28,8 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   }
   //解析后台配置的antdpro配置
   const { antdpro = {} } = localsetting;
-  const { title, logo, navTheme: onavTheme, colorPrimary, token, ...antdproRest } = antdpro;
-  const newToken = merge(defaultSettings?.token, token);
+  const { title, logo, navTheme: onavTheme, colorPrimary, token = {}, ...antdproRest } = antdpro;
+  const newToken = merge(defaultSettings?.token || {}, token);
   //console.log('localsetting',localsetting);
   if (localsetting.colorPrimary) {
     navTheme.colorPrimary = localsetting.colorPrimary;

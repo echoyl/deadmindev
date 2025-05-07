@@ -3,11 +3,11 @@ import { ProFormSelect, ProFormCascader } from '@ant-design/pro-components';
 import { useLocation } from '@umijs/max';
 import { Cascader, Empty, Select, Spin } from 'antd';
 import type { SelectProps } from 'antd/es/select';
-import debounce from 'lodash/debounce';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { isObj, isStr } from './checkers';
 import { tplComplie } from './helpers';
 import { SaContext } from './posts/table';
+import { debounce } from 'es-toolkit';
 export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
   fetchOptions: (search: { [key: string]: any }) => Promise<ValueType[]> | string;

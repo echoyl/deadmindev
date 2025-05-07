@@ -1,7 +1,7 @@
 import { devDefaultFields, devTabelFields } from '@/pages/dev/model';
 import { TreeNodeProps } from 'antd';
 import { saFormColumnsType, saTableColumnsType } from '../../helpers';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'es-toolkit';
 //列表可选类型
 export const columnType = [
   { label: '日期 - date', value: 'date' },
@@ -215,7 +215,7 @@ export const getModelColumns = (
     }));
   return uniqBy(
     [...(allColumns ? allColumns : []), ...devDefaultFields, ...devTabelFields, ...searchColumn],
-    'value',
+    (item) => item.value,
   );
 };
 

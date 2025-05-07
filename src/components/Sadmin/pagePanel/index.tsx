@@ -13,10 +13,10 @@ import { getFormFieldColumns } from '../posts/formDom';
 import { getTableColumns } from '../posts/tableColumns';
 import styles from './style.less';
 import AreaMap from '../dev/panel/items/areaMap';
-import { sum } from 'lodash';
 import numeral from 'numeral';
 import { PageContainer404 } from '../404';
 import { MapShow } from '../map';
+import { sum } from 'es-toolkit';
 export const PagePanelHeader: FC = (props) => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState;

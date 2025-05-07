@@ -5,7 +5,7 @@ import type { SelectProps } from 'antd/es/select';
 import React, { useEffect, useState } from 'react';
 import { isArr, isObj, isStr, isUndefined } from '../../checkers';
 import { tplComplie, uid } from '../../helpers';
-import _ from 'lodash';
+import { isEqual } from 'es-toolkit';
 export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
   fetchOptions: (search: { [key: string]: any }) => Promise<ValueType[]> | string;
@@ -110,7 +110,7 @@ export default function SearchSelect<
         normalParms[v] = params[v];
       }
     });
-    if (!_.isEqual(_recordParams, recordParams)) {
+    if (!isEqual(_recordParams, recordParams)) {
       setRecordParams(_recordParams);
     }
     const get_params = {

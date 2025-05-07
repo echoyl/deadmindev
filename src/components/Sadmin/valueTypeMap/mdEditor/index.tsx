@@ -1,10 +1,10 @@
 import request from '@/components/Sadmin/lib/request';
 import UiwMDEditor from '@uiw/react-md-editor';
-import { isNull } from 'lodash';
 import type { SetStateAction } from 'react';
 import { useContext, useState } from 'react';
 import { message } from '../../message';
 import { SaDevContext } from '../../dev';
+import { isNull } from 'es-toolkit';
 
 const insertToTextArea = (intsertString: string) => {
   const textarea = document.querySelector('textarea');

@@ -1,10 +1,10 @@
-import { isUndefined } from 'lodash';
 import React, { FC, useCallback, useContext, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isBool } from '../checkers';
 import { getBread, getFromObject, getMenuDataById, tplComplie } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
 import { useModel } from '@umijs/max';
+import { isUndefined } from 'es-toolkit';
 
 const TableFromBread: FC<{
   fieldProps?: any;

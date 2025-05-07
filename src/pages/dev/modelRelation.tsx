@@ -5,7 +5,7 @@ import { devDefaultFields } from './model';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import { getModelColumns } from '@/components/Sadmin/dev/table/baseFormColumns';
 import { CopyOutlined } from '@ant-design/icons';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'es-toolkit';
 import settingColumns from '@/components/Sadmin/dev/vars/relation/settingColumns';
 
 //生成关联模型的字段及其管理模型
@@ -18,7 +18,7 @@ export const getModelColumnsTree = (id: number, allModels, pid: string = '', lev
           title: v.label ? v.label : [v.title, v.name].join(' - '),
           value: pid ? [pid, v.name ? v.name : v.value].join('-') : v.name ? v.name : v.value,
         })),
-        'value',
+        (item) => item.value,
       )
     : [];
   level += 1;

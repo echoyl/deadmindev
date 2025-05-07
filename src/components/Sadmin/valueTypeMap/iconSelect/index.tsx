@@ -2,9 +2,9 @@
 import * as Icon from '@ant-design/icons';
 import { css } from '@emotion/css';
 import { Card, Flex, Segmented, Select, theme } from 'antd';
-import { isFunction } from 'lodash';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../../dev';
+import { isFunction } from 'es-toolkit';
 // 编写生成ReactNode的方法
 
 export const iconToElement = (name: string, style = {}) => {
