@@ -74,6 +74,7 @@ const formMoreType = [
   { label: '评分 - rate', value: 'rate' },
   { label: '滑动条 - slider', value: 'saSlider' },
   { label: '日历表单 - formCalendar', value: 'formCalendar' },
+  { label: 'alert提醒 - alert', value: 'alert' },
 ];
 
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {

@@ -45,6 +45,7 @@ import SaSliderMap from './valueTypeMap/saSlider';
 import SearchSelect from './valueTypeMap/search/select';
 import { MapShowRender, MapinputRender } from './map';
 import { isString } from 'es-toolkit';
+import { Alert } from 'antd';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -135,6 +136,7 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'iconSelect'
   | 'dropdownAction'
   | 'saSlider'
+  | 'alert'
 >;
 type saFormColumnsTypeFn<T> = (d: T) => saFormColumnsType;
 export declare type saFormTabColumnsType = Array<{
@@ -427,6 +429,14 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   saSlider: {
     render: SaSliderMap,
     renderFormItem: SaSliderMap,
+  },
+  alert: {
+    render: (text, props) => {
+      return <Alert message={text} type="info" showIcon {...props.fieldProps} />;
+    },
+    renderFormItem: (text, props) => {
+      return <Alert message={text} type="info" showIcon {...props.fieldProps} />;
+    },
   },
 };
 export const t = (id?: string, intl?: any) => {
