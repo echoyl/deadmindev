@@ -650,11 +650,19 @@ export const toolBarRender = (props) => {
     [...toolBarButton, ..._btns]?.forEach((btn, index) => {
       //console.log('btn', btn);
       if (devEnable && (isString(btn.title) || !btn.title)) {
+        const btnTitle = btn.title ? btn.title : defaultTitle[btn.valueType];
+        //按钮如果是导入因为有upload的高度 不需要额外添加padding
         btn.title = (
           <ToolbarColumnTitle
             {...btn}
             key={btn.key}
-            title={btn.title ? btn.title : defaultTitle[btn.valueType]}
+            title={
+              btn.valueType == 'import' ? (
+                btnTitle
+              ) : (
+                <div style={{ padding: '4px 0' }}>{btnTitle}</div>
+              )
+            }
           />
         );
       }
@@ -665,13 +673,7 @@ export const toolBarRender = (props) => {
       if (btn.valueType == 'import') {
         btns.push(<ImportButton key={index} {...btn} afterAction={afterFormPost} />);
       }
-      if (btn.valueType == 'devadd') {
-        btns.push(
-          <Button key={btn.key} type="dashed">
-            {btn.title}
-          </Button>,
-        );
-      }
+
       if (btn.valueType == 'devsetting') {
         btns.push(
           <ToolBarMenu key={index} trigger={<Button icon={btn.icon} />} pageMenu={pageMenu} />,
@@ -689,10 +691,9 @@ export const toolBarRender = (props) => {
       if (btn.valueType == 'toolbar') {
         //console.log('toolbar btn', btn);
         if (devEnable) {
-          //console.log('toolbar btn', btn);
           btns.push(
             <Button key={btn.uid + '_dev'} type="dashed">
-              <ToolbarColumnTitle {...btn} />
+              {btn.title}
             </Button>,
           );
         }
@@ -704,6 +705,13 @@ export const toolBarRender = (props) => {
             paramExtra={values}
             record={{ ...enums, type: 'toolbar' }}
           />,
+        );
+      }
+      if (btn.valueType == 'devadd' && toolBarButton.length < 1) {
+        btns.push(
+          <Button key={btn.key} type="dashed">
+            {btn.title}
+          </Button>,
         );
       }
     });

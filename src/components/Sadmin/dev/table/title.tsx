@@ -616,6 +616,7 @@ export const DevTableColumnTitle = (props) => {
   };
   const { styles: dstyles } = useDesignerCss();
   const { token } = theme.useToken();
+  const dataIndexSpan = isArr(props?.dataIndex) ? props?.dataIndex.join('.') : props?.dataIndex;
   return (
     <SortableItem
       className={dstyles.saSortItem}
@@ -645,9 +646,11 @@ export const DevTableColumnTitle = (props) => {
       </div>
       <div role="button">
         {title ? tplComplie(title) : 'dev'}
-        <span style={{ color: token.colorTextTertiary, fontWeight: 'normal', paddingLeft: 6 }}>
-          {isArr(props?.dataIndex) ? props?.dataIndex.join('.') : props?.dataIndex}
-        </span>
+        {dataIndexSpan ? (
+          <span style={{ color: token.colorTextTertiary, fontWeight: 'normal', paddingLeft: 6 }}>
+            {dataIndexSpan}
+          </span>
+        ) : null}
       </div>
     </SortableItem>
   );
