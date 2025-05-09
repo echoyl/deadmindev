@@ -5,6 +5,7 @@ import { message, notification } from '@/components/Sadmin/message';
 import { history } from '@umijs/max';
 import { extend } from 'umi-request';
 import { isUndefined } from '../../checkers';
+import { trimEnd } from 'es-toolkit';
 const codeMessage: { [key: string]: any } = {};
 
 export const request_prefix = '/sadmin/';
@@ -18,6 +19,8 @@ export const rememberName = 'Sa-Remember';
 export const settingName = 'adminSetting';
 
 export const messageLoadingKey = 'message_loading_key';
+
+export const adminPrefix = '/antadmin/';
 
 function errorHandler(error) {
   // 请求已发送但服务端返回状态码非 2xx 的响应
@@ -103,6 +106,11 @@ request.interceptors.request.use(async (url, options) => {
   };
 });
 
+const goLoginUrl = () => {
+  const redirect = history.location.pathname.replace(trimEnd(adminPrefix, '/'), '');
+  return loginPath + (redirect && redirect != '/' ? '?redirect=' + redirect : '');
+};
+
 export const responseCodeAction = (code: number, method: string, drawer: boolean) => {
   //登录失效
   //const baseurl = process.env.NODE_ENV === 'production' ? './' : '/';
@@ -110,9 +118,8 @@ export const responseCodeAction = (code: number, method: string, drawer: boolean
     // if (window.location.pathname.replace(baseurl, '/') == loginPath) {
     //   return true;
     // }
-
-    const gourl = loginPath + '?redirect=' + history.location.pathname;
-    console.log('gourl', gourl);
+    const gourl = goLoginUrl();
+    //console.log('gourl', gourl);
     history.push(gourl);
     return true;
   } else if (code == 401301) {
@@ -120,7 +127,7 @@ export const responseCodeAction = (code: number, method: string, drawer: boolean
     //如果设置了drawer参数 get方式也是不会跳转页面的 示例，当打开一个form时 post和get都指向一个路由 都没有权限的话 会有不用跳转页面的需求
     if (method == 'GET' && !drawer) {
       history.push('/403');
-      console.log('noauth go push');
+      //console.log('noauth go push');
       return true;
     }
   }
@@ -248,11 +255,8 @@ export async function loginOut(cb?: Function) {
       if (cb) {
         cb();
       }
-
-      history.push({
-        pathname: loginPath,
-        search: '?redirect=' + history.location.pathname,
-      });
+      const gourl = goLoginUrl();
+      history.push(gourl);
       return;
     },
   });

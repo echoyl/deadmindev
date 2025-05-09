@@ -326,6 +326,7 @@ export default () => {
                   },
                 ],
               },
+
               {
                 valueType: 'group',
                 columns: [
@@ -339,6 +340,24 @@ export default () => {
                         { label: '快捷登录', value: 'thunder' },
                       ],
                     },
+                    colProps: { span: 12 },
+                  },
+                  {
+                    title: '自动跳转',
+                    valueType: 'switch',
+                    dataIndex: 'loginAutoRedirect',
+                    colProps: { span: 12 },
+                    tooltip: '开启后登录成功后自动跳转url中的redirect参数，默认为关闭',
+                  },
+                ],
+              },
+              {
+                valueType: 'group',
+                columns: [
+                  {
+                    title: '登录后跳转页面',
+                    dataIndex: 'loginDefaultRedirectPage',
+                    tooltip: '账号登录跳转的页面路由地址，默认为菜单的第一个',
                     colProps: { span: 12 },
                   },
                   {

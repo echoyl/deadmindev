@@ -117,16 +117,15 @@ const Login: React.FC = () => {
       settings: adminSetting,
     })).then(() => {
       setSettingDev?.(adminSetting);
-      //const redirect = searchParams.get('redirect') || '/';
-      const redirect = '/';
-      let goUrl = '/';
-      if (data.userinfo.redirect) {
-        //后台登录后指定跳转页面
-        goUrl = data.userinfo.redirect;
-      } else if (initialState?.settings?.adminSetting?.baseurl) {
-        goUrl = redirect.replace(initialState?.settings?.adminSetting?.baseurl, '/');
-      }
-      //console.log('goUrl is ', goUrl);
+      const auto_redirect = adminSetting.adminSetting.loginAutoRedirect
+        ? searchParams.get('redirect')
+        : '';
+      const redirect =
+        auto_redirect ||
+        data.userinfo.redirect ||
+        adminSetting?.adminSetting.loginDefaultRedirectPage ||
+        '/';
+      const goUrl = redirect.replace(adminSetting?.adminSetting.baseurl, '/');
       history.push(goUrl);
     });
   };
