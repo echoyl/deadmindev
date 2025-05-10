@@ -176,6 +176,18 @@ export default () => {
                   { title: '高德地图安全密钥', dataIndex: 'amap_skey', colProps: { span: 6 } },
                 ],
               },
+              {
+                valueType: 'group',
+                columns: [
+                  {
+                    title: '默认经度',
+                    dataIndex: ['map', 'default_lat'],
+                    colProps: { span: 12 },
+                    tooltip: '设置默认经纬度后打开地图会自动定位到该位置',
+                  },
+                  { title: '默认纬度', dataIndex: ['map', 'default_lng'], colProps: { span: 12 } },
+                ],
+              },
             ],
           },
           {
@@ -345,7 +357,7 @@ export default () => {
                   {
                     title: '自动跳转',
                     valueType: 'switch',
-                    dataIndex: 'loginAutoRedirect',
+                    dataIndex: ['login', 'autoRedirect'],
                     colProps: { span: 12 },
                     tooltip: '开启后登录成功后自动跳转url中的redirect参数，默认为关闭',
                   },
@@ -356,7 +368,7 @@ export default () => {
                 columns: [
                   {
                     title: '登录后跳转页面',
-                    dataIndex: 'loginDefaultRedirectPage',
+                    dataIndex: ['login', 'defaultRedirectPage'],
                     tooltip: '账号登录跳转的页面路由地址，默认为菜单的第一个',
                     colProps: { span: 12 },
                   },

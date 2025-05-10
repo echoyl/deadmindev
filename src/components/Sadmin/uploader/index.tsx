@@ -164,7 +164,7 @@ const Uploader: React.FC<Props> = (props) => {
       <PlusOutlined />
       <div style={{ marginTop: 4 }}>{type == 'image' ? '选图片' : '选文件'}</div>
       <div>
-        {fileList?.length}/{max}
+        {fileList?.length} / {max}
       </div>
     </div>
   );
@@ -177,7 +177,9 @@ const Uploader: React.FC<Props> = (props) => {
         )}
       </div>
     ) : (
-      <Button icon={<PlusOutlined />}>{type == 'image' ? '选图片' : '选文件'}</Button>
+      <Button icon={<PlusOutlined />} type="dashed">
+        {type == 'image' ? '选图片' : '选文件'}
+      </Button>
     );
 
   const sensor = useSensor(PointerSensor, {

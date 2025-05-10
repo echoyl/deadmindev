@@ -112,8 +112,6 @@ const Map: FC = (props: {
   const [init, setInit] = useState(false);
   const [map, setMap] = useState();
   const [instance, setInstance] = useState<MapType>();
-  const [marker, setMaker] = useState();
-  const [markerLayer, setMarkerLayer] = useState();
   const [res, setRes] = useState({ lat: '', lng: '', address: '' });
   const { initialState } = useModel('@@initialState');
   const { zoom = 15, level = 2 } = props;
@@ -209,9 +207,12 @@ type MapInputProps = {
   [key: string]: any;
 };
 export const MapInput: FC = (props: MapInputProps) => {
+  const { initialState } = useModel('@@initialState');
+  const { map: { default_lat = '', default_lng = '' } = {} } =
+    initialState?.settings?.adminSetting || {};
   const defaultValue = {
-    lat: '28.689578',
-    lng: '115.89352755',
+    lat: default_lat ? default_lat : '28.689578',
+    lng: default_lng ? default_lng : '115.89352755',
   };
   const { onChange, value } = props;
   const [latlng, setLatlng] = useState<Record<string, any>>({});
@@ -294,6 +295,10 @@ export const MapinputRender = {
 export const MapShowRender = {
   render: (text) => {
     //console.log(text);
+    text = getJson(text, {});
+    return <MapShow {...text} />;
+  },
+  renderFormItem: (text) => {
     text = getJson(text, {});
     return <MapShow {...text} />;
   },

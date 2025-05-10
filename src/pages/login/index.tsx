@@ -117,15 +117,15 @@ const Login: React.FC = () => {
       settings: adminSetting,
     })).then(() => {
       setSettingDev?.(adminSetting);
-      const auto_redirect = adminSetting.adminSetting.loginAutoRedirect
-        ? searchParams.get('redirect')
-        : '';
-      const redirect =
-        auto_redirect ||
-        data.userinfo.redirect ||
-        adminSetting?.adminSetting.loginDefaultRedirectPage ||
-        '/';
-      const goUrl = redirect.replace(adminSetting?.adminSetting.baseurl, '/');
+      const {
+        adminSetting: {
+          login: { autoRedirect = false, defaultRedirectPage = '' } = {},
+          baseurl = '',
+        } = {},
+      } = adminSetting || {};
+      const auto_redirect = autoRedirect ? searchParams.get('redirect') : '';
+      const redirect = auto_redirect || data.userinfo.redirect || defaultRedirectPage || '/';
+      const goUrl = redirect.replace(baseurl, '/');
       history.push(goUrl);
     });
   };
