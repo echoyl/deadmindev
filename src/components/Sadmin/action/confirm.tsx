@@ -1,5 +1,5 @@
 import request from '@/components/Sadmin/lib/request';
-import { Button, ButtonProps, Modal } from 'antd';
+import { Button, ButtonProps, Modal, Popconfirm } from 'antd';
 import React, { FC, ReactElement, useContext, useMemo } from 'react';
 import { SaContext } from '../posts/table';
 import cache from '../helper/cache';
@@ -21,9 +21,15 @@ interface actionConfirm {
   title?: string;
   afterActionType?: 'reload' | 'goback' | 'none';
   record?: Record<string, any>;
+  type?: 'modal' | 'popconfirm';
 }
 
-export const ConfirmTriggerClick = (props: actionConfirm, actionRef, searchFormRef?: any) => {
+export const ConfirmTriggerClick = (
+  props: actionConfirm,
+  actionRef,
+  searchFormRef?: any,
+  type = 'modal',
+) => {
   const {
     msg,
     method = 'post',
@@ -41,72 +47,84 @@ export const ConfirmTriggerClick = (props: actionConfirm, actionRef, searchFormR
     const tplc = tplComplie(data[k], { record });
     newData[k] = tplc ? tplc : '';
   });
-  return {
-    title: title ? title : '温馨提示！',
-    content: msg,
-    onOk: async () => {
-      const pdata =
-        method == 'get'
-          ? { ...newData, id: dataId, ...values }
-          : { ...newData, id: dataId, ...values };
-      //如果是get请求 检测values是数组的话修改name
-      if (method == 'get') {
-        Object.keys(pdata).map((k) => {
-          if (isArr(pdata[k])) {
-            pdata[k + '[]'] = pdata[k];
-            delete pdata[k];
-          }
-        });
-      }
-      const requestProps =
-        method == 'get'
-          ? { params: pdata }
-          : {
-              data: pdata,
-            };
-      const ret = await request[method](url, { ...requestProps, drawer: true });
-      if (callback) {
-        const cbret = callback(ret);
-        if (cbret == true) {
-          //自定义回调返回true 后 阻断后续操作
-          return;
+  const ok = async () => {
+    const pdata =
+      method == 'get'
+        ? { ...newData, id: dataId, ...values }
+        : { ...newData, id: dataId, ...values };
+    //如果是get请求 检测values是数组的话修改name
+    if (method == 'get') {
+      Object.keys(pdata).map((k) => {
+        if (isArr(pdata[k])) {
+          pdata[k + '[]'] = pdata[k];
+          delete pdata[k];
         }
-      }
-      if (!ret) {
+      });
+    }
+    const requestProps =
+      method == 'get'
+        ? { params: pdata }
+        : {
+            data: pdata,
+          };
+    const ret = await request[method](url, { ...requestProps, drawer: true });
+    if (callback) {
+      const cbret = callback(ret);
+      if (cbret == true) {
+        //自定义回调返回true 后 阻断后续操作
         return;
       }
-      //加入默认的回调动作
-      if (!ret.code) {
-        //后台传值后 支持 1.本地storage信息写入 2.页面是否跳转
-        if (ret.data?.setStorage) {
-          for (let name in ret.data.setStorage) {
-            cache.set(name, ret.data.setStorage[name]);
-          }
+    }
+    if (!ret) {
+      return;
+    }
+    //加入默认的回调动作
+    if (!ret.code) {
+      //后台传值后 支持 1.本地storage信息写入 2.页面是否跳转
+      if (ret.data?.setStorage) {
+        for (let name in ret.data.setStorage) {
+          cache.set(name, ret.data.setStorage[name]);
         }
-        if (ret.data?.redirect) {
-          window.open(ret.data.redirect.url, ret.data.redirect.type);
+      }
+      if (ret.data?.redirect) {
+        window.open(ret.data.redirect.url, ret.data.redirect.type);
+      } else {
+        //不跳转链接就刷新页面
+        if (actionRef?.current && afterActionType == 'reload') {
+          actionRef.current?.reload();
         } else {
-          //不跳转链接就刷新页面
-          if (actionRef?.current && afterActionType == 'reload') {
-            actionRef.current?.reload();
-          } else {
-            if (afterActionType == 'goback') {
-              history.back();
-            }
+          if (afterActionType == 'goback') {
+            history.back();
           }
         }
       }
-      // if (!ret.code) {
-      //   actionRef.current?.reload();
-      //   setSelectedRows([]);
-      //   setSelectedRowKeys([]);
-      // }
-    },
+    }
+    // if (!ret.code) {
+    //   actionRef.current?.reload();
+    //   setSelectedRows([]);
+    //   setSelectedRowKeys([]);
+    // }
   };
+  const showTitle = title ? title : '温馨提示！';
+  return type == 'modal'
+    ? {
+        title: showTitle,
+        content: msg,
+        onOk: ok,
+      }
+    : {
+        title: showTitle,
+        description: msg,
+        onConfirm: ok,
+      };
 };
 
 const Confirm: FC<actionConfirm> = (props) => {
-  const { btn = { title: '操作', type: 'primary', danger: false }, trigger } = props;
+  const {
+    btn = { title: '操作', type: 'primary', danger: false },
+    trigger,
+    type = 'modal',
+  } = props;
   const { modalApi } = useContext(SaDevContext);
   const { actionRef, searchFormRef } = useContext(SaContext);
   const onClick = (e?: any) => {
@@ -121,14 +139,15 @@ const Confirm: FC<actionConfirm> = (props) => {
     const newDom = React.cloneElement(trigger as ReactElement, {
       key: 'trigger',
       onClick: (e: any) => {
-        onClick(e);
+        if (type == 'modal') {
+          onClick(e);
+        }
         trigger?.props?.onClick?.(e);
       },
     });
     return newDom;
   }, [trigger]);
-
-  return (
+  const dom = (
     <>
       {trigger ? (
         triggerDom
@@ -138,6 +157,12 @@ const Confirm: FC<actionConfirm> = (props) => {
         </Button>
       )}
     </>
+  );
+
+  return type == 'modal' ? (
+    dom
+  ) : (
+    <Popconfirm {...ConfirmTriggerClick(props, actionRef, searchFormRef, type)}>{dom}</Popconfirm>
   );
 };
 // export const ConfirmConfig:FC = (props) => {

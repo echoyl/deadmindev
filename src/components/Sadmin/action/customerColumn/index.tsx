@@ -1,19 +1,5 @@
 import { Link, useModel } from '@umijs/max';
-import {
-  App,
-  Badge,
-  Button,
-  Divider,
-  Dropdown,
-  Modal,
-  Popover,
-  QRCode,
-  Space,
-  Table,
-  Timeline,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Divider, Dropdown, Modal, Popover, QRCode, Space, Table, Timeline } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr } from '../../checkers';
 import { getFromObject, getMenuDataById, parseIcon, tplComplie } from '../../helpers';
@@ -21,7 +7,7 @@ import { SaContext } from '../../posts/table';
 import TableFromBread from '../../tableFromBread';
 import ButtonDrawer from '../buttonDrawer';
 import ButtonModal from '../buttonModal';
-import Confirm, { ConfirmTriggerClick } from '../confirm';
+import Confirm from '../confirm';
 import ConfirmForm from '../confirmForm';
 import Print from '../print';
 import RequestComponent from '../request';
@@ -29,7 +15,7 @@ import ItemTags from './items/tag';
 import DropdownAction from '../../valueTypeMap/dropdownAction';
 import dayjs from 'dayjs';
 import { ExportButton, ImportButton } from '../../dev/table/toolbar';
-import RequestButton, { RequestButtonRender } from '../../components/requestButton';
+import { RequestButtonRender } from '../../components/requestButton';
 const CustomerColumnRender = (props) => {
   const {
     items = [],
@@ -221,6 +207,7 @@ const CustomerColumnRender = (props) => {
               method={item.request?.method ? item.request?.method : 'post'}
               msg={item.modal?.msg}
               title={item.modal?.title}
+              type={item.modal?.type}
               afterActionType={item.request?.afterActionType}
               callback={(ret) => {
                 if (!ret.code && ret.data?.ifram_url) {
@@ -346,7 +333,6 @@ const CustomerColumnRender = (props) => {
           );
         } else if (inArray(item.action, ['edit', 'delete', 'view']) > -1) {
           const xkey = key + '_' + item.action;
-
           return dom
             ? React.cloneElement(dom, {
                 key: xkey,
@@ -411,45 +397,28 @@ const CustomerColumnRender = (props) => {
     <>
       {modalHolder}
       {direction == 'dropdown' ? (
-        dropdown.num ? (
-          <Space>
-            {itemsDom.filter((v, i) => i < dropdown.num)}
-            {itemsDom.length > dropdown.num ? (
-              <Dropdown
-                key="action_dropdown"
-                trigger="click"
-                menu={{
-                  items: itemsDom
-                    .filter((v, i) => i >= dropdown.num)
-                    .map((v, i) => {
-                      //console.log(label);
-                      return {
-                        label: v,
-                        key: i,
-                      };
-                    }),
-                }}
-              >
-                <a onClick={(e) => e.preventDefault()}>{dropdown.text ? dropdown.text : '···'}</a>
-              </Dropdown>
-            ) : null}
-          </Space>
-        ) : itemsDom.legnth ? (
-          <>
-            {contextHolder}
+        <Space>
+          {itemsDom.filter((v, i) => i < dropdown.num)}
+          {itemsDom.length > dropdown.num ? (
             <Dropdown
               key="action_dropdown"
               trigger="click"
               menu={{
-                items: itemsDom.map((v, i) => {
-                  return { label: v, key: i };
-                }),
+                items: itemsDom
+                  .filter((v, i) => i >= dropdown.num)
+                  .map((v, i) => {
+                    //console.log(label);
+                    return {
+                      label: v,
+                      key: i,
+                    };
+                  }),
               }}
             >
               <a onClick={(e) => e.preventDefault()}>{dropdown.text ? dropdown.text : '···'}</a>
             </Dropdown>
-          </>
-        ) : null
+          ) : null}
+        </Space>
       ) : direction == 'none' ? (
         itemsDom
       ) : (

@@ -522,6 +522,18 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                       dataIndex: 'msg',
                                       title: '提示语',
                                     },
+                                    {
+                                      dataIndex: 'type',
+                                      title: '显示类型',
+                                      valueType: 'select',
+                                      fieldProps: {
+                                        options: [
+                                          { label: 'modal', value: 'modal' },
+                                          { label: 'Popconfirm', value: 'popconfirm' },
+                                        ],
+                                        defaultValue: 'modal',
+                                      },
+                                    },
                                   ],
                                 },
                               });
