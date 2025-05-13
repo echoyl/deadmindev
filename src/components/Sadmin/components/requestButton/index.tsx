@@ -1,7 +1,7 @@
 import { useModel } from '@umijs/max';
 import React from 'react';
 import { parseIcon, tplComplie } from '../../helpers';
-import { Button, Tooltip, Typography } from 'antd';
+import { Button, Space, Tooltip, Typography } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { isObj } from '../../checkers';
 
@@ -46,6 +46,7 @@ export const RequestButtonRender = (props?: RequestButtonProps) => {
     delete btn.errorLevel;
   }
   const tpl = tplComplie(btn.text, { record, user: initialState?.currentUser });
+  const icon = loading ? <LoadingOutlined /> : parseIcon(btn.icon);
   if (domtype == 'button') {
     //添加检测连接类型
     const btnProps: Record<string, any> = {};
@@ -56,7 +57,7 @@ export const RequestButtonRender = (props?: RequestButtonProps) => {
       });
       //console.log('value.btn.href', href, record);
     }
-    const icon = loading ? <LoadingOutlined /> : parseIcon(btn.icon);
+
     const TheButton = (
       <Button {...styleProps} {...btn} {...value?.btn} {...btnProps} icon={icon}>
         {tpl}
@@ -73,16 +74,21 @@ export const RequestButtonRender = (props?: RequestButtonProps) => {
   } else {
     //文字展示
     //是否支持复制
-    if (!tpl) {
+    if (!tpl && !icon) {
       return null;
     }
     const showContent = isObj(tpl) ? JSON.stringify(tpl) : tpl;
-    const textCopyable = btn.copyable ? (
-      <Typography.Paragraph key="text_copyable" copyable>
-        {showContent}
-      </Typography.Paragraph>
-    ) : (
-      showContent
+    const textCopyable = (
+      <Space>
+        {icon}
+        {btn.copyable ? (
+          <Typography.Paragraph key="text_copyable" copyable>
+            {showContent}
+          </Typography.Paragraph>
+        ) : (
+          showContent
+        )}
+      </Space>
     );
     if (tooltip) {
       return <Tooltip title={tooltip}>{textCopyable}</Tooltip>;
