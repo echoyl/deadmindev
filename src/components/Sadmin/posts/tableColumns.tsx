@@ -250,7 +250,7 @@ export const getTableColumns = (props) => {
           type: v.editable?.type,
         });
     }
-    const df = v.valueType ? defaulColumnsRender(v.valueType) : false;
+    const df = v.valueType ? defaulColumnsRender(v.valueType, v) : false;
     if (df) {
       df.uid = v.uid;
       const fixed = v.fixed;
@@ -337,20 +337,20 @@ export const getTableColumns = (props) => {
 
     return v;
   };
-  const defaulColumnsRender = (type: string) => {
+  const defaulColumnsRender = (type: string, customer: any) => {
     if (type == 'coption') {
       type = 'option';
     }
     if (defaulColumns[type]) {
       //console.log(defaulColumns[c]);
-      return defaulColumns[type];
+      return { ...defaulColumns[type], ...customer };
     }
     return false;
   };
   const _columns = customerColumns
     ?.map((c) => {
       if (typeof c == 'string') {
-        const dr = defaulColumnsRender(c);
+        const dr = defaulColumnsRender(c, {});
         return dr
           ? dr
           : {
