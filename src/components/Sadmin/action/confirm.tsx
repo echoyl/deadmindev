@@ -48,6 +48,9 @@ export const ConfirmTriggerClick = (
     newData[k] = tplc ? tplc : '';
   });
   const ok = async () => {
+    if (!url) {
+      return;
+    }
     const pdata =
       method == 'get'
         ? { ...newData, id: dataId, ...values }
