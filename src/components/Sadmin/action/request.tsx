@@ -5,6 +5,8 @@ interface RequestParamProps {
   method: 'post' | 'get';
   url?: string;
   data?: { [key: string]: any };
+  paramdata?: { [key: string]: any };
+  then?: 'system' | 'none';
 }
 interface RequestComponentProps {
   trigger?: JSX.Element;
@@ -17,12 +19,14 @@ const RequestComponent: React.FC<RequestComponentProps> = (props) => {
 
   const [loading, setLoading] = useState(false);
 
-  const { method = 'get', url = '', data } = requestParam;
+  const { method = 'post', url = '', data, paramdata, then = 'system' } = requestParam;
 
   const doRequest = async () => {
     setLoading(true);
     const requestProps =
-      method == 'post' ? { data: { ...data }, then: () => {} } : { params: { ...data } };
+      method == 'post'
+        ? { data: { ...data }, then: then == 'none' ? () => {} : undefined }
+        : { params: { ...data, ...paramdata } };
     const ret = await request[method]?.(url, requestProps);
     callback?.(ret);
     setLoading(false);
