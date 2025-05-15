@@ -4,7 +4,7 @@ import { Color } from 'antd/es/color-picker';
 import { useState } from 'react';
 
 const ColorPicker = (props) => {
-  const { onChange, colorType = 'hex', disabled } = props;
+  const { onChange, colorType = 'hex', disabled, size = 'middle' } = props;
   const [value, setValue] = useState(props?.value ? props?.value : '');
   const getColorValueString = (color: Color) => {
     if (colorType == 'rgb') {
@@ -41,6 +41,7 @@ const ColorPicker = (props) => {
       ]}
     >
       <Input
+        size={size}
         addonBefore={<BgColorsOutlined style={{ color: value }} />}
         value={value}
         onChange={(e) => {

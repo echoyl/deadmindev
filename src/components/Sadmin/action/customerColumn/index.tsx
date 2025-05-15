@@ -70,14 +70,14 @@ const CustomerColumnRender = (props) => {
     } else if (item.domtype == 'timeline') {
       //处理icon
       //console.log('timeline', item);
-      const items = record?.[item.props?.name]?.map((it) => {
+      const name = item.props?.name || dataindex;
+      const items = record?.[name]?.map((it) => {
         if (it.icon) {
           it.dot = parseIcon(it.icon);
         }
-
         return it;
       });
-      return <Timeline style={{ paddingTop: 10 }} key={i} items={items} />;
+      return <Timeline style={{ paddingTop: 10 }} key={i} items={items} {...item.props} />;
     } else if (item.domtype == 'button' || item.domtype == 'text') {
       //tooltip也支持变量读取
       if (item.btn) {
@@ -140,7 +140,7 @@ const CustomerColumnRender = (props) => {
           dataSource={dataSource}
           rowKey="id"
           {...item.fieldProps?.value}
-          columns={tableColumns}
+          columns={tableColumns.filter((v) => v.hideInTable !== true && v.title)}
         />
       );
     } else if (item.domtype == 'dayjsfrom') {
@@ -161,7 +161,6 @@ const CustomerColumnRender = (props) => {
         const { value = {} } = fieldProps;
 
         if (item.action == 'confirmForm') {
-          //console.log('confirmForm', record);
           const { idName = 'id' } = value;
           const dataId = getFromObject(record, idName);
           return (
@@ -174,6 +173,7 @@ const CustomerColumnRender = (props) => {
               url={item.request?.url}
               postUrl={item.request?.postUrl}
               data={{ ...paramExtra, ...item.request?.data }}
+              paramdata={{ ...item.request?.paramdata }}
               afterActionType={item.request?.afterActionType}
               dataId={dataId}
               {...value}
@@ -262,6 +262,7 @@ const CustomerColumnRender = (props) => {
                 scrollHeight={450}
                 key={key}
                 fieldProps={fieldProps}
+                menu_page_id={modal?.page}
                 record={record}
               />
             </ButtonModal>
@@ -283,6 +284,7 @@ const CustomerColumnRender = (props) => {
               <TableFromBread
                 fieldProps={fieldProps}
                 record={record}
+                menu_page_id={modal?.page}
                 type="drawer"
                 scrollHeight="calc(100vh - 330px)"
               />
@@ -300,7 +302,18 @@ const CustomerColumnRender = (props) => {
             </ButtonDrawer>
           );
         } else if (item.action == 'dropdown') {
-          return <DropdownAction key={key} {...item.request} value={text} id={record.id} />;
+          const modelName = item.request?.modelName || dataindex;
+          return (
+            <DropdownAction
+              key={key}
+              fieldNames="id,title"
+              {...item.request}
+              modelName={modelName}
+              value={text}
+              id={record.id}
+              {...value}
+            />
+          );
         } else if (item.action == 'popover') {
           //检测弹出的类型
           let popcontent = null;
@@ -326,8 +339,9 @@ const CustomerColumnRender = (props) => {
           } else {
             popcontent = item.popover?.content;
           }
+          const trigger = item.popover?.trigger || 'click';
           return (
-            <Popover key={key} content={popcontent} trigger="click">
+            <Popover key={key} content={popcontent} trigger={trigger}>
               {dom}
             </Popover>
           );
@@ -419,7 +433,7 @@ const CustomerColumnRender = (props) => {
             </Dropdown>
           ) : null}
         </Space>
-      ) : direction == 'none' ? (
+      ) : itemsDom.length == 1 ? (
         itemsDom
       ) : (
         <Space direction={direction}>{itemsDom}</Space>

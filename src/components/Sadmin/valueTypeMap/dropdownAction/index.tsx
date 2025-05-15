@@ -1,9 +1,10 @@
-import { Badge, Dropdown, Space, Tag } from 'antd';
+import { Badge, Button, Dropdown, Space, Tag } from 'antd';
 import React, { useContext } from 'react';
 import { SaContext } from '../../posts/table';
 import { SaDevContext } from '../../dev';
 import { ConfirmTriggerClick } from '../../action/confirm';
 import { iconToElement } from '../iconSelect';
+import { DownOutlined } from '@ant-design/icons';
 
 const DropdownAction: React.FC = (props: {
   fieldNames?: string;
@@ -19,7 +20,7 @@ const DropdownAction: React.FC = (props: {
   disabled?: boolean;
 }) => {
   const { actionRef, columnData, url: tableUrl } = useContext(SaContext);
-  const { modalApi, messageApi } = useContext(SaDevContext);
+  const { modalApi } = useContext(SaDevContext);
   const {
     fieldNames = 'value,label',
     modelName = '',
@@ -42,7 +43,12 @@ const DropdownAction: React.FC = (props: {
   const getLabel = (v: any, type = showType) => {
     if (type == 'tag') {
       return (
-        <Tag color={v.color} icon={v.icon ? iconToElement(v.icon) : false} bordered={false}>
+        <Tag
+          color={v.color}
+          icon={v.icon ? iconToElement(v.icon) : false}
+          bordered={false}
+          style={{ marginInlineEnd: 0 }}
+        >
           {v[label]}
         </Tag>
       );
@@ -50,12 +56,16 @@ const DropdownAction: React.FC = (props: {
       const badge_status = v.status ? v.status : v[key] ? 'success' : 'error';
       return <Badge status={badge_status} text={v[label]} />;
     } else {
-      return v[label];
+      return (
+        <Button variant="link" color={v.color}>
+          {v[label]}
+        </Button>
+      );
     }
   };
 
   const dropdown_items = columnData?.[dataName]?.map((v: any) => {
-    return { key: v[key], label: getLabel(v), v };
+    return { key: v[key], label: getLabel(v), v, disabled: v[key] == value };
   });
   //console.log(dropdown_items, columnData, item.request);
   //如果返回的dom是text的话那么检测状态加入 badge
@@ -73,6 +83,7 @@ const DropdownAction: React.FC = (props: {
       trigger={['click']}
       disabled={disabled}
       menu={{
+        selectedKeys: [value],
         items: dropdown_items,
         onClick: (event) => {
           //console.log(event.item);
@@ -87,7 +98,7 @@ const DropdownAction: React.FC = (props: {
                 msg: (
                   <Space>
                     确定要执行
-                    <span style={{ color: 'red' }}>{clickItem?.label}</span>
+                    {clickItem?.label}
                     操作吗？
                   </Space>
                 ),
@@ -96,14 +107,18 @@ const DropdownAction: React.FC = (props: {
               },
               actionRef,
               null,
-              messageApi,
             ),
           );
         },
       }}
       arrow
     >
-      <a>{showType == 'badge' ? selectItem?.label : getLabel(selectItem.v, 'tag')}</a>
+      <a>
+        <Space>
+          {selectItem ? selectItem?.label : '请选择'}
+          {showType == 'string' ? <DownOutlined /> : null}
+        </Space>
+      </a>
     </Dropdown>
   );
 };

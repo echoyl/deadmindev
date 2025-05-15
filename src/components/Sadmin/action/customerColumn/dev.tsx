@@ -284,7 +284,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                       valueType: 'modalJson',
                       fieldProps: {
                         title: '设置',
-                        size: 'small',
+                        btn: { size: 'small' },
                       },
                     },
                   ];
@@ -637,7 +637,20 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                             ],
                                             defaultValue: 'post',
                                           },
-                                          colProps: { span: 12 },
+                                          colProps: { span: 6 },
+                                        },
+                                        {
+                                          dataIndex: 'then',
+                                          valueType: 'select',
+                                          title: '反馈方式',
+                                          fieldProps: {
+                                            options: [
+                                              { label: '系统默认', value: 'system' },
+                                              { label: '静默', value: 'none' },
+                                            ],
+                                            defaultValue: 'system',
+                                          },
+                                          colProps: { span: 6 },
                                         },
                                       ],
                                     },
@@ -688,10 +701,17 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                         },
                                       ],
                                     },
-
                                     {
                                       dataIndex: 'data',
-                                      title: '额外传输数据',
+                                      title: 'post额外传输数据',
+                                      valueType: 'jsonEditor',
+                                      fieldProps: {
+                                        height: 250,
+                                      },
+                                    },
+                                    {
+                                      dataIndex: 'paramdata',
+                                      title: 'get额外传输数据',
                                       valueType: 'jsonEditor',
                                       fieldProps: {
                                         height: 250,
@@ -714,17 +734,41 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                   },
                                   formColumns: [
                                     {
-                                      dataIndex: 'type',
-                                      title: '弹出类型',
-                                      valueType: 'select',
-                                      fieldProps: {
-                                        options: [
-                                          { label: '文本', value: 'content' },
-                                          { label: '图片', value: 'img' },
-                                          { label: '二维码', value: 'qrcode' },
-                                        ],
-                                      },
+                                      valueType: 'group',
+                                      columns: [
+                                        {
+                                          dataIndex: 'type',
+                                          title: '弹出类型',
+                                          valueType: 'select',
+                                          fieldProps: {
+                                            options: [
+                                              { label: '文本', value: 'content' },
+                                              { label: '图片', value: 'img' },
+                                              { label: '二维码', value: 'qrcode' },
+                                            ],
+                                          },
+                                          colProps: {
+                                            span: 12,
+                                          },
+                                        },
+                                        {
+                                          dataIndex: 'trigger',
+                                          title: '弹出行为',
+                                          valueType: 'select',
+                                          fieldProps: {
+                                            defaultValue: 'click',
+                                            options: [
+                                              { label: 'click', value: 'click' },
+                                              { label: 'hover', value: 'hover' },
+                                            ],
+                                          },
+                                          colProps: {
+                                            span: 12,
+                                          },
+                                        },
+                                      ],
                                     },
+
                                     {
                                       valueType: 'dependency',
                                       name: ['type'],

@@ -343,7 +343,8 @@ export const getTableColumns = (props) => {
     }
     if (defaulColumns[type]) {
       //console.log(defaulColumns[c]);
-      return { ...defaulColumns[type], ...customer };
+      const title = customer?.title || defaulColumns[type]?.title;
+      return { ...defaulColumns[type], ...customer, title };
     }
     return false;
   };

@@ -63,11 +63,12 @@ const TableFromBread: FC<{
     }
   }
 
-  const paramExtra = {
-    ...fieldProps.props?.paramExtra,
-    [fieldProps.foreign_key]: post_key ? post_key : 0,
-  };
-  fieldProps.props.paramExtra = paramExtra;
+  if (fieldProps.foreign_key) {
+    fieldProps.props.paramExtra = {
+      ...fieldProps.props.paramExtra,
+      [fieldProps.foreign_key]: post_key ? post_key : 0,
+    };
+  }
 
   //以下是点击table的checkbox后需要将里面的toolbar栏展示到外面 直接用usestate后会报错，使用和buttonDrawer中参考drawerForm组件一样的设置
   const footerRef = useRef<HTMLDivElement | null>(null);
@@ -96,9 +97,7 @@ const TableFromBread: FC<{
     );
   }, []);
   //console.log('alwaysenable', props, alwaysenable, post_key);
-  return !alwaysenable && !post_key ? (
-    '-'
-  ) : (
+  return (
     <>
       <SaTable
         pageType="drawer"

@@ -187,7 +187,7 @@ const IconSelectPanel = (props) => {
 };
 
 const IconSelectInput = (props) => {
-  const { value: uvalue, onChange: uonChang } = props;
+  const { value: uvalue, onChange: uonChang, size = 'middle' } = props;
   const [searchVal, setSeachVal] = useState();
   const [value, setValue] = useState<{ [key: string]: any } | null>();
   const [open, setOpen] = useState(false);
@@ -215,6 +215,7 @@ const IconSelectInput = (props) => {
   }, [uvalue]);
   return (
     <Select
+      size={size}
       open={open}
       allowClear
       showSearch
@@ -246,12 +247,13 @@ const IconSelectInput = (props) => {
 };
 
 export const IconSelectRel = (props) => {
-  const { value: pvalue = '', onChange, width } = props;
+  const { value: pvalue = '', onChange, width, size } = props;
   const [value, setValue] = useState(pvalue);
 
   return (
     <div style={{ width }}>
       <IconSelectInput
+        size={size}
         value={value}
         onChange={(v) => {
           setValue(v);

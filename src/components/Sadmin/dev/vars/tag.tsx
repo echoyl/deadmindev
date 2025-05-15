@@ -16,6 +16,9 @@ const tagConfig: saFormColumnsType = [
     valueType: 'colorPicker',
     title: '颜色选择',
     tooltip: '使用对象数据后，该设置失效',
+    fieldProps: {
+      size: 'small',
+    },
   },
   {
     dataIndex: 'icon',
@@ -24,6 +27,7 @@ const tagConfig: saFormColumnsType = [
     fieldProps: {
       width: 180,
       placeholder: '请选择图标',
+      size: 'small',
     },
   },
   {

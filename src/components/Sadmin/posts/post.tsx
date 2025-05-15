@@ -242,6 +242,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         actionRef,
         tableDesigner,
         detail,
+        columnData: detail,
       }}
     >
       <DndContext>

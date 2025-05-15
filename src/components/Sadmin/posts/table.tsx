@@ -31,6 +31,7 @@ import { getTableColumns } from './tableColumns';
 import { SaDevContext } from '../dev';
 import TableRender from './tableRender';
 import { tplToDate } from '../helper/functions';
+import { size } from 'es-toolkit/compat';
 export interface saTableProps {
   url?: string;
   name?: string;
@@ -123,7 +124,7 @@ interface saTableContextProps {
 export const SaContext = createContext<{
   actionRef?: any;
   formRef?: any;
-  columnData?: { [key: string]: any };
+  columnData?: { [key: string]: any } | boolean;
   searchData?: { [key: string]: any };
   url?: string;
   tableDesigner?: tableDesignerInstance;
@@ -243,7 +244,13 @@ const SaTable: React.FC<saTableProps> = (props) => {
     if (pageIsChange && data && data.length > 0 && data.length == total) {
       return Promise.resolve({ data, success: true, total });
     }
-    const ret = await request.get(url, { params: { ...params, ...exceptUrlParam, sort, filter } });
+    if (size(sort)) {
+      params.sort = sort;
+    }
+    if (size(filter)) {
+      params.filter = filter;
+    }
+    const ret = await request.get(url, { params: { ...params, ...exceptUrlParam } });
     if (!ret) {
       return;
     }
