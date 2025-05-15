@@ -18,6 +18,7 @@ interface actionConfirm {
   url?: string;
   postUrl?: string;
   data?: {};
+  paramdata?: {};
   dataId?: number;
   formColumns?: saFormColumnsType;
   tabs?: saFormTabColumnsType;
@@ -53,6 +54,7 @@ const InnerForm = (props) => {
     value,
     dataid,
     data,
+    paramdata,
     onChange,
     page,
     readonly = false,
@@ -120,7 +122,7 @@ const InnerForm = (props) => {
 
   //参数中是否有ids 在get的时候也传给接口
   const { ids } = data;
-
+  //console.log('conform data', paramdata);
   return formOpen ? (
     <SaForm
       {...saFormProps}
@@ -136,7 +138,11 @@ const InnerForm = (props) => {
       formRef={formRef}
       actionRef={actionRef}
       postExtra={{ id: dataid, ...data }}
-      paramExtra={ids ? { id: dataid, ids: isArr(ids) ? ids.join('.') : ids } : { id: dataid }}
+      paramExtra={
+        ids
+          ? { id: dataid, ids: isArr(ids) ? ids.join('.') : ids, ...paramdata }
+          : { id: dataid, ...paramdata }
+      }
       // showTabs={tabs?.length <= 1 ? false : true}
       formProps={{
         contentRender,
@@ -202,6 +208,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     url = '',
     postUrl,
     data = {},
+    paramdata = {},
     dataId = 0,
     callback,
     formColumns,
@@ -244,6 +251,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
       callback={callback}
       value={initValue(props.value)}
       data={data}
+      paramdata={paramdata}
       dataid={dataId}
       onChange={onChange}
       readonly={readonly}
