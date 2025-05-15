@@ -97,9 +97,7 @@ const CustomerColumnRender = (props) => {
         const { text = '', size = 'small', errorLevel = 'M' } = item.btn;
         const tpl = tplComplie(text, { record });
         const sizeArr = { small: 120, middle: 160, large: 200 };
-        return (
-          <QRCode key={i} value={tpl} size={sizeArr[size]} errorLevel={errorLevel} bgColor="#fff" />
-        );
+        return <QRCode key={i} value={tpl} size={sizeArr[size]} errorLevel={errorLevel} />;
       }
     } else if (item.domtype == 'tag' || item.domtype == 'Badge') {
       //console.log('tag text', text, item);
@@ -332,7 +330,6 @@ const CustomerColumnRender = (props) => {
                 value={tpl}
                 size={sizeArr[size]}
                 errorLevel={errorLevel}
-                bgColor="#fff"
                 bordered={bordered}
               />
             );
