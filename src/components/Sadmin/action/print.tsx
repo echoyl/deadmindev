@@ -37,7 +37,7 @@ const Print: FC<actionConfirm> = (props) => {
   const click = () => {
     setOpen(true);
   };
-  const { messageApi } = useContext(SaDevContext);
+  const { messageApi, notificationApi } = useContext(SaDevContext);
   useEffect(() => {
     const init = async () => {
       setLoading(true);
@@ -85,7 +85,15 @@ const Print: FC<actionConfirm> = (props) => {
         request.post(callbackUrl, {
           data: { ...data, id: dataId, callback: 1 },
           then: ({ code, msg }) => {
-            actionRef.current?.reload();
+            if (code) {
+              notificationApi?.error({
+                description: msg,
+                message: '提示',
+              });
+            } else {
+              actionRef?.current?.reload();
+            }
+
             return;
           },
         });
