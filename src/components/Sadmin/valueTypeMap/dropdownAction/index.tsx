@@ -41,14 +41,10 @@ const DropdownAction: React.FC = (props: {
   //const items_length = columnData?.[dataName]?.length;
 
   const getLabel = (v: any, type = showType) => {
+    const icon = v.icon ? iconToElement(v.icon) : false;
     if (type == 'tag') {
       return (
-        <Tag
-          color={v.color}
-          icon={v.icon ? iconToElement(v.icon) : false}
-          bordered={false}
-          style={{ marginInlineEnd: 0 }}
-        >
+        <Tag color={v.color} icon={icon} bordered={false} style={{ marginInlineEnd: 0 }}>
           {v[label]}
         </Tag>
       );
@@ -57,7 +53,7 @@ const DropdownAction: React.FC = (props: {
       return <Badge status={badge_status} text={v[label]} />;
     } else {
       return (
-        <Button variant="link" color={v.color}>
+        <Button variant="link" color={v.color} icon={icon}>
           {v[label]}
         </Button>
       );

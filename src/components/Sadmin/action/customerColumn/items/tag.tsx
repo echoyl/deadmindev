@@ -1,10 +1,9 @@
 import { isArr, isObj } from '@/components/Sadmin/checkers';
 import { getFromObject } from '@/components/Sadmin/helpers';
-import { SaContext } from '@/components/Sadmin/posts/table';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
 import { Badge, Tag, Typography } from 'antd';
 import { BadgeProps } from 'antd/lib';
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 const ItemTag: FC<{
   color?: string;
   title?: string;
