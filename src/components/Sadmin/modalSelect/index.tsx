@@ -3,7 +3,7 @@ import { CheckCard } from '@ant-design/pro-components';
 import { App, Modal, Typography, theme } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { inArray, isArr, isUndefined } from '../checkers';
-import { getBread, getFromObject } from '../helpers';
+import { getBread, getFromObject, getMenuDataById } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
 import { useModel } from '@umijs/max';
 
@@ -29,6 +29,7 @@ const ModalSelect = (props) => {
     max = 9,
     value,
     size = 'default',
+    extColumns = [], //数据额外获取的列
   } = props;
   const { formRef } = useContext(SaContext);
   let breadTableColumns = [];
@@ -36,21 +37,23 @@ const ModalSelect = (props) => {
   const { message } = App.useApp();
   const { initialState } = useModel('@@initialState');
   if (page) {
-    const bread = getBread(page.path, initialState?.currentUser);
+    const bread = page.path
+      ? getBread(page.path, initialState?.currentUser)
+      : getMenuDataById(initialState?.currentUser?.menuData, page.id);
     if (bread) {
       breadTableColumns = bread?.data?.tableColumns?.filter((v) => {
         if (page?.columns) {
           return inArray(v.dataIndex, page?.columns) > -1;
         } else {
           return (
-            inArray(v.dataIndex, ['state', 'created_at', 'option']) < 0 &&
-            inArray(v, ['option', 'displayorder']) < 0
+            inArray(v.dataIndex, ['state', 'created_at', 'option', 'displayorder']) < 0 &&
+            inArray(v, ['option', 'displayorder']) < 0 &&
+            inArray(v.valueType, ['option', 'displayorder']) < 0
           );
         }
       });
       breadUrl = bread?.data.url;
     }
-
     //message.error({ content: '无' + page.path + '页面权限', key: 'modal_select_error' });
   }
 
@@ -58,6 +61,31 @@ const ModalSelect = (props) => {
   const [getData, setGetData] = useState(false); //是否已经通过form获取了数据信息
 
   const [open, setOpen] = useState(false);
+
+  /**
+   * 处理数据 剪掉不必要的字段
+   * @param item
+   * @returns
+   */
+  const parseItem = (item: Record<string, any>) => {
+    const fiels = { ...defaultFieldNames, ...fieldNames };
+    const { title, avatar, description } = fiels;
+    const ret = {
+      [title]: item[title],
+      [description]: item[description],
+      id: item.id,
+    };
+    if (isArr(avatar)) {
+      ret[avatar[0]] = item[avatar[0]];
+    } else {
+      ret[avatar] = item[avatar];
+    }
+    extColumns?.map((v) => {
+      ret[v] = item[v];
+    });
+    return ret;
+  };
+
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     //点击确认选择关闭弹层赋值
     if (selectItems.length < 1) {
@@ -105,8 +133,13 @@ const ModalSelect = (props) => {
           query[i] = iquery[i];
         }
       }
-      setSelectItems(parseValue);
-      setSelectedItems(parseValue);
+      const svalues = parseValue.map((v) => {
+        return multiple
+          ? { id: v.id ? v.id : 0, [dataName]: parseItem(v[dataName]) }
+          : parseItem(v);
+      });
+      setSelectItems(svalues);
+      setSelectedItems(svalues);
       setQuery(query);
       setGetData(true);
     }
@@ -150,7 +183,7 @@ const ModalSelect = (props) => {
           return (
             <CheckCircleOutlined
               onClick={() => {
-                checkEvent(record);
+                checkEvent(parseItem(record));
               }}
               style={{ color: token.colorPrimary, fontSize: 18 }}
             />
@@ -162,7 +195,7 @@ const ModalSelect = (props) => {
         return (
           <a
             onClick={() => {
-              checkEvent(record);
+              checkEvent(parseItem(record));
             }}
           >
             选择
@@ -289,7 +322,12 @@ const ModalSelectList = (props) => {
                 }}
               />
             }
-            style={{ height: 98, marginBottom: 10, backgroundColor: token.colorFillQuaternary }}
+            style={{
+              height: 98,
+              marginBottom: 10,
+              backgroundColor: token.colorFillQuaternary,
+              maxWidth: '100%',
+            }}
             className="sa-modal-select-item"
             size={size}
           />
@@ -301,7 +339,6 @@ const ModalSelectList = (props) => {
 };
 export const ModalSelectRender = (text, props) => {
   //这不是函数组件 不能使用hook
-
   //console.log(text, props.record, formRef, formRef.current?.getFieldValue('shop'));
   //获取显示的数据
   const { fieldProps } = props;
