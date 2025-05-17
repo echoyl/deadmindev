@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
 import FormFromBread from '../formFromBread';
-import { getBread } from '../helpers';
+import { getBread, getMenuDataById } from '../helpers';
 import { useModel } from '@umijs/max';
 import { isArr } from '../checkers';
 import { SaContext } from '../posts/table';
@@ -17,6 +17,7 @@ const FormCalendar: React.FC<{
   defaultContent?: string;
   onlyFuture?: boolean; //是否只有未来日期可选
   path?: string;
+  page?: Record<string, any>; //所关联菜单信息
   colors?: string[];
   recordFields?: string[]; //传输当前表单数据字段信息
   idName?: string; //关联数据的id名称
@@ -43,6 +44,7 @@ const FormCalendar: React.FC<{
     defaultContent = '-',
     onlyFuture = true,
     path = '',
+    page,
     colors = [
       'blue',
       'orange',
@@ -61,8 +63,12 @@ const FormCalendar: React.FC<{
     recordFields = ['id'],
     idName = 'id',
   } = props;
+
   const { initialState } = useModel('@@initialState');
-  const bread = getBread(path, initialState?.currentUser);
+  //const bread = getBread(path, initialState?.currentUser);
+  const bread = path
+    ? getBread(path, initialState?.currentUser)
+    : getMenuDataById(initialState?.currentUser?.menuData, page?.id);
   const url = bread?.data?.url ? bread?.data.url : '';
   //这里可能需要再抽一层 ButtonModalForm 出来
   const [allData, setAllData] = useState<Array<Record<string, any>>>();
@@ -156,6 +162,7 @@ const FormCalendar: React.FC<{
         }}
       >
         <FormFromBread
+          menu_page_id={page?.id}
           fieldProps={{
             path,
             props: {

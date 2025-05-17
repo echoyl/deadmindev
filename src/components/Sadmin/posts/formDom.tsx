@@ -350,6 +350,8 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
             ? relateMenu.data.formColumns
             : relateMenu.data.tabs[0]?.formColumns;
         }
+        //将page传入page.id中
+        v.fieldProps.page = { ...v.fieldProps.page, id: v.page };
       } else {
         //如果时formlist 没有page 且没有columns 默认给一个 防止无属性不渲染dom
         if (v.valueType == 'formList' && !v.columns) {
