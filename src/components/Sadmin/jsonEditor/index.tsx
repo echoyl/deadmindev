@@ -1,4 +1,4 @@
-import { useContext, useState, lazy, Suspense } from 'react';
+import { useContext, useState, lazy, Suspense, useEffect } from 'react';
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 import { theme } from 'antd';
 import { SaDevContext } from '../dev';
@@ -7,7 +7,7 @@ import LoadingFullHeight from '@/components/LoadingFullHeight';
 const VanillaJSONEditor = lazy(() => import('./VanillaJSONEditor'));
 
 const JsonEditor = (props) => {
-  const { value = {}, onChange, options = {}, height = 400 } = props;
+  const { value = {}, onChange, options = {}, height = 400, readOnly } = props;
   const { setting } = useContext(SaDevContext);
   const { useToken } = theme;
   const { token } = useToken();
@@ -15,7 +15,15 @@ const JsonEditor = (props) => {
     json: value,
     text: undefined,
   });
-
+  useEffect(() => {
+    if (readOnly) {
+      //当只读模式下根据外面的值来更新数据
+      setContent({
+        json: value,
+        text: undefined,
+      });
+    }
+  }, [value]);
   const onChangeR = (e) => {
     setContent(e);
     try {
@@ -34,7 +42,12 @@ const JsonEditor = (props) => {
       style={{ '--jse-theme-color': token.colorPrimary }}
     >
       <Suspense fallback={<LoadingFullHeight />}>
-        <VanillaJSONEditor content={content} onChange={onChangeR} />
+        <VanillaJSONEditor
+          content={content}
+          onChange={onChangeR}
+          height={height}
+          readOnly={readOnly}
+        />
       </Suspense>
     </div>
   );

@@ -198,7 +198,9 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
   },
   jsonEditor: {
-    render: (text) => text,
+    render: (text, props) => {
+      return <JsonEditor {...props.fieldProps} value={text} readOnly={true} />;
+    },
     renderFormItem: (text, props) => {
       return <JsonEditor {...props.fieldProps} />;
     },
@@ -399,6 +401,9 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   },
   html: {
     render: (text, props) => {
+      return <div dangerouslySetInnerHTML={{ __html: text }}></div>;
+    },
+    renderFormItem: (text, props) => {
       return <div dangerouslySetInnerHTML={{ __html: text }}></div>;
     },
   },
