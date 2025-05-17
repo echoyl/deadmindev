@@ -16,7 +16,7 @@ const JsonEditor = (props) => {
     text: undefined,
   });
   useEffect(() => {
-    if (readOnly) {
+    if (readOnly && Object.keys(value).length > 0) {
       //当只读模式下根据外面的值来更新数据
       setContent({
         json: value,
