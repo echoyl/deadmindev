@@ -16,6 +16,8 @@ import DropdownAction from '../../valueTypeMap/dropdownAction';
 import dayjs from 'dayjs';
 import { ExportButton, ImportButton } from '../../dev/table/toolbar';
 import { RequestButtonRender } from '../../components/requestButton';
+import ConsoleLogShowFormValue from './items/consolelogformvalue';
+import OpenIframe from './items/openiframe';
 const CustomerColumnRender = (props) => {
   const {
     items = [],
@@ -207,21 +209,6 @@ const CustomerColumnRender = (props) => {
               title={item.modal?.title}
               type={item.modal?.type}
               afterActionType={item.request?.afterActionType}
-              callback={(ret) => {
-                if (!ret.code && ret.data?.ifram_url) {
-                  modalApi.info({
-                    title: ret.data?.ifram_title ? ret.data?.ifram_title : '详情',
-                    width: 1000, //两边padding48px
-                    content: (
-                      <>
-                        <iframe src={ret.data?.ifram_url} width="952" height="700" />
-                      </>
-                    ),
-                    okText: '关闭',
-                    icon: null,
-                  });
-                }
-              }}
             />
           );
         } else if (item.action == 'request') {
@@ -390,6 +377,10 @@ const CustomerColumnRender = (props) => {
               {dom}
             </a>
           );
+        } else if (item.action == 'iframe') {
+          return <OpenIframe key={key} trigger={dom} {...value} />;
+        } else if (item.action == 'console') {
+          return <ConsoleLogShowFormValue key={key} />;
         } else {
           return <span key={key}>{dom}</span>;
         }
@@ -397,7 +388,7 @@ const CustomerColumnRender = (props) => {
       .filter((v) => v);
   };
   if (!record || Object.keys(record).length < 1) {
-    return null;
+    //return null;2025-05-17没有record或者record为空则不显示，先关闭这个设置。不知道当时为什么添加这个设置
   }
   //dropdown的设置 num 表示预留几个直接出现 text-显示的文字
   const itemsDom = getItemsDom(

@@ -1,7 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import cache from '@/components/Sadmin/helper/cache';
-import { message, notification } from '@/components/Sadmin/message';
+import { message, notification, modal } from '@/components/Sadmin/message';
 import { history } from '@umijs/max';
 import { extend } from 'umi-request';
 import { isUndefined } from '../../checkers';
@@ -183,6 +183,8 @@ request.interceptors.response.use(async (response, options) => {
           notification.info({ description: notificationContent, message: '提示' });
         }
 
+        //以下是根据返回数据中有的关键字然后进行的动作
+
         //添加导出跳转下载页面功能
         if (data?.download) {
           const a = document.createElement('a');
@@ -192,6 +194,29 @@ request.interceptors.response.use(async (response, options) => {
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
+        }
+
+        //打开新窗口
+        if (data?.ifram_url) {
+          const { ifram_title = '详情', ifram_width = 1000, ifram_url, ifram_height = 700 } = data;
+          modal.info({
+            title: ifram_title,
+            width: ifram_width, //两边padding48px
+            content: (
+              <>
+                <iframe
+                  src={ifram_url}
+                  width={ifram_width - 48}
+                  height={ifram_height}
+                  style={{ border: 'none' }}
+                />
+              </>
+            ),
+            okText: null,
+            icon: null,
+            footer: null,
+            closable: true,
+          });
         }
 
         if (data?.logout) {

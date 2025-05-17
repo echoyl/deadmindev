@@ -458,6 +458,8 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                               { label: '导出', value: 'export' },
                               { label: '站内链接', value: 'link' },
                               { label: '外链接', value: 'alink' },
+                              { label: '打开iframe', value: 'iframe' },
+                              { label: 'console.log', value: 'console' },
                             ],
                             size: 'small',
                           },
