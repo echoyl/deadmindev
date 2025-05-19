@@ -104,6 +104,8 @@ const ModalSelect = (props) => {
     setOpen(false);
   };
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
+    //取消选择重设弹层中已选的值
+    setSelectItems([...selectedItems]);
     setOpen(false);
   };
   //列表中选中的项
@@ -138,8 +140,9 @@ const ModalSelect = (props) => {
           ? { id: v.id ? v.id : 0, [dataName]: parseItem(v[dataName]) }
           : parseItem(v);
       });
-      setSelectItems(svalues);
-      setSelectedItems(svalues);
+      setSelectItems([...svalues]);
+      //console.log('useEffect', svalues);
+      setSelectedItems([...svalues]);
       setQuery(query);
       setGetData(true);
     }
@@ -168,6 +171,7 @@ const ModalSelect = (props) => {
       //单选
       setSelectItems([record]);
     }
+    return;
   };
   const { token } = theme.useToken();
   const radioSelect = {
@@ -175,32 +179,21 @@ const ModalSelect = (props) => {
     width: 120,
     search: false,
     render: (text, record, _, action) => {
+      //console.log('radio render', record, selectItems);
+      const checkStyle = { color: token.colorPrimary, fontSize: 18 };
       const selected_index: number = multiple
         ? selectItems.findIndex((v) => v[dataName]?.id == record.id)
         : selectItems.findIndex((v) => v.id == record.id);
       if (selected_index >= 0) {
         if (multiple) {
           return (
-            <CheckCircleOutlined
-              onClick={() => {
-                checkEvent(parseItem(record));
-              }}
-              style={{ color: token.colorPrimary, fontSize: 18 }}
-            />
+            <CheckCircleOutlined onClick={() => checkEvent(parseItem(record))} style={checkStyle} />
           );
         } else {
-          return <CheckCircleOutlined style={{ color: token.colorPrimary, fontSize: 18 }} />;
+          return <CheckCircleOutlined style={checkStyle} />;
         }
       } else {
-        return (
-          <a
-            onClick={() => {
-              checkEvent(parseItem(record));
-            }}
-          >
-            选择
-          </a>
-        );
+        return <a onClick={() => checkEvent(parseItem(record))}>选择</a>;
       }
     },
   };
