@@ -4,14 +4,10 @@ import { Badge, Button, Image, Upload, theme } from 'antd';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import React, { useContext, useEffect, useState } from 'react';
 import './index.less';
-
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
-import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { css } from '@emotion/css';
 import { SaDevContext } from '../dev';
 import { isArr, isHttpLink, isStr } from '../checkers';
 import ImgCrop, { ImgCropProps } from 'antd-img-crop';
+import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
 
 interface Props {
   max?: number;
@@ -25,51 +21,6 @@ interface Props {
   crop?: boolean;
   cropProps?: ImgCropProps;
 }
-
-interface DraggableUploadListItemProps {
-  originNode: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-  file: UploadFile<any>;
-}
-
-const DraggableUploadListItem = ({ originNode, file }: DraggableUploadListItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: file.uid,
-  });
-  const commonStyle = {
-    cursor: 'move',
-    transition: 'unset', // Prevent element from shaking after drag
-    height: '100%',
-    width: '100%',
-  };
-  // const style: React.CSSProperties = {
-  //   transform: CSS.Transform.toString(transform),
-  //   transition,
-  // };
-  const style = transform
-    ? {
-        ...commonStyle,
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        transition: isDragging ? 'unset' : transition, // Improve performance/visual effect when dragging
-        ...(isDragging ? { zIndex: 9999 } : {}),
-      }
-    : commonStyle;
-
-  // prevent preview event when drag end
-  const className = isDragging
-    ? css`
-        a {
-          pointer-events: none;
-        }
-      `
-    : '';
-
-  return (
-    <div ref={setNodeRef} style={style} className={className} {...attributes} {...listeners}>
-      {/* hide error tooltip when dragging */}
-      {file.status === 'error' && isDragging ? originNode.props.children : originNode}
-    </div>
-  );
-};
 
 const Uploader: React.FC<Props> = (props) => {
   const [headers, setHeaders] = useState();
@@ -182,18 +133,9 @@ const Uploader: React.FC<Props> = (props) => {
       </Button>
     );
 
-  const sensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 10 },
-  });
-
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    if (active.id !== over?.id) {
-      const activeIndex = fileList.findIndex((i) => i.uid === active.id);
-      const overIndex = fileList.findIndex((i) => i.uid === over?.id);
-      const new_sort_data = arrayMove(fileList, activeIndex, overIndex);
-      setFileList([...new_sort_data]);
-      props.onChange?.([...new_sort_data]);
-    }
+  const onDragEnd = (new_sort_data: any) => {
+    setFileList([...new_sort_data]);
+    props.onChange?.([...new_sort_data]);
   };
 
   const fileChange = (info) => {
@@ -296,29 +238,26 @@ const Uploader: React.FC<Props> = (props) => {
           </Upload>
         </ImgCrop>
       ) : (
-        <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-          <SortableContext
-            items={fileList?.map((i) => i.uid)}
-            //strategy={horizontalListSortingStrategy}
+        <DndKitContext onDragEnd={onDragEnd} list={fileList}>
+          <Upload
+            {...fieldProps}
+            headers={headers}
+            action={action}
+            listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
+            className={
+              buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
+            }
+            itemRender={(originNode, file) => (
+              <DragItem item={file} style={{ width: '100%', height: '100%' }}>
+                {originNode}
+              </DragItem>
+            )}
+            fileList={fileList}
+            onChange={fileChange}
           >
-            <Upload
-              {...fieldProps}
-              headers={headers}
-              action={action}
-              listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
-              className={
-                buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
-              }
-              itemRender={(originNode, file) => (
-                <DraggableUploadListItem originNode={originNode} file={file} />
-              )}
-              fileList={fileList}
-              onChange={fileChange}
-            >
-              {fileList?.length && fileList.length == max && !loading ? null : uploadButton}
-            </Upload>
-          </SortableContext>
-        </DndContext>
+            {fileList?.length && fileList.length == max && !loading ? null : uploadButton}
+          </Upload>
+        </DndKitContext>
       )}
       {fileList?.length > 0 && (
         <div style={{ display: 'none' }}>

@@ -1,14 +1,11 @@
 import { CloseCircleOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProCard, ProForm, ProFormDependency, ProFormText } from '@ant-design/pro-components';
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
-import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { css } from '@emotion/css';
 import { Button, Divider, Form, Popover, Select, Space, theme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
 import { inArray } from '../checkers';
 import { uid } from '../helpers';
+import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
 
 export interface wxMenu {
   name?: string;
@@ -17,57 +14,6 @@ export interface wxMenu {
   key?: string;
   sub_button?: wxMenu[];
 }
-
-interface DraggableUploadListItemProps {
-  originNode: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-  item: wxMenu;
-}
-
-const DraggableUploadListItem = ({ originNode, item }: DraggableUploadListItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: item.uid,
-  });
-  const commonStyle = {
-    cursor: 'move',
-    transition: 'unset', // Prevent element from shaking after drag
-    height: '100%',
-    ...originNode?.props?.style,
-  };
-  // const style: React.CSSProperties = {
-  //   transform: CSS.Transform.toString(transform),
-  //   transition,
-  // };
-  const style = transform
-    ? {
-        ...commonStyle,
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        transition: isDragging ? 'unset' : transition, // Improve performance/visual effect when dragging
-        ...(isDragging ? { zIndex: 9999 } : {}),
-      }
-    : commonStyle;
-
-  // prevent preview event when drag end
-  const className = isDragging
-    ? css`
-        a {
-          pointer-events: none;
-        }
-      `
-    : '';
-  return React.cloneElement(originNode, {
-    ...attributes,
-    ...listeners,
-    className,
-    style,
-    ref: setNodeRef,
-  });
-  return (
-    <div ref={setNodeRef} style={style} className={className} {...attributes} {...listeners}>
-      {/* hide error tooltip when dragging */}
-      {originNode}
-    </div>
-  );
-};
 
 export const SecondMenu: React.FC<{
   data?: wxMenu[];
@@ -78,9 +24,6 @@ export const SecondMenu: React.FC<{
   const { data, onChange, menuSelect, selected = false } = props;
   const [menus, setMenus] = useState<wxMenu[]>([]);
   const [thisMenu, setThisMenu] = useState<wxMenu>();
-  const sensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 10 },
-  });
   const menuMaxLength = 5;
 
   useEffect(() => {
@@ -89,13 +32,8 @@ export const SecondMenu: React.FC<{
     }
   }, [data]);
 
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    if (active.id !== over?.id) {
-      const activeIndex = menus.findIndex((i) => i.uid === active.id);
-      const overIndex = menus.findIndex((i) => i.uid === over?.id);
-      const new_sort_data = arrayMove(menus, activeIndex, overIndex);
-      changeMenu(new_sort_data);
-    }
+  const onDragEnd = (new_sort_data: any) => {
+    changeMenu(new_sort_data);
   };
   const addMenu = () => {
     const ad_menu = {
@@ -125,57 +63,47 @@ export const SecondMenu: React.FC<{
   };
   return (
     <div style={{ textAlign: 'center', width: 126 }}>
-      <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-        <SortableContext
-          items={menus.map((i) => i.uid)}
-          //strategy={horizontalListSortingStrategy}
-        >
-          {menus.length < menuMaxLength ? (
-            <Button type="text" onClick={addMenu} icon={<PlusOutlined />} />
-          ) : null}
-          {menus.length > 0 &&
-            menus.map((item, index) => {
-              return (
-                <React.Fragment key={index}>
-                  <DraggableUploadListItem
-                    originNode={
-                      <div style={{ width: '100%' }}>
-                        <div
-                          style={{
-                            background: !selected && thisMenu?.uid == item.uid ? '#eee' : 'none',
-                            padding: '12px 0',
-                          }}
-                        >
-                          <Space
-                            style={{
-                              margin: '0 auto',
-                            }}
-                          >
-                            <span
-                              onClick={() => {
-                                menuSelect?.(item);
-                                setThisMenu(item);
-                              }}
-                            >
-                              {item.name}
-                            </span>
-                            <CloseCircleOutlined
-                              onClick={() => {
-                                closeMenu(index);
-                              }}
-                            />
-                          </Space>
-                        </div>
-                      </div>
-                    }
-                    item={item}
-                  />
-                  {index < menus.length - 1 ? <Divider style={{ margin: '6px 0' }} /> : null}
-                </React.Fragment>
-              );
-            })}
-        </SortableContext>
-      </DndContext>
+      <DndKitContext onDragEnd={onDragEnd} list={menus}>
+        {menus.length < menuMaxLength ? (
+          <Button type="text" onClick={addMenu} icon={<PlusOutlined />} />
+        ) : null}
+        {menus.length > 0 &&
+          menus.map((item, index) => {
+            return (
+              <React.Fragment key={index}>
+                <DragItem item={item}>
+                  <div
+                    style={{
+                      background: !selected && thisMenu?.uid == item.uid ? '#eee' : 'none',
+                      padding: '12px 0',
+                    }}
+                  >
+                    <Space
+                      style={{
+                        margin: '0 auto',
+                      }}
+                    >
+                      <span
+                        onClick={() => {
+                          menuSelect?.(item);
+                          setThisMenu(item);
+                        }}
+                      >
+                        {item.name}
+                      </span>
+                      <CloseCircleOutlined
+                        onClick={() => {
+                          closeMenu(index);
+                        }}
+                      />
+                    </Space>
+                  </div>
+                </DragItem>
+                {index < menus.length - 1 ? <Divider style={{ margin: '6px 0' }} /> : null}
+              </React.Fragment>
+            );
+          })}
+      </DndKitContext>
     </div>
   );
 };
@@ -337,98 +265,98 @@ const WxMenu: React.FC<{
     changeMenu(menus);
   };
 
-  const sensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 10 },
-  });
+  // const sensor = useSensor(PointerSensor, {
+  //   activationConstraint: { distance: 10 },
+  // });
 
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    const activeIndex = menus.findIndex((i) => i.uid === active.id);
-    if (active.id !== over?.id) {
-      const overIndex = menus.findIndex((i) => i.uid === over?.id);
-      const new_sort_data = arrayMove(menus, activeIndex, overIndex);
+  // const onDragEnd = ({ active, over }: DragEndEvent) => {
+  //   const activeIndex = menus.findIndex((i) => i.uid === active.id);
+  //   if (active.id !== over?.id) {
+  //     const overIndex = menus.findIndex((i) => i.uid === over?.id);
+  //     const new_sort_data = arrayMove(menus, activeIndex, overIndex);
+  //     changeMenu(new_sort_data);
+  //   }
+  //   setSelected(true);
+  //   setThisMenu(menus[activeIndex]);
+  // };
+  const onDragEnd = (new_sort_data: any, activeIndex: number, issort = false) => {
+    if (issort) {
       changeMenu(new_sort_data);
     }
     setSelected(true);
     setThisMenu(menus[activeIndex]);
   };
-
   return (
     <ProCard split="vertical">
-      <ProCard style={{ paddingTop: 440, background: token.colorBgLayout }} colSpan={15} key="menupanel">
+      <ProCard
+        style={{ paddingTop: 440, background: token.colorBgLayout }}
+        colSpan={15}
+        key="menupanel"
+      >
         {/* <SecondMenu
     data={sm}
     onChange={(v) => {
       console.log('子菜单顺序变化', v);
     }}
   /> */}
-        <DndContext
-          sensors={[sensor]}
+        <DndKitContext
           onDragEnd={onDragEnd}
+          list={menus}
           onDragStart={() => {
             setSelected(false);
             setThisMenu(null);
           }}
         >
-          <SortableContext
-            items={menus?.map((i) => i.uid)}
-            //strategy={horizontalListSortingStrategy}
-          >
-            {menus?.map((item, index) => {
-              return (
-                <React.Fragment key={item.uid}>
-                  <DraggableUploadListItem
-                    originNode={
-                      <div style={{ display: 'inline-block' }}>
-                        <Popover
-                          content={
-                            <SecondMenu
-                              data={item.sub_button}
-                              menuSelect={(menu) => {
-                                setFormMenu(menu);
-                                setSelected(false);
-                              }}
-                              onChange={(smenu) => {
-                                //二级菜单更新
-                                item.sub_button = smenu;
-                                changeMenu(menus);
-                              }}
-                              selected={selected}
-                            />
-                          }
-                          trigger="click"
-                          placement="top"
-                          open={thisMenu && item.uid == thisMenu.uid ? true : false}
-                        >
-                          <Button
-                            type={thisMenu?.uid == item.uid ? 'dashed ' : 'text'}
-                            style={{ width: 150 }}
-                            onClick={() => {
-                              clickMenu(item);
-                              setSelected(true);
-                            }}
-                          >
-                            <Space>
-                              {item.name}
-                              <CloseCircleOutlined
-                                onClick={(e) => {
-                                  closeMenu(index);
-                                  e.stopPropagation();
-                                }}
-                              />
-                            </Space>
-                          </Button>
-                        </Popover>
-                      </div>
+          {menus?.map((item, index) => {
+            return (
+              <React.Fragment key={item.uid}>
+                <DragItem item={item} style={{ display: 'inline-block' }}>
+                  <Popover
+                    content={
+                      <SecondMenu
+                        data={item.sub_button}
+                        menuSelect={(menu) => {
+                          setFormMenu(menu);
+                          setSelected(false);
+                        }}
+                        onChange={(smenu) => {
+                          //二级菜单更新
+                          item.sub_button = smenu;
+                          changeMenu(menus);
+                        }}
+                        selected={selected}
+                      />
                     }
-                    item={item}
-                  />
+                    trigger="click"
+                    placement="top"
+                    open={thisMenu && item.uid == thisMenu.uid ? true : false}
+                  >
+                    <Button
+                      type={thisMenu?.uid == item.uid ? 'dashed ' : 'text'}
+                      style={{ width: 150 }}
+                      onClick={() => {
+                        clickMenu(item);
+                        setSelected(true);
+                      }}
+                    >
+                      <Space>
+                        {item.name}
+                        <CloseCircleOutlined
+                          onClick={(e) => {
+                            closeMenu(index);
+                            e.stopPropagation();
+                          }}
+                        />
+                      </Space>
+                    </Button>
+                  </Popover>
+                </DragItem>
 
-                  {index < menus.length - 1 ? <Divider type="vertical" /> : null}
-                </React.Fragment>
-              );
-            })}
-          </SortableContext>
-        </DndContext>
+                {index < menus.length - 1 ? <Divider type="vertical" /> : null}
+              </React.Fragment>
+            );
+          })}
+        </DndKitContext>
         {menus?.length < menuMaxLength ? (
           <>
             {menus?.length > 0 ? <Divider type="vertical" /> : null}
