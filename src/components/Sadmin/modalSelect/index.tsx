@@ -1,11 +1,12 @@
 import { CheckCircleOutlined, CloseCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { CheckCard } from '@ant-design/pro-components';
-import { App, Modal, Typography, theme } from 'antd';
-import { useContext, useEffect, useState } from 'react';
+import { App, Flex, Modal, Space, Typography, theme } from 'antd';
+import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr, isUndefined } from '../checkers';
 import { getBread, getFromObject, getMenuDataById } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
 import { useModel } from '@umijs/max';
+import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
 
 const ModalSelect = (props) => {
   const defaultFieldNames = {
@@ -241,6 +242,10 @@ const ModalSelect = (props) => {
         fieldNames={{ ...defaultFieldNames, ...fieldNames }}
         max={max}
         size={size}
+        onChange={(newList: any) => {
+          setSelectedItems([...newList]);
+          onChange?.([...newList]);
+        }}
       />
       <Modal
         width={width}
@@ -282,52 +287,63 @@ const ModalSelectList = (props) => {
     fieldNames = { avatar: 'avatar', description: 'description', title: 'title' },
     max,
     size = 'default',
+    onChange,
   } = props;
   const { Paragraph } = Typography;
   const { token } = theme.useToken();
+  const onDragEnd = (newList: Record<string, any>[]) => {
+    onChange?.(newList);
+  };
   return (
-    <>
-      {items?.map((item, i) => {
-        //多选的话显示的数据是关联数据信息
-        const data = multiple ? item[dataName] : item;
-        const title = getFromObject(data, fieldNames.title);
-        const avatar = getFromObject(data, fieldNames.avatar);
-        const description = getFromObject(data, fieldNames.description);
-        return (
-          <CheckCard
-            key={i}
-            checked={false}
-            title={
-              <Typography.Text style={{ width: avatar ? 100 : 140 }} ellipsis={{ tooltip: title }}>
-                {title}
-              </Typography.Text>
-            }
-            avatar={isArr(avatar) ? avatar[0].url : avatar}
-            description={
-              <Paragraph ellipsis={{ rows: 1 }} style={{ marginBottom: 0 }}>
-                {description}
-              </Paragraph>
-            }
-            extra={
-              <CloseCircleOutlined
-                onClick={() => {
-                  close(i);
+    <DndKitContext onDragEnd={onDragEnd} list={items} idName={['data', 'id']}>
+      <Flex wrap gap="small">
+        {items?.map((item, i) => {
+          //多选的话显示的数据是关联数据信息
+          const data = multiple ? item[dataName] : item;
+          const title = getFromObject(data, fieldNames.title);
+          const avatar = getFromObject(data, fieldNames.avatar);
+          const description = getFromObject(data, fieldNames.description);
+          return (
+            <DragItem item={item} key={i} idName={['data', 'id']} style={{ maxWidth: '100%' }}>
+              <CheckCard
+                key={i}
+                checked={false}
+                title={
+                  <Typography.Text
+                    style={{ width: avatar ? 100 : 140 }}
+                    ellipsis={{ tooltip: title }}
+                  >
+                    {title}
+                  </Typography.Text>
+                }
+                avatar={isArr(avatar) ? avatar[0].url : avatar}
+                description={
+                  <Paragraph ellipsis={{ rows: 1 }} style={{ marginBottom: 0 }}>
+                    {description}
+                  </Paragraph>
+                }
+                extra={
+                  <CloseCircleOutlined
+                    onClick={() => {
+                      close(i);
+                    }}
+                  />
+                }
+                style={{
+                  height: 98,
+                  marginBottom: 10,
+                  backgroundColor: token.colorFillQuaternary,
+                  maxWidth: '100%',
                 }}
+                className="sa-modal-select-item"
+                size={size}
               />
-            }
-            style={{
-              height: 98,
-              marginBottom: 10,
-              backgroundColor: token.colorFillQuaternary,
-              maxWidth: '100%',
-            }}
-            className="sa-modal-select-item"
-            size={size}
-          />
-        );
-      })}
-      {(multiple && max && max > items.length) || items.length == 0 ? button : ''}
-    </>
+            </DragItem>
+          );
+        })}
+        {(multiple && max && max > items.length) || items.length == 0 ? button : ''}
+      </Flex>
+    </DndKitContext>
   );
 };
 export const ModalSelectRender = (text, props) => {
