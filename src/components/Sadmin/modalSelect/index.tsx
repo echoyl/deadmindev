@@ -217,7 +217,7 @@ const ModalSelect = (props) => {
       //单选直接清除
       setSelectedItems([]);
       setSelectItems([]);
-      onChange?.(0);
+      onChange?.([]);
     }
   };
   const tagPlusStyle: React.CSSProperties = {
