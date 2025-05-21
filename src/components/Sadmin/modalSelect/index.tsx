@@ -1,6 +1,6 @@
 import { CheckCircleOutlined, CloseCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { CheckCard } from '@ant-design/pro-components';
-import { App, Flex, Modal, Space, Typography, theme } from 'antd';
+import { App, Flex, Modal, Space, Tag, Typography, theme } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr, isUndefined } from '../checkers';
 import { getBread, getFromObject, getMenuDataById } from '../helpers';
@@ -31,6 +31,7 @@ const ModalSelect = (props) => {
     value,
     size = 'default',
     extColumns = [], //数据额外获取的列
+    type = 'checkbox',
   } = props;
   const { formRef } = useContext(SaContext);
   let breadTableColumns = [];
@@ -199,38 +200,56 @@ const ModalSelect = (props) => {
     },
   };
   const closeItem = (index) => {
-    const deleteItem = selectedItems[index];
-    const innerIndex = selectItems.findIndex((v) => deleteItem.id == v.id);
-    selectedItems.splice(index, 1);
-    setSelectedItems([...selectedItems]);
-    if (innerIndex > -1) {
-      //如果弹层列表中有该删除的选项 才将他删除
-      selectItems.splice(innerIndex, 1);
-      setSelectItems([...selectItems]);
-    }
-
     if (multiple) {
       //多选的话传输数据类型为对象非id
-      onChange?.(selectItems);
+      const deleteItem = selectedItems[index];
+      const innerIndex = selectItems.findIndex((v) => deleteItem[dataName]?.id == v[dataName]?.id);
+      //return;
+      selectedItems.splice(index, 1);
+      setSelectedItems([...selectedItems]);
+      if (innerIndex > -1) {
+        //如果弹层列表中有该删除的选项 才将他删除
+        selectItems.splice(innerIndex, 1);
+        setSelectItems([...selectItems]);
+      }
+      onChange?.([...selectedItems]);
     } else {
+      //单选直接清除
+      setSelectedItems([]);
+      setSelectItems([]);
       onChange?.(0);
     }
   };
-  const selectButton = (
-    <div
-      className="sa-select-button"
-      onClick={() => {
-        setOpen(true);
-      }}
-    >
-      <div className="sa-select-button-select">
-        <div>
-          <PlusOutlined />
-          <div style={{ marginTop: 4 }}>选择</div>
+  const tagPlusStyle: React.CSSProperties = {
+    background: token.colorBgContainer,
+    borderStyle: 'dashed',
+    cursor: 'pointer',
+  };
+  const selectButton =
+    type == 'checkbox' ? (
+      <div
+        className="sa-select-button"
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        <div className="sa-select-button-select">
+          <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 4 }}>选择</div>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    ) : (
+      <Tag
+        style={tagPlusStyle}
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        <PlusOutlined /> 选择
+      </Tag>
+    );
   return (
     <>
       <ModalSelectList
@@ -246,6 +265,7 @@ const ModalSelect = (props) => {
           setSelectedItems([...newList]);
           onChange?.([...newList]);
         }}
+        type={type}
       />
       <Modal
         width={width}
@@ -288,62 +308,87 @@ const ModalSelectList = (props) => {
     max,
     size = 'default',
     onChange,
+    type = 'checkbox',
   } = props;
   const { Paragraph } = Typography;
   const { token } = theme.useToken();
   const onDragEnd = (newList: Record<string, any>[]) => {
     onChange?.(newList);
   };
-  return (
+  const itemsRendered = (
+    <>
+      {items?.map((item, i) => {
+        //多选的话显示的数据是关联数据信息
+        const data = multiple ? item[dataName] : item;
+        const title = getFromObject(data, fieldNames.title);
+        const avatar = getFromObject(data, fieldNames.avatar);
+        const description = getFromObject(data, fieldNames.description);
+        const itemDom =
+          type == 'checkbox' ? (
+            <CheckCard
+              key={i}
+              checked={false}
+              title={
+                <Typography.Text
+                  style={{ width: avatar ? 100 : 140 }}
+                  ellipsis={{ tooltip: title }}
+                >
+                  {title}
+                </Typography.Text>
+              }
+              avatar={isArr(avatar) ? avatar[0].url : avatar}
+              description={
+                <Paragraph ellipsis={{ rows: 1 }} style={{ marginBottom: 0 }}>
+                  {description}
+                </Paragraph>
+              }
+              extra={
+                <CloseCircleOutlined
+                  onClick={() => {
+                    close(i);
+                  }}
+                />
+              }
+              style={{
+                height: 98,
+                marginBottom: 10,
+                backgroundColor: token.colorFillQuaternary,
+                maxWidth: '100%',
+              }}
+              className="sa-modal-select-item"
+              size={size}
+            />
+          ) : (
+            <Tag
+              key={i}
+              closable={true}
+              onClose={(e) => {
+                close(i);
+                e.preventDefault();
+              }}
+            >
+              {title}
+            </Tag>
+          );
+        return multiple ? (
+          <DragItem item={item} key={i} idName={['data', 'id']} style={{ maxWidth: '100%' }}>
+            {itemDom}
+          </DragItem>
+        ) : (
+          itemDom
+        );
+      })}
+      {(multiple && max && max > items.length) || items.length == 0 ? button : ''}
+    </>
+  );
+  return multiple ? (
     <DndKitContext onDragEnd={onDragEnd} list={items} idName={['data', 'id']}>
       <Flex wrap gap="small">
-        {items?.map((item, i) => {
-          //多选的话显示的数据是关联数据信息
-          const data = multiple ? item[dataName] : item;
-          const title = getFromObject(data, fieldNames.title);
-          const avatar = getFromObject(data, fieldNames.avatar);
-          const description = getFromObject(data, fieldNames.description);
-          return (
-            <DragItem item={item} key={i} idName={['data', 'id']} style={{ maxWidth: '100%' }}>
-              <CheckCard
-                key={i}
-                checked={false}
-                title={
-                  <Typography.Text
-                    style={{ width: avatar ? 100 : 140 }}
-                    ellipsis={{ tooltip: title }}
-                  >
-                    {title}
-                  </Typography.Text>
-                }
-                avatar={isArr(avatar) ? avatar[0].url : avatar}
-                description={
-                  <Paragraph ellipsis={{ rows: 1 }} style={{ marginBottom: 0 }}>
-                    {description}
-                  </Paragraph>
-                }
-                extra={
-                  <CloseCircleOutlined
-                    onClick={() => {
-                      close(i);
-                    }}
-                  />
-                }
-                style={{
-                  height: 98,
-                  marginBottom: 10,
-                  backgroundColor: token.colorFillQuaternary,
-                  maxWidth: '100%',
-                }}
-                className="sa-modal-select-item"
-                size={size}
-              />
-            </DragItem>
-          );
-        })}
-        {(multiple && max && max > items.length) || items.length == 0 ? button : ''}
+        {itemsRendered}
       </Flex>
     </DndKitContext>
+  ) : (
+    <>{itemsRendered}</>
   );
 };
 export const ModalSelectRender = (text, props) => {
