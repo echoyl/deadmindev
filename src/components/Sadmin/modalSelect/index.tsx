@@ -178,7 +178,8 @@ const ModalSelect = (props) => {
   const { token } = theme.useToken();
   const radioSelect = {
     title: '操作',
-    width: 120,
+    width: 80,
+    fixed: 'right',
     search: false,
     render: (text, record, _, action) => {
       //console.log('radio render', record, selectItems);
