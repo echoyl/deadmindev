@@ -32,6 +32,8 @@ import { SaDevContext } from '../dev';
 import TableRender from './tableRender';
 import { tplToDate } from '../helper/functions';
 import { size } from 'es-toolkit/compat';
+import DndKitContext from '../dev/dnd-context/dragSort';
+import sortDragEnd from '../dev/dnd-context/displayorder';
 export interface saTableProps {
   url?: string;
   name?: string;
@@ -484,187 +486,197 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }}
     >
       <>
-        <TableRender
-          tableColumns={tableColumns}
-          devEnable={devEnable}
-          allProps={{ ...props, setSelectedRowKeys, selectedRowKeys }}
-          components={components}
-          className="sa-pro-table"
-          rowClassName={() => 'editable-row'}
-          actionRef={actionRef}
-          onLoad={() => {
-            return onTableReload();
-          }}
-          params={{
-            ...paramExtra,
-            ...(table_menu_key ? { [table_menu_key]: tableMenuId } : {}),
-          }}
-          columns={tbColumns}
-          request={rq}
-          formRef={searchFormRef}
-          searchFormRender={(p, d) => {
-            return <DndContext>{d}</DndContext>;
-          }}
-          search={
-            search_config.length > 0
-              ? {
-                  span: isMobile ? 24 : 6, //手机端占满一行
-                  className: 'posts-table posts-table-' + pageType,
-                  labelWidth: 'auto',
-                }
-              : false
-          }
-          revalidateOnFocus={false}
-          form={
-            pageType != 'page'
-              ? { variant: setting?.form?.variant ? setting?.form?.variant : 'filled' }
-              : {
-                  variant: setting?.form?.variant ? setting?.form?.variant : 'filled',
-                  ignoreRules: false,
-                  syncToInitialValues: false,
-                  style: { padding: 16 },
-                  extraUrlParams: exceptUrlParam,
-                  syncToUrl: (values, type) => {
-                    if (pageType != 'page') {
-                      //只有在页面显示的table 搜索数据才会同步到url中
-                      return false;
-                    }
-                    if (type === 'get') {
-                      for (var i in values) {
-                        if (/^\d+$/.test(values[i])) {
-                          if (!enumNames || enumNames.findIndex((v) => v == i) < 0) {
-                            //如果长度过长 那应该不是数字不要格式化它
-                            if (values[i].length <= 8) {
-                              values[i] = parseInt(values[i]);
-                            }
-                          }
-                        }
-                      }
-                      for (var i in values) {
-                        let jval = getJson(values[i], '');
-                        if (isObj(jval)) {
-                          values[i] = jval;
-                        } else {
-                          //检测 是否是逗号拼接的数组
-                          if (isStr(values[i]) && values[i].indexOf(',') > -1) {
-                            values[i] = values[i].split(',');
-                          }
-                        }
-                        if (isArr(values[i])) {
-                          //数组的话检测里面的数据是否是数字，系统会默认将同一名字的query参数整合到数组中 并且数字变成了字符串
-                          values[i] = values[i].map((v) => {
-                            if (isStr(v) && /^\d+$/.test(v)) {
-                              v = parseInt(v);
-                            }
-                            if (isStr(v)) {
-                              //这里日期格式中空格会被转义成+号，这里需要转回来 只在日期区间才做该处理
-                              v = v.replace('+', ' ');
-                            }
-                            return v;
-                          });
-                        }
-                      }
-                      //将columns配置中设置了defaultvalue的搜索项的默认值添加到request参数中
-                      const ret = { ...searchDefaultValues, ...values };
-                      return ret;
-                    }
-                    for (var i in values) {
-                      if (typeof values[i] == 'object') {
-                        values[i] = JSON.stringify(values[i]);
-                      }
-                    }
-                    return values;
-                  },
-                }
-          }
-          toolBarRender={toolBarRender({
-            setCurrentRow,
-            handleModalVisible,
-            paramExtra,
-            enums,
-            initRequest,
-            initialState,
-            tableMenuId,
-            table_menu_key,
-            selectedRowKeys,
-            devEnable,
-            pageMenu,
-            sort,
-            actionRef,
-            ...props,
+        <DndKitContext
+          list={data}
+          idName="id"
+          restrict="vertical"
+          onDragEnd={sortDragEnd(url, (list) => {
+            setData([...list]);
           })}
-          rowSelection={
-            !checkEnable || setting?.checkDisable
-              ? false
-              : {
-                  selectedRowKeys,
-                  onChange: (newSelectedRowKeys, selectedRows) => {
-                    //console.log('newSelectedRowKeys', newSelectedRowKeys);
-                    setSelectedRowKeys(newSelectedRowKeys);
-                  },
-                  checkStrictly: false,
-                  columnWidth: 80,
-                  renderCell: (checked, record, index, originNode) => {
-                    return !setting?.table?.checkHoverDisable ? (
-                      <TableIndex
-                        checked={checked}
-                        record={record}
-                        index={index}
-                        originNode={originNode}
-                      />
-                    ) : (
-                      originNode
-                    );
-                  },
-                }
-          }
-          toolbar={
-            tableMenu && table_menu_key
-              ? {
-                  menu: {
-                    type: 'tab',
-                    activeKey: tableMenuId,
-                    items: tableMenu?.map((v) => ({ label: v.label, key: v.value + '' })),
-                    onChange: (key) => {
-                      setTableMenuId(key as string);
-                      if (pageType == 'page') {
-                        let url_search = search2Obj();
-                        //return;
-                        url_search[table_menu_key] = key;
-                        setUrlSearch(url_search);
-                      }
-                    },
-                  },
-                }
-              : { title: tableTitle ? tableTitle : '列表' }
-          }
-          tableAlertRender={false}
-          summary={(data) => {
-            return summary ? (
-              <tr>
-                <td
-                  colSpan={
-                    tableColumns?.filter((v) => {
-                      return !v.hideInTable;
-                    }).length
+        >
+          <TableRender
+            tableColumns={tableColumns}
+            devEnable={devEnable}
+            allProps={{ ...props, setSelectedRowKeys, selectedRowKeys }}
+            components={components}
+            className="sa-pro-table"
+            rowClassName={() => 'editable-row'}
+            actionRef={actionRef}
+            onLoad={() => {
+              return onTableReload();
+            }}
+            params={{
+              ...paramExtra,
+              ...(table_menu_key ? { [table_menu_key]: tableMenuId } : {}),
+            }}
+            columns={tbColumns}
+            request={rq}
+            dataSource={data}
+            formRef={searchFormRef}
+            searchFormRender={(p, d) => {
+              return <DndContext>{d}</DndContext>;
+            }}
+            search={
+              search_config.length > 0
+                ? {
+                    span: isMobile ? 24 : 6, //手机端占满一行
+                    className: 'posts-table posts-table-' + pageType,
+                    labelWidth: 'auto',
                   }
-                  dangerouslySetInnerHTML={{ __html: summary }}
-                ></td>
-              </tr>
-            ) : null;
-          }}
-          scroll={{ x: 900 }}
-          pagination={{
-            showSizeChanger: true,
-            showQuickJumper: true,
-            ...setting?.pagination,
-            defaultPageSize: currentPageSize,
-            pageSize: currentPageSize,
-          }}
-          {...tableProps}
-          {...setting?.table}
-          rowKey="id"
-        />
+                : false
+            }
+            revalidateOnFocus={false}
+            form={
+              pageType != 'page'
+                ? { variant: setting?.form?.variant ? setting?.form?.variant : 'filled' }
+                : {
+                    variant: setting?.form?.variant ? setting?.form?.variant : 'filled',
+                    ignoreRules: false,
+                    syncToInitialValues: false,
+                    style: { padding: 16 },
+                    extraUrlParams: exceptUrlParam,
+                    syncToUrl: (values, type) => {
+                      if (pageType != 'page') {
+                        //只有在页面显示的table 搜索数据才会同步到url中
+                        return false;
+                      }
+                      if (type === 'get') {
+                        for (var i in values) {
+                          if (/^\d+$/.test(values[i])) {
+                            if (!enumNames || enumNames.findIndex((v) => v == i) < 0) {
+                              //如果长度过长 那应该不是数字不要格式化它
+                              if (values[i].length <= 8) {
+                                values[i] = parseInt(values[i]);
+                              }
+                            }
+                          }
+                        }
+                        for (var i in values) {
+                          let jval = getJson(values[i], '');
+                          if (isObj(jval)) {
+                            values[i] = jval;
+                          } else {
+                            //检测 是否是逗号拼接的数组
+                            if (isStr(values[i]) && values[i].indexOf(',') > -1) {
+                              values[i] = values[i].split(',');
+                            }
+                          }
+                          if (isArr(values[i])) {
+                            //数组的话检测里面的数据是否是数字，系统会默认将同一名字的query参数整合到数组中 并且数字变成了字符串
+                            values[i] = values[i].map((v) => {
+                              if (isStr(v) && /^\d+$/.test(v)) {
+                                v = parseInt(v);
+                              }
+                              if (isStr(v)) {
+                                //这里日期格式中空格会被转义成+号，这里需要转回来 只在日期区间才做该处理
+                                v = v.replace('+', ' ');
+                              }
+                              return v;
+                            });
+                          }
+                        }
+                        //将columns配置中设置了defaultvalue的搜索项的默认值添加到request参数中
+                        const ret = { ...searchDefaultValues, ...values };
+                        return ret;
+                      }
+                      for (var i in values) {
+                        if (typeof values[i] == 'object') {
+                          values[i] = JSON.stringify(values[i]);
+                        }
+                      }
+                      return values;
+                    },
+                  }
+            }
+            toolBarRender={toolBarRender({
+              setCurrentRow,
+              handleModalVisible,
+              paramExtra,
+              enums,
+              initRequest,
+              initialState,
+              tableMenuId,
+              table_menu_key,
+              selectedRowKeys,
+              devEnable,
+              pageMenu,
+              sort,
+              actionRef,
+              ...props,
+            })}
+            rowSelection={
+              !checkEnable || setting?.checkDisable
+                ? false
+                : {
+                    selectedRowKeys,
+                    onChange: (newSelectedRowKeys, selectedRows) => {
+                      //console.log('newSelectedRowKeys', newSelectedRowKeys);
+                      setSelectedRowKeys(newSelectedRowKeys);
+                    },
+                    checkStrictly: false,
+                    columnWidth: 80,
+                    renderCell: (checked, record, index, originNode) => {
+                      return !setting?.table?.checkHoverDisable ? (
+                        <TableIndex
+                          checked={checked}
+                          record={record}
+                          index={index}
+                          originNode={originNode}
+                        />
+                      ) : (
+                        originNode
+                      );
+                    },
+                  }
+            }
+            toolbar={
+              tableMenu && table_menu_key
+                ? {
+                    menu: {
+                      type: 'tab',
+                      activeKey: tableMenuId,
+                      items: tableMenu?.map((v) => ({ label: v.label, key: v.value + '' })),
+                      onChange: (key) => {
+                        setTableMenuId(key as string);
+                        if (pageType == 'page') {
+                          let url_search = search2Obj();
+                          //return;
+                          url_search[table_menu_key] = key;
+                          setUrlSearch(url_search);
+                        }
+                      },
+                    },
+                  }
+                : { title: tableTitle ? tableTitle : '列表' }
+            }
+            tableAlertRender={false}
+            summary={(data) => {
+              return summary ? (
+                <tr>
+                  <td
+                    colSpan={
+                      tableColumns?.filter((v) => {
+                        return !v.hideInTable;
+                      }).length
+                    }
+                    dangerouslySetInnerHTML={{ __html: summary }}
+                  ></td>
+                </tr>
+              ) : null;
+            }}
+            //scroll={{ x: 900 }}
+            pagination={{
+              showSizeChanger: true,
+              showQuickJumper: true,
+              ...setting?.pagination,
+              defaultPageSize: currentPageSize,
+              pageSize: currentPageSize,
+            }}
+            {...tableProps}
+            {...setting?.table}
+            rowKey="id"
+          />
+        </DndKitContext>
         <TableForm
           {...props}
           createModalVisible={createModalVisible}

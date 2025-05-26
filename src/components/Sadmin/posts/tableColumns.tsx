@@ -11,6 +11,7 @@ import { defaultColumnsLabel } from './formDom';
 import { SaContext } from './table';
 import { tplToDate } from '../helper/functions';
 import { cloneDeep } from 'es-toolkit';
+import { DragHandle } from '../dev/dnd-context/dragSort';
 
 export const SaTableAction = (props) => {
   const { openType } = props;
@@ -150,7 +151,7 @@ export const onCell = (props) => {
       record[dataIndex] = newV;
       setData([...data]);
       const ret = await request.post(url, {
-        data: { base: { id: row.id, [dataIndex]: newV } },
+        data: { base: { id: row.id, [dataIndex]: newV }, actype: dataIndex, [dataIndex]: newV }, //兼容actype
       });
 
       //const success = true;
@@ -217,6 +218,11 @@ export const getTableColumns = (props) => {
         />
       ),
     },
+    dragsort: {
+      align: 'center',
+      width: 80,
+      render: () => <DragHandle />,
+    },
   };
   const customerColumns =
     typeof columns == 'function' ? columns(enums, actionRef) : cloneDeep(columns);
@@ -249,6 +255,7 @@ export const getTableColumns = (props) => {
           dataIndex: v.dataIndex,
           type: v.editable?.type,
         });
+      v.width = v.width || 120;
     }
     const df = v.valueType ? defaulColumnsRender(v.valueType, v) : false;
     if (df) {

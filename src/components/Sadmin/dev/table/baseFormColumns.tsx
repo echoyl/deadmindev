@@ -26,6 +26,8 @@ export const columnType = [
   { label: '搜索select', value: 'searchSelect' },
   { label: '评分 - rate', value: 'rate' },
   { label: '滑动条 - slider', value: 'saSlider' },
+  { label: '操作栏 - option', value: 'option' },
+  { label: '排序 - dragsort', value: 'dragsort' },
 ];
 //表单可选类型
 const formMoreType = [

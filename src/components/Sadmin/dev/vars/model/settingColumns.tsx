@@ -272,6 +272,18 @@ export default (model_id: number, dev: { [key: string]: any }): saFormTabColumns
             },
           ],
         },
+        {
+          valueType: 'group',
+          columns: [
+            {
+              dataIndex: 'openDragSort',
+              title: '开启拖拽排序',
+              tooltip: '开启后可以在列表中添加拖拽排序列进行排序数据排序功能',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
+          ],
+        },
       ],
     },
     {

@@ -2,9 +2,11 @@ import { Form, Input, InputRef } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isNum, isNumberLike } from '../checkers';
+import { DragItem } from '../dev/dnd-context/dragSort';
 
 interface EditableRowProps {
   index: number;
+  'data-row-key': string;
 }
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -13,7 +15,9 @@ export const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => 
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
-        <tr {...props} />
+        <DragItem item={{ uid: props?.['data-row-key'] }} handle={false}>
+          <tr {...props} />
+        </DragItem>
       </EditableContext.Provider>
     </Form>
   );

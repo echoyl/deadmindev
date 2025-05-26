@@ -31,10 +31,7 @@ export const devDefaultFields = tagOptions([
 /**
  * 默认table列表中预设的字段列名
  */
-export const devTabelFields = tagOptions([
-  { label: 'option - 操作栏', title: 'option - 操作栏', value: 'option', color: 'processing' },
-  //{ label: 'coption - 分类操作栏', value: 'coption' },
-]);
+export const devTabelFields = [];
 
 export const modelFormColumns = (
   detail: Record<string, any>,
