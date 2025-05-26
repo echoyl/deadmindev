@@ -72,31 +72,33 @@ export const SecondMenu: React.FC<{
             return (
               <React.Fragment key={index}>
                 <DragItem item={item}>
-                  <div
-                    style={{
-                      background: !selected && thisMenu?.uid == item.uid ? '#eee' : 'none',
-                      padding: '12px 0',
-                    }}
-                  >
-                    <Space
+                  <div style={{ width: '100%' }}>
+                    <div
                       style={{
-                        margin: '0 auto',
+                        background: !selected && thisMenu?.uid == item.uid ? '#eee' : 'none',
+                        padding: '12px 0',
                       }}
                     >
-                      <span
-                        onClick={() => {
-                          menuSelect?.(item);
-                          setThisMenu(item);
+                      <Space
+                        style={{
+                          margin: '0 auto',
                         }}
                       >
-                        {item.name}
-                      </span>
-                      <CloseCircleOutlined
-                        onClick={() => {
-                          closeMenu(index);
-                        }}
-                      />
-                    </Space>
+                        <span
+                          onClick={() => {
+                            menuSelect?.(item);
+                            setThisMenu(item);
+                          }}
+                        >
+                          {item.name}
+                        </span>
+                        <CloseCircleOutlined
+                          onClick={() => {
+                            closeMenu(index);
+                          }}
+                        />
+                      </Space>
+                    </div>
                   </div>
                 </DragItem>
                 {index < menus.length - 1 ? <Divider style={{ margin: '6px 0' }} /> : null}
@@ -279,8 +281,8 @@ const WxMenu: React.FC<{
   //   setSelected(true);
   //   setThisMenu(menus[activeIndex]);
   // };
-  const onDragEnd = (new_sort_data: any, activeIndex: number, issort = false) => {
-    if (issort) {
+  const onDragEnd = (new_sort_data: any, { activeIndex = 0, change = false }) => {
+    if (change) {
       changeMenu(new_sort_data);
     }
     setSelected(true);

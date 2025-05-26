@@ -248,8 +248,8 @@ const Uploader: React.FC<Props> = (props) => {
               buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
             }
             itemRender={(originNode, file) => (
-              <DragItem item={file} style={{ width: '100%', height: '100%' }}>
-                {originNode}
+              <DragItem item={file}>
+                <div style={{ width: '100%', height: '100%' }}>{originNode}</div>
               </DragItem>
             )}
             fileList={fileList}

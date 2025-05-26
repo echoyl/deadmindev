@@ -1,11 +1,30 @@
 import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
-import React from 'react';
+import {
+  SortableContext,
+  arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
+import { CSS } from '@dnd-kit/utilities';
+import { restrictToVerticalAxis, restrictToHorizontalAxis } from '@dnd-kit/modifiers';
+import React, { useContext, useMemo } from 'react';
 import { css } from '@emotion/css';
 import { getFromObject } from '../../helpers';
-const DndKitContext = (props) => {
-  const { onDragEnd, idName = 'uid', list = [], children, ...retProps } = props;
+import { Button } from 'antd';
+import { HolderOutlined } from '@ant-design/icons';
+
+interface DndKitContextProps {
+  children: any;
+  list: Record<string, any>[] | any[];
+  idName?: string | string[];
+  restrict?: 'vertical' | 'horizontal' | undefined; //限制拖拽方向 vertical horizontal undefined
+  onDragEnd?(list: Record<string, any>[] | any[], more?: Record<string, any>): void;
+}
+const DndKitContext = (props: DndKitContextProps) => {
+  const { onDragEnd, idName = 'uid', list = [], children, restrict, ...retProps } = props;
 
   const sensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 10 },
@@ -18,18 +37,26 @@ const DndKitContext = (props) => {
     if (aid !== oid) {
       const overIndex = list.findIndex((i) => getFromObject(i, idName) === oid);
       new_sort_data = arrayMove(list, activeIndex, overIndex);
-      //setFileList([...new_sort_data]);
-      //props.onChange?.([...new_sort_data]);
     }
-    onDragEnd?.([...new_sort_data], activeIndex, aid !== oid); //自定义回调已排序的数据
+    onDragEnd?.([...new_sort_data], { activeIndex, change: aid !== oid, event: { active, over } }); //自定义回调已排序的数据
   };
   const items = list?.map((i) => getFromObject(i, idName));
+  //restrict 如果是vertical 则限制只能上下拖拽，horizontal 则限制只能左右拖拽
+  const modifiers =
+    restrict == 'vertical'
+      ? [restrictToVerticalAxis]
+      : restrict == 'horizontal'
+        ? [restrictToHorizontalAxis]
+        : undefined;
+  const strategy =
+    restrict == 'vertical'
+      ? verticalListSortingStrategy
+      : restrict == 'horizontal'
+        ? horizontalListSortingStrategy
+        : undefined;
   return (
-    <DndContext sensors={[sensor]} onDragEnd={dragEnd} {...retProps}>
-      <SortableContext
-        items={items}
-        //strategy={horizontalListSortingStrategy}
-      >
+    <DndContext modifiers={modifiers} sensors={[sensor]} onDragEnd={dragEnd} {...retProps}>
+      <SortableContext items={items} strategy={strategy}>
         {children}
       </SortableContext>
     </DndContext>
@@ -41,24 +68,43 @@ interface DragItemProps {
   item: Record<string, any>;
   idName?: string | string[];
   style?: React.CSSProperties | undefined;
+  handle?: boolean;
 }
+
+interface ItemContextProps {
+  setActivatorNodeRef?: (element: HTMLElement | null) => void;
+  listeners?: SyntheticListenerMap;
+}
+
+const DragItemContext = React.createContext<ItemContextProps>({});
 
 export const DragItem = ({
   item,
   children,
   idName = 'uid',
   style: itemStyle = {},
+  handle = true, //默认dom就是拖拽手柄
 }: DragItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: getFromObject(item, idName),
   });
   const commonStyle = {
-    cursor: 'move',
-    transition: 'unset', // Prevent element from shaking after drag
+    //transition: 'unset', // Prevent element from shaking after drag
     // height: '100%',
     // width: '100%',
     ...itemStyle,
   };
+  if (handle) {
+    commonStyle.cursor = 'move';
+  }
   // const style: React.CSSProperties = {
   //   transform: CSS.Transform.toString(transform),
   //   transition,
@@ -67,9 +113,11 @@ export const DragItem = ({
   const style = transform
     ? {
         ...commonStyle,
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        transition: isDragging ? 'unset' : transition, // Improve performance/visual effect when dragging
-        ...(isDragging ? { zIndex: 9999 } : {}),
+        transform: CSS.Translate.toString(transform),
+        transition,
+        //transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        //transition: isDragging ? 'unset' : transition, // Improve performance/visual effect when dragging
+        ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
       }
     : commonStyle;
 
@@ -81,6 +129,28 @@ export const DragItem = ({
         }
       `
     : '';
+  //console.log('children type', typeof children.type, children.type);
+  //如果传入的children是html标签 那么直接复制该标签将拖拽属性添加到该标签上，如果是function函数组件，那么因为无法设置ref所以默认加入一个外层div包裹
+  const ls = handle ? listeners : {}; //如果设置为不是手柄 则不用添加监听事件
+  const dom =
+    typeof children.type === 'string' ? (
+      React.cloneElement(children, {
+        ...attributes,
+        ...ls,
+        className,
+        ...children.props, //保留原有属性
+        style: {
+          ...children.props?.style,
+          ...style,
+        },
+        ref: setNodeRef,
+      })
+    ) : (
+      <div ref={setNodeRef} style={style} className={className} {...attributes} {...ls}>
+        {/* hide error tooltip when dragging */}
+        {children}
+      </div>
+    );
   // return React.cloneElement(children, {
   //   ...attributes,
   //   ...listeners,
@@ -88,11 +158,24 @@ export const DragItem = ({
   //   style,
   //   ref: setNodeRef,
   // });
+  const contextValue = useMemo<ItemContextProps>(
+    () => ({ setActivatorNodeRef, listeners }),
+    [setActivatorNodeRef, listeners],
+  );
+  return <DragItemContext.Provider value={contextValue}>{dom}</DragItemContext.Provider>;
+};
+
+export const DragHandle: React.FC = () => {
+  const { setActivatorNodeRef, listeners } = useContext(DragItemContext);
   return (
-    <div ref={setNodeRef} style={style} className={className} {...attributes} {...listeners}>
-      {/* hide error tooltip when dragging */}
-      {children}
-    </div>
+    <Button
+      type="text"
+      size="small"
+      icon={<HolderOutlined />}
+      style={{ cursor: 'move' }}
+      ref={setActivatorNodeRef}
+      {...listeners}
+    />
   );
 };
 
