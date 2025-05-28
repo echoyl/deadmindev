@@ -21,6 +21,7 @@ const sortDragEnd = (
         actype: 'dragSort',
         active: { id: active.id },
         over: { id: over.id },
+        id: [active.id, over.id],
       },
       then: ({ code, msg }) => {
         if (code) {
