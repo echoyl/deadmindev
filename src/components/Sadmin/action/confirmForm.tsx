@@ -30,6 +30,7 @@ interface actionConfirm {
   trigger?: ReactNode | JSX.Element;
   width?: number;
   height?: number;
+  maxHeight?: number;
   page?: string;
   readonly?: boolean;
   xkey?: string;
@@ -216,6 +217,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     trigger,
     width = 800,
     height = 450,
+    maxHeight = 650,
     page,
     onChange,
     readonly = false,
@@ -274,6 +276,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
       }}
       modalProps={modalProps}
       minHeight={height}
+      height={maxHeight}
     >
       {inner}
     </ButtonModal>

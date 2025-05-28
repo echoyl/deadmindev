@@ -1,5 +1,5 @@
 import ConfirmForm from '../Sadmin/action/confirmForm';
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import cache from '../Sadmin/helper/cache';
 
 const LockScreen: FC = (props) => {
@@ -15,6 +15,7 @@ const LockScreen: FC = (props) => {
       modalProps={{
         closable: false,
         styles: { mask: { backgroundColor: 'rgba(0,0,0,0.8)' } },
+        height: 400,
       }}
       callback={(ret) => {
         if (!ret.code) {
@@ -23,16 +24,19 @@ const LockScreen: FC = (props) => {
         }
         return true;
       }}
-      afterActionType="none"
+      afterActionType="reload"
       msg="屏幕已锁定请输入密码解锁"
       postUrl="lockscreen"
-      saFormProps={{ devEnable: false }}
+      width={400}
+      maxHeight={100}
+      height={100}
+      saFormProps={{ devEnable: false, showTabs: false }}
       tabs={[
         {
           title: 'test',
           formColumns: [
             {
-              title: '',
+              title: '请输入锁屏密码',
               dataIndex: 'password',
               valueType: 'password',
               formItemProps: {

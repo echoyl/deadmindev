@@ -1,12 +1,13 @@
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Spin, Tabs, theme } from 'antd';
 import useMergedState from 'rc-util/es/hooks/useMergedState';
-import React from 'react';
+import React, { useContext } from 'react';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import type { NoticeIconTabProps } from './NoticeList';
 import NoticeList from './NoticeList';
 import { useStyle } from './style';
+import { SaDevContext } from '../Sadmin/dev';
 
 export type NoticeIconProps = {
   count?: number;
@@ -77,20 +78,18 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
     });
 
     return (
-      <>
-        <Spin spinning={loading} delay={300}>
-          <div
-            style={{
-              boxShadow:
-                '0 6px 16px -8px rgba(0,0,0,.08), 0 9px 28px 0 rgba(0,0,0,.05), 0 12px 48px 16px rgba(0,0,0,.03)',
-              borderRadius: 4,
-              background: token.colorBgBase,
-            }}
-          >
-            <Tabs onChange={onTabChange} centered items={items} />
-          </div>
-        </Spin>
-      </>
+      <Spin spinning={loading} delay={300}>
+        <div
+          style={{
+            boxShadow:
+              '0 6px 16px -8px rgba(0,0,0,.08), 0 9px 28px 0 rgba(0,0,0,.05), 0 12px 48px 16px rgba(0,0,0,.03)',
+            borderRadius: 4,
+            background: token.colorBgBase,
+          }}
+        >
+          <Tabs onChange={onTabChange} centered items={items} />
+        </div>
+      </Spin>
     );
   };
 
@@ -104,11 +103,22 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
   const notificationBox = getNotificationBox();
   const prefixCls = 'header-bell';
   const { wrapSSR, hashId } = useStyle(prefixCls);
-
   const NoticeBellIcon = bell || <BellOutlined />;
+  const { setting } = useContext(SaDevContext);
+  //console.log('setting', setting?.adminSetting.headerColor);
+  const color =
+    setting?.adminSetting.headerColor == 'dark'
+      ? 'rgba(255, 255, 255, 0.45)'
+      : 'rgba(0, 0, 0, 0.45)';
   const trigger = (
     <Badge
-      styles={{ root: { ...style, color: token.colorTextTertiary } }}
+      styles={{
+        root: {
+          ...style,
+          color,
+          //color: token.colorTextTertiary
+        },
+      }}
       count={count}
       size="small"
       offset={[-10, 10]}

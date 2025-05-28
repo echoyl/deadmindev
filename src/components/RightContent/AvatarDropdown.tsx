@@ -3,14 +3,13 @@ import { LockOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@an
 import { history, useIntl, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
-import { stringify } from 'querystring';
 import React, { useCallback, useContext, useState, useEffect } from 'react';
-import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
 import { t } from '../Sadmin/helpers';
 import { SaDevContext } from '../Sadmin/dev';
 import LockScreen from './lockscreen';
 import cache from '../Sadmin/helper/cache';
+import { AutoThemeCon } from '.';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -138,7 +137,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
   ];
 
   return (
-    <>
+    <AutoThemeCon>
       <HeaderDropdown
         menu={{
           selectedKeys: [],
@@ -148,12 +147,13 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
       >
         {children}
       </HeaderDropdown>
+
       <LockScreen
         open={open}
         onOpen={(open) => {
           setOpen(open);
         }}
       />
-    </>
+    </AutoThemeCon>
   );
 };
