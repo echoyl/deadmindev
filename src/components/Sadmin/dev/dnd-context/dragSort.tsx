@@ -34,11 +34,17 @@ const DndKitContext = (props: DndKitContextProps) => {
     const oid = getFromObject(over, 'id');
     const activeIndex = list.findIndex((i) => getFromObject(i, idName) === aid);
     let new_sort_data = list;
+    let overIndex = -1;
     if (aid !== oid) {
-      const overIndex = list.findIndex((i) => getFromObject(i, idName) === oid);
+      overIndex = list.findIndex((i) => getFromObject(i, idName) === oid);
       new_sort_data = arrayMove(list, activeIndex, overIndex);
     }
-    onDragEnd?.([...new_sort_data], { activeIndex, change: aid !== oid, event: { active, over } }); //自定义回调已排序的数据
+    onDragEnd?.([...new_sort_data], {
+      activeIndex,
+      overIndex,
+      change: aid !== oid,
+      event: { active, over },
+    }); //自定义回调已排序的数据
   };
   const items = list?.map((i) => getFromObject(i, idName));
   //restrict 如果是vertical 则限制只能上下拖拽，horizontal 则限制只能左右拖拽

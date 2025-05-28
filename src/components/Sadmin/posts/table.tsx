@@ -490,7 +490,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
           list={data}
           idName="id"
           restrict="vertical"
-          onDragEnd={sortDragEnd(url, (list) => {
+          onDragEnd={sortDragEnd(url, data, (list) => {
             setData([...list]);
           })}
         >
