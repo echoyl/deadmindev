@@ -196,7 +196,11 @@ const ModalSelect = (props) => {
           return <CheckCircleOutlined style={checkStyle} />;
         }
       } else {
-        return <a onClick={() => checkEvent(parseItem(record))}>选择</a>;
+        return (
+          <a onClick={() => checkEvent(parseItem(record))} style={{ color: token.colorPrimary }}>
+            选择
+          </a>
+        );
       }
     },
   };

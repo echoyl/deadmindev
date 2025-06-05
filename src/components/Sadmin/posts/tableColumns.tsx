@@ -352,9 +352,6 @@ export const getTableColumns = (props) => {
       //console.log(defaulColumns[c]);
       const title = customer?.title || defaulColumns[type]?.title;
       const v = { ...defaulColumns[type], ...customer, title };
-      if (devEnable) {
-        v.title = <TableColumnTitle id={type} {...v} />;
-      }
       return v;
     }
     return false;
@@ -363,6 +360,9 @@ export const getTableColumns = (props) => {
     ?.map((c) => {
       if (typeof c == 'string') {
         const dr = defaulColumnsRender(c, {});
+        if (dr && devEnable) {
+          dr.title = <TableColumnTitle id={c} {...dr} />;
+        }
         return dr
           ? dr
           : {
