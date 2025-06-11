@@ -115,15 +115,6 @@
             -webkit-animation: antrotate 1.2s infinite linear;
             animation: antRotate 1.2s infinite linear;
           }
-          .ant-spin-lg .ant-spin-dot {
-            width: 32px;
-            height: 32px;
-            font-size: 32px;
-          }
-          .ant-spin-lg .ant-spin-dot i {
-            width: 14px;
-            height: 14px;
-          }
           @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
             .ant-spin-blur {
               background: #fff;
@@ -162,7 +153,7 @@
           min-height: 362px;
         ">
           <div class="page-loading-warp">
-            <div class="ant-spin ant-spin-lg ant-spin-spinning">
+            <div class="ant-spin ant-spin-spinning">
               <span class="ant-spin-dot ant-spin-dot-spin">
                 <i class="ant-spin-dot-item"></i>
                 <i class="ant-spin-dot-item"></i>
@@ -172,10 +163,7 @@
             </div>
           </div>
           <div class="loading-title">
-            正在为您加载资源
-          </div>
-          <div class="loading-sub-title">
-            初次加载资源可能需要较多时间 请耐心等待
+          Loading
           </div>
         </div>
       `;
