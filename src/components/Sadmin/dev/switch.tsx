@@ -4,7 +4,7 @@ import { Button, FloatButton } from 'antd';
 import { useState, useEffect } from 'react';
 
 const DevSwitch = (props: Record<string, any>) => {
-  const { type = 'float' } = props;
+  const { type = 'float', buttonType = 'default' } = props;
   const [checked, setChecked] = useState(true);
   const { setInitialState, initialState } = useModel('@@initialState');
   const click = () => {
@@ -28,7 +28,7 @@ const DevSwitch = (props: Record<string, any>) => {
       {type == 'float' ? (
         <FloatButton
           icon={<HighlightOutlined />}
-          type={checked ? 'primary' : 'default'}
+          type={checked ? 'primary' : buttonType}
           // style={checked ? { ...checkedStyle } : {}}
           // title={checked ? '预览' : '切换至开发模式'}
           onClick={click}
@@ -37,7 +37,7 @@ const DevSwitch = (props: Record<string, any>) => {
         <Button
           onClick={click}
           icon={<HighlightOutlined />}
-          type={checked ? 'primary' : 'default'}
+          type={checked ? 'primary' : buttonType}
         />
       )}
     </>

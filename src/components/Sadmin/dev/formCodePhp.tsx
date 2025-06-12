@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import request from '../lib/request';
 
 const FormCodePhp = (props: Record<string, any>) => {
-  const { pageMenu = { id: 0, model_id: 0 } } = props;
+  const { pageMenu = { id: 0, model_id: 0 }, trigger } = props;
   const [text, setText] = useState();
   const load = () => {
     request
@@ -23,7 +23,7 @@ const FormCodePhp = (props: Record<string, any>) => {
   };
   return (
     <ButtonModal
-      trigger={<Button icon={<CodeOutlined />} />}
+      trigger={trigger ? trigger : <Button icon={<CodeOutlined />} />}
       minHeight={650}
       title="通过模型字段快速格式化php代码"
       afterOpenChange={(open) => {

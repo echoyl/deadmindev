@@ -246,8 +246,8 @@ export const SaForm: FC<saFormProps> = (props) => {
       }}
     >
       <DndContext>
-        {initialState?.settings?.adminSetting?.dev && pdevEnable ? (
-          <FormAddTab pageMenu={pageMenu} marginTop={pageType != 'page' ? 0 : 16} />
+        {initialState?.settings?.adminSetting?.dev && pdevEnable && !showTabs ? (
+          <FormAddTab pageMenu={pageMenu} style={pageType != 'page' ? { marginTop: 16 } : {}} />
         ) : null}
         {setting?.steps_form ? (
           <StepsForm
@@ -366,7 +366,13 @@ export const SaForm: FC<saFormProps> = (props) => {
                 // centered={true}
                 tabBarExtraContent={
                   initialState?.settings?.adminSetting?.dev && pdevEnable
-                    ? { right: <AddTabItem /> }
+                    ? {
+                        right: (
+                          <>
+                            <FormAddTab pageMenu={pageMenu} type="formTab" />
+                          </>
+                        ),
+                      }
                     : null
                 }
                 onChange={(activeKey) => {

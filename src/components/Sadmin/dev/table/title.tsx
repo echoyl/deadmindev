@@ -666,22 +666,28 @@ export const AddTabItem = (props) => {
 };
 
 export const FormAddTab = (props) => {
-  const { pageMenu, marginTop = 16 } = props;
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { pageMenu, type = 'form', style = {} } = props;
+  const { initialState } = useModel('@@initialState');
+  const buttonType = type == 'formTab' ? 'text' : 'default';
   return (
-    <Space style={{ marginTop }}>
+    <Space style={style}>
       <ColumnsSelector
         key="devcolumns"
-        trigger={<Button icon={<UnorderedListOutlined />} />}
+        trigger={<Button type={buttonType} icon={<UnorderedListOutlined />} />}
         dev={initialState?.settings?.adminSetting?.dev}
       />
       <ToolBarMenu
         key="devsetting"
-        trigger={<Button icon={<SettingOutlined />} />}
+        trigger={<Button type={buttonType} icon={<SettingOutlined />} />}
         pageMenu={pageMenu}
       />
-      <DevSwitch key="DevSwitch" type="button" />
-      <FormCodePhp key="FormCodePhp" pageMenu={pageMenu} />
+      <FormCodePhp
+        key="FormCodePhp"
+        pageMenu={pageMenu}
+        trigger={<Button type={buttonType} icon={<CodeOutlined />} />}
+      />
+      {type == 'formTab' && <AddTabItem />}
+      <DevSwitch key="DevSwitch" type="button" buttonType={buttonType} />
     </Space>
   );
 };
