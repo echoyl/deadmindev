@@ -221,24 +221,23 @@ const ItemTab = (props) => {
 const ItemRow = (props) => {
   const { row, data, noTitle = false, index, getData } = props;
   return (
-    <Row gutter={[16, 16]} style={{ marginTop: -16 }}>
+    <>
       {noTitle ? null : (
-        <Col span={24} key={'row'}>
-          <DevPanelColumnTitle
-            span={24}
-            otitle={null}
-            title={row?.title ? row?.title : '分组 - ' + row?.uid}
-            uid={row?.uid}
-            devData={{ itemType: 'row' }}
-            row={row}
-          />
-        </Col>
+        <DevPanelColumnTitle
+          style={{ width: '25%', margin: '-14px 0' }}
+          otitle={null}
+          title={row?.title ? row?.title : '分组 - ' + row?.uid}
+          uid={row?.uid}
+          devData={{ itemType: 'row' }}
+          row={row}
+        />
       )}
-
-      {row?.cols?.map((col, key) => {
-        return <ItemCol {...col} key={key} data={data} getData={getData} />;
-      })}
-    </Row>
+      <Row gutter={[16, 16]}>
+        {row?.cols?.map((col, key) => {
+          return <ItemCol {...col} key={key} data={data} getData={getData} />;
+        })}
+      </Row>
+    </>
   );
 };
 
