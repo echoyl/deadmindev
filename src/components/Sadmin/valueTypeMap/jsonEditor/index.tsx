@@ -5,18 +5,23 @@ import { isObj } from '../../checkers';
 
 const Editor = lazy(() => import('@monaco-editor/react'));
 
+export const MonacoDefaultOptions = {
+  selectOnLineNumbers: false,
+  automaticLayout: true,
+  minimap: {
+    enabled: false,
+  },
+  autoIndent: true,
+  scrollbar: {
+    verticalScrollbarSize: 6,
+    horizontalScrollbarSize: 6,
+  },
+};
+
 const JsonEditor = (props) => {
   const { value = '', onChange, height = 400, readOnly } = props;
   const { setting } = useContext(SaDevContext);
-  const options = {
-    selectOnLineNumbers: false,
-    automaticLayout: true,
-    minimap: {
-      enabled: false,
-    },
-    readOnly,
-    autoIndent: true,
-  };
+  const options = { ...MonacoDefaultOptions, readOnly };
 
   const [content, setContent] = useState(
     value && isObj(value) ? JSON.stringify(value, null, 2) : value,

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { tplComplie } from '../helpers';
 import Loading from '@/components/Loading';
+import { MonacoDefaultOptions } from './jsonEditor';
 
 const AliyunVideo = lazy(() => import('@/components/Sadmin/uploader/video'));
 const Uploader = lazy(() => import('@/components/Sadmin/uploader'));
@@ -55,9 +56,7 @@ export const MDEditorRender = (_, props) => {
   const { options } = fieldProps;
   const editorOptions = {
     ...options,
-    minimap: {
-      enabled: false,
-    },
+    ...MonacoDefaultOptions,
   };
   return (
     <Suspense fallback={<Loading />}>
