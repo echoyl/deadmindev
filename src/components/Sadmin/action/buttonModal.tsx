@@ -14,6 +14,7 @@ interface actionConfirm {
   confirmLoading?: boolean;
   afterOpenChange?: (open: boolean) => void;
   formFooter?: boolean; //是否使用 form的底部 设置false的话 使用自带的footer设置
+  readonly?: boolean;
 }
 
 const ButtonModal: FC<actionConfirm> = (props) => {
@@ -30,6 +31,7 @@ const ButtonModal: FC<actionConfirm> = (props) => {
     afterOpenChange,
     confirmLoading = false,
     formFooter = true,
+    readonly = false,
   } = props;
   const [iopen, setOpen] = useState(open);
   //下面这段参考 drawerForm组件
@@ -108,22 +110,26 @@ const ButtonModal: FC<actionConfirm> = (props) => {
         centered={true}
         destroyOnClose={true}
         confirmLoading={confirmLoading}
-        footer={(originNode) => {
-          //console.log(params);
-          if (formFooter) {
-            return (
-              <div
-                ref={footerDomRef}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                }}
-              />
-            );
-          } else {
-            return originNode;
-          }
-        }}
+        footer={
+          readonly
+            ? null
+            : (originNode) => {
+                //console.log(params);
+                if (formFooter) {
+                  return (
+                    <div
+                      ref={footerDomRef}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                      }}
+                    />
+                  );
+                } else {
+                  return originNode;
+                }
+              }
+        }
         maskClosable={false}
         styles={{
           body: {

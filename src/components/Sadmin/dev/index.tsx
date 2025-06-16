@@ -12,7 +12,6 @@ import { Link, useLocation } from '@umijs/max';
 import { Dropdown, FloatButton, Image, Popover, Space } from 'antd';
 import { MessageInstance } from 'antd/es/message/interface';
 import { createContext, useContext } from 'react';
-import ModalJson from '../action/modalJson';
 import Refresh from '../components/refresh';
 import { HookAPI } from 'antd/es/modal/useModal';
 import { NotificationInstance } from 'antd/es/notification/interface';
@@ -22,6 +21,7 @@ import { iconToElement } from '../valueTypeMap/iconSelect';
 import { getFromObject } from '../helpers';
 import { trim } from 'es-toolkit';
 import { isUrl } from '@ant-design/pro-components';
+import ConfirmForm from '../action/confirmForm';
 
 export const SaDevContext = createContext<{
   setting?: any;
@@ -90,7 +90,8 @@ export const DevLinks = (props: any) => {
     {
       key: 'json',
       label: (
-        <ModalJson
+        <ConfirmForm
+          msg="JsonEditor"
           trigger={
             <div style={{ width: '100%', textAlign: 'center' }}>
               <Space>
@@ -99,6 +100,12 @@ export const DevLinks = (props: any) => {
               </Space>
             </div>
           }
+          formColumns={[
+            { dataIndex: 'json', valueType: 'jsonEditor', fieldProps: { height: 426 } },
+          ]}
+          saFormProps={{ devEnable: false, showTabs: false }}
+          readonly={true}
+          width={1000}
         />
       ),
     },

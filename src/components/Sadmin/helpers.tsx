@@ -21,7 +21,6 @@ import CarBrand from './carBrand';
 import { getJson, isObj, isStr } from './checkers';
 import { FormCalendarRender } from './formCalendar';
 import { Guiges } from './guige';
-import JsonEditor from './jsonEditor';
 import JsonForm from './jsonForm';
 import { ModalSelectRender } from './modalSelect';
 import SaOptions, { SaEditorTable } from './options';
@@ -46,6 +45,7 @@ import SearchSelect from './valueTypeMap/search/select';
 import { MapShowRender, MapinputRender } from './map';
 import { isString } from 'es-toolkit';
 import { Alert } from 'antd';
+import JsonEditor from './valueTypeMap/jsonEditor';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];

@@ -1,7 +1,7 @@
 import { ModalForm, ProFormItem, ProFormTextArea } from '@ant-design/pro-components';
 import { Button } from 'antd';
-import { FC,useState,useEffect } from 'react';
-import JsonEditor from '../jsonEditor';
+import { FC, useState, useEffect } from 'react';
+import JsonEditor from '../valueTypeMap/jsonEditor';
 
 const ModalJson: FC<{
   title?: string;
@@ -14,8 +14,6 @@ const ModalJson: FC<{
   const { title = '点击编辑', value, type = 'json', trigger, btn } = props;
 
   const button = <Button {...btn}>{btn?.title ? btn.title : title}</Button>;
-
-
 
   return (
     <ModalForm

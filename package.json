@@ -43,6 +43,7 @@
     "@antv/l7": "^2.20.13",
     "@antv/l7-maps": "^2.20.13",
     "@antv/l7-react": "^2.4.3",
+    "@monaco-editor/react": "^4.7.0",
     "@testing-library/dom": "^10.4.0",
     "@tinymce/tinymce-react": "^4.2.0",
     "@uiw/react-md-editor": "^4.0.3",
@@ -59,8 +60,7 @@
     "querystring": "^0.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-to-print": "*",
-    "vanilla-jsoneditor": "^0.23.8"
+    "react-to-print": "*"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.1.5",

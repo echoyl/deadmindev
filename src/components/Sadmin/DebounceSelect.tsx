@@ -50,8 +50,9 @@ export default function DebounceSelect<
     } else {
       //初始化处理一次label 如果label可能是模板
       const value = props.value;
-      if (value && isObj(value) && !value.label) {
-        value.label = tplComplie(label, { record: value });
+      if (value && isObj(value) && !value[label]) {
+        value[label] = tplComplie(label, { record: value });
+        value.label = value[label];
       }
       setThisValue(value);
       setIsInit(true);

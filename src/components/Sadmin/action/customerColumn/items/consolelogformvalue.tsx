@@ -1,5 +1,5 @@
-import JsonEditor from '@/components/Sadmin/jsonEditor';
 import { SaContext } from '@/components/Sadmin/posts/table';
+import JsonEditor from '@/components/Sadmin/valueTypeMap/jsonEditor';
 import { Button, Space } from 'antd';
 import { useContext, useState } from 'react';
 

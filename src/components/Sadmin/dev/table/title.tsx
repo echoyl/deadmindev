@@ -301,7 +301,7 @@ const ItemJson = (props) => {
     <ConfirmForm
       trigger={<div style={{ width: '100%' }}>{title}</div>}
       value={value}
-      formColumns={[{ dataIndex: 'json', valueType: 'jsonEditor' }]}
+      formColumns={[{ dataIndex: 'json', valueType: 'jsonEditor', fieldProps: { height: 426 } }]}
       saFormProps={{ devEnable: false, showTabs: false }}
       readonly={true}
       width={1000}

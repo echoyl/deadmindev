@@ -270,13 +270,15 @@ export const MenuFormColumn: saFormTabColumnsType = [
         title: '',
         dataIndex: 'desc',
         valueType: 'jsonEditor',
-        fieldProps: { height: 600 },
+        fieldProps: { height: 500 },
       },
     ],
   },
   {
     tab: { title: '子权限' },
-    formColumns: [{ title: '', dataIndex: 'perms', valueType: 'jsonEditor' }],
+    formColumns: [
+      { title: '', dataIndex: 'perms', valueType: 'jsonEditor', fieldProps: { height: 500 } },
+    ],
   },
   {
     tab: { title: '其它配置' },
@@ -285,7 +287,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
         title: '',
         dataIndex: 'other_config',
         valueType: 'jsonEditor',
-        fieldProps: { height: 600 },
+        fieldProps: { height: 500 },
       },
     ],
   },

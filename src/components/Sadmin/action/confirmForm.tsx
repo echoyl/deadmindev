@@ -277,6 +277,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
       modalProps={modalProps}
       minHeight={height}
       height={maxHeight}
+      readonly={readonly}
     >
       {inner}
     </ButtonModal>
