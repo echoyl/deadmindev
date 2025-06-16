@@ -6,7 +6,7 @@ const AliyunVideo = lazy(() => import('@/components/Sadmin/uploader/video'));
 const Uploader = lazy(() => import('@/components/Sadmin/uploader'));
 const TableFromBread = lazy(() => import('@/components/Sadmin/tableFromBread'));
 const ConfirmForm = lazy(() => import('@/components/Sadmin/action/confirmForm'));
-const MDEditorReal = lazy(() => import('@/components/Sadmin/valueTypeMap/mdEditor'));
+const Editor = lazy(() => import('@monaco-editor/react'));
 export const AliyunVideoRender = (props) => {
   return (
     <Suspense fallback={<Loading />}>
@@ -52,9 +52,22 @@ export const ConfirmFormRender = (props) => {
 
 export const MDEditorRender = (_, props) => {
   const { fieldProps } = props;
+  const { options } = fieldProps;
+  const editorOptions = {
+    ...options,
+    minimap: {
+      enabled: false,
+    },
+  };
   return (
     <Suspense fallback={<Loading />}>
-      <MDEditorReal {...fieldProps} style={{ margin: '0 1px' }} />
+      <Editor
+        {...fieldProps}
+        className="monaco-editor-container"
+        options={editorOptions}
+        language="markdown"
+        style={{ margin: '0 1px' }}
+      />
     </Suspense>
   );
 };

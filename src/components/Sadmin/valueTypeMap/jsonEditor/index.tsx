@@ -51,6 +51,7 @@ const JsonEditor = (props) => {
         language="json"
         value={content}
         onChange={onChangeR}
+        className="monaco-editor-container"
       />
     </Suspense>
   );
