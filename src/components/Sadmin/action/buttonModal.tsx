@@ -108,7 +108,7 @@ const ButtonModal: FC<actionConfirm> = (props) => {
         title={title}
         {...modalProps}
         centered={true}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         confirmLoading={confirmLoading}
         footer={
           readonly

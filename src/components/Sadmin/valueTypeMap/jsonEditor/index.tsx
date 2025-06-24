@@ -2,6 +2,7 @@ import { useContext, useState, lazy, Suspense, useEffect, useRef } from 'react';
 import LoadingFullHeight from '@/components/LoadingFullHeight';
 import { SaDevContext } from '../../dev';
 import { isObj } from '../../checkers';
+import { loader } from '@monaco-editor/react';
 
 const Editor = lazy(() => import('@monaco-editor/react'));
 
@@ -18,10 +19,37 @@ export const MonacoDefaultOptions = {
   },
 };
 
+export const MonacoEditor = (props) => {
+  useEffect(() => {
+    loader.config({
+      paths: {
+        vs: 'https://cdn.jsdmirror.com/npm/monaco-editor@0.52.2/min/vs',
+      },
+    });
+  }, []);
+
+  const { options, height = 400, ...restProps } = props;
+  const realOptions = { ...MonacoDefaultOptions, ...options };
+  const { setting } = useContext(SaDevContext);
+
+  return (
+    <Suspense fallback={<LoadingFullHeight />}>
+      <Editor
+        options={realOptions}
+        height={height}
+        theme={setting?.navTheme != 'light' ? 'vs-dark' : 'vs'}
+        //theme="vs-dark"
+        language="json"
+        className="monaco-editor-container"
+        {...restProps}
+      />
+    </Suspense>
+  );
+};
+
 const JsonEditor = (props) => {
   const { value = '', onChange, height = 400, readOnly } = props;
-  const { setting } = useContext(SaDevContext);
-  const options = { ...MonacoDefaultOptions, readOnly };
+  const options = { readOnly };
 
   const [content, setContent] = useState(
     value && isObj(value) ? JSON.stringify(value, null, 2) : value,
@@ -46,20 +74,7 @@ const JsonEditor = (props) => {
     //console.log('inputValue',inputValue);
   };
 
-  return (
-    <Suspense fallback={<LoadingFullHeight />}>
-      <Editor
-        options={options}
-        height={height}
-        theme={setting?.navTheme != 'light' ? 'vs-dark' : 'vs'}
-        //theme="vs-dark"
-        language="json"
-        value={content}
-        onChange={onChangeR}
-        className="monaco-editor-container"
-      />
-    </Suspense>
-  );
+  return <MonacoEditor options={options} height={height} value={content} onChange={onChangeR} />;
 };
 
 export default JsonEditor;

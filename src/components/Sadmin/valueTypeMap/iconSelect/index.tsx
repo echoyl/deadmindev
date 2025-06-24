@@ -226,13 +226,13 @@ const IconSelectInput = (props) => {
       onClear={() => {
         uonChang('');
       }}
-      onDropdownVisibleChange={(open) => {
+      onOpenChange={(open) => {
         setOpen(open);
       }}
       value={value}
       style={{ width: '100%', minWidth: 100 }}
-      dropdownStyle={{ minWidth: 400 }}
-      dropdownRender={() => {
+      styles={{ popup: { root: { minWidth: 400 } } }}
+      popupRender={() => {
         return (
           <IconSelectPanel
             keyword={searchVal}

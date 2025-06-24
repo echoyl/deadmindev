@@ -1,13 +1,12 @@
 import { lazy, Suspense } from 'react';
 import { tplComplie } from '../helpers';
 import Loading from '@/components/Loading';
-import { MonacoDefaultOptions } from './jsonEditor';
+import { MonacoEditor } from './jsonEditor';
 
 const AliyunVideo = lazy(() => import('@/components/Sadmin/uploader/video'));
 const Uploader = lazy(() => import('@/components/Sadmin/uploader'));
 const TableFromBread = lazy(() => import('@/components/Sadmin/tableFromBread'));
 const ConfirmForm = lazy(() => import('@/components/Sadmin/action/confirmForm'));
-const Editor = lazy(() => import('@monaco-editor/react'));
 export const AliyunVideoRender = (props) => {
   return (
     <Suspense fallback={<Loading />}>
@@ -54,19 +53,5 @@ export const ConfirmFormRender = (props) => {
 export const MDEditorRender = (_, props) => {
   const { fieldProps } = props;
   const { options } = fieldProps;
-  const editorOptions = {
-    ...options,
-    ...MonacoDefaultOptions,
-  };
-  return (
-    <Suspense fallback={<Loading />}>
-      <Editor
-        {...fieldProps}
-        className="monaco-editor-container"
-        options={editorOptions}
-        language="markdown"
-        style={{ margin: '0 1px' }}
-      />
-    </Suspense>
-  );
+  return <MonacoEditor {...fieldProps} language="markdown" options={options} />;
 };

@@ -197,7 +197,7 @@ const ItemTab = (props) => {
               }
             : null
         }
-        destroyInactiveTabPane={true}
+        destroyOnHidden={true}
         items={rows?.map((row, i) => {
           return {
             key: i,

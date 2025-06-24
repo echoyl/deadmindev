@@ -35,6 +35,7 @@ const formMoreType = [
   { label: '自定义显示 - customerColumn', value: 'customerColumn' },
   { label: '属性配置 - jsonForm', value: 'jsonForm' },
   { label: '多行编辑 - formList', value: 'formList' },
+  { label: '多行编辑 - saFormList', value: 'saFormList' },
   { label: 'Select选择器', value: 'select' },
   { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
   { label: '搜索select', value: 'searchSelect' },

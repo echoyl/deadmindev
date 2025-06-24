@@ -268,10 +268,12 @@ export default () => {
           {record.title}
         </Space>
       ),
+      search: false,
     },
     {
       title: '名称',
       dataIndex: 'name',
+      search: false,
     },
     {
       title: '额外操作',

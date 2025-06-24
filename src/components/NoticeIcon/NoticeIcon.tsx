@@ -135,7 +135,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
     <HeaderDropdown
       className={`${prefixCls} ${hashId}`}
       placement="bottomRight"
-      dropdownRender={getNotificationBox}
+      popupRender={getNotificationBox}
       overlayClassName={styles.popover}
       trigger={['click']}
       open={visible}

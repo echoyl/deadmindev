@@ -27,7 +27,7 @@ const Category: React.FC<CategoryProps> = (props) => {
   //console.log('props', props);
 
   const tableProps = {
-    search: false,
+    //search: false,//分类页面可能也需要检索
     columnsState: {
       persistenceKey: 'pro-table-singe-demos',
       persistenceType: 'localStorage',
