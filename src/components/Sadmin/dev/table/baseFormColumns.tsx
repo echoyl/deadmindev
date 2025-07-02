@@ -6,7 +6,7 @@ import { uniqBy } from 'es-toolkit';
 export const columnType = [
   { label: '日期 - date', value: 'date' },
   { label: '日期区间 - dateRange', value: 'dateRange' },
-  { label: '时间 - dateTime', value: 'dateTime' },
+  { label: '日期时间 - dateTime', value: 'dateTime' },
   { label: '时间区间 - dateTimeRange', value: 'dateTimeRange' },
   { label: '上传-uploader', value: 'uploader' },
   { label: '自定义组件 - customerColumn', value: 'customerColumn' },
@@ -28,6 +28,11 @@ export const columnType = [
   { label: '滑动条 - slider', value: 'saSlider' },
   { label: '操作栏 - option', value: 'option' },
   { label: '排序 - dragsort', value: 'dragsort' },
+  { label: '日期年 - dateYear', value: 'dateYear' },
+  { label: '日期季度 - dateQuarter', value: 'dateQuarter' },
+  { label: '日期月 - dateMonth', value: 'dateMonth' },
+  { label: '日期周 - dateWeek', value: 'dateWeek' },
+  { label: '时间 - time', value: 'time' },
 ];
 //表单可选类型
 const formMoreType = [

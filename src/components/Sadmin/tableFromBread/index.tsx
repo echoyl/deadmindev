@@ -56,7 +56,7 @@ const TableFromBread: FC<{
         ...v_data,
         ...readonlyProps,
         //paramExtra: { [fieldProps.foreign_key]: post_key },
-        //postExtra: { [fieldProps.foreign_key]: post_key ? post_key : 0 },
+        //postExtra: { [fieldProps.foreign_key]: post_key ? post_key : 0 },//这里去掉了table种的form提交数据后提交的参数，应该在请求form后重新将参数返回后放入到一个hidden元素中
         pageMenu: bread,
       };
       //log('saformtabolex', v);

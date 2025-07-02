@@ -207,6 +207,13 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.fieldProps = { ...v.fieldProps, name: v.dataIndex };
       }
 
+      //如果设置了隐藏元素 当开启了dev后应该显示出来
+      if (v.formItemProps?.hidden && devEnable) {
+        v.formItemProps.hidden = false;
+        v.formItemProps.extra = 'hidden元素';
+        //v.readonly = true; //隐藏元素设置为只读
+      }
+
       let columnsFun;
       if (isString(v.columns)) {
         columnsFun = ((body) => {

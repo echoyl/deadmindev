@@ -1,7 +1,7 @@
 import { saFormColumnsType } from '@/components/Sadmin/helpers';
 import { columnType } from '../../table/baseFormColumns';
 
-const formColumns = (data, dataIndex = ['defaultConfig', 'columns']): saFormColumnsType => [
+const formColumns = (data, dataIndex = ['defaultConfig', 'form', 'columns']): saFormColumnsType => [
   {
     valueType: 'group',
     columns: [
@@ -28,11 +28,10 @@ const formColumns = (data, dataIndex = ['defaultConfig', 'columns']): saFormColu
                 title: 'Label',
                 dataIndex: 'title',
                 colProps: { span: 6 },
-                fieldProps:{
-                  placeholder:'不输入的话使用后台数据'
-                }
+                fieldProps: {
+                  placeholder: '不输入的话使用后台数据',
+                },
               },
-              
               {
                 title: '组件类型',
                 dataIndex: 'valueType',

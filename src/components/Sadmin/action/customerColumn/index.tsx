@@ -103,6 +103,9 @@ const CustomerColumnRender = (props) => {
       }
     } else if (item.domtype == 'tag' || item.domtype == 'Badge') {
       //console.log('tag text', text, item);
+      if (text === false) {
+        return null;
+      }
       return (
         <ItemTags
           key={i}

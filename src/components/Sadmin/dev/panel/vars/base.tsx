@@ -118,19 +118,17 @@ const baseFormColumns = (data: any[]): saFormTabColumnsType => {
           name: ['type', 'sourceDataName'],
           valueType: 'dependency',
           columns: ({ type, sourceDataName }) => {
+            const sourceData = data?.find((v) => v.value == sourceDataName);
             if (type == 'chart') {
-              return chartColumns(data?.find((v) => v.value == sourceDataName));
+              return chartColumns(sourceData);
             } else if (type == 'table') {
-              return tableColumns(data?.find((v) => v.value == sourceDataName));
+              return tableColumns(sourceData);
             } else if (type == 'StatisticCard') {
-              return cardColumns(data?.find((v) => v.value == sourceDataName));
+              return cardColumns(sourceData);
             } else if (type == 'form') {
-              return formColumns(data?.find((v) => v.value == sourceDataName));
+              return formColumns(sourceData);
             } else if (type == 'tab') {
-              return formColumns(
-                data?.find((v) => v.value == sourceDataName),
-                ['defaultConfig', 'form', 'columns'],
-              );
+              return formColumns(sourceData);
             }
             return [];
           },

@@ -108,12 +108,13 @@ const ItemForm = (props) => {
     );
   };
   //处理一遍后端的动态参数，如果有前端设置动态参数的话 需要一个编译js的函数 类似 tplComplie
-  const _columns = config?.columns?.map((v) => {
+  const __columns = config?.form?.columns ? config?.form?.columns : config?.columns;
+  const _columns = __columns?.map((v) => {
     //获取是否有设置
     const ps = idata?.data?.find((ida) => ida.name == v.dataIndex);
     //select使用了label 但是 form item是使用title
     if (ps) {
-      v = { title: ps.label, ...v, ...ps.props };
+      v = { title: ps.label, ...v, ...ps.props, fieldProps: { ...ps.fieldProps } };
     }
     return v;
   });
