@@ -115,7 +115,7 @@ const TinyEditor: FC<{
           file_picker_callback: (callback, value, meta) => {
             //文件分类
             var filetype =
-              '.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4';
+              '.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4,.mov';
             //模拟出一个input用于添加本地文件
             var input = document.createElement('input');
             input.setAttribute('type', 'file');
