@@ -84,15 +84,16 @@ const PermGroup: React.FC<{
   roleList?: string[] | boolean;
   roleid?: number;
   value?: any;
+  url?: string;
 }> = (props) => {
-  const { value: ivalue, roleid = 0, onChange: onValueChange } = props;
+  const { value: ivalue, roleid = 0, onChange: onValueChange, url = 'perm/role/perms' } = props;
   const [perms, setPerms] = useState<DataNode[]>();
   const [value, setValue] = useState([]);
   const { formRef } = useContext(SaContext);
   const [init, setInit] = useState(false);
 
   const getData = async (roleid: number) => {
-    const { data, code } = await request.get('perm/role/perms', { params: { roleid } });
+    const { data, code } = await request.get(url, { params: { roleid } });
     if (code) {
       return;
     }
