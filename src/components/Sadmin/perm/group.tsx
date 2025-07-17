@@ -83,10 +83,17 @@ const PermGroup: React.FC<{
   onChange?: (value: any) => void;
   roleList?: string[] | boolean;
   roleid?: number;
+  role_id?: number;
   value?: any;
   url?: string;
 }> = (props) => {
-  const { value: ivalue, roleid = 0, onChange: onValueChange, url = 'perm/role/perms' } = props;
+  const {
+    value: ivalue,
+    roleid = 0,
+    role_id = 0,
+    onChange: onValueChange,
+    url = 'perm/role/perms',
+  } = props;
   const [perms, setPerms] = useState<DataNode[]>();
   const [value, setValue] = useState([]);
   const { formRef } = useContext(SaContext);
@@ -120,9 +127,9 @@ const PermGroup: React.FC<{
 
   useEffect(() => {
     if (formRef.current) {
-      getData(roleid);
+      getData(roleid ? roleid : role_id);
     }
-  }, [formRef, roleid]);
+  }, [formRef, roleid, role_id]);
 
   const onChange = (newValue: string[]) => {
     //console.log('onChange ', newValue);
