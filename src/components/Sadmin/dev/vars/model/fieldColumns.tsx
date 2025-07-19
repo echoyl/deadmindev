@@ -327,6 +327,7 @@ export const fieldColumn: saValueTypeMapType = {
             saFormProps: {
               devEnable: false,
             },
+            width: 900,
             formColumns: [
               {
                 valueType: 'group',
@@ -385,12 +386,15 @@ export const fieldColumn: saValueTypeMapType = {
               {
                 title: 'json可选数据',
                 dataIndex: 'json',
-                valueType: 'saFormList',
+                valueType: 'formList',
                 rowProps: {
                   gutter: 0,
                 },
                 fieldProps: {
-                  showtype: 'table',
+                  arrowSort: true,
+                  containerStyle: {
+                    width: 'calc(100% - 96px)',
+                  },
                 },
                 columns: [
                   {

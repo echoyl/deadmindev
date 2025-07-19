@@ -4,6 +4,7 @@ import {
   ProColumns,
   ProFormCascader,
   ProFormColumnsType,
+  ProFormSelect,
   ProRenderFieldPropsType,
   RouteContext,
   getMenuData,

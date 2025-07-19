@@ -2,11 +2,12 @@ import { lazy, Suspense } from 'react';
 import { tplComplie } from '../helpers';
 import Loading from '@/components/Loading';
 import { MonacoEditor } from './jsonEditor';
+import ConfirmForm from '../action/confirmForm';
 
 const AliyunVideo = lazy(() => import('@/components/Sadmin/uploader/video'));
 const Uploader = lazy(() => import('@/components/Sadmin/uploader'));
 const TableFromBread = lazy(() => import('@/components/Sadmin/tableFromBread'));
-const ConfirmForm = lazy(() => import('@/components/Sadmin/action/confirmForm'));
+//const ConfirmForm = lazy(() => import('@/components/Sadmin/action/confirmForm'));
 export const AliyunVideoRender = (props) => {
   return (
     <Suspense fallback={<Loading />}>
@@ -43,11 +44,7 @@ export const ConfirmFormRender = (props) => {
   if (props.if) {
     show = tplComplie(props.if, props);
   }
-  return (
-    <Suspense fallback={<Loading />}>
-      {show ? <ConfirmForm dataId={props.record?.id} {...props} /> : null}
-    </Suspense>
-  );
+  return show ? <ConfirmForm dataId={props.record?.id} {...props} /> : null;
 };
 
 export const MDEditorRender = (_, props) => {
