@@ -487,7 +487,7 @@ export const tplComplie = (exp: string | undefined, props: any = {}) => {
         return new Function('$root', `with($root) { return (${exp}); }`)({ ...props, t, intl });
       }
     } catch (e) {
-      console.log('表达式错误，请' + +'重写', exp, props, e);
+      console.log('表达式错误，请重写', exp, props, e);
       return false;
     }
   };

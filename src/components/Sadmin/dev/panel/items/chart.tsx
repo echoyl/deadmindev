@@ -39,7 +39,14 @@ const PanelItemChart = (props: any) => {
   if (type == 'pie') {
     const x = config.colorField;
     const y = config.angleField;
-    const sum_val = sum(data.map((v) => v[y]));
+    const sum_val = sum(data?.map((v) => v[y]));
+    if (sum_val > 0) {
+      data?.map((v) => {
+        v.per = ((v[y] / sum_val) * 100).toFixed(2) + '%';
+      });
+    }
+    const { label, ...leftConfig } = config;
+
     return (
       <Pie
         appendPadding={10}
@@ -54,10 +61,13 @@ const PanelItemChart = (props: any) => {
         //   },
         // }}
         label={{
+          ...label,
           position: 'outside',
-          text: (item: any) => {
-            return `${item[x]}: ${numeral(item[y]).format('0,0')}`;
-          },
+          text: tpls.labelText
+            ? tpls.labelText
+            : (item: any) => {
+                return `${item[x]}: ${numeral(item[y]).format('0,0')}`;
+              },
           transform: [{ type: 'overlapDodgeY' }],
         }}
         tooltip={(item: any, index, data, column) => {
@@ -90,7 +100,7 @@ const PanelItemChart = (props: any) => {
             position: 'top',
           },
         }}
-        {...config}
+        {...leftConfig}
       />
     );
   } else if (type == 'bar') {
