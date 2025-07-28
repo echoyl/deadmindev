@@ -51,11 +51,8 @@ const Uploader: React.FC<Props> = (props) => {
   fieldProps.accept = accept;
 
   const parseImageUrl = (url: string): UploadFile => {
-    if (isHttpLink(url)) {
-      return { url, value: url };
-    } else {
-      return { url: [setting?.adminSetting?.fileImagePrefix, url].join(''), value: url };
-    }
+    url = isHttpLink(url) ? url : [setting?.adminSetting?.fileImagePrefix, url].join('');
+    return { url, value: url, status: 'done' };
   };
 
   useEffect(() => {
@@ -69,7 +66,6 @@ const Uploader: React.FC<Props> = (props) => {
     if (isStr(value)) {
       //单图字符串
       newFileList.push(parseImageUrl(value));
-      setFileList(newFileList);
     } else if (isArr(value)) {
       //数组格式
       if (value.length < 1) {
@@ -80,11 +76,11 @@ const Uploader: React.FC<Props> = (props) => {
           //多图字符串
           newFileList.push(parseImageUrl(v));
         } else {
-          newFileList.push(v);
+          newFileList.push({ ...v, status: 'done' });
         }
       });
-      setFileList(newFileList);
     }
+    setFileList(newFileList);
   }, [value]);
 
   const handlePreview = async (file: UploadFile) => {
@@ -221,16 +217,18 @@ const Uploader: React.FC<Props> = (props) => {
             fileList={fileList?.length ? [fileList[0]] : []}
             onChange={fileChange}
             itemRender={(originNode) => {
-              return (
+              return fileList?.length > 1 && readonly ? (
                 <Badge
                   color={token.colorPrimary}
-                  count={fileList?.length > 1 && readonly ? fileList?.length : 0}
+                  count={fileList?.length}
                   size="small"
                   offset={[-2, 2]}
                   styles={{ root: { height: '100%', width: '100%' } }}
                 >
                   {originNode}
                 </Badge>
+              ) : (
+                originNode
               );
             }}
           >
