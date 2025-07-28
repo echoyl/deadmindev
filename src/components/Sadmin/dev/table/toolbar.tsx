@@ -671,7 +671,14 @@ export const toolBarRender = (props) => {
         btns.push(<ExportButton key={index} {...btn} request={{ data: values }} />);
       }
       if (btn.valueType == 'import') {
-        btns.push(<ImportButton key={index} {...btn} afterAction={afterFormPost} />);
+        btns.push(
+          <ImportButton
+            key={index}
+            {...btn}
+            request={{ data: values }}
+            afterAction={afterFormPost}
+          />,
+        );
       }
 
       if (btn.valueType == 'devsetting') {
