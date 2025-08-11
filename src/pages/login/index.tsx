@@ -451,7 +451,8 @@ const Login: React.FC = () => {
               //maxWidth: 440,
               //margin: '0px auto',
               // padding: '20px 0',
-              background: setting?.adminSetting?.loginBgCardColor,
+              background:
+                setting?.navTheme == 'light' ? setting?.adminSetting?.loginBgCardColor : 'none',
               width: 380,
               marginTop: -72,
             }}
