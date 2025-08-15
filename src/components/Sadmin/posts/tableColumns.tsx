@@ -12,6 +12,7 @@ import { SaContext } from './table';
 import { tplToDate } from '../helper/functions';
 import { cloneDeep } from 'es-toolkit';
 import { DragHandle } from '../dev/dnd-context/dragSort';
+import { onHeaderCell } from '../dev/table/resizeableTitle';
 
 export const SaTableAction = (props) => {
   const { openType } = props;
@@ -341,6 +342,9 @@ export const getTableColumns = (props) => {
     if (devEnable) {
       v.title = <TableColumnTitle {...v} />;
     }
+
+    //增加拖拽设置宽度
+    v.onHeaderCell = onHeaderCell;
 
     return v;
   };

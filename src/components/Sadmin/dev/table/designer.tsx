@@ -22,6 +22,7 @@ export type tableDesignerInstance = {
   delete?: (data: { [key: string]: any }) => void;
   devEnable?: boolean; //开启的必要条件
   sourceData?: any;
+  setColumnWidth?: (data: { [key: string]: any }) => void;
   [key: string]: any;
 };
 
@@ -45,6 +46,7 @@ export function useTableDesigner(props: tableDesignerInstance) {
       editUrl: 'dev/menu/editTableColumn',
       deleteUrl: 'dev/menu/deleteTableColumn',
       sortUrl: 'dev/menu/sortTableColumns',
+      setWidthUrl: 'dev/menu/setTableColumnWidth',
     },
     toolbar: {
       sortUrl: 'dev/menu/sortTableColumns',
@@ -59,6 +61,7 @@ export function useTableDesigner(props: tableDesignerInstance) {
   const editUrl = config[type].editUrl;
   const deleteUrl = config[type].deleteUrl;
   const addUrl = config[type].addUrl;
+  const setWidthUrl = config[type].setWidthUrl;
   //const sortUrl = config[type].sortUrl;
   const reflush = (data: any) => {
     //重新设置列表列
@@ -108,6 +111,11 @@ export function useTableDesigner(props: tableDesignerInstance) {
     add: async (data: { [key: string]: any }) => {
       //后台请求
       await post(addUrl, data);
+      return;
+    },
+    setColumnWidth: async (data: { [key: string]: any }) => {
+      //后台请求
+      await post(setWidthUrl, data);
       return;
     },
   };

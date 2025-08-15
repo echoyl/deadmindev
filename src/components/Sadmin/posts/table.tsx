@@ -12,9 +12,6 @@ import { getJson, inArray, isArr, isFn, isObj, isStr, isUndefined } from '../che
 import { TableForm } from '../dev/table/form';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
-//import _ from 'underscore';
-import { css } from '@emotion/css';
-import { default as cls } from 'classnames';
 import { DndContext } from '../dev/dnd-context';
 import { tableDesignerInstance, useTableDesigner } from '../dev/table/designer';
 import {
@@ -34,6 +31,7 @@ import { tplToDate } from '../helper/functions';
 import { size } from 'es-toolkit/compat';
 import DndKitContext from '../dev/dnd-context/dragSort';
 import sortDragEnd from '../dev/dnd-context/displayorder';
+import ResizableTitle from '../dev/table/resizeableTitle';
 export interface saTableProps {
   url?: string;
   name?: string;
@@ -98,26 +96,9 @@ const components = {
         </DndContext>
       );
     },
-    cell: (props) => {
-      return (
-        <th
-          {...props}
-          className={cls(
-            props.className,
-            css`
-              max-width: 300px;
-              white-space: nowrap;
-              &:hover .general-schema-designer {
-                display: block;
-              }
-            `,
-          )}
-        />
-      );
-    },
+    cell: ResizableTitle,
   },
 };
-
 interface saTableContextProps {
   edit: (...record: Array<{ [key: string]: any }>) => void;
   view: (id: any) => void;
@@ -470,6 +451,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     setColumns: setTbColumns,
     getColumnsRender: getTableColumnsRender,
     devEnable,
+    tbColumns,
   });
   return (
     <SaContext.Provider
