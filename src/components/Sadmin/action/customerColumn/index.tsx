@@ -1,5 +1,5 @@
 import { Link, useModel } from '@umijs/max';
-import { Divider, Dropdown, Modal, Popover, QRCode, Space, Table, Timeline } from 'antd';
+import { Divider, Dropdown, Image, Modal, Popover, QRCode, Space, Table, Timeline } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr } from '../../checkers';
 import { getFromObject, getMenuDataById, parseIcon, tplComplie } from '../../helpers';
@@ -162,6 +162,12 @@ const CustomerColumnRender = (props) => {
         if (dom === '') return '';
         const { fieldProps = {}, modal } = item;
         const { value = {} } = fieldProps;
+        //解析request.data 支持读取record中的数据
+        const newRequestData: Record<string, any> = {};
+        Object.keys(item.request?.data || {}).map((k) => {
+          const tplc = tplComplie(item.request?.data[k], { record });
+          newRequestData[k] = tplc ? tplc : '';
+        });
 
         if (item.action == 'confirmForm') {
           const { idName = 'id' } = value;
@@ -175,7 +181,7 @@ const CustomerColumnRender = (props) => {
               page={item.modal?.page}
               url={item.request?.url}
               postUrl={item.request?.postUrl}
-              data={{ ...paramExtra, ...item.request?.data }}
+              data={{ ...paramExtra, ...newRequestData }}
               paramdata={{ ...item.request?.paramdata }}
               afterActionType={item.request?.afterActionType}
               dataId={dataId}
@@ -206,7 +212,7 @@ const CustomerColumnRender = (props) => {
               trigger={dom}
               //trigger={false}
               url={item.request?.url}
-              data={{ ...paramExtra, ...item.request?.data }}
+              data={{ ...paramExtra, ...newRequestData }}
               method={item.request?.method ? item.request?.method : 'post'}
               msg={item.modal?.msg}
               title={item.modal?.title}
@@ -215,7 +221,13 @@ const CustomerColumnRender = (props) => {
             />
           );
         } else if (item.action == 'request') {
-          return <RequestComponent key={key} trigger={dom} requestParam={{ ...item.request }} />;
+          return (
+            <RequestComponent
+              key={key}
+              trigger={dom}
+              requestParam={{ ...item.request, data: newRequestData }}
+            />
+          );
         } else if (item.action == 'print') {
           return (
             <Print
@@ -223,7 +235,7 @@ const CustomerColumnRender = (props) => {
               dataId={record?.id}
               trigger={(click) => <div onClick={click}>{dom}</div>}
               url={item.request?.url}
-              data={{ ...paramExtra, ...item.request?.data }}
+              data={{ ...paramExtra, ...newRequestData }}
               record={record}
               title={item.modal?.title}
               {...item.fieldProps?.value}
@@ -304,27 +316,29 @@ const CustomerColumnRender = (props) => {
           );
         } else if (item.action == 'popover') {
           //检测弹出的类型
-          let popcontent = null;
-          if (item.popover?.type == 'qrcode') {
-            const {
-              content = '',
-              size = 'small',
-              errorLevel = 'M',
-              bordered = false,
-            } = item.popover;
-            const tpl = tplComplie(content, { record });
-            const sizeArr = { small: 120, middle: 160, large: 200 };
+
+          const {
+            content = '',
+            size = 'small',
+            errorLevel = 'M',
+            bordered = false,
+            type = 'text',
+          } = item.popover;
+          const tpl = tplComplie(content, { record });
+          let popcontent = tpl;
+          const sizeArr = { small: 120, middle: 160, large: 200 };
+          if (type == 'qrcode') {
             popcontent = (
               <QRCode
                 key={key}
                 value={tpl}
-                size={sizeArr[size]}
+                size={sizeArr[size] ?? 120}
                 errorLevel={errorLevel}
                 bordered={bordered}
               />
             );
-          } else {
-            popcontent = item.popover?.content;
+          } else if (type == 'img') {
+            popcontent = <Image width={sizeArr[size] ?? 120} src={tpl} />;
           }
           const trigger = item.popover?.trigger || 'click';
           return (
