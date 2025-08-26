@@ -2,7 +2,7 @@ import ConfirmForm from '../Sadmin/action/confirmForm';
 import { FC } from 'react';
 import cache from '../Sadmin/helper/cache';
 
-const LockScreen: FC = (props) => {
+const LockScreen: FC<{ open: boolean; onOpen?: (open: boolean) => void }> = (props) => {
   const { open = false, onOpen } = props;
   return (
     <ConfirmForm

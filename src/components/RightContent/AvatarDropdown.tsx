@@ -1,11 +1,11 @@
 import { loginOut, messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { LockOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { history, useIntl, useModel } from '@umijs/max';
+import { history, useIntl, useModel, useLocation } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useCallback, useContext, useState, useEffect } from 'react';
 import HeaderDropdown from '../HeaderDropdown';
-import { t } from '../Sadmin/helpers';
+import { t, uid } from '../Sadmin/helpers';
 import { SaDevContext } from '../Sadmin/dev';
 import LockScreen from './lockscreen';
 import cache from '../Sadmin/helper/cache';
@@ -49,16 +49,19 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
   const { initialState, setInitialState } = useModel('@@initialState');
   const { messageApi } = useContext(SaDevContext);
-  const [open, setOpen] = useState<boolean>();
+  const [open, setOpen] = useState<boolean>(false);
+  const [lockkey, setLockkey] = useState<string>(uid());
   //检测锁屏是否已开启
+  const localtion = useLocation();
 
   useEffect(() => {
     cache.get('lockscreen').then((v) => {
       if (v) {
+        setLockkey(uid()); //根据页面地址生成唯一key 用户可能console中删掉dom所以换一个key重新生成dom
         setOpen(true);
       }
     });
-  }, []);
+  }, [localtion.pathname]);
 
   const onMenuClick = useCallback(
     (event: any) => {
@@ -150,6 +153,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
       <LockScreen
         open={open}
+        key={lockkey}
         onOpen={(open) => {
           setOpen(open);
         }}
