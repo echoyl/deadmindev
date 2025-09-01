@@ -30,7 +30,7 @@ import {
 } from './baseFormColumns';
 import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
 import { ColumnsSelector, ToolBarMenu } from './toolbar';
-import { tplComplie } from '../../helpers';
+import { loopMenuLocale, tplComplie } from '../../helpers';
 import DevSwitch from '../switch';
 import { getJson, isArr } from '../../checkers';
 import { createStyles } from 'antd-style';
@@ -144,10 +144,12 @@ const BaseForm = (props) => {
 
   const [relations, setRelations] = useState<any[]>([]);
   const [modelColumns, setModelColumns] = useState<any[]>([]);
-  const { allMenus = [] } = setting?.adminSetting?.dev;
+  const [allMenus, setAllMenus] = useState<any[]>([]);
+  //const { allMenus = [] } = setting?.adminSetting?.dev;
   useEffect(() => {
     setRelations(getModelRelations(pageMenu?.model_id, setting?.adminSetting?.dev));
     setModelColumns(getModelColumns(pageMenu?.model_id, setting?.adminSetting?.dev));
+    setAllMenus(loopMenuLocale(setting?.adminSetting?.dev?.allMenus));
   }, []);
   const noMore = ctype == 'copyToMenu';
   const { json = {}, setJson } = useContext(DevJsonContext);
@@ -210,7 +212,7 @@ const BaseForm = (props) => {
                       title: '复制到',
                       valueType: 'treeSelect',
                       fieldProps: {
-                        options: setting?.adminSetting?.dev?.allMenus,
+                        options: allMenus,
                         treeLine: { showLeafIcon: true },
                         treeDefaultExpandAll: true,
                         showSearch: true,

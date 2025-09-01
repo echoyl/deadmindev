@@ -90,6 +90,26 @@ export const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] =>
     };
   });
 
+/**
+ * 将菜单进行国际化处理
+ * @param menus
+ * @returns
+ */
+export const loopMenuLocale = (
+  menus: Record<string, any>[],
+  fieldNames = { children: 'children' },
+): any[] => {
+  return menus?.map(({ [fieldNames.children]: children, ...item }) => {
+    const msg = tplComplie(item.label);
+    return {
+      ...item,
+      title: msg,
+      label: msg,
+      [fieldNames.children]: children && loopMenuLocale(children),
+    };
+  });
+};
+
 declare type saColumnsExtend = {
   requestParam?: { url?: string; params?: object };
   requestDataName?: string;
