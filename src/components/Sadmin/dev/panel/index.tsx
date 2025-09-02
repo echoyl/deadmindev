@@ -114,7 +114,12 @@ const ItemForm = (props) => {
     const ps = idata?.data?.find((ida) => ida.name == v.dataIndex);
     //select使用了label 但是 form item是使用title
     if (ps) {
-      v = { title: ps.label, ...v, ...ps.props, fieldProps: { ...ps.fieldProps } };
+      v = {
+        title: ps.label,
+        ...v,
+        ...ps.props,
+        fieldProps: { ...(ps.fieldProps || ps.props?.fieldProps) }, //兼容ps配置中的fieldProps，优先级更高，如果未设置则再读取props中的fieldProps
+      };
     }
     return v;
   });
