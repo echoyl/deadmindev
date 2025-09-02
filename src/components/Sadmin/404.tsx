@@ -81,7 +81,7 @@ export const Page: React.FC = () => {
   );
 };
 
-export const PageContainer404 = (props) => {
+export const PageContainer404: React.FC<{ [key: string]: any }> = (props) => {
   const { title = false, match = false, path } = props;
   const { setting } = useContext(SaDevContext);
   const { initialState } = useModel('@@initialState');
@@ -119,7 +119,35 @@ export const PageContainer404 = (props) => {
   );
 };
 
-const PageTypes = ({ menu, match, pathname }) => {
+const ListPage: React.FC<{ [key: string]: any }> = (props) => {
+  const { menu, pathname, name, data, page_type, ...rest } = props;
+  const level = menu?.data?.setting?.level || 0;
+  return (
+    <Suspense fallback={<Loading />}>
+      {page_type == 'category' || level ? (
+        <Category
+          pageMenu={menu}
+          key={pathname}
+          path={pathname}
+          name={name}
+          {...data}
+          tableTitle={false}
+        />
+      ) : (
+        <PostsList
+          key={pathname}
+          path={pathname}
+          name={name}
+          pageMenu={menu}
+          {...data}
+          tableTitle={false}
+        />
+      )}
+    </Suspense>
+  );
+};
+
+const PageTypes: React.FC<{ [key: string]: any }> = ({ menu, match, pathname }) => {
   const { data, page_type, name } = menu;
   //console.log('menu is', menu);
   if (match || page_type == 'form') {
@@ -155,31 +183,10 @@ const PageTypes = ({ menu, match, pathname }) => {
   } else {
     switch (page_type) {
       case 'category':
-        return (
-          <Suspense fallback={<Loading />}>
-            <Category
-              pageMenu={menu}
-              key={pathname}
-              path={pathname}
-              name={name}
-              {...data}
-              tableTitle={false}
-            />
-          </Suspense>
-        );
       case 'table':
       case 'justTable':
         return (
-          <Suspense fallback={<Loading />}>
-            <PostsList
-              key={pathname}
-              path={pathname}
-              name={name}
-              pageMenu={menu}
-              {...data}
-              tableTitle={false}
-            />
-          </Suspense>
+          <ListPage pathname={pathname} menu={menu} name={menu} pagetype={page_type} data={data} />
         );
       case 'panel':
         return (
