@@ -46,7 +46,7 @@ const PanelItemCard = (props) => {
       if (!text) {
         return null;
       }
-      footerContent = text;
+      footerContent = <div dangerouslySetInnerHTML={{ __html: text }}></div>;
     }
     return (
       <>
@@ -80,7 +80,13 @@ const PanelItemCard = (props) => {
     if (type == 'trend') {
       return <div style={style}>{getTrends(data.trend, config.chart?.trend?.layout)}</div>;
     } else if (type == 'progress') {
-      return <div style={style}>{data.progress?.map((v, i) => <Progress key={i} {...v} />)}</div>;
+      return (
+        <div style={style}>
+          {data.progress?.map((v, i) => (
+            <Progress key={i} {...v} />
+          ))}
+        </div>
+      );
     } else {
       return <PanelItemChart {...data?.chart} config={chart} type={type} />;
     }
