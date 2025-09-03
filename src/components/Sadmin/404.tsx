@@ -186,7 +186,7 @@ const PageTypes: React.FC<{ [key: string]: any }> = ({ menu, match, pathname }) 
       case 'table':
       case 'justTable':
         return (
-          <ListPage pathname={pathname} menu={menu} name={menu} pagetype={page_type} data={data} />
+          <ListPage pathname={pathname} menu={menu} name={name} pagetype={page_type} data={data} />
         );
       case 'panel':
         return (
