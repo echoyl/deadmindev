@@ -220,7 +220,7 @@ const formType = [
   { label: '层级选择 - cascader', value: 'cascader' },
   { label: '省市区 - pca', value: 'pca' },
   { label: '地图选点 - mapInput', value: 'mapInput' },
-  { label: '富文本 - tinyEditor', value: 'tinyEditor' },
+  { label: '富文本 - tinyMCE', value: 'tinyEditor' },
   { label: '价格2- price', value: 'price' },
   { label: '价格3- mprice', value: 'mprice' },
   { label: '价格4- mmprice', value: 'mmprice' },

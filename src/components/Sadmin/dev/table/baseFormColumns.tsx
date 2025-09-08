@@ -48,7 +48,7 @@ const formMoreType = [
   { label: 'jsonCode', value: 'jsonCode' },
   { label: '头像显示 - avatar', value: 'avatar' },
   { label: '弹层选择器 - modalSelect', value: 'modalSelect' },
-  { label: '富文本 - tinyEditor', value: 'tinyEditor' },
+  { label: '富文本 - tinyMCE', value: 'tinyEditor' },
   { label: '规格编辑 - guigePanel', value: 'guigePanel' },
   { label: '权限配置 - permGroup', value: 'permGroup' },
   { label: '自定义 - cdependency', value: 'cdependency' },
