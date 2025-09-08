@@ -144,7 +144,7 @@ const IconSelectPanel = (props) => {
   return (
     <Card
       style={{ minWidth: 400 }}
-      bordered={false}
+      variant="borderless"
       title={
         <Segmented
           value={type}

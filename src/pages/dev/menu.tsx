@@ -337,19 +337,19 @@ export default () => {
           {tplComplie(record.title)}
         </Space>
       ),
-      search:false
+      search: false,
     },
     {
       title: 'path',
       dataIndex: 'path',
       key: 'path',
-      search:false
+      search: false,
     },
     {
       title: '排序',
       dataIndex: 'displayorder',
       valueType: 'displayorder',
-      search:false
+      search: false,
     },
     {
       title: '操作',
