@@ -45,7 +45,7 @@
     "@antv/l7-react": "^2.4.3",
     "@monaco-editor/react": "^4.7.0",
     "@testing-library/dom": "^10.4.0",
-    "@tinymce/tinymce-react": "^4.2.0",
+    "@tinymce/tinymce-react": "^6.2.0",
     "ali-oss": "^6.18.1",
     "antd": "^5.24.3",
     "antd-img-crop": "^4.24.0",

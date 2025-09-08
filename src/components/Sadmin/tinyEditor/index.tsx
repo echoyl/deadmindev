@@ -1,9 +1,10 @@
 import { messageLoadingKey, saUpload } from '@/components/Sadmin/lib/request';
-import { FC, useContext, useRef, lazy, Suspense } from 'react';
+import { FC, useContext, useRef, lazy, Suspense, useState, useEffect } from 'react';
 import './style.less';
 import { SaDevContext } from '../dev';
 import LoadingFullHeight from '@/components/LoadingFullHeight';
 import { message } from '@/components/Sadmin/message';
+import { uid } from '../helpers';
 
 const Editor = lazy(() =>
   import('@tinymce/tinymce-react').then((module) => ({
@@ -21,14 +22,27 @@ const TinyEditor: FC<{
   const editorRef = useRef(null);
 
   const { setting } = useContext(SaDevContext);
+  const [key, setKey] = useState<string>(''); //用于切换主题时重新渲染编辑器
+  const [editorValue, setEditorValue] = useState<string>(value); //存储编辑器内容
+  const [editorinitValue, setEditorinitValue] = useState<string>(value); //切换主题时重新初始化编辑器内容
+
+  useEffect(() => {
+    setKey(uid());
+    setEditorinitValue(editorValue);
+  }, [setting?.navTheme]);
+
   return (
     <Suspense fallback={<LoadingFullHeight />}>
       <Editor
+        licenseKey="gpl"
+        key={key}
         tinymceScriptSrc={setting?.adminSetting?.baseurl + 'tinymce/tinymce.min.js'}
         onInit={(evt, editor) => (editorRef.current = editor)}
         value={value}
+        initialValue={editorinitValue}
         onEditorChange={(content) => {
           //console.log(content);
+          setEditorValue(content);
           props.onChange?.(content);
           return;
         }}
@@ -36,7 +50,7 @@ const TinyEditor: FC<{
           min_height: height,
           width: width ? width : '100%',
           menubar: false,
-          language: 'zh-Hans',
+          language: 'zh_CN',
           placeholder: '请输入',
           //skin: 'snow',
           skin: setting?.navTheme == 'light' ? 'oxide' : 'oxide-dark',
@@ -73,7 +87,7 @@ const TinyEditor: FC<{
             'undo redo blocks fontfamily fontsize lineheight ' +
             'bold italic underline strikethrough forecolor backcolor | alignleft aligncenter ' +
             'alignright alignjustify | bullist numlist outdent indent indent2em | ' +
-            'removeformat | axupimgs link media table',
+            'removeformat | axupimgs link media table | code',
           toolbar_mode: 'wrap',
           content_style: 'body { font-family:Microsoft YaHei,Arial,sans-serif; font-size:14px }',
           images_upload_handler: (blobInfo, progress) =>
