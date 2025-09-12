@@ -11,19 +11,20 @@ import {
   ProCard,
   ProForm,
   ProFormDigit,
+  ProFormInstance,
   ProFormList,
   ProFormText,
 } from '@ant-design/pro-components';
-import { App, Button, ConfigProvider, Flex, InputNumber, Space, Switch, Tooltip } from 'antd';
+import { Button, ConfigProvider, Flex, InputNumber, Space, Switch, Tooltip } from 'antd';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import ButtonDrawer from '../action/buttonDrawer';
 import { getJson, isStr } from '../checkers';
-import { saFormColumnsType, uid } from '../helpers';
+import { getFromObject, saFormColumnsType, uid } from '../helpers';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { css } from '@emotion/css';
-import { FormListOperation } from 'antd/lib/form';
+import TranslationModal from '../dev/form/translation';
 const getData = (attributes: any[], values: any) => {
   const tableRows: any[] = [];
   const editableKeys: React.Key[] = [];
@@ -257,7 +258,7 @@ const GuigeTable: FC<{
 };
 
 const DraggableItem = (props) => {
-  const { item } = props;
+  const { item, items, index, setItems, localesopen } = props;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item?.id,
   });
@@ -313,11 +314,41 @@ const DraggableItem = (props) => {
           <HolderOutlined />
         </div>
       </div>
+      {localesopen && (
+        <div style={{ height: 32, marginBlockEnd: '24px', lineHeight: '36px' }}>
+          <div
+            style={{
+              padding: 4,
+              borderRadius: 6,
+              fontSize: 14,
+              display: 'inline-flex',
+            }}
+            className="guigehandle"
+          >
+            <TranslationModal
+              onChange={(values) => {
+                items[index] = { ...item, ...values };
+                setItems?.(items);
+              }}
+              column={{ title: '规格名', dataIndex: 'name' }}
+              values={item}
+            />
+          </div>
+        </div>
+      )}
     </Flex>
   );
 };
 
-const GuigeItems = ({ action, item }: { item: { [key: string]: any }; action: any }) => {
+const GuigeItems = ({
+  action,
+  item,
+  localesopen = false,
+}: {
+  item: { [key: string]: any };
+  action: any;
+  localesopen?: boolean;
+}) => {
   //const { item,action } = props;
   const sensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 10 },
@@ -378,7 +409,15 @@ const GuigeItems = ({ action, item }: { item: { [key: string]: any }; action: an
           }}
         >
           {(f, index, inneraction) => {
-            return <DraggableItem item={inneraction.getCurrentRowData()} />;
+            return (
+              <DraggableItem
+                item={inneraction.getCurrentRowData()}
+                setItems={setItems}
+                items={items}
+                index={index}
+                localesopen={localesopen}
+              />
+            );
           }}
         </ProFormList>
       </SortableContext>
@@ -392,10 +431,10 @@ const GuigePanel: FC<{
   setOpen?: any;
   onChange?: any;
   columns?: any[];
+  localesopen?: boolean; //是否开启多语言
 }> = (props) => {
-  const { value, contentRender, setOpen, onChange, columns = [] } = props;
-  const { message } = App.useApp();
-  const formRef = useRef();
+  const { value, contentRender, setOpen, onChange, columns = [], localesopen = false } = props;
+  const formRef = useRef<ProFormInstance<any>>();
   const tableForm = useRef<EditableFormInstance>();
   const [isSync, setIsSync] = useState(0);
 
@@ -419,8 +458,6 @@ const GuigePanel: FC<{
           return;
         }
         //这里将未设置的值过滤掉
-
-        //console.log('submit here unparse v is ', v);
 
         const items = [];
         const attrs = [];
@@ -473,6 +510,7 @@ const GuigePanel: FC<{
         }}
         min={1}
         copyIconProps={false}
+        arrowSort={true}
         itemRender={({ listDom, action }, { index }) => (
           <ProCard
             bordered
@@ -483,7 +521,26 @@ const GuigePanel: FC<{
                 rules={[{ required: true }]}
                 width="md"
                 name="name"
-                label="规格名"
+                label={
+                  <Space>
+                    规格名
+                    {localesopen && (
+                      <TranslationModal
+                        onChange={(values) => {
+                          const oldvalues = formRef?.current?.getFieldValue(['items', index]);
+                          const newvalues = { ...oldvalues, ...values };
+                          formRef?.current?.setFieldValue(['items', index], newvalues);
+                        }}
+                        column={{ title: '规格名', dataIndex: 'name' }}
+                        values={
+                          formRef?.current
+                            ? formRef?.current?.getFieldValue(['items', index])
+                            : getFromObject(value, ['items', index])
+                        }
+                      />
+                    )}
+                  </Space>
+                }
               />
             }
             extra={action}
@@ -496,7 +553,13 @@ const GuigePanel: FC<{
         //initialValue={[{ name: '', items: [{ name: '', id: uid() }], id: uid() }]}
       >
         {(topf, topindex, topaction) => {
-          return <GuigeItems item={topaction.getCurrentRowData()} action={topaction} />;
+          return (
+            <GuigeItems
+              item={topaction.getCurrentRowData()}
+              action={topaction}
+              localesopen={localesopen}
+            />
+          );
         }}
       </ProFormList>
       <ProFormText name="attrs" hidden />
@@ -528,7 +591,7 @@ export const Guiges = (props) => {
   const value = getJson(props.value, dvalue);
   //log('inner value is', value);
   const [hidden, setHidden] = useState(value.open ? false : true);
-  const { columns = [] } = props;
+  const { columns = [], locale } = props;
   const columnsName = getColumnsName(columns);
   return (
     <>
@@ -570,7 +633,12 @@ export const Guiges = (props) => {
             width={1200}
             title="规格参数设置"
           >
-            <GuigePanel value={value} onChange={props.onChange} columns={columns} />
+            <GuigePanel
+              value={value}
+              onChange={props.onChange}
+              columns={columns}
+              localesopen={locale}
+            />
           </ButtonDrawer>
         </Space>
       </ProForm.Item>

@@ -5,9 +5,14 @@ import { useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '..';
 import { SaContext } from '../../posts/table';
 import { Tooltip } from 'antd';
+import { isArr } from '../../checkers';
 
-const TranslationModal = (props) => {
-  const { column = { dataIndex: 'title', title: '标题' } } = props;
+const TranslationModal = (props: {
+  column?: Record<string, any>;
+  values?: Record<string, any>;
+  onChange?: (values: any) => void;
+}) => {
+  const { column = { dataIndex: 'title', title: '标题' }, values, onChange } = props;
 
   const { setting } = useContext(SaDevContext);
 
@@ -16,11 +21,22 @@ const TranslationModal = (props) => {
   //console.log('formRef', formRef, formRef?.current?.getFieldsValue());
 
   const tabs: saFormTabColumnsType = setting?.adminSetting?.locales.map((lo) => {
+    let index: string | string[] = '';
+    if (isArr(column?.dataIndex)) {
+      //获取最后一个元素后 解构剩余元素，最后一个元素和语言包名josn _
+      const or = [...column?.dataIndex];
+      index = or.pop();
+
+      index = [...or, [index, lo.name].join('_')];
+      //console.log('index', index, or);
+    } else {
+      index = [column?.dataIndex, lo.name].join('_');
+    }
     return {
       title: lo.title,
       formColumns: [
         {
-          dataIndex: [column?.dataIndex, lo.name].join('_'),
+          dataIndex: index,
           title: column?.title,
           valueType: column?.valueType,
         },
@@ -28,10 +44,12 @@ const TranslationModal = (props) => {
     };
   });
 
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(values);
 
   useEffect(() => {
-    setValue(formRef?.current?.getFieldsValue());
+    if (formRef?.current && !values) {
+      setValue(formRef?.current?.getFieldsValue());
+    }
   }, []);
 
   return (
@@ -46,7 +64,12 @@ const TranslationModal = (props) => {
       value={value}
       onChange={(values) => {
         setValue(values);
-        formRef?.current?.setFieldsValue(values);
+        if (onChange) {
+          onChange(values);
+        } else {
+          formRef?.current?.setFieldsValue(values);
+        }
+
         //console.log(values, formRef?.current?.getFieldsValue());
       }}
     />
