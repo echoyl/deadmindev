@@ -66,7 +66,10 @@ export default (props) => {
       //toolBarRender={false}
       tableColumns={[
         { dataIndex: 'title', title: '名称' },
-        { dataIndex: 'name', title: 'name' },
+        {
+          dataIndex: 'name',
+          title: 'name',
+        },
         { dataIndex: 'type', title: '类型' },
         {
           title: '额外操作',
@@ -144,7 +147,18 @@ export default (props) => {
               valueType: 'group',
               columns: [
                 { dataIndex: 'title', title: '名称', colProps: { span: 12 } },
-                { dataIndex: 'name', title: 'Name', colProps: { span: 12 } },
+                {
+                  dataIndex: 'name',
+                  title: 'Name',
+                  colProps: { span: 12 },
+                  formItemProps: {
+                    rules: [
+                      {
+                        required: true,
+                      },
+                    ],
+                  },
+                },
               ],
             },
             {
