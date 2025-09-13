@@ -3,6 +3,7 @@ import LoadingFullHeight from '@/components/LoadingFullHeight';
 import { SaDevContext } from '../../dev';
 import { isObj } from '../../checkers';
 import { loader } from '@monaco-editor/react';
+import { Card, Typography } from 'antd';
 
 const Editor = lazy(() => import('@monaco-editor/react'));
 
@@ -28,21 +29,42 @@ export const MonacoEditor = (props) => {
     });
   }, []);
 
-  const { options, height = 400, ...restProps } = props;
+  const { options, height = 400, language = 'json', ...restProps } = props;
   const realOptions = { ...MonacoDefaultOptions, ...options };
   const { setting } = useContext(SaDevContext);
+  const editorRef = useRef(null);
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+  };
 
   return (
     <Suspense fallback={<LoadingFullHeight />}>
-      <Editor
-        options={realOptions}
-        height={height}
-        theme={setting?.navTheme != 'light' ? 'vs-dark' : 'vs'}
-        //theme="vs-dark"
-        language="json"
-        className="monaco-editor-container"
-        {...restProps}
-      />
+      <Card
+        title={`${language}编辑器`}
+        size="small"
+        styles={{ body: { paddingLeft: 0, paddingRight: 0 } }}
+        extra={
+          <Typography.Text
+            copyable={{
+              text: () => {
+                return editorRef?.current?.getValue();
+              },
+            }}
+          />
+        }
+      >
+        <Editor
+          options={realOptions}
+          height={height}
+          theme={setting?.navTheme != 'light' ? 'vs-dark' : 'vs'}
+          //theme="vs-dark"
+          language={language}
+          style={{ boder: 'none' }}
+          className="monaco-editor-container"
+          onMount={handleEditorDidMount}
+          {...restProps}
+        />
+      </Card>
     </Suspense>
   );
 };
