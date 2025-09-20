@@ -1,6 +1,5 @@
 import {
   DoubleRightOutlined,
-  HolderOutlined,
   PlusCircleOutlined,
   SettingOutlined,
   SyncOutlined,
@@ -15,16 +14,13 @@ import {
   ProFormList,
   ProFormText,
 } from '@ant-design/pro-components';
-import { Button, ConfigProvider, Flex, InputNumber, Space, Switch, Tooltip } from 'antd';
-import React, { FC, useContext, useEffect, useRef, useState } from 'react';
-import ButtonDrawer from '../action/buttonDrawer';
-import { getJson, isStr } from '../checkers';
-import { getFromObject, saFormColumnsType, uid } from '../helpers';
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
-import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
-import { css } from '@emotion/css';
-import TranslationModal from '../dev/form/translation';
+import { Button, Flex, Input, InputNumber, Space, Switch, Tooltip } from 'antd';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import ButtonDrawer from '@/components/Sadmin/action/buttonDrawer';
+import { getJson, isStr } from '@/components/Sadmin/checkers';
+import { getFromObject, saFormColumnsType, uid } from '@/components/Sadmin/helpers';
+import TranslationModal from '@/components/Sadmin/dev/form/translation';
+import Uploader from '@/components/Sadmin/uploader';
 const getData = (attributes: any[], values: any) => {
   const tableRows: any[] = [];
   const editableKeys: React.Key[] = [];
@@ -70,41 +66,57 @@ const getData = (attributes: any[], values: any) => {
   return [tableRows, editableKeys];
 };
 
-const columnsName: Array<{ title: string; name: string; required?: boolean; prefix?: string }> = [
-  { title: '价格', name: 'price', required: true, prefix: '￥' },
-  { title: '库存', name: 'sku', required: true, prefix: '' },
-  { title: '市场价', name: 'old_price', prefix: '￥' },
-  { title: '结算价', name: 'jiesuan_price', prefix: '￥' },
-  { title: '成本价', name: 'chengben_price', prefix: '￥' },
-  { title: '每次最大购买', name: 'max', prefix: '' },
+const columnsName: Array<{
+  title: string;
+  name: string;
+  required?: boolean;
+  prefix?: string;
+  valueType?: string;
+}> = [
+  { title: '价格', name: 'price', valueType: 'digit', required: true, prefix: '￥' },
+  { title: '库存', name: 'sku', valueType: 'digit', required: true, prefix: '' },
+  { title: '市场价', name: 'old_price', valueType: 'digit', prefix: '￥' },
+  { title: '结算价', name: 'jiesuan_price', valueType: 'digit', prefix: '￥' },
+  { title: '成本价', name: 'chengben_price', valueType: 'digit', prefix: '￥' },
+  { title: '每次最大购买', name: 'max', valueType: 'digit', prefix: '' },
 ];
 
 const PiliangInput = (props) => {
-  const { name, action } = props;
+  const { name, action, type } = props;
   const [value, setValue] = useState<any>();
-  return (
+  const addonAfter = (
+    <DoubleRightOutlined
+      title="批量设置"
+      onClick={() => {
+        //log('pliang value', piliang);
+        action(name, value);
+      }}
+      style={{ cursor: 'pointer' }}
+      rotate={90}
+    />
+  );
+  return type == 'digit' ? (
     <InputNumber
       style={{ width: '100%' }}
       size="small"
       onChange={(v) => {
         setValue(v);
       }}
-      addonAfter={
-        <DoubleRightOutlined
-          title="批量设置"
-          onClick={() => {
-            //log('pliang value', piliang);
-            action(name, value);
-          }}
-          style={{ cursor: 'pointer' }}
-          rotate={90}
-        />
-      }
+      addonAfter={addonAfter}
+    />
+  ) : (
+    <Input
+      style={{ width: '100%' }}
+      size="small"
+      onChange={(v) => {
+        setValue(v.target.value);
+      }}
+      addonAfter={addonAfter}
     />
   );
 };
 
-const getColumnsName = (_columns: Array<an>) => {
+const getColumnsName = (_columns: Array<any>) => {
   let _columnsName = [];
   if (_columns.length == 0) {
     //默认全部字段都选择
@@ -114,7 +126,7 @@ const getColumnsName = (_columns: Array<an>) => {
       .map((item) => {
         if (isStr(item)) {
           //读取预设置的字段
-          return columnsName.find((v) => v.name == item);
+          return columnsName.find((v) => v.name == item) || item;
         } else {
           //自定义字段
           return item;
@@ -138,40 +150,48 @@ const getColumns = (
       readonly: true,
     });
   });
+  const titlepicIndex = _columnsName.findIndex((v) => v == 'titlepic');
+  if (titlepicIndex != -1) {
+    columns.push({
+      title: '图片',
+      dataIndex: 'titlepic',
+      valueType: 'uploader',
+      fieldProps: {
+        buttonType: 'table',
+      },
+    });
+  }
 
-  columns.push({
-    title: '图片',
-    dataIndex: 'titlepic',
-    valueType: 'uploader',
-    fieldProps: {
-      buttonType: 'table',
-    },
-  });
-
-  const normalColumns: saFormColumnsType = _columnsName.map((item) => {
-    return {
-      title: (
-        <>
-          {item.tooltip ? <Tooltip title={item.tooltip}>{item.title}</Tooltip> : item.title}
-          <br />
-          <PiliangInput name={item.name} action={piliangAction} />
-        </>
-      ),
-      dataIndex: item.name,
-      valueType: 'digit',
-      fieldProps: { prefix: item.prefix, style: { width: '100%' } },
-      formItemProps: item.required
-        ? {
-            rules: [
-              {
-                required: true,
-                message: '此项必填',
-              },
-            ],
-          }
-        : false,
-    };
-  });
+  const normalColumns: saFormColumnsType = _columnsName
+    .map((item) => {
+      if (isStr(item)) {
+        return null;
+      } else {
+        return {
+          title: (
+            <>
+              {item.tooltip ? <Tooltip title={item.tooltip}>{item.title}</Tooltip> : item.title}
+              <br />
+              <PiliangInput name={item.name} type={item.valueType} action={piliangAction} />
+            </>
+          ),
+          dataIndex: item.name,
+          valueType: item.valueType,
+          fieldProps: { prefix: item.prefix, style: { width: '100%' } },
+          formItemProps: item.required
+            ? {
+                rules: [
+                  {
+                    required: true,
+                    message: '此项必填',
+                  },
+                ],
+              }
+            : false,
+        };
+      }
+    })
+    .filter((v) => v);
 
   return columns.concat(normalColumns);
 };
@@ -258,62 +278,25 @@ const GuigeTable: FC<{
 };
 
 const DraggableItem = (props) => {
-  const { item, items, index, setItems, localesopen } = props;
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: item?.id,
-  });
-  const commonStyle = {
-    transition: 'unset', // Prevent element from shaking after drag
-    height: '100%',
-    width: '100%',
+  const { action, localesopen, itemImg } = props;
+
+  const changeData = (v) => {
+    const old = action?.getCurrentRowData();
+    const newval = { ...old, ...v };
+    action?.setCurrentRowData?.({ ...newval });
   };
-  // const style: React.CSSProperties = {
-  //   transform: CSS.Transform.toString(transform),
-  //   transition,
-  // };
-  const style = transform
-    ? {
-        ...commonStyle,
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        transition: isDragging ? 'unset' : transition, // Improve performance/visual effect when dragging
-        ...(isDragging ? { zIndex: 9999 } : {}),
-      }
-    : commonStyle;
-
-  // prevent preview event when drag end
-  const className = isDragging
-    ? css`
-        a {
-          pointer-events: none;
-        }
-      `
-    : css`
-        .guigehandle:hover {
-          color: rgba(42, 46, 54, 0.88);
-          background-color: #d3e7ff;
-        }
-      `;
-  const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
-
   return (
-    <Flex ref={setNodeRef} style={style} className={className} {...attributes} gap="small">
+    <Flex gap="small">
       <ProFormText allowClear={false} width="xs" rules={[{ required: true }]} name={['name']} />
-      <div style={{ height: 32, marginBlockEnd: '24px', lineHeight: '36px' }}>
-        <div
-          style={{
-            cursor: 'grab',
-            padding: 4,
-            borderRadius: 6,
-            fontSize: 14,
-            display: 'inline-flex',
+      {itemImg && (
+        <Uploader
+          buttonType="table"
+          value={action?.getCurrentRowData()?.titlepic}
+          onChange={(v) => {
+            changeData({ titlepic: v });
           }}
-          className="guigehandle"
-          {...listeners}
-          title="拖拽移动后排序"
-        >
-          <HolderOutlined />
-        </div>
-      </div>
+        />
+      )}
       {localesopen && (
         <div style={{ height: 32, marginBlockEnd: '24px', lineHeight: '36px' }}>
           <div
@@ -327,11 +310,10 @@ const DraggableItem = (props) => {
           >
             <TranslationModal
               onChange={(values) => {
-                items[index] = { ...item, ...values };
-                setItems?.(items);
+                changeData(values);
               }}
               column={{ title: '规格名', dataIndex: 'name' }}
-              values={item}
+              values={action?.getCurrentRowData()}
             />
           </div>
         </div>
@@ -341,87 +323,43 @@ const DraggableItem = (props) => {
 };
 
 const GuigeItems = ({
-  action,
-  item,
   localesopen = false,
+  itemImg = false,
 }: {
-  item: { [key: string]: any };
-  action: any;
   localesopen?: boolean;
+  itemImg?: boolean;
 }) => {
-  //const { item,action } = props;
-  const sensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 10 },
-  });
-  const [items, setItems] = useState(item.items);
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    //console.log('onDragEnd', active, over);
-    if (active.id !== over?.id) {
-      const nitem = action.getCurrentRowData();
-      const { items = [] } = nitem;
-      const activeIndex = items.findIndex((i) => i.id === active.id);
-      const overIndex = items.findIndex((i) => i.id === over?.id);
-      const new_sort_data = arrayMove(items, activeIndex, overIndex);
-      setItems([...new_sort_data]);
-      item.items = new_sort_data;
-      // setFileList([...new_sort_data]);
-      // props.onChange?.([...new_sort_data]);
-      action.setCurrentRowData?.(item);
-    }
-  };
   return (
-    <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-      <SortableContext
-        items={items?.map((i) => i.id)}
-        //strategy={horizontalListSortingStrategy}
-      >
-        <ProFormList
-          label="规格值"
-          name="items"
-          creatorRecord={() => ({ name: '', id: uid() })}
-          creatorButtonProps={{
-            creatorButtonText: '新建',
-            icon: <PlusCircleOutlined />,
-            type: 'link',
-            style: { width: 'unset' },
-          }}
-          min={1}
-          copyIconProps={false}
-          deleteIconProps={{ tooltipText: '删除' }}
-          itemRender={({ listDom, action }) => (
-            <div
-              style={{
-                display: 'inline-flex',
-                marginInlineEnd: 25,
-              }}
-            >
-              {listDom}
-              {action}
-            </div>
-          )}
-          onAfterAdd={() => {
-            const newitem = action.getCurrentRowData();
-            setItems(newitem.items);
-          }}
-          onAfterRemove={() => {
-            const newitem = action.getCurrentRowData();
-            setItems(newitem.items);
+    <ProFormList
+      label="规格值"
+      name="items"
+      creatorRecord={() => ({ name: '', id: uid() })}
+      creatorButtonProps={{
+        creatorButtonText: '新建',
+        icon: <PlusCircleOutlined />,
+        type: 'link',
+        style: { width: 'unset' },
+      }}
+      min={1}
+      copyIconProps={false}
+      deleteIconProps={{ tooltipText: '删除' }}
+      itemRender={({ listDom, action }) => (
+        <div
+          style={{
+            display: 'inline-flex',
+            marginInlineEnd: 25,
           }}
         >
-          {(f, index, inneraction) => {
-            return (
-              <DraggableItem
-                item={inneraction.getCurrentRowData()}
-                setItems={setItems}
-                items={items}
-                index={index}
-                localesopen={localesopen}
-              />
-            );
-          }}
-        </ProFormList>
-      </SortableContext>
-    </DndContext>
+          {listDom}
+          {action}
+        </div>
+      )}
+      arrowSort={true}
+    >
+      {(f, index, inneraction) => {
+        return <DraggableItem action={inneraction} localesopen={localesopen} itemImg={itemImg} />;
+      }}
+    </ProFormList>
   );
 };
 
@@ -432,8 +370,17 @@ const GuigePanel: FC<{
   onChange?: any;
   columns?: any[];
   localesopen?: boolean; //是否开启多语言
+  itemImg?: boolean; //规格名称是否开启图片
 }> = (props) => {
-  const { value, contentRender, setOpen, onChange, columns = [], localesopen = false } = props;
+  const {
+    value,
+    contentRender,
+    setOpen,
+    onChange,
+    columns = [],
+    localesopen = false,
+    itemImg = false,
+  } = props;
   const formRef = useRef<ProFormInstance<any>>();
   const tableForm = useRef<EditableFormInstance>();
   const [isSync, setIsSync] = useState(0);
@@ -552,15 +499,7 @@ const GuigePanel: FC<{
         creatorRecord={() => ({ name: '', items: [{ name: '', id: uid() }], id: uid() })}
         //initialValue={[{ name: '', items: [{ name: '', id: uid() }], id: uid() }]}
       >
-        {(topf, topindex, topaction) => {
-          return (
-            <GuigeItems
-              item={topaction.getCurrentRowData()}
-              action={topaction}
-              localesopen={localesopen}
-            />
-          );
-        }}
+        <GuigeItems localesopen={localesopen} itemImg={itemImg} />
       </ProFormList>
       <ProFormText name="attrs" hidden />
       <ProForm.Item
@@ -591,7 +530,7 @@ export const Guiges = (props) => {
   const value = getJson(props.value, dvalue);
   //log('inner value is', value);
   const [hidden, setHidden] = useState(value.open ? false : true);
-  const { columns = [], locale } = props;
+  const { columns = [], locale, itemImg } = props;
   const columnsName = getColumnsName(columns);
   return (
     <>
@@ -638,6 +577,7 @@ export const Guiges = (props) => {
               onChange={props.onChange}
               columns={columns}
               localesopen={locale}
+              itemImg={itemImg}
             />
           </ButtonDrawer>
         </Space>

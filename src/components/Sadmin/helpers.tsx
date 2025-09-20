@@ -21,7 +21,7 @@ import ModalJson from './action/modalJson';
 import CarBrand from './carBrand';
 import { getJson, isObj, isStr } from './checkers';
 import { FormCalendarRender } from './formCalendar';
-import { Guiges } from './guige';
+import { Guiges } from './valueTypeMap/guigePanel';
 import JsonForm from './jsonForm';
 import { ModalSelectRender } from './modalSelect';
 import SaOptions, { SaEditorTable } from './options';

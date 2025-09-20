@@ -52,6 +52,12 @@ const TranslationModal = (props: {
     }
   }, []);
 
+  useEffect(() => {
+    if (values) {
+      setValue(values);
+    }
+  }, [values]);
+
   return (
     <ConfirmForm
       tabs={tabs}
