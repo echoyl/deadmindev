@@ -290,6 +290,7 @@ export default () => {
               title: '{{record.title + " - 关联管理"}}',
               drawerProps: {
                 width: 1000,
+                styles: { body: { padding: 16 } },
               },
               childrenRender: (record) => <ModelRelation model={record} />,
             },
