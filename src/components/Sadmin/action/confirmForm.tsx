@@ -23,7 +23,7 @@ interface actionConfirm {
   formColumns?: saFormColumnsType;
   tabs?: saFormTabColumnsType;
   callback?: (value: any) => void;
-  afterActionType?: 'reload' | 'goback' | 'none';
+  afterActionType?: 'reload' | 'goback' | 'none' | 'close';
   onChange?: (value: any) => void;
   value?: any;
   initValue?: (value: any) => any;

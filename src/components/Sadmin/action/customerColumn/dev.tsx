@@ -696,6 +696,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                               { label: 'reload', value: 'reload' },
                                               { label: 'goback', value: 'goback' },
                                               { label: 'none', value: 'none' },
+                                              { label: '仅关闭弹窗', value: 'close' },
                                             ],
                                             defaultValue: 'reload',
                                           },

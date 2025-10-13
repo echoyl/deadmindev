@@ -92,7 +92,7 @@ const JsonForm: FC<{
         msg="配置页面"
         tabs={config?.desc?.tabs}
         value={value}
-        afterActionType="none"
+        afterActionType="close"
         onChange={onChange}
         showType="drawer"
       />
