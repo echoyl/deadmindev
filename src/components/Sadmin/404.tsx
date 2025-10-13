@@ -120,11 +120,11 @@ export const PageContainer404: React.FC<{ [key: string]: any }> = (props) => {
 };
 
 const ListPage: React.FC<{ [key: string]: any }> = (props) => {
-  const { menu, pathname, name, data, page_type, ...rest } = props;
+  const { menu, pathname, name, data, pagetype, ...rest } = props;
   const level = menu?.data?.setting?.level || 0;
   return (
     <Suspense fallback={<Loading />}>
-      {page_type == 'category' || level ? (
+      {pagetype == 'category' || level ? (
         <Category
           pageMenu={menu}
           key={pathname}
