@@ -69,7 +69,7 @@ export default () => {
                   {
                     title: '水印设置',
                     dataIndex: 'watermark',
-                    tooltip: '1.username表示后台用户名',
+                    tooltip: '1.username表示后台用户名.2.清空表示关闭水印',
                     colProps: { span: 12 },
                   },
                   {
