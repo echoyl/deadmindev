@@ -295,11 +295,15 @@ export const getTableColumns = (props) => {
     }
     //是否开启了排序 如果table有url的话会重新请求到后台获取数据 没有url的话会排序这个table的数据
     if (v.sort) {
-      v.sorter = (a, b) => {
-        const aval = getFromObject(a, v.dataIndex);
-        const bval = getFromObject(b, v.dataIndex);
-        return aval - bval;
-      };
+      if (url) {
+        v.sorter = true;
+      } else {
+        v.sorter = (a, b) => {
+          const aval = getFromObject(a, v.dataIndex);
+          const bval = getFromObject(b, v.dataIndex);
+          return aval > bval;
+        };
+      }
       delete v.sort;
     }
     //加入合并行设置
