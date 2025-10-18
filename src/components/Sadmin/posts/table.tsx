@@ -55,7 +55,7 @@ export interface saTableProps {
   titleField?: string | Array<string>;
   formProps?: ProFormProps;
   //左侧分类菜单的 配置信息
-  leftMenu?: { name?: string; url_name?: string; field?: Object; title?: string };
+  leftMenu?: { name?: string; url_name?: string; field?: Object; title?: string; close?: boolean };
   categorysName?: string;
   //table组件 toolbar中menu 请求和url中参数name
   table_menu_key?: string; //列表头部tab切换读取的数据字段名称

@@ -1,7 +1,7 @@
 import { findParents, search2Obj } from '@/components/Sadmin/helpers';
 //import { PageContainer } from '@ant-design/pro-layout';
 import { useSearchParams } from '@umijs/max';
-import { Col, Row, Tree } from 'antd';
+import { Col, Row, Splitter, Tree, Typography } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React, { useState } from 'react';
 import './style.less';
@@ -10,37 +10,20 @@ import SaTable from './table';
 import { PageContainer404 } from '@/components/Sadmin/404';
 
 const PostsList: React.FC<saTableProps> = (props) => {
-  //console.log('props', props);
+  const { tableTitle = false, path, leftMenu } = props;
   const {
-    tableTitle = false,
-    path,
-    leftMenu = {
-      name: 'categorys',
-      url_name: 'category_id',
-      title: '分类选择',
-      field: { title: 'label', key: 'value' },
-    },
-  } = props;
-  //const url = 'posts/posts';
-  if (leftMenu) {
-  }
-  // const {
-  //   name: categorysName = 'categorys',
-  //   title: treeTitle = '分类选择',
-  //   url_name: category_id_name = 'category_id',
-  //   field: treeFieldNams = { title: 'label', key: 'value' },
-  // } = leftMenu;
-  const categorysName = leftMenu ? leftMenu.name : '';
-  const treeTitle = leftMenu ? leftMenu.title : '';
-  const category_id_name = leftMenu ? leftMenu.url_name : '';
-  const treeFieldNams = leftMenu ? leftMenu.field : false;
+    name: categorysName = 'categorys',
+    title: treeTitle = '分类选择',
+    url_name: category_id_name = 'category_id',
+    field: treeFieldNams = { title: 'label', key: 'value', children: 'children' },
+    close: leftMenuClose = false,
+  } = leftMenu || { close: true };
 
   const [categorys, setCategorys] = useState([]);
 
   //const setUrlSearch = useUrlSearchParams({}, { disabled: false })[1];
   const [searchParams, setUrlSearch] = useSearchParams();
 
-  //const query = usep();
   //console.log(searchParams, 333);
   const searchCategoryId = searchParams.get(category_id_name);
   const [category_id, setKey] = useState(
@@ -50,30 +33,13 @@ const PostsList: React.FC<saTableProps> = (props) => {
         : parseInt(searchCategoryId)
       : 0,
   );
-  //let location = useLocation();
   const [expandedKeys, setExpandedKeys] = useState([]);
-  // useEffect(() => {
-  //   request.get(url).then((ret) => {
-  //     setCategorys([...ret.search.categorys]);
-  //     //获取分类父级路径
-  //     //console.log(category_id, 222);
-  //     if (category_id.length > 0 && expandedKeys.length < 1) {
-  //       const category_parent_keys = findParents(ret.search.categorys, category_id[0], {
-  //         id: 'value',
-  //         children: 'children',
-  //       });
-  //       console.log(category_parent_keys, 111);
-  //       setExpandedKeys(category_parent_keys);
-  //     }
-  //   });
-  // }, []);
-  //log('categorys',categorys);
   return (
     <PageContainer404 title={tableTitle} path={path}>
-      <Row gutter={[12, 12]} style={categorys.length > 1 ? { marginLeft: 0, marginRight: 0 } : {}}>
+      <Row gutter={[30, 0]} style={categorys.length > 1 ? { marginLeft: 0 } : {}}>
         {categorys.length > 1 && (
-          <Col span={3} title={treeTitle} style={{ background: '#fff', paddingTop: 20 }}>
-            <Title level={5}>{treeTitle}</Title>
+          <Col span={3} title={treeTitle} style={{ background: '#fff',padding:10 }}>
+            <Typography.Text strong> {treeTitle}</Typography.Text>
             <Tree
               selectedKeys={[category_id]}
               expandedKeys={expandedKeys}
@@ -109,7 +75,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
                 : { ...props.paramExtra }
             }
             beforeTableGet={(ret) => {
-              if (!leftMenu) {
+              if (leftMenuClose) {
                 return;
               }
               if (categorys.length > 0 || !ret.search?.[categorysName]) {
@@ -125,7 +91,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
                   id: 'value',
                   children: 'children',
                 });
-                console.log(category_parent_keys, 111);
+                //console.log(category_parent_keys, 111);
                 setExpandedKeys(category_parent_keys);
               }
             }}
