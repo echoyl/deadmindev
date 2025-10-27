@@ -105,27 +105,30 @@ const Uploader: React.FC<Props> = (props) => {
   //   fieldProps.accept = 'application/*,text/*';
   //   //'.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,.xls,.xlsx,.ppt,.rar,.zip,.chm,text/*';
   // }
+  const uploadText = type == 'image' ? '选图片' : '选文件';
 
   const uploadButton = (
     <div>
       <PlusOutlined />
-      <div style={{ marginTop: 4 }}>{type == 'image' ? '选图片' : '选文件'}</div>
-      <div>
-        {fileList?.length} / {max}
-      </div>
+      {buttonType == 'card' && (
+        <>
+          <div style={{ marginTop: 4 }}>{uploadText}</div>
+          <div>
+            {fileList?.length} / {max}
+          </div>
+        </>
+      )}
     </div>
   );
   const uploadButtonOne =
     buttonType == 'card' || buttonType == 'table' ? (
       <div>
         {loading ? <LoadingOutlined /> : <PlusOutlined />}
-        {buttonType == 'card' && (
-          <div style={{ marginTop: 8 }}>{type == 'image' ? '选图片' : '选文件'}</div>
-        )}
+        {buttonType == 'card' && <div style={{ marginTop: 8 }}>{uploadText}</div>}
       </div>
     ) : (
       <Button icon={<PlusOutlined />} type="dashed">
-        {type == 'image' ? '选图片' : '选文件'}
+        {uploadText}
       </Button>
     );
 
@@ -201,6 +204,9 @@ const Uploader: React.FC<Props> = (props) => {
     return;
   };
 
+  const listType = buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text';
+  const className = `sa-upload-list sa-upload-list-${buttonType} sa-upload-list-${readonly ? 'readonly' : 'edit'}`;
+
   return (
     <>
       {max == 1 || readonly ? (
@@ -208,8 +214,8 @@ const Uploader: React.FC<Props> = (props) => {
           <Upload
             {...fieldProps}
             headers={headers}
-            listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
-            className={`sa-upload-list sa-upload-list-${buttonType} sa-upload-list-${readonly ? 'readonly' : 'edit'}`}
+            listType={listType}
+            className={className}
             showUploadList={
               fileList?.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
             }
@@ -241,10 +247,8 @@ const Uploader: React.FC<Props> = (props) => {
             {...fieldProps}
             headers={headers}
             action={action}
-            listType={buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text'}
-            className={
-              buttonType == 'table' ? 'sa-upload-list sa-upload-list-table' : 'sa-upload-list'
-            }
+            listType={listType}
+            className={className}
             itemRender={(originNode, file) => (
               <DragItem item={file}>
                 <div style={{ width: '100%', height: '100%' }}>{originNode}</div>
