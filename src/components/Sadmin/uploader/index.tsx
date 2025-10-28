@@ -20,10 +20,11 @@ interface Props {
   readonly?: boolean;
   crop?: boolean;
   cropProps?: ImgCropProps;
+  accept?: string;
 }
 
 const Uploader: React.FC<Props> = (props) => {
-  const [headers, setHeaders] = useState();
+  const [headers, setHeaders] = useState<Record<string, any>>();
 
   const {
     max = 1,
@@ -46,13 +47,19 @@ const Uploader: React.FC<Props> = (props) => {
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(false);
-  fieldProps.maxCount = max;
-  fieldProps.multiple = max > 1 ? true : false;
-  fieldProps.accept = accept;
+  // fieldProps.maxCount = max;
+  // fieldProps.multiple = max > 1 ? true : false;
+  // fieldProps.accept = accept;
+  const innerfieldProps: UploadProps = {
+    ...fieldProps,
+    maxCount: max,
+    multiple: max > 1 ? true : false,
+    accept: accept,
+  };
 
-  const parseImageUrl = (url: string): UploadFile => {
+  const parseImageUrl = (url: string): UploadFile & { value?: string } => {
     url = isHttpLink(url) ? url : [setting?.adminSetting?.fileImagePrefix, url].join('');
-    return { url, value: url, status: 'done' };
+    return { url, value: url, status: 'done', uid: url, name: url };
   };
 
   useEffect(() => {
@@ -99,7 +106,7 @@ const Uploader: React.FC<Props> = (props) => {
 
   //const fieldProps = ;
   if (type == 'image') {
-    fieldProps.onPreview = handlePreview;
+    innerfieldProps.onPreview = handlePreview;
   }
   // if (type == 'file') {
   //   fieldProps.accept = 'application/*,text/*';
@@ -137,7 +144,7 @@ const Uploader: React.FC<Props> = (props) => {
     props.onChange?.([...new_sort_data]);
   };
 
-  const fileChange = (info) => {
+  const fileChange = (info: any) => {
     //console.log('fileChange', info);
     if (info.file.status === 'uploading') {
       setLoading(true);
@@ -149,7 +156,7 @@ const Uploader: React.FC<Props> = (props) => {
 
       const { code, msg, data } = info.file.response;
       const index = fileList.findIndex((v) => v.uid == info.file.uid);
-      const file = {
+      const file: UploadFile & { value?: string } = {
         uid: info.file.uid,
         name: info.file.name,
         url: !code ? data.src : '',
@@ -212,7 +219,7 @@ const Uploader: React.FC<Props> = (props) => {
       {max == 1 || readonly ? (
         <ImgCrop aspectSlider={true} beforeCrop={beforeCrop} {...cropProps}>
           <Upload
-            {...fieldProps}
+            {...innerfieldProps}
             headers={headers}
             listType={listType}
             className={className}
@@ -244,7 +251,7 @@ const Uploader: React.FC<Props> = (props) => {
       ) : (
         <DndKitContext onDragEnd={onDragEnd} list={fileList}>
           <Upload
-            {...fieldProps}
+            {...innerfieldProps}
             headers={headers}
             action={action}
             listType={listType}
