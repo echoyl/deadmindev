@@ -138,7 +138,7 @@ const Uploader: React.FC<Props> = (props) => {
   };
 
   const fileChange = (info) => {
-    //console.log(info);
+    //console.log('fileChange', info);
     if (info.file.status === 'uploading') {
       setLoading(true);
       setFileList([...info.fileList]);
@@ -251,7 +251,15 @@ const Uploader: React.FC<Props> = (props) => {
             className={className}
             itemRender={(originNode, file) => (
               <DragItem item={file}>
-                <div style={{ width: '100%', height: '100%' }}>{originNode}</div>
+                <div style={{ width: '100%', height: '100%' }}>
+                  {file.status == 'uploading' && buttonType == 'table' ? (
+                    <div className="ant-upload-list-item" style={{ textAlign: 'center' }}>
+                      <LoadingOutlined style={{ margin: '0 auto' }} />
+                    </div>
+                  ) : (
+                    originNode
+                  )}
+                </div>
               </DragItem>
             )}
             fileList={fileList}
