@@ -17,8 +17,9 @@ const TinyEditor: FC<{
   width?: number;
   value?: any;
   onChange?: (value: any) => void;
+  images_width100?: boolean;
 }> = (props) => {
-  const { height = 700, value, width } = props;
+  const { height = 700, value, width, images_width100 = false } = props;
   const editorRef = useRef(null);
 
   const { setting } = useContext(SaDevContext);
@@ -90,6 +91,7 @@ const TinyEditor: FC<{
             'removeformat | axupimgs link media table | code',
           toolbar_mode: 'wrap',
           content_style: 'body { font-family:Microsoft YaHei,Arial,sans-serif; font-size:14px }',
+          images_width100,
           images_upload_handler: (blobInfo, progress) =>
             new Promise((resolve, reject) => {
               //console.log(blobInfo.blob());
