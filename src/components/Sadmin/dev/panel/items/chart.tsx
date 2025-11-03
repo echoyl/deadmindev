@@ -60,16 +60,20 @@ const PanelItemChart = (props: any) => {
         //     textAlign: 'center',
         //   },
         // }}
-        label={{
-          ...label,
-          position: 'outside',
-          text: tpls.labelText
-            ? tpls.labelText
-            : (item: any) => {
-                return `${item[x]}: ${numeral(item[y]).format('0,0')}`;
-              },
-          transform: [{ type: 'overlapDodgeY' }],
-        }}
+        label={
+          label === false
+            ? false
+            : {
+                ...label,
+                position: 'outside',
+                text: tpls.labelText
+                  ? tpls.labelText
+                  : (item: any) => {
+                      return `${item[x]}: ${numeral(item[y]).format('0,0')}`;
+                    },
+                transform: [{ type: 'overlapDodgeY' }],
+              }
+        }
         tooltip={(item: any, index, data, column) => {
           return { value: `${item[x]}: ${numeral(item[y]).format('0,0')}` };
         }}
@@ -114,11 +118,15 @@ const PanelItemChart = (props: any) => {
       <Column
         data={data}
         scale={{ x: { paddingInner: 0.4 } }}
-        label={{
-          textBaseline: 'bottom',
-          ...label,
-          text: tpls.labelText ? tpls.labelText : (d: any) => d?.[y],
-        }}
+        label={
+          label === false
+            ? false
+            : {
+                textBaseline: 'bottom',
+                ...label,
+                text: tpls.labelText ? tpls.labelText : (d: any) => d?.[y],
+              }
+        }
         style={{
           // 圆角样式
           radiusTopLeft: 10,
