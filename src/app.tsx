@@ -87,13 +87,13 @@ export async function getInitialState(): Promise<{
  * @param container
  * @returns
  */
-export function rootContainer(container: JSX.Element, args) {
+export function rootContainer(container: JSX.Element, args: any) {
   // console.log('args', args);
   // args.plugin.hooks.getInitialState[0]().then((v) => {
   //   console.log('v', v);
   // });
 
-  const Provider = (props) => {
+  const Provider = (props: any) => {
     //const { initialState } = useModel('@@initialState');
     const [setting, setSetting] = useState<any>(defaultSettings);
     const [currentLocale, setCurrentLocale] = useState<string>(getLocale());
@@ -116,7 +116,7 @@ export function rootContainer(container: JSX.Element, args) {
       //dayjs.locale(currentLocale.toLocaleLowerCase());
       saGetSetting().then((v) => {
         setSetting(v);
-        v?.adminSetting?.locales?.map((lo) => {
+        v?.adminSetting?.locales?.map((lo: Record<string, any>) => {
           addLocale(lo.name, lo.configs);
         });
         createFromIconfontCN({
@@ -197,7 +197,7 @@ export function rootContainer(container: JSX.Element, args) {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   const values = useContext(ProProvider);
-  const { adminSetting, ...rest } = initialState?.settings;
+  const { adminSetting, ...rest } = initialState?.settings || {};
   const checkWaterMark = () => {
     const watermark = adminSetting?.watermark;
     if (watermark) {
@@ -215,14 +215,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     initialState?.settings?.layout == 'side' ? 'deadmin-layout-side' : '',
     initialState?.settings?.navTheme == 'light' ? 'deadmin-light' : 'deadmin-dark',
   ];
-  const menuRender = (props, dom) => {
+  const menuRender = (props: Record<string, any>, dom: React.ReactNode) => {
     return pRender(props, dom, 'siderColor');
   };
-  const headerRender = (props, dom) => {
+  const headerRender = (props: Record<string, any>, dom: React.ReactNode) => {
     return pRender(props, dom, 'headerColor');
   };
 
-  const pRender = (props, dom, type) => {
+  const pRender = (props: Record<string, any>, dom: React.ReactNode, type: string) => {
     if (initialState?.settings?.adminSetting?.[type] == 'dark') {
       return (
         <ProConfigProvider dark={true} token={props.token}>
@@ -277,7 +277,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
           <WebSocketListen />
           {children}
           <DevLinks />
-          {adminSetting.dev && (
+          {adminSetting?.dev && (
             <SettingDrawer
               disableUrlParams
               enableDarkTheme
@@ -285,7 +285,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
               onSettingChange={(settings) => {
                 setInitialState((preInitialState) => ({
                   ...preInitialState,
-                  settings: { ...preInitialState.settings, ...settings },
+                  settings: { ...preInitialState?.settings, ...settings },
                 }));
               }}
             />
@@ -294,7 +294,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       );
     },
     siderWidth: 200,
-    className: classNames.filter((v) => v),
+    className: classNames.filter((v) => v).join(' '),
     ...initialState?.settings,
   };
 };
