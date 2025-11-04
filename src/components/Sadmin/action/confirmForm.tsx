@@ -41,6 +41,7 @@ interface actionConfirm {
   modalProps?: GetProps<typeof Modal>;
   drawerProps?: GetProps<typeof Drawer>;
   showType?: 'modal' | 'drawer';
+  returnData?: (value: any) => any; //返回数据格式化
 }
 
 const InnerForm = (props) => {
@@ -62,6 +63,7 @@ const InnerForm = (props) => {
     saFormProps,
     afterActionType = 'reload',
     closable = true,
+    returnData,
   } = props;
   const formRef = useRef<ProFormInstance>();
   const { actionRef, formRef: topFormRef } = useContext(SaContext);
@@ -177,6 +179,7 @@ const InnerForm = (props) => {
         //setOpen(false);
         //console.log('finish', ret);
         const { code, data } = ret;
+        const retData = returnData ? returnData(data) : data;
         if (url || postUrl) {
           //有url提交
           if (!code) {
@@ -192,7 +195,7 @@ const InnerForm = (props) => {
             setOpen(false);
           }
 
-          onChange?.(data);
+          onChange?.(retData);
         }
       }}
     />
@@ -231,6 +234,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     afterActionType = 'reload',
     showType = 'modal',
     initValue = (v) => v,
+    returnData,
   } = props;
   const defaultButton = { title: '操作', type: 'primary', danger: false, size: 'small' };
   const _btn = { ...defaultButton, ...btn };
@@ -260,6 +264,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
       saFormProps={saFormProps}
       closable={closable}
       afterActionType={afterActionType}
+      returnData={returnData}
     />
   );
   //console.log('inner form ', inner);

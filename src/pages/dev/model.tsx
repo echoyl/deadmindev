@@ -116,11 +116,11 @@ export const modelFormColumns = (
             formColumns: fieldColumns,
             //tabs: settingColumns(detail.id, setting?.dev),
             saFormProps: { devEnable: false, grid: true },
-            initValue: (v) => {
+            initValue: (v: any) => {
               return { columns: v, add_customer_columns: detail?.add_customer_columns };
             },
-            onChange: (v: Record<string, any[]>) => {
-              formRef?.current?.setFieldValue('columns', v.columns);
+            returnData: (v: any) => {
+              return v.columns;
             },
             width: 1500,
             showType: 'drawer',
@@ -161,10 +161,10 @@ export const modelFormColumns = (
         let foreignOptions = [];
         if (columns) {
           foreignOptions = columns
-            ?.filter((v) => {
+            ?.filter((v: Record<string, any>) => {
               return v.title && v.name;
             })
-            .map((v) => ({
+            .map((v: Record<string, any>) => ({
               label: [v.title, v.name].join(' - '),
               value: v.name,
             }));
@@ -292,7 +292,7 @@ export default () => {
                 width: 1000,
                 styles: { body: { padding: 16 } },
               },
-              childrenRender: (record) => <ModelRelation model={record} />,
+              childrenRender: (record: Record<string, any>) => <ModelRelation model={record} />,
             },
             action: 'drawer',
             btn: { text: '', icon: <InsertRowLeftOutlined />, tooltip: '模型关联', size: 'small' },
