@@ -32,6 +32,17 @@ import { size } from 'es-toolkit/compat';
 import DndKitContext from '../dev/dnd-context/dragSort';
 import sortDragEnd from '../dev/dnd-context/displayorder';
 import ResizableTitle from '../dev/table/resizeableTitle';
+import { Table } from 'antd';
+interface TableRecordType {
+  id: number;
+  [key: string]: any;
+}
+
+interface TableParamsType {
+  current?: number;
+  pageSize?: number;
+  [key: string]: any;
+}
 export interface saTableProps {
   url?: string;
   name?: string;
@@ -47,7 +58,7 @@ export interface saTableProps {
   beforePost?: (value: any) => void | boolean;
   beforeGet?: (value: any) => void;
   beforeTableGet?: (value: any) => void;
-  tableProps?: ProTableProps;
+  tableProps?: ProTableProps<TableRecordType, TableParamsType>;
   tabs?: saFormTabColumnsType;
   /**
    * 删除操作时 弹出提示数据所展示的字段
@@ -62,7 +73,7 @@ export interface saTableProps {
   table_menu_all?: boolean; //tab 是否需要自动加入全部选项
   table_menu_default?: string; //默认的tab值
   //actionRef 实例
-  actionRef?: Object;
+  actionRef?: React.MutableRefObject<ActionType>;
   //表单实例
   formRef?: ProFormInstance;
   pageType?: 'page' | 'drawer'; //table页面是page还是在弹出层中
@@ -80,7 +91,8 @@ export interface saTableProps {
   pageMenu?: { [key: string]: any }; //当前菜单信息
   devEnable?: boolean; //是否开启开发模式
   setting?: { [key: string]: any }; //其它配置统一放这里
-  afterDelete?: (ret: any) => void; //删除数据后的回调
+  afterDelete?: (ret: any) => void | boolean; //删除数据后的回调
+  afterFormPost?: (ret: any) => void | boolean | Promise<boolean | void>; //表单提交数据后的回调
 }
 
 const components = {
@@ -148,11 +160,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
     afterDelete,
   } = props;
   //console.log('tableprops', props);
-  const [tbColumns, setTbColumns] = useState([]);
+  const [tbColumns, setTbColumns] = useState<saTableColumnsType>([]);
   const [enums, setEnums] = useState<Record<string, any>>();
   const [summary, setSummary] = useState();
   const [columnData, setColumnData] = useState({});
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Record<string, any>[]>([]);
   //当前数据总量
   const [total, setTotal] = useState<number>(0);
   //分页设置
@@ -177,21 +189,21 @@ const SaTable: React.FC<saTableProps> = (props) => {
 
   const [searchParams, setUrlSearch] = useSearchParams();
 
-  const [tableMenu, setTableMenu] = useState<[{ [key: string]: any }]>();
+  const [tableMenu, setTableMenu] = useState<Record<string, any>[]>();
   const searchTableMenuId =
     table_menu_key && pageType == 'page' ? searchParams.get(table_menu_key) : '';
   //console.log('searchTableMenuId', searchTableMenuId, searchParams.get(table_menu_key));
   const [tableMenuId, setTableMenuId] = useState<string>(
     searchTableMenuId ? searchTableMenuId : table_menu_default,
   );
-  const _tableColumns = tableColumns
+  const _tableColumns: any[] = tableColumns
     ? isFn(tableColumns)
       ? tableColumns([])
       : [...tableColumns]
     : [];
   const enumNames = _tableColumns?.filter((v) => v.valueEnum).map((v) => v.dataIndex);
-  const searchDefaultValues = {};
-  const search_config = _tableColumns?.filter((v) => {
+  const searchDefaultValues: Record<string, any> = {};
+  const search_config = _tableColumns?.filter((v: Record<string, any>) => {
     const is_search =
       isObj(v) &&
       (isUndefined(v.search) || v.search) &&
@@ -319,7 +331,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     });
   };
 
-  const remove = (id, msg: string) => {
+  const remove = (id: number | string, msg: string) => {
     const modals = modalApi?.confirm({
       title: '温馨提示！',
       content: msg,
@@ -343,15 +355,15 @@ const SaTable: React.FC<saTableProps> = (props) => {
     });
   };
 
-  const switchState = (id, msg: string, val: string) => {
-    const modals = modalApi.confirm({
+  const switchState = (id: number | string, msg: string, val: string) => {
+    const modals = modalApi?.confirm({
       title: '温馨提示！',
       content: msg,
       onOk: async () => {
         const ret = await request.post(url, {
           data: { id, state: val, actype: 'state' },
         });
-        modals.destroy();
+        modals?.destroy();
         if (!ret.code) {
           actionRef.current?.reload();
           setSelectedRowKeys([]);
@@ -416,7 +428,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     return false;
   };
 
-  const getTableColumnsRender = (columns) => {
+  const getTableColumnsRender = (columns: Record<string, any>[]) => {
     return getTableColumns({
       setData,
       data,
@@ -495,7 +507,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             request={rq}
             dataSource={data}
             formRef={searchFormRef}
-            searchFormRender={(p, d) => {
+            searchFormRender={(p: any, d: any) => {
               return <DndContext>{d}</DndContext>;
             }}
             search={
@@ -517,7 +529,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                     syncToInitialValues: false,
                     style: { padding: 16 },
                     extraUrlParams: exceptUrlParam,
-                    syncToUrl: (values, type) => {
+                    syncToUrl: (values: Record<string, any>, type: string) => {
                       if (pageType != 'page') {
                         //只有在页面显示的table 搜索数据才会同步到url中
                         return false;
@@ -545,7 +557,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                           }
                           if (isArr(values[i])) {
                             //数组的话检测里面的数据是否是数字，系统会默认将同一名字的query参数整合到数组中 并且数字变成了字符串
-                            values[i] = values[i].map((v) => {
+                            values[i] = values[i].map((v: any) => {
                               if (isStr(v) && /^\d+$/.test(v)) {
                                 v = parseInt(v);
                               }
@@ -591,13 +603,17 @@ const SaTable: React.FC<saTableProps> = (props) => {
                 ? false
                 : {
                     selectedRowKeys,
-                    onChange: (newSelectedRowKeys, selectedRows) => {
-                      //console.log('newSelectedRowKeys', newSelectedRowKeys);
+                    onChange: (newSelectedRowKeys: React.Key[]) => {
                       setSelectedRowKeys(newSelectedRowKeys);
                     },
                     checkStrictly: false,
                     columnWidth: 80,
-                    renderCell: (checked, record, index, originNode) => {
+                    renderCell: (
+                      checked: boolean,
+                      record: Record<string, any>,
+                      index: number,
+                      originNode: JSX.Element,
+                    ) => {
                       return !setting?.table?.checkHoverDisable ? (
                         <TableIndex
                           checked={checked}
@@ -618,7 +634,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                       type: 'tab',
                       activeKey: tableMenuId,
                       items: tableMenu?.map((v) => ({ label: v.label, key: v.value + '' })),
-                      onChange: (key) => {
+                      onChange: (key: string) => {
                         setTableMenuId(key as string);
                         if (pageType == 'page') {
                           let url_search = search2Obj();
@@ -632,18 +648,18 @@ const SaTable: React.FC<saTableProps> = (props) => {
                 : { title: tableTitle ? tableTitle : '列表' }
             }
             tableAlertRender={false}
-            summary={(data) => {
+            summary={() => {
+              const isCheckEnable = !checkEnable || setting?.checkDisable ? false : true;
+              const tbc_length =
+                _tableColumns?.filter((v) => {
+                  return !v.hideInTable;
+                }).length + (isCheckEnable ? 1 : 0);
               return summary ? (
-                <tr>
-                  <td
-                    colSpan={
-                      tableColumns?.filter((v) => {
-                        return !v.hideInTable;
-                      }).length
-                    }
-                    dangerouslySetInnerHTML={{ __html: summary }}
-                  ></td>
-                </tr>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell index={0} colSpan={tbc_length}>
+                    <div dangerouslySetInnerHTML={{ __html: summary }}></div>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
               ) : null;
             }}
             //scroll={{ x: 900 }}

@@ -22,7 +22,7 @@ export const messageLoadingKey = 'message_loading_key';
 
 export const adminPrefix = '/antadmin/';
 
-function errorHandler(error) {
+function errorHandler(error: Record<string, any>) {
   // 请求已发送但服务端返回状态码非 2xx 的响应
   //console.log(typeof error, JSON.stringify(error), error);
   let description;

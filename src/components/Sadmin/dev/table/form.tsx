@@ -80,7 +80,6 @@ export const TableForm = (
     createModalVisible?: any;
     currentRow?: any;
     handleModalVisible?: any;
-    afterFormPost?: any;
   },
 ) => {
   const {

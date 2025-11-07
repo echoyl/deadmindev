@@ -76,10 +76,58 @@ const Lang = () => {
 };
 
 const LoginComponent: React.FC = () => {
-  return <Login />;
+  return <LoginPage />;
 };
 
-const Login: React.FC = () => {
+const LoginPage: React.FC = () => {
+  const [setting, setSetting] = useState<any>();
+  const { styles } = useStyles();
+  useEffect(() => {
+    saGetSetting().then((v) => {
+      setSetting(v);
+    });
+  }, []);
+  const { token } = theme.useToken();
+  const containerStyle: CSSProperties = {};
+  if (setting?.navTheme == 'light') {
+    if (setting?.adminSetting?.loginBgImage) {
+      containerStyle.backgroundImage = `url("${setting?.adminSetting?.loginBgImage}")`;
+    } else {
+      containerStyle.backgroundImage = `url("${setting?.adminSetting?.baseurl}/login_bg.png")`;
+    }
+  } else {
+    containerStyle.background = token.colorBgBase;
+  }
+  return setting ? (
+    <div className={styles.container} style={{ ...containerStyle }}>
+      <Helmet>
+        <title>登录 - {setting?.title}</title>
+      </Helmet>
+      {setting?.adminSetting?.lang ? <Lang /> : null}
+      <div style={{ flex: '1' }}>
+        <Flex align="center" justify="center" style={{ height: '100%' }}>
+          <ProCard
+            style={{
+              //maxWidth: 440,
+              //margin: '0px auto',
+              // padding: '20px 0',
+              background:
+                setting?.navTheme == 'light' ? setting?.adminSetting?.loginBgCardColor : 'none',
+              width: 380,
+              marginTop: -72,
+            }}
+            bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
+          >
+            <Login setting={setting} />
+          </ProCard>
+        </Flex>
+      </div>
+      <Footer />
+    </div>
+  ) : null;
+};
+
+export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const [captchaReload, setCaptchaReload] = useState(0);
   const [captchaPhoneReload, setCaptchaPhoneReload] = useState(0);
@@ -91,21 +139,17 @@ const Login: React.FC = () => {
 
   const { clientId, messageData, bind } = useContext(WebSocketContext);
   const { messageApi, notificationApi, setSetting: setSettingDev } = useContext(SaDevContext);
-  const [setting, setSetting] = useState<any>();
+  const [loginType, setLoginType] = useState<string>(
+    setting?.adminSetting?.loginTypeDefault || 'password',
+  );
   const { styles } = useStyles();
-  const [loginType, setLoginType] = useState();
   useEffect(() => {
-    saGetSetting().then((v) => {
-      //console.log('setSetting', v);
-      setSetting(v);
-      setLoginType(v?.adminSetting?.loginTypeDefault);
-    });
     cache.get('Sa-ShowCaptcha').then((v) => {
       setShowCaptcha(v ? true : false);
     });
-  }, []);
+  }, [setting]);
 
-  const doLogin = (data) => {
+  const doLogin = (data: Record<string, any>) => {
     bind?.();
     //删除showCaptcha
     cache.remove('Sa-ShowCaptcha');
@@ -165,7 +209,7 @@ const Login: React.FC = () => {
     await request.post('login', {
       data: { ...values, loginType },
       duration: 1,
-      then: (res) => {
+      then: (res: Record<string, any>) => {
         const { code, msg, data } = res;
         if (res.code) {
           notificationApi?.error({ description: msg, message: '提示' });
@@ -352,20 +396,9 @@ const Login: React.FC = () => {
         ),
     },
   ];
-  const { token } = theme.useToken();
-  const containerStyle: CSSProperties = {};
-  if (setting?.navTheme == 'light') {
-    if (setting?.adminSetting?.loginBgImage) {
-      containerStyle.backgroundImage = `url("${setting?.adminSetting?.loginBgImage}")`;
-    } else {
-      containerStyle.backgroundImage = `url("${setting?.adminSetting?.baseurl}/login_bg.png")`;
-    }
-  } else {
-    containerStyle.background = token.colorBgBase;
-  }
 
-  const ThunderLogin = (props) => {
-    const { styles } = props;
+  const ThunderLogin: React.FC<{ styles?: Record<string, any> }> = (props) => {
+    const { styles = {} } = props;
     const [loading, setLoading] = useState<boolean>(false);
     const { url, desc } = setting?.adminSetting?.loginThunder;
     const click = async () => {
@@ -385,8 +418,7 @@ const Login: React.FC = () => {
     );
   };
 
-  const ActionLogin = (props) => {
-    const { type } = props;
+  const ActionLogin: React.FC = () => {
     const [timestamp, setTimestamp] = useState<number>(0);
     const [status, setStatus] = useState<GetProp<typeof QRCode, 'status'>>('active');
     const expiredTimes = 3 * 60; //3分钟后过期
@@ -438,122 +470,97 @@ const Login: React.FC = () => {
       </div>
     );
   };
-  return setting ? (
-    <div className={styles.container} style={{ ...containerStyle }}>
-      <Helmet>
-        <title>登录 - {setting?.title}</title>
-      </Helmet>
-      {setting?.adminSetting?.lang ? <Lang /> : null}
-      <div style={{ flex: '1' }}>
-        <Flex align="center" justify="center" style={{ height: '100%' }}>
-          <ProCard
-            style={{
-              //maxWidth: 440,
-              //margin: '0px auto',
-              // padding: '20px 0',
-              background:
-                setting?.navTheme == 'light' ? setting?.adminSetting?.loginBgCardColor : 'none',
-              width: 380,
-              marginTop: -72,
-            }}
-            bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
-            className={styles.card}
-          >
-            <LoginForm
-              contentStyle={{
-                minWidth: 280,
-                maxWidth: '75vw',
-              }}
-              containerStyle={{
-                paddingInline: 0,
-              }}
-              formRef={formRef}
-              logo={setting?.logo}
-              title={setting?.title}
-              subTitle={
-                setting?.adminSetting?.subtitle ? (
-                  <span
-                    dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}
-                  ></span>
-                ) : null
+  return (
+    <LoginForm
+      contentStyle={{
+        minWidth: 280,
+        maxWidth: '75vw',
+      }}
+      containerStyle={{
+        paddingInline: 0,
+      }}
+      formRef={formRef}
+      logo={setting?.logo}
+      title={setting?.title}
+      subTitle={
+        setting?.adminSetting?.subtitle ? (
+          <span
+            style={{ display: 'block', marginBlockEnd: -28 }}
+            dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}
+          ></span>
+        ) : null
+      }
+      initialValues={{
+        autoLogin: true,
+      }}
+      onFinish={async (values) => {
+        await handleSubmit(values as API.LoginParams);
+      }}
+      //submitter={isQrcode ? false : undefined}
+      actions={
+        setting?.adminSetting?.loginActions ? (
+          <Space>
+            {t('pages.login.loginWith', intl)}
+            {setting?.adminSetting?.loginActions?.map((ac: string, index: number) => {
+              if (ac == 'wechat') {
+                return (
+                  <ButtonModal
+                    trigger={<WechatOutlined className={styles.action} />}
+                    width={350}
+                    title="扫码登录"
+                    key="wechatlogin"
+                  >
+                    <ActionLogin key={index} />
+                  </ButtonModal>
+                );
+              } else if (ac == 'thunder') {
+                return <ThunderLogin key="thunderlogin" styles={styles} />;
+              } else {
+                return <></>;
               }
-              initialValues={{
-                autoLogin: true,
-              }}
-              onFinish={async (values) => {
-                await handleSubmit(values as API.LoginParams);
-              }}
-              //submitter={isQrcode ? false : undefined}
-              actions={
-                setting?.adminSetting?.loginActions ? (
-                  <Space>
-                    {t('pages.login.loginWith', intl)}
-                    {setting?.adminSetting?.loginActions?.map((ac, index) => {
-                      if (ac == 'wechat') {
-                        return (
-                          <ButtonModal
-                            trigger={<WechatOutlined className={styles.action} />}
-                            width={350}
-                            title="扫码登录"
-                            key="wechatlogin"
-                          >
-                            <ActionLogin key={index} type={ac} />
-                          </ButtonModal>
-                        );
-                      } else if (ac == 'thunder') {
-                        return <ThunderLogin key="thunderlogin" styles={styles} />;
-                      } else {
-                        return <></>;
-                      }
-                    })}
-                  </Space>
-                ) : null
-              }
-            >
-              {setting.adminSetting?.loginType?.length > 1 ? (
-                <Tabs
-                  centered
-                  activeKey={loginType}
-                  onChange={(activeKey) => {
-                    setLoginType(activeKey);
-                    setIsQrcode(activeKey == 'phone');
-                  }}
-                  items={setting.adminSetting?.loginType?.map((v) => {
-                    return loginTypeItems.find((item) => item.key == v);
-                  })}
-                />
-              ) : (
-                loginTypeItems.find((item) => item.key == setting.adminSetting?.loginType?.[0])
-                  ?.children
-              )}
+            })}
+          </Space>
+        ) : null
+      }
+    >
+      {setting?.adminSetting?.loginType?.length > 1 ? (
+        <Tabs
+          centered
+          activeKey={loginType}
+          onChange={(activeKey) => {
+            setLoginType(activeKey);
+            setIsQrcode(activeKey == 'phone');
+          }}
+          items={setting?.adminSetting?.loginType?.map((v: string) => {
+            return loginTypeItems.find((item) => item.key == v);
+          })}
+        />
+      ) : (
+        loginTypeItems.find((item) => item.key == setting?.adminSetting?.loginType?.[0])?.children
+      )}
 
-              <div
-                style={{
-                  marginBottom: 24,
-                }}
-                key="login_bottom"
-              >
-                <ProFormCheckbox noStyle name="autoLogin">
-                  {t('pages.login.rememberMe', intl)}
-                </ProFormCheckbox>
-                <a
-                  style={{
-                    float: 'right',
-                  }}
-                  onClick={() => {
-                    messageApi?.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
-                  }}
-                >
-                  {t('pages.login.forgotPassword', intl)}
-                </a>
-              </div>
-            </LoginForm>
-          </ProCard>
-        </Flex>
+      <div
+        style={{
+          marginBottom: 24,
+        }}
+        key="login_bottom"
+      >
+        <ProFormCheckbox noStyle name="autoLogin">
+          {t('pages.login.rememberMe', intl)}
+        </ProFormCheckbox>
+        <a
+          style={{
+            float: 'right',
+          }}
+          onClick={() => {
+            messageApi?.info('请使用手机号登录后修改,或联系后台管理员修改账号密码！');
+          }}
+        >
+          {t('pages.login.forgotPassword', intl)}
+        </a>
       </div>
-      <Footer />
-    </div>
-  ) : null;
+    </LoginForm>
+  );
 };
 
 export default LoginComponent;
