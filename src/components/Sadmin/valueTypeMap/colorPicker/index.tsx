@@ -1,5 +1,5 @@
 import { BgColorsOutlined } from '@ant-design/icons';
-import { ColorPicker as ColorPickerAnt, Input } from 'antd';
+import { Button, ColorPicker as ColorPickerAnt, Input, Space } from 'antd';
 import { Color } from 'antd/es/color-picker';
 import { useState } from 'react';
 
@@ -42,7 +42,7 @@ const ColorPicker = (props) => {
     >
       <Input
         size={size}
-        addonBefore={<BgColorsOutlined style={{ color: value }} />}
+        prefix={<BgColorsOutlined style={{ color: value }} />}
         value={value}
         onChange={(e) => {
           onChange?.(e.target.value);
