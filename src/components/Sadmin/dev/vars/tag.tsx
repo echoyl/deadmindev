@@ -1,5 +1,10 @@
-import { saFormColumnsType } from '../../helpers';
+import type { saFormColumnsType } from '../../helpers';
 
+const colProps = {
+  colProps: {
+    span: 3,
+  },
+};
 const tagConfig: saFormColumnsType = [
   {
     dataIndex: 'if',
@@ -10,6 +15,7 @@ const tagConfig: saFormColumnsType = [
       type: 'textarea',
       btn: { size: 'small' },
     },
+    ...colProps,
   },
   {
     dataIndex: 'color',
@@ -19,16 +25,17 @@ const tagConfig: saFormColumnsType = [
     fieldProps: {
       size: 'small',
     },
+    ...colProps,
   },
   {
     dataIndex: 'icon',
     valueType: 'iconSelect',
     title: 'icon',
     fieldProps: {
-      width: 180,
       placeholder: '请选择图标',
       size: 'small',
     },
+    ...colProps,
   },
   {
     dataIndex: 'bordered',
@@ -39,6 +46,7 @@ const tagConfig: saFormColumnsType = [
       checkedChildren: '边框',
       unCheckedChildren: '边框',
     },
+    ...colProps,
   },
   {
     dataIndex: 'ellipsis',
@@ -49,6 +57,7 @@ const tagConfig: saFormColumnsType = [
       checkedChildren: 'ellipsis',
       unCheckedChildren: 'ellipsis',
     },
+    ...colProps,
   },
 ];
 
