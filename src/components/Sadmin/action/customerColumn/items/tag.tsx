@@ -1,4 +1,4 @@
-import { isArr, isObj } from '@/components/Sadmin/checkers';
+import { isArr, isObj, isStr } from '@/components/Sadmin/checkers';
 import { getFromObject } from '@/components/Sadmin/helpers';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
 import { Badge, Tag, Typography } from 'antd';
@@ -26,7 +26,7 @@ const ItemTag: FC<{
 };
 
 const ItemTags: FC<{
-  tags?: Array<{ color?: string; title?: string; status?: BadgeProps['status'] }>;
+  tags?: { color?: string; title?: string; status?: BadgeProps['status'] }[];
   color?: string;
   dataindex?: string | string[];
   bordered?: boolean;
@@ -49,8 +49,23 @@ const ItemTags: FC<{
   // console.log('dataindex', dataindex, searchData, tags);
 
   //读取配置参数 dataindex 或复数 s是否有
-  const option = getFromObject(data, dataindex);
-  const options = option ? option : getFromObject(data, dataindex + 's');
+
+  const getOptions = (index?: string | string[]) => {
+    const option = getFromObject(data, index);
+    if (option && isObj(option)) {
+      return [option];
+    }
+    //检测dataindex中是否存在_id字符串，读取去掉_id后数据
+    if (index?.toString().includes('_id')) {
+      const rt = getFromObject(data, index?.toString().replace('_id', ''));
+      if (rt) {
+        return [rt];
+      }
+    }
+    return isStr(index) ? getFromObject(data, index + 's') : [];
+  };
+
+  const options = getOptions(dataindex);
   return (
     <>
       {tags.map((tag, i) => {

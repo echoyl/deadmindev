@@ -1,23 +1,23 @@
 import { Link, useModel } from '@umijs/max';
 import { Divider, Dropdown, Image, Modal, Popover, QRCode, Space, Table, Timeline } from 'antd';
+import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr } from '../../checkers';
+import { RequestButtonRender } from '../../components/requestButton';
+import { ExportButton, ImportButton } from '../../dev/table/toolbar';
 import { getFromObject, getMenuDataById, parseIcon, tplComplie } from '../../helpers';
 import { SaContext } from '../../posts/table';
 import TableFromBread from '../../tableFromBread';
+import DropdownAction from '../../valueTypeMap/dropdownAction';
 import ButtonDrawer from '../buttonDrawer';
 import ButtonModal from '../buttonModal';
 import Confirm from '../confirm';
 import ConfirmForm from '../confirmForm';
 import Print from '../print';
 import RequestComponent from '../request';
-import ItemTags from './items/tag';
-import DropdownAction from '../../valueTypeMap/dropdownAction';
-import dayjs from 'dayjs';
-import { ExportButton, ImportButton } from '../../dev/table/toolbar';
-import { RequestButtonRender } from '../../components/requestButton';
 import ConsoleLogShowFormValue from './items/consolelogformvalue';
 import OpenIframe from './items/openiframe';
+import ItemTags from './items/tag';
 const CustomerColumnRender = (props) => {
   const {
     items = [],
@@ -31,7 +31,14 @@ const CustomerColumnRender = (props) => {
   } = props;
   const { initialState } = useModel('@@initialState');
   //console.log('props ', props);
-  const { actionRef, formRef, columnData, url, saTableContext, searchData } = useContext(SaContext);
+  const {
+    actionRef,
+    formRef,
+    columnData,
+    url,
+    saTableContext,
+    searchData = {},
+  } = useContext(SaContext);
 
   //const formValue = formRef?.current?.getFieldsValue?.(true);
   const [record, setRecord] = useState(orecord);
@@ -102,7 +109,7 @@ const CustomerColumnRender = (props) => {
         return <QRCode key={i} value={tpl} size={sizeArr[size]} errorLevel={errorLevel} />;
       }
     } else if (item.domtype == 'tag' || item.domtype == 'Badge') {
-      //console.log('tag text', text, item);
+      //console.log('tag text', text, item, record);
       if (text === false || text === '') {
         return null;
       }
@@ -116,7 +123,7 @@ const CustomerColumnRender = (props) => {
           icon={item.icon}
           ellipsis={item.ellipsis}
           type={item.domtype}
-          data={type == 'table' ? searchData : record}
+          data={{ ...searchData, ...record }}
         />
       );
     } else if (item.domtype == 'table') {
