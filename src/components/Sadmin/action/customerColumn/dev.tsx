@@ -25,6 +25,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
     dataIndex: 'fieldProps',
     title: 'fieldProps',
     valueType: 'confirmForm',
+    colProps: {
+      span: 3,
+    },
     fieldProps: {
       saFormProps: { devEnable: false },
       width: 1200,
@@ -121,6 +124,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
             options: allMenus,
             treeLine: { showLeafIcon: true },
             treeDefaultExpandAll: true,
+            variant: 'filled',
           },
           colProps: {
             span: 12,
@@ -241,10 +245,14 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
       dataIndex: ['props', 'items'],
       //dataIndex: 'items',
       title: 'DOM列',
-      valueType: 'saFormList',
+      valueType: 'formList',
       fieldProps: {
         //creatorRecord: { ...defaultBtn },
-        showtype: 'table',
+        //showtype: 'table',
+        arrowSort: true,
+        containerStyle: {
+          width: 'calc(100% - 96px)',
+        },
       },
       columns: [
         {
@@ -269,6 +277,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                 ],
                 size: 'small',
               },
+              colProps: {
+                span: 3,
+              },
             },
 
             {
@@ -286,6 +297,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                         title: '设置',
                         btn: { size: 'small' },
                       },
+                      colProps: {
+                        span: 3,
+                      },
                     },
                   ];
                 }
@@ -301,6 +315,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                         options: allMenus,
                         treeLine: { showLeafIcon: true },
                         treeDefaultExpandAll: true,
+                      },
+                      colProps: {
+                        span: 6,
                       },
                     },
                   ];
@@ -323,6 +340,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                           { label: 'H', value: 'H' },
                         ],
                         size: 'small',
+                      },
+                      colProps: {
+                        span: 3,
                       },
                     });
                   }
@@ -385,6 +405,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                   return [
                     {
                       valueType: 'group',
+                      colProps: {
+                        span: 21,
+                      },
                       columns: [
                         {
                           dataIndex: 'if',
@@ -394,6 +417,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                             title: '编辑条件',
                             type: 'textarea',
                             btn: { size: 'small' },
+                          },
+                          colProps: {
+                            span: 3,
                           },
                         },
                         {
@@ -407,6 +433,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                             },
                             formColumns: domFormColumns,
                             saFormProps: { grid: false, devEnable: false },
+                          },
+                          colProps: {
+                            span: 3,
                           },
                         },
                         {
@@ -432,6 +461,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                     </Typography.Text>
                                   );
                                 },
+                                colProps: {
+                                  span: 4,
+                                },
                               },
                             ];
                           },
@@ -440,7 +472,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                           dataIndex: 'action',
                           title: 'Action类型',
                           valueType: 'select',
-                          width: 130,
+                          colProps: {
+                            span: 4,
+                          },
                           fieldProps: {
                             options: [
                               { label: 'confirm', value: 'confirm' },
@@ -475,7 +509,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                               _columns.push({
                                 dataIndex: 'modal',
                                 title: 'modal配置',
-                                width: 120,
+                                colProps: {
+                                  span: 3,
+                                },
                                 valueType: 'confirmForm',
                                 fieldProps: {
                                   saFormProps: { devEnable: false },
@@ -506,7 +542,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                               _columns.push({
                                 dataIndex: 'modal',
                                 title: 'modal配置',
-                                width: 120,
+                                colProps: {
+                                  span: 3,
+                                },
                                 valueType: 'confirmForm',
                                 fieldProps: {
                                   saFormProps: { devEnable: false },
@@ -543,7 +581,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                               _columns.push({
                                 dataIndex: 'modal',
                                 title: 'modal配置',
-                                width: 120,
+                                colProps: {
+                                  span: 3,
+                                },
                                 valueType: 'confirmForm',
                                 fieldProps: {
                                   saFormProps: { devEnable: false },
@@ -610,7 +650,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                             ) {
                               action_ret.push({
                                 dataIndex: 'request',
-                                width: 120,
+                                colProps: {
+                                  span: 4,
+                                },
                                 title: 'request配置',
                                 valueType: 'confirmForm',
                                 fieldProps: {
@@ -727,7 +769,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                             if (action == 'popover') {
                               action_ret.push({
                                 dataIndex: 'popover',
-                                width: 120,
+                                colProps: {
+                                  span: 4,
+                                },
                                 title: 'popover配置',
                                 valueType: 'confirmForm',
                                 fieldProps: {
