@@ -1,4 +1,4 @@
-import { modal } from '@/components/Sadmin/message';
+import { Flex, Modal, Spin } from 'antd';
 import React from 'react';
 
 interface Props {
@@ -11,21 +11,39 @@ interface Props {
 
 const OpenIframe: React.FC<Props> = (props) => {
   const { trigger, title = '详情', width = 1000, height = 700, src } = props;
-
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const IframeModal = (
+    <Modal
+      title={title}
+      open={isModalOpen}
+      footer={null}
+      width={width}
+      onCancel={() => {
+        setIsModalOpen(false);
+        setLoading(false);
+      }}
+      destroyOnHidden={true}
+    >
+      {loading && (
+        <Flex align="center" justify="center">
+          <Spin />
+        </Flex>
+      )}
+      <iframe
+        onLoad={() => {
+          setLoading(false);
+        }}
+        src={src}
+        width={width - 48}
+        height={height}
+        style={{ border: 'none' }}
+      />
+    </Modal>
+  );
   const open = () => {
-    modal.info({
-      title: title,
-      width: width, //两边padding48px
-      content: (
-        <>
-          <iframe src={src} width={width - 48} height={height} style={{ border: 'none' }} />
-        </>
-      ),
-      okText: null,
-      icon: null,
-      footer: null,
-      closable: true,
-    });
+    setIsModalOpen(true);
+    setLoading(true);
   };
 
   const triggerDom = trigger
@@ -36,7 +54,12 @@ const OpenIframe: React.FC<Props> = (props) => {
       })
     : null;
 
-  return <>{triggerDom}</>;
+  return (
+    <>
+      {triggerDom}
+      {IframeModal}
+    </>
+  );
 };
 
 export default OpenIframe;
