@@ -1,13 +1,13 @@
 import request from '@/components/Sadmin/lib/request';
 import { BetaSchemaForm, ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
+import { Space } from 'antd';
 import dayjs from 'dayjs';
+import { cloneDeep, isString } from 'es-toolkit';
 import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
+import TranslationModal from '../dev/form/translation';
 import { FormColumnTitle } from '../dev/table/title';
 import { getFromObject, getMenuDataById, saFormColumnsType, tplComplie } from '../helpers';
-import { Space } from 'antd';
-import TranslationModal from '../dev/form/translation';
-import { cloneDeep, isString } from 'es-toolkit';
 export const defaultColumnsLabel = {
   id: '序号',
   category_id: '分类选择',
@@ -159,8 +159,8 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       const requestName = v.requestDataName
         ? v.requestDataName
         : v.fieldProps?.requestDataName
-          ? v.fieldProps.requestDataName
-          : false;
+        ? v.fieldProps.requestDataName
+        : false;
       if (requestName) {
         // v.request = async () => {
         //   return enums[v.requestDataName] ? enums[v.requestDataName] : detail[v.requestDataName];
@@ -413,10 +413,14 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       }
 
       //增加如果是date datetime digit类型没有设置width的话自动加上100%
-      if (v.valueType == 'date' || v.valueType == 'dateTime' || v.valueType == 'digit') {
-        if (!v.width) {
-          v.width = '100%';
-        }
+      if (
+        inArray(v.valueType, ['date', 'dateTime', 'digit', 'dateMonth', 'dateYear', 'dateWeek']) >
+        -1
+      ) {
+        v.width = v.width || '100%';
+      }
+      if (v.valueType == 'cascader') {
+        v.fieldProps.variant = 'filled';
       }
 
       return v;
