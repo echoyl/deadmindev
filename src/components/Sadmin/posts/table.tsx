@@ -1,19 +1,27 @@
 import request from '@/components/Sadmin/lib/request';
 import {
   ActionType,
+  FooterToolbar,
   ProFormInstance,
   ProFormProps,
   ProTableProps,
-  FooterToolbar,
 } from '@ant-design/pro-components';
 import { history, useModel, useSearchParams } from '@umijs/max';
+import { Table } from 'antd';
+import dayjs from 'dayjs';
+import { size } from 'es-toolkit/compat';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { getJson, inArray, isArr, isFn, isObj, isStr, isUndefined } from '../checkers';
+import { getJson, inArray, isArr, isFn, isObj, isPlainObj, isStr, isUndefined } from '../checkers';
+import { SaDevContext } from '../dev';
+import { DndContext } from '../dev/dnd-context';
+import sortDragEnd from '../dev/dnd-context/displayorder';
+import DndKitContext from '../dev/dnd-context/dragSort';
+import { tableDesignerInstance, useTableDesigner } from '../dev/table/designer';
 import { TableForm } from '../dev/table/form';
+import ResizableTitle from '../dev/table/resizeableTitle';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
-import { DndContext } from '../dev/dnd-context';
-import { tableDesignerInstance, useTableDesigner } from '../dev/table/designer';
+import { tplToDate } from '../helper/functions';
 import {
   getFromObject,
   saFormColumnsType,
@@ -25,14 +33,7 @@ import {
 import { EditableCell, EditableRow } from './editable';
 import './style.less';
 import { getTableColumns } from './tableColumns';
-import { SaDevContext } from '../dev';
 import TableRender from './tableRender';
-import { tplToDate } from '../helper/functions';
-import { size } from 'es-toolkit/compat';
-import DndKitContext from '../dev/dnd-context/dragSort';
-import sortDragEnd from '../dev/dnd-context/displayorder';
-import ResizableTitle from '../dev/table/resizeableTitle';
-import { Table } from 'antd';
 interface TableRecordType {
   id: number;
   [key: string]: any;
@@ -220,6 +221,37 @@ const SaTable: React.FC<saTableProps> = (props) => {
   );
   // const [enumNames, setEnumNames] = useState<any[]>([]);
   // const [search_config, setSearch_config] = useState<any[]>([]);
+  const paramsFormat = (cols, value, key) => {
+    const tcolumn = cols?.find((v) => v.dataIndex == key);
+    if (tcolumn && value) {
+      //月份区间选择器获取到的值经行格式化 这个是pro-component的bug
+      if (tcolumn.valueType == 'dateMonthRange') {
+        const ov = isStr(value) ? JSON.parse(value) : value;
+        return ov
+          ? JSON.stringify([dayjs(ov[0]).format('YYYY-MM'), dayjs(ov[1]).format('YYYY-MM')])
+          : '';
+      }
+    }
+    return isObj(value) ? JSON.stringify(value) : value;
+  };
+  /**
+   * 获取第一个链式key {user:{username:"test"}} => ["user","username"]
+   * @param obj
+   * @param fkey
+   * @returns
+   */
+  const getFirstChainKeys = (obj: Record<string, any>, fkey: string): string[] => {
+    let ret: string[] = [];
+    for (const key in obj) {
+      if (isPlainObj(obj[key])) {
+        ret = [fkey, ...getFirstChainKeys(obj[key], key)];
+      } else {
+        ret = [fkey, key];
+      }
+      break;
+    }
+    return ret;
+  };
   const rq = async (params: Record<string, any> = {}, sort: any, filter: any) => {
     const { pageSize, current } = params;
     setCurrentPageSize(pageSize);
@@ -229,21 +261,26 @@ const SaTable: React.FC<saTableProps> = (props) => {
       setInitRequest(true);
       return [];
     }
-    for (let i in params) {
-      if (typeof params[i] == 'object') {
-        params[i] = JSON.stringify(params[i]);
-      }
-    }
-    setSort(sort);
-    //检测分页信息，如果已全部返回数据 分页或修改pagesize后不再请后接口数据
-    if (pageIsChange && data && data.length > 0 && data.length == total) {
-      return Promise.resolve({ data, success: true, total });
-    }
+
     if (size(sort)) {
       params.sort = sort;
     }
     if (size(filter)) {
       params.filter = filter;
+    }
+    const params_keys = []; //保存params的key
+    for (const i in params) {
+      if (isPlainObj(params[i])) {
+        params_keys.push(getFirstChainKeys(params[i], i));
+      } else {
+        params_keys.push(i);
+      }
+      params[i] = paramsFormat(_tableColumns, params[i], i);
+    }
+    setSort(sort);
+    //检测分页信息，如果已全部返回数据 分页或修改pagesize后不再请后接口数据
+    if (pageIsChange && data && data.length > 0 && data.length == total) {
+      return Promise.resolve({ data, success: true, total });
     }
     const ret = await request.get(url, { params: { ...params, ...exceptUrlParam } });
     if (!ret) {
@@ -281,10 +318,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
 
       const exceptNames = ['current', 'pageSize', ...Object.keys(paramExtra), table_menu_key];
 
-      for (var i in search_config) {
-        exceptNames.push(search_config[i].dataIndex);
-      }
-      const nowName = Object.keys(params).filter((v) => {
+      search_config?.map((v) => {
+        exceptNames.push(v.dataIndex);
+      });
+
+      const nowName = params_keys.filter((v) => {
         return inArray(v, exceptNames) < 0;
       });
       if (nowName.length > 0) {
@@ -322,14 +360,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
     }
   }, [table_menu_key, enums, table_menu_all]);
-  const { messageApi, modalApi, isMobile } = useContext(SaDevContext);
-  const post = async (base: any, extra: any, requestRes: any) => {
-    return await request.post(url, {
-      data: { base: { ...base }, ...extra },
-      messageApi,
-      ...requestRes,
-    });
-  };
+  const { modalApi, isMobile } = useContext(SaDevContext);
 
   const remove = (id: number | string, msg: string) => {
     const modals = modalApi?.confirm({
@@ -568,14 +599,19 @@ const SaTable: React.FC<saTableProps> = (props) => {
                               return v;
                             });
                           }
+                          if (values[i] === '') {
+                            delete values[i];
+                          }
                         }
                         //将columns配置中设置了defaultvalue的搜索项的默认值添加到request参数中
                         const ret = { ...searchDefaultValues, ...values };
                         return ret;
                       }
-                      for (var i in values) {
-                        if (typeof values[i] == 'object') {
-                          values[i] = JSON.stringify(values[i]);
+                      for (const key in values) {
+                        const v = values[key];
+                        values[key] = paramsFormat(_tableColumns, v, key);
+                        if (values[key] === '') {
+                          delete values[key];
                         }
                       }
                       return values;
