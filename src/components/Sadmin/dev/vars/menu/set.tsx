@@ -1,4 +1,4 @@
-import { saFormColumnsType } from '@/components/Sadmin/helpers';
+import type { saFormColumnsType } from '@/components/Sadmin/helpers';
 
 const tableSet: saFormColumnsType = [
   {
