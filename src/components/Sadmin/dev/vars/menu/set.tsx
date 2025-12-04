@@ -17,7 +17,14 @@ const tableSet: saFormColumnsType = [
             { label: 'card', value: 'card' },
           ],
         },
-        colProps: { span: 24 },
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['table', 'styles', 'section', 'minHeight'],
+        title: '最小高度',
+        valueType: 'digit',
+        width: '100%',
+        colProps: { span: 12 },
       },
       {
         dataIndex: ['table', 'scroll', 'y'],
