@@ -77,7 +77,6 @@ const ModalSelect = (props) => {
       image: getFromObject(item, avatar),
       id: item.id,
     };
-    console.log('parseItem', ret);
     extColumns?.map((v) => {
       ret[v] = item[v];
     });
