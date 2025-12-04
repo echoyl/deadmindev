@@ -1,12 +1,12 @@
 import { CheckCircleOutlined, CloseCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { CheckCard } from '@ant-design/pro-components';
-import { App, Flex, Modal, Space, Tag, Typography, theme } from 'antd';
+import { useModel } from '@umijs/max';
+import { App, Flex, Modal, Tag, Typography, theme } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr, isUndefined } from '../checkers';
+import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
 import { getBread, getFromObject, getMenuDataById } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
-import { useModel } from '@umijs/max';
-import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
 
 const ModalSelect = (props) => {
   const defaultFieldNames = {
@@ -24,7 +24,6 @@ const ModalSelect = (props) => {
     query: iquery,
     url,
     title = '请选择',
-    name,
     relationname,
     page, //新增 直接读取 已有页面的配置
     max = 9,
@@ -73,15 +72,12 @@ const ModalSelect = (props) => {
     const fiels = { ...defaultFieldNames, ...fieldNames };
     const { title, avatar, description } = fiels;
     const ret = {
-      [title]: item[title],
-      [description]: item[description],
+      title: getFromObject(item, title),
+      description: getFromObject(item, description),
+      image: getFromObject(item, avatar),
       id: item.id,
     };
-    if (isArr(avatar)) {
-      ret[avatar[0]] = item[avatar[0]];
-    } else {
-      ret[avatar] = item[avatar];
-    }
+    console.log('parseItem', ret);
     extColumns?.map((v) => {
       ret[v] = item[v];
     });
@@ -263,7 +259,6 @@ const ModalSelect = (props) => {
         button={selectButton}
         items={selectedItems}
         close={closeItem}
-        fieldNames={{ ...defaultFieldNames, ...fieldNames }}
         max={max}
         size={size}
         onChange={(newList: any) => {
@@ -271,6 +266,7 @@ const ModalSelect = (props) => {
           onChange?.([...newList]);
         }}
         type={type}
+        setOpen={setOpen}
       />
       <Modal
         width={width}
@@ -309,11 +305,11 @@ const ModalSelectList = (props) => {
     button,
     multiple = false,
     dataName = 'data',
-    fieldNames = { avatar: 'avatar', description: 'description', title: 'title' },
     max,
     size = 'default',
     onChange,
     type = 'checkbox',
+    setOpen,
   } = props;
   const { Paragraph } = Typography;
   const { token } = theme.useToken();
@@ -325,9 +321,9 @@ const ModalSelectList = (props) => {
       {items?.map((item, i) => {
         //多选的话显示的数据是关联数据信息
         const data = multiple ? item[dataName] : item;
-        const title = getFromObject(data, fieldNames.title);
-        const avatar = getFromObject(data, fieldNames.avatar);
-        const description = getFromObject(data, fieldNames.description);
+        const title = getFromObject(data, 'title');
+        const avatar = getFromObject(data, 'image');
+        const description = getFromObject(data, 'description');
         const itemDom =
           type == 'checkbox' ? (
             <CheckCard
@@ -362,6 +358,12 @@ const ModalSelectList = (props) => {
               }}
               className="sa-modal-select-item"
               size={size}
+              onClick={() => {
+                if (!multiple) {
+                  //单选支持点击重新选择而不需要清空当前数据
+                  setOpen(true);
+                }
+              }}
             />
           ) : (
             <Tag
