@@ -47,7 +47,7 @@ const ModalSelect = (props) => {
           return inArray(v.dataIndex, page?.columns) > -1;
         } else {
           return (
-            inArray(v.dataIndex, ['state', 'created_at', 'option', 'displayorder']) < 0 &&
+            inArray(v.dataIndex, ['state', 'created_at', 'option', 'displayorder', '']) < 0 &&
             inArray(v, ['option', 'displayorder']) < 0 &&
             inArray(v.valueType, ['option', 'displayorder']) < 0
           );
@@ -344,8 +344,9 @@ const ModalSelectList = (props) => {
               }
               extra={
                 <CloseCircleOutlined
-                  onClick={() => {
+                  onClick={(e) => {
                     close(i);
+                    e.stopPropagation(); //阻止冒泡
                   }}
                 />
               }
