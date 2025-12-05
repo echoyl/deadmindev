@@ -4,8 +4,8 @@ import { Button, Divider, Form, Popover, Select, Space, theme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
 import { inArray } from '../checkers';
-import { uid } from '../helpers';
 import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
+import { uid } from '../helpers';
 
 export interface wxMenu {
   name?: string;
@@ -395,7 +395,7 @@ export const WxMenuModal = (props) => {
       width={1000}
       formFooter={false}
       onOk={() => {
-        console.log('ok submit', value);
+        //console.log('ok submit', value);
         props?.onChange?.([...value]);
         return true;
       }}
