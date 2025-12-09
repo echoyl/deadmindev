@@ -7,7 +7,7 @@ const columnColumns = (data): saFormColumnsType => [
       {
         title: 'x轴字段',
         dataIndex: ['defaultConfig', 'chart', 'xField'],
-        colProps: { span: 12 },
+        colProps: { span: 6 },
         valueType: 'select',
         fieldProps: {
           options: data?.fields,
@@ -16,11 +16,26 @@ const columnColumns = (data): saFormColumnsType => [
       {
         title: 'y轴字段',
         dataIndex: ['defaultConfig', 'chart', 'yField'],
-        colProps: { span: 12 },
+        colProps: { span: 6 },
         valueType: 'select',
         fieldProps: {
           options: data?.fields,
         },
+      },
+      {
+        title: '分组字段',
+        dataIndex: ['defaultConfig', 'chart', 'colorField'],
+        colProps: { span: 6 },
+        valueType: 'select',
+        fieldProps: {
+          options: data?.fields,
+        },
+      },
+      {
+        title: '开启分组',
+        dataIndex: ['defaultConfig', 'chart', 'group'],
+        colProps: { span: 6 },
+        valueType: 'switch',
       },
     ],
   },

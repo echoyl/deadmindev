@@ -1,9 +1,11 @@
+import { PageContainer404 } from '@/components/Sadmin/404';
 import request, { messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { SettingOutlined } from '@ant-design/icons';
 import { BetaSchemaForm, ProCard } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Button, Col, Flex, Row, Skeleton, Space, Tabs } from 'antd';
 import { useContext, useEffect, useState } from 'react';
+import { SaDevContext } from '..';
 import { tplComplie } from '../../helpers';
 import { PagePanelHeader } from '../../pagePanel';
 import { getFormFieldColumns } from '../../posts/formDom';
@@ -14,81 +16,6 @@ import { ToolBarMenu } from '../table/toolbar';
 import PanelItemCard from './items/card';
 import PanelItemTable from './items/table';
 import { DevPanelColumnTitle } from './title';
-import { SaDevContext } from '..';
-import { PageContainer404 } from '@/components/Sadmin/404';
-
-const ItemCol = (props) => {
-  const {
-    span,
-    title,
-    uid,
-    rows,
-    data,
-    config,
-    sourceDataName,
-    chart,
-    noTitle = false,
-    height,
-    type,
-    getData,
-    show_condition: showCondition,
-  } = props;
-  const { isMobile } = useContext(SaDevContext);
-  const idata = data?.find((v) => v.value == sourceDataName);
-  const {
-    tableDesigner: { devEnable },
-  } = useContext(SaContext);
-  const { initialState } = useModel('@@initialState');
-  const show =
-    showCondition && !devEnable
-      ? tplComplie(showCondition, { user: initialState?.currentUser })
-      : true;
-  //console.log('ItemCol', props, data);
-  const ctitle = (_title = '') => {
-    return noTitle ? null : (
-      <DevPanelColumnTitle
-        otitle={_title ? _title : title}
-        title={(_title ? _title : title ? title : '元素') + ' - ' + uid}
-        uid={uid}
-        col={props}
-        devData={{ itemType: 'col' }}
-      />
-    );
-  };
-  //console.log('cititle', ctitle);
-  const itemTitle = devEnable ? ctitle(title) : title ? title : false;
-  return show ? (
-    <Col span={isMobile ? 24 : span}>
-      {type == 'tab' ? (
-        <ItemTab {...props} />
-      ) : type == 'table' ? (
-        <PanelItemTable {...props} data={idata} />
-      ) : rows || type == 'rows' ? (
-        <>
-          {ctitle()}
-          <Panel rows={rows} data={data} />
-        </>
-      ) : type == 'form' ? (
-        <ItemForm {...props} idata={idata} />
-      ) : type == 'user' ? (
-        <ProCard
-          headStyle={devEnable ? { width: '100%', display: 'block' } : {}}
-          title={devEnable ? ctitle() : false}
-        >
-          <PagePanelHeader flash={getData} />
-        </ProCard>
-      ) : type == 'StatisticCard' ? (
-        <PanelItemCard
-          title={itemTitle}
-          data={idata?.data}
-          label={idata?.label}
-          config={config}
-          height={height}
-        />
-      ) : null}
-    </Col>
-  ) : null;
-};
 
 const ItemForm = (props) => {
   const { config, idata, title, uid, getData, simple } = props;
@@ -223,7 +150,78 @@ const ItemTab = (props) => {
     </ProCard>
   );
 };
-
+const ItemCol = (props) => {
+  const {
+    span,
+    title,
+    uid,
+    rows,
+    data,
+    config,
+    sourceDataName,
+    chart,
+    noTitle = false,
+    height,
+    type,
+    getData,
+    show_condition: showCondition,
+  } = props;
+  const { isMobile } = useContext(SaDevContext);
+  const idata = data?.find((v) => v.value == sourceDataName);
+  const {
+    tableDesigner: { devEnable },
+  } = useContext(SaContext);
+  const { initialState } = useModel('@@initialState');
+  const show =
+    showCondition && !devEnable
+      ? tplComplie(showCondition, { user: initialState?.currentUser })
+      : true;
+  //console.log('ItemCol', props, data);
+  const ctitle = (_title = '') => {
+    return noTitle ? null : (
+      <DevPanelColumnTitle
+        otitle={_title ? _title : title}
+        title={(_title ? _title : title ? title : '元素') + ' - ' + uid}
+        uid={uid}
+        col={props}
+        devData={{ itemType: 'col' }}
+      />
+    );
+  };
+  //console.log('cititle', ctitle);
+  const itemTitle = devEnable ? ctitle(title) : title ? title : false;
+  return show ? (
+    <Col span={isMobile ? 24 : span}>
+      {type == 'tab' ? (
+        <ItemTab {...props} />
+      ) : type == 'table' ? (
+        <PanelItemTable {...props} data={idata} />
+      ) : rows || type == 'rows' ? (
+        <>
+          {ctitle()}
+          <Panel rows={rows} data={data} />
+        </>
+      ) : type == 'form' ? (
+        <ItemForm {...props} idata={idata} />
+      ) : type == 'user' ? (
+        <ProCard
+          headStyle={devEnable ? { width: '100%', display: 'block' } : {}}
+          title={devEnable ? ctitle() : false}
+        >
+          <PagePanelHeader flash={getData} />
+        </ProCard>
+      ) : type == 'StatisticCard' ? (
+        <PanelItemCard
+          title={itemTitle}
+          data={idata?.data}
+          label={idata?.label}
+          config={config}
+          height={height}
+        />
+      ) : null}
+    </Col>
+  ) : null;
+};
 const ItemRow = (props) => {
   const { row, data, noTitle = false, index, getData } = props;
   return (
