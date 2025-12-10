@@ -1,30 +1,29 @@
 import { Footer } from '@/components';
-import {
-  Settings as LayoutSettings,
-  ProConfigProvider,
-  ProProvider,
-  SettingDrawer,
-  useBreakpoint,
-} from '@ant-design/pro-components';
-import { RunTimeLayoutConfig, history, getLocale, addLocale } from '@umijs/max';
+import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { ProConfigProvider, SettingDrawer, useBreakpoint } from '@ant-design/pro-components';
+import type { RunTimeLayoutConfig } from '@umijs/max';
+import { addLocale, getLocale, history } from '@umijs/max';
 
+//import '@ant-design/v5-patch-for-react-19';
 import { App, ConfigProvider, Modal, message, notification, theme } from 'antd';
-import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
+import zhCN from 'antd/locale/zh_CN';
 import zhTW from 'antd/locale/zh_TW';
 
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { loginPath, currentUser as queryCurrentUser } from '@/components/Sadmin/lib/request';
+import { createFromIconfontCN } from '@ant-design/icons';
+import type { Locale } from 'antd/es/locale';
+import type { JSX } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import defaultSettings from '../config/defaultSettings';
+import { actionsRender } from './components/RightContent';
+import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
+import LoginModal from './components/Sadmin/components/login';
+import { saGetSetting } from './components/Sadmin/components/refresh';
 import { DevLinks, SaDevContext } from './components/Sadmin/dev';
 import { loopMenuItem, saValueTypeMap } from './components/Sadmin/helpers';
 import WebSocketProvider, { WebSocketListen } from './components/Sadmin/hooks/websocket';
 import Message from './components/Sadmin/message';
-import { saGetSetting } from './components/Sadmin/components/refresh';
-import { loginPath, currentUser as queryCurrentUser } from '@/components/Sadmin/lib/request';
-import { Locale } from 'antd/es/locale';
-import { actionsRender } from './components/RightContent';
-import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
-import defaultSettings from '../config/defaultSettings';
-import { createFromIconfontCN } from '@ant-design/icons';
 
 //const isDev = process.env.NODE_ENV === 'development';
 // export default defineConfig({
@@ -120,10 +119,10 @@ export function rootContainer(container: JSX.Element, args: any) {
           addLocale(lo.name, lo.configs);
         });
         createFromIconfontCN({
-          scriptUrl: v?.adminSetting?.iconfont?.urls?.map((v: Record<string, any>) => v.url),
+          scriptUrl: v?.adminSetting?.iconfont?.urls?.map((v2: Record<string, any>) => v2.url),
         });
 
-        var element = document.querySelector('#rootLoading');
+        const element = document.querySelector('#rootLoading');
         if (element) {
           console.log('remove loading force');
           element.parentNode?.removeChild(element);
@@ -196,10 +195,10 @@ export function rootContainer(container: JSX.Element, args: any) {
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
-  const values = useContext(ProProvider);
-  const { adminSetting, ...rest } = initialState?.settings || {};
+  //const values = useContext(ProProvider);
+  const { adminSetting = {}, ...rest } = initialState?.settings || {};
   const checkWaterMark = () => {
-    const watermark = adminSetting?.watermark;
+    const watermark = adminSetting.watermark;
     if (watermark) {
       return watermark == 'username' ? initialState?.currentUser?.name : watermark;
     } else {
@@ -208,22 +207,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   };
 
   const classNames = [
-    initialState?.settings?.adminSetting?.siderColor == 'dark' ? 'deadmin-sider-dark' : '',
-    initialState?.settings?.adminSetting?.siderColor == 'white' ? 'deadmin-sider-white' : '',
-    initialState?.settings?.adminSetting?.headerColor == 'dark' ? 'deadmin-header-dark' : '',
-    initialState?.settings?.adminSetting?.headerColor == 'white' ? 'deadmin-header-white' : '',
+    adminSetting.siderColor == 'dark' ? 'deadmin-sider-dark' : '',
+    adminSetting.siderColor == 'white' ? 'deadmin-sider-white' : '',
+    adminSetting.headerColor == 'dark' ? 'deadmin-header-dark' : '',
+    adminSetting.headerColor == 'white' ? 'deadmin-header-white' : '',
     initialState?.settings?.layout == 'side' ? 'deadmin-layout-side' : '',
     initialState?.settings?.navTheme == 'light' ? 'deadmin-light' : 'deadmin-dark',
   ];
-  const menuRender = (props: Record<string, any>, dom: React.ReactNode) => {
-    return pRender(props, dom, 'siderColor');
-  };
-  const headerRender = (props: Record<string, any>, dom: React.ReactNode) => {
-    return pRender(props, dom, 'headerColor');
-  };
 
   const pRender = (props: Record<string, any>, dom: React.ReactNode, type: string) => {
-    if (initialState?.settings?.adminSetting?.[type] == 'dark') {
+    if (adminSetting[type] == 'dark') {
       return (
         <ProConfigProvider dark={true} token={props.token}>
           {dom}
@@ -231,6 +224,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       );
     }
     return dom;
+  };
+  const menuRender = (props: Record<string, any>, dom: React.ReactNode) => {
+    return pRender(props, dom, 'siderColor');
+  };
+  const headerRender = (props: Record<string, any>, dom: React.ReactNode) => {
+    return pRender(props, dom, 'headerColor');
   };
 
   return {
@@ -273,8 +272,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     headerRender,
     childrenRender: (children, props) => {
       return (
-        <ProConfigProvider {...values} valueTypeMap={{ ...saValueTypeMap }}>
+        <ProConfigProvider valueTypeMap={{ ...saValueTypeMap }}>
           <WebSocketListen />
+          <LoginModal />
           {children}
           <DevLinks />
           {adminSetting?.dev && (

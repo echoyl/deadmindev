@@ -1,5 +1,4 @@
 import {
-  AntDesignOutlined,
   DatabaseOutlined,
   FileMarkdownOutlined,
   MenuOutlined,
@@ -8,20 +7,20 @@ import {
   SettingOutlined,
   ToolOutlined,
 } from '@ant-design/icons';
+import { isUrl } from '@ant-design/pro-components';
 import { Link, useLocation } from '@umijs/max';
 import { Dropdown, FloatButton, Image, Popover, Space } from 'antd';
-import { MessageInstance } from 'antd/es/message/interface';
+import type { MessageInstance } from 'antd/es/message/interface';
+import type { HookAPI } from 'antd/es/modal/useModal';
+import type { NotificationInstance } from 'antd/es/notification/interface';
+import { trim } from 'es-toolkit';
 import { createContext, useContext } from 'react';
+import ConfirmForm from '../action/confirmForm';
 import Refresh from '../components/refresh';
-import { HookAPI } from 'antd/es/modal/useModal';
-import { NotificationInstance } from 'antd/es/notification/interface';
+import { getFromObject } from '../helpers';
+import { iconToElement } from '../valueTypeMap/iconSelect';
 import DevSwitch from './switch';
 import { ToolMenuForm } from './table/toolbar';
-import { iconToElement } from '../valueTypeMap/iconSelect';
-import { getFromObject } from '../helpers';
-import { trim } from 'es-toolkit';
-import { isUrl } from '@ant-design/pro-components';
-import ConfirmForm from '../action/confirmForm';
 
 export const SaDevContext = createContext<{
   setting?: any;
@@ -31,7 +30,7 @@ export const SaDevContext = createContext<{
   messageApi?: MessageInstance;
   modalApi?: HookAPI;
   notificationApi?: NotificationInstance;
-  isMobile?: Boolean;
+  isMobile?: boolean;
 }>({});
 
 export const DevLinks = (props: any) => {
@@ -116,6 +115,7 @@ export const DevLinks = (props: any) => {
           href={'https://echoyl.com'}
           style={{ display: 'inline-block', width: '100%', textAlign: 'center' }}
           key="setting"
+          rel="noreferrer"
           target={'_blank'}
         >
           <Space>
@@ -151,8 +151,8 @@ export const DevLinks = (props: any) => {
     <DevSwitch key="DevSwitch" />,
   ];
 
-  const AlertImg = (props) => {
-    const { item = {} } = props;
+  const AlertImg = (iprops: Record<string, any>) => {
+    const { item = {} } = iprops;
     const { icon, width = 150, height = 150 } = item;
     return (
       <Popover
@@ -166,8 +166,8 @@ export const DevLinks = (props: any) => {
     );
   };
 
-  const LinkRender = (props) => {
-    const { item = {}, type = 'icon' } = props;
+  const LinkRender = (iprops: Record<string, any>) => {
+    const { item = {}, type = 'icon' } = iprops;
     const { icon, title, link, target } = item;
     const iconElement = iconToElement(icon);
     const tolink = isUrl(link) ? link : `${setting.adminSetting?.baseurl}${trim(link, '/')}`;
@@ -194,7 +194,7 @@ export const DevLinks = (props: any) => {
   };
 
   const getFloatButton = () => {
-    const floatButtons = setting?.adminSetting?.floatButton?.items?.map((item, i) => {
+    const floatButtons = setting?.adminSetting?.floatButton?.items?.map((item, i: number) => {
       const { type, icon } = item;
       if (type == 'alertimg') {
         //弹出图片
@@ -202,14 +202,19 @@ export const DevLinks = (props: any) => {
       } else if (type == 'link') {
         return <LinkRender key={i} item={item} type={'icon'} />;
       } else if (type == 'floatmenu') {
-        const items = item?.menus?.map((menu, i) => {
+        const iitems = item?.menus?.map((menu, index: number) => {
           return {
             key: i,
-            label: <LinkRender key={i} item={menu} type={'menu'} />,
+            label: <LinkRender key={index} item={menu} type={'menu'} />,
           };
         });
         return (
-          <Dropdown menu={{ items }} key={i} arrow={{ pointAtCenter: true }} placement="top">
+          <Dropdown
+            menu={{ items: iitems }}
+            key={i}
+            arrow={{ pointAtCenter: true }}
+            placement="top"
+          >
             <FloatButton icon={iconToElement(icon)} />
           </Dropdown>
         );

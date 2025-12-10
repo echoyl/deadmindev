@@ -254,6 +254,9 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
           width: 'calc(100% - 96px)',
         },
       },
+      rowProps: {
+        gutter: 0,
+      },
       columns: [
         {
           valueType: 'group',

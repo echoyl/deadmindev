@@ -64,6 +64,11 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
       return null;
     }
 
+    //如果是fragment 直接返回 否则会console.log报错
+    if (trigger?.type == React.Fragment) {
+      return trigger;
+    }
+
     return React.cloneElement(trigger, {
       key: 'trigger',
       ...trigger.props,

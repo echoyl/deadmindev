@@ -1,14 +1,14 @@
-import { useModel } from '@umijs/max';
-import { FC, useEffect, useState } from 'react';
-import { uid } from '../helpers';
-import { Button, Flex, Input, Modal, Space, Spin } from 'antd';
-import SaPca, { getPcaValue } from '../pca';
-import Tianmap from './tianmap';
 import { PushpinOutlined } from '@ant-design/icons';
-import Tmap from './tmap';
-import Bmap from './bmap';
-import Amap from './amap';
+import { useModel } from '@umijs/max';
+import { Button, Flex, Input, Modal, Space, Spin } from 'antd';
+import { FC, useEffect, useState } from 'react';
 import { getJson } from '../checkers';
+import { uid } from '../helpers';
+import SaPca, { getPcaValue } from '../pca';
+import Amap from './amap';
+import Bmap from './bmap';
+import Tianmap from './tianmap';
+import Tmap from './tmap';
 const loadScript = (url: string): Promise<void> => {
   return new Promise(function (resolve, reject) {
     //log('tmap init now');
@@ -295,12 +295,12 @@ export const MapinputRender = {
 export const MapShowRender = {
   render: (text) => {
     //console.log(text);
-    text = getJson(text, {});
-    return <MapShow {...text} />;
+    const _text = getJson(text, {});
+    return <MapShow {..._text} />;
   },
   renderFormItem: (text) => {
-    text = getJson(text, {});
-    return <MapShow {...text} />;
+    const _text = getJson(text, {});
+    return <MapShow {..._text} />;
   },
 };
 

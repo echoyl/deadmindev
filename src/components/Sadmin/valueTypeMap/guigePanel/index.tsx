@@ -1,31 +1,32 @@
+import ButtonDrawer from '@/components/Sadmin/action/buttonDrawer';
+import { getJson, isStr } from '@/components/Sadmin/checkers';
+import TranslationModal from '@/components/Sadmin/dev/form/translation';
+import type { saFormColumnsType } from '@/components/Sadmin/helpers';
+import { getFromObject, uid } from '@/components/Sadmin/helpers';
+import Uploader from '@/components/Sadmin/uploader';
 import {
   DoubleRightOutlined,
   PlusCircleOutlined,
   SettingOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
+import type { EditableFormInstance, ProFormInstance } from '@ant-design/pro-components';
 import {
-  EditableFormInstance,
   EditableProTable,
   ProCard,
   ProForm,
   ProFormDigit,
-  ProFormInstance,
   ProFormList,
   ProFormText,
 } from '@ant-design/pro-components';
 import { Button, Flex, Input, InputNumber, Space, Switch, Tooltip } from 'antd';
-import React, { FC, useEffect, useRef, useState } from 'react';
-import ButtonDrawer from '@/components/Sadmin/action/buttonDrawer';
-import { getJson, isStr } from '@/components/Sadmin/checkers';
-import { getFromObject, saFormColumnsType, uid } from '@/components/Sadmin/helpers';
-import TranslationModal from '@/components/Sadmin/dev/form/translation';
-import Uploader from '@/components/Sadmin/uploader';
+import type { FC } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 const getData = (attributes: any[], values: any) => {
   const tableRows: any[] = [];
   const editableKeys: React.Key[] = [];
-  var data: any[] = [],
-    table = [[]];
+  const data: any[] = [];
+  let table = [[]];
   attributes?.forEach((attr) => {
     const temp: any[] = [];
     attr.items?.forEach((row) => {
@@ -36,7 +37,7 @@ const getData = (attributes: any[], values: any) => {
     data.push(temp);
   });
   data.forEach(function (rows) {
-    var temp = [];
+    const temp: any[] = [];
     table.forEach(function (line) {
       rows.forEach(function (item) {
         temp.push(line.concat(item));
@@ -66,13 +67,13 @@ const getData = (attributes: any[], values: any) => {
   return [tableRows, editableKeys];
 };
 
-const columnsName: Array<{
+const columnsName: {
   title: string;
   name: string;
   required?: boolean;
   prefix?: string;
   valueType?: string;
-}> = [
+}[] = [
   { title: '价格', name: 'price', valueType: 'digit', required: true, prefix: '￥' },
   { title: '库存', name: 'sku', valueType: 'digit', required: true, prefix: '' },
   { title: '市场价', name: 'old_price', valueType: 'digit', prefix: '￥' },
@@ -85,34 +86,40 @@ const PiliangInput = (props) => {
   const { name, action, type } = props;
   const [value, setValue] = useState<any>();
   const addonAfter = (
-    <DoubleRightOutlined
-      title="批量设置"
+    <Button
+      size="small"
       onClick={() => {
         //log('pliang value', piliang);
         action(name, value);
       }}
-      style={{ cursor: 'pointer' }}
-      rotate={90}
+      color="default"
+      variant="filled"
+      icon={<DoubleRightOutlined rotate={90} title="批量设置" />}
     />
   );
-  return type == 'digit' ? (
-    <InputNumber
-      style={{ width: '100%' }}
-      size="small"
-      onChange={(v) => {
-        setValue(v);
-      }}
-      addonAfter={addonAfter}
-    />
-  ) : (
-    <Input
-      style={{ width: '100%' }}
-      size="small"
-      onChange={(v) => {
-        setValue(v.target.value);
-      }}
-      addonAfter={addonAfter}
-    />
+  return (
+    <Space.Compact>
+      {type == 'digit' ? (
+        <InputNumber
+          style={{ width: '100%' }}
+          size="small"
+          onChange={(v) => {
+            setValue(v);
+          }}
+          variant="filled"
+        />
+      ) : (
+        <Input
+          style={{ width: '100%' }}
+          size="small"
+          onChange={(v) => {
+            setValue(v.target.value);
+          }}
+          variant="filled"
+        />
+      )}
+      {addonAfter}
+    </Space.Compact>
   );
 };
 
@@ -169,15 +176,15 @@ const getColumns = (
       } else {
         return {
           title: (
-            <>
+            <Space direction="vertical">
               {item.tooltip ? <Tooltip title={item.tooltip}>{item.title}</Tooltip> : item.title}
-              <br />
               <PiliangInput name={item.name} type={item.valueType} action={piliangAction} />
-            </>
+            </Space>
           ),
           dataIndex: item.name,
           valueType: item.valueType,
-          fieldProps: { prefix: item.prefix, style: { width: '100%' } },
+          fieldProps: { prefix: item.prefix, style: { width: '100%' }, variant: 'filled' },
+          // React.Fragment 的属性错误 react 19
           formItemProps: item.required
             ? {
                 rules: [
@@ -205,8 +212,8 @@ const GuigeTable: FC<{
   const { isSync, formRef, tableForm, columns: ccolumns = [] } = props;
   const [editableKeys, setEditableKeys] = useState([]);
   //const [tableRows, editableKeys] = getData(items, formRef?.current?.getFieldValue('attrs'));
-  const [datas, setDatas] = useState<Array<any>>([]);
-  const [columns, setColumns] = useState<Array<any>>([]);
+  const [datas, setDatas] = useState<any[]>([]);
+  const [columns, setColumns] = useState<any[]>([]);
   const getGuiges = (value: any) => {
     setDatas([...value]);
     //console.log('form set value', value, datas);
@@ -217,9 +224,9 @@ const GuigeTable: FC<{
     const attrs = formRef.current?.getFieldValue('attrs');
     const items = formRef.current?.getFieldValue('items');
     //console.log('form get attrs and items are', attrs, items);
-    const [_datas, editableKeys] = getData(items, attrs);
+    const [_datas, _editableKeys] = getData(items, attrs);
     setDatas([..._datas]);
-    setEditableKeys([...editableKeys]);
+    setEditableKeys([..._editableKeys]);
     formRef.current?.setFieldValue('attrs', [..._datas]);
   };
 
@@ -387,6 +394,7 @@ const GuigePanel: FC<{
 
   return (
     <ProForm
+      variant="filled"
       formRef={formRef}
       initialValues={value}
       contentRender={contentRender}
@@ -465,7 +473,7 @@ const GuigePanel: FC<{
             title={
               <ProFormText
                 style={{ padding: 0 }}
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: '规格名不能为空' }]}
                 width="md"
                 name="name"
                 label={

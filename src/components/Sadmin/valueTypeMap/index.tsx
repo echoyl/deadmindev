@@ -1,8 +1,9 @@
-import { lazy, Suspense } from 'react';
-import { tplComplie } from '../helpers';
 import Loading from '@/components/Loading';
-import { MonacoEditor } from './jsonEditor';
+import { Alert } from 'antd';
+import { lazy, Suspense } from 'react';
 import ConfirmForm from '../action/confirmForm';
+import { tplComplie } from '../helpers';
+import { MonacoEditor } from './jsonEditor';
 
 const AliyunVideo = lazy(() => import('@/components/Sadmin/uploader/video'));
 const Uploader = lazy(() => import('@/components/Sadmin/uploader'));
@@ -51,4 +52,8 @@ export const MDEditorRender = (_, props) => {
   const { fieldProps } = props;
   const { options } = fieldProps;
   return <MonacoEditor {...fieldProps} language="markdown" options={options} />;
+};
+
+export const AlertRender = (_, props) => {
+  return <Alert title={_} type="info" showIcon {...props.fieldProps} />;
 };

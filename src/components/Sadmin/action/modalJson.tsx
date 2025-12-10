@@ -1,6 +1,6 @@
 import { ModalForm, ProFormItem, ProFormTextArea } from '@ant-design/pro-components';
 import { Button } from 'antd';
-import { FC, useState, useEffect } from 'react';
+import type { FC } from 'react';
 import JsonEditor from '../valueTypeMap/jsonEditor';
 
 const ModalJson: FC<{

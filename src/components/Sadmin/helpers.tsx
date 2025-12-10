@@ -4,12 +4,12 @@ import {
   ProColumns,
   ProFormCascader,
   ProFormColumnsType,
-  ProFormSelect,
   ProRenderFieldPropsType,
   RouteContext,
   getMenuData,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useModel, useRouteData } from '@umijs/max';
+import { isString } from 'es-toolkit';
 import { get } from 'rc-util';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
@@ -21,32 +21,31 @@ import ModalJson from './action/modalJson';
 import CarBrand from './carBrand';
 import { getJson, isObj, isStr } from './checkers';
 import { FormCalendarRender } from './formCalendar';
-import { Guiges } from './valueTypeMap/guigePanel';
 import JsonForm from './jsonForm';
+import { MapShowRender, MapinputRender } from './map';
 import { ModalSelectRender } from './modalSelect';
 import SaOptions, { SaEditorTable } from './options';
 import { PcaRender, getPca } from './pca';
 import PermGroup from './perm/group';
 import TinyEditor from './tinyEditor';
 import { SaTransferRender } from './transfer';
-import IconSelect, { iconToElement, IconSelectRender } from './valueTypeMap/iconSelect';
-import { wxMenuRender } from './wxMenu';
-import SaAutoCompleteMap from './valueTypeMap/autoComplete';
-import { DropdownActionMap } from './valueTypeMap/dropdownAction';
-import { ColorPickerMap, ColorPickerRenderMap } from './valueTypeMap/colorPicker';
 import {
+  AlertRender,
   AliyunVideoRender,
-  UploaderRender,
-  tableFromBreadRender,
   ConfirmFormRender,
   MDEditorRender,
+  UploaderRender,
+  tableFromBreadRender,
 } from './valueTypeMap';
+import SaAutoCompleteMap from './valueTypeMap/autoComplete';
+import { ColorPickerMap, ColorPickerRenderMap } from './valueTypeMap/colorPicker';
+import { DropdownActionMap } from './valueTypeMap/dropdownAction';
+import { Guiges } from './valueTypeMap/guigePanel';
+import IconSelect, { IconSelectRender, iconToElement } from './valueTypeMap/iconSelect';
+import JsonEditor from './valueTypeMap/jsonEditor';
 import SaSliderMap from './valueTypeMap/saSlider';
 import SearchSelect from './valueTypeMap/search/select';
-import { MapShowRender, MapinputRender } from './map';
-import { isString } from 'es-toolkit';
-import { Alert } from 'antd';
-import JsonEditor from './valueTypeMap/jsonEditor';
+import { wxMenuRender } from './wxMenu';
 
 export function findParents(array, id, fieldNames = { id: 'id', children: 'child' }) {
   let parentArray = [];
@@ -160,15 +159,18 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'alert'
 >;
 type saFormColumnsTypeFn<T> = (d: T) => saFormColumnsType;
-export declare type saFormTabColumnsType = Array<{
+export declare type saFormTabColumnsType = {
   title?: string;
   tab?: { title?: string; [key: string]: any };
   formColumns?: saFormColumnsType | saFormColumnsTypeFn<any>;
-}>;
-export declare type saFormColumnsType = Array<saValueTypeMapType | saColumnsExtend | string>;
-export declare type saTableColumnsType = Array<
-  ProColumns | saValueTypeMapType | saColumnsExtend | string
->;
+}[];
+export declare type saFormColumnsType = (saValueTypeMapType | saColumnsExtend | string)[];
+export declare type saTableColumnsType = (
+  | ProColumns
+  | saValueTypeMapType
+  | saColumnsExtend
+  | string
+)[];
 //只有table中渲染才有props.record form中渲染是没有record ,只有当前字段的数据信息
 export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   uploader: {
@@ -263,7 +265,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
         <ProFormCascader
           noStyle
           {...props.fieldProps}
-          fieldProps={{ ...props.fieldProps }}
+          fieldProps={{ variant: 'filled', ...props.fieldProps }}
           request={async () => {
             const data = await getPca(level, topCode);
             return data;
@@ -457,12 +459,8 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     renderFormItem: SaSliderMap,
   },
   alert: {
-    render: (text, props) => {
-      return <Alert message={text} type="info" showIcon {...props.fieldProps} />;
-    },
-    renderFormItem: (text, props) => {
-      return <Alert message={text} type="info" showIcon {...props.fieldProps} />;
-    },
+    render: AlertRender,
+    renderFormItem: AlertRender,
   },
 };
 export const t = (id?: string, intl?: any) => {

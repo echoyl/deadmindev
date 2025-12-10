@@ -1,4 +1,5 @@
-import { isUrl } from "@ant-design/pro-components";
+import { isUrl } from '@ant-design/pro-components';
+import { isPlainObject } from 'es-toolkit';
 
 const toString = Object.prototype.toString;
 const isType =
@@ -9,7 +10,7 @@ export const getType = (obj: any) => toString.call(obj);
 export const isFn = (val: any): val is Function => typeof val === 'function';
 export const isUndefined = (val: any) => typeof val == 'undefined';
 export const isArr = Array.isArray;
-export const isPlainObj = isType<object>('Object');
+export const isPlainObj = (v: unknown) => isPlainObject(v);
 export const isStr = isType<string>('String');
 export const isBool = isType<boolean>('Boolean');
 export const isNum = isType<number>('Number');

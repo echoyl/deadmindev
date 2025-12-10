@@ -21,7 +21,7 @@ export type HeaderDropdownProps = {
 
 const HeaderDropdown: React.FC<HeaderDropdownProps> = ({ overlayClassName: cls, ...restProps }) => {
   const { styles } = useStyles();
-  return <Dropdown overlayClassName={classNames(styles.dropdown, cls)} {...restProps} />;
+  return <Dropdown classNames={{ root: classNames(styles.dropdown, cls) }} {...restProps} />;
 };
 
 export default HeaderDropdown;

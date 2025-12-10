@@ -1,5 +1,7 @@
-import { MenuFormColumn } from '@/pages/dev/menu';
 import request, { getFullUrl, requestHeaders } from '@/components/Sadmin/lib/request';
+import { MenuFormColumn } from '@/pages/dev/menu';
+import { modelFormColumns } from '@/pages/dev/model';
+import ModelRelation from '@/pages/dev/modelRelation';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -15,28 +17,27 @@ import {
   SettingOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
+import type { ProFormInstance } from '@ant-design/pro-components';
 import { FormattedMessage, Link, useModel } from '@umijs/max';
 import { Button, Dropdown, Popover, Space, Tree, Upload } from 'antd';
+import { isString } from 'es-toolkit';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { SaDevContext } from '..';
 import ButtonDrawer from '../../action/buttonDrawer';
+import ButtonModal from '../../action/buttonModal';
 import CustomerColumnRender from '../../action/customerColumn';
+import { isStr } from '../../checkers';
+import { saReload, saReloadMenu } from '../../components/refresh';
+import type { RequestButtonProps } from '../../components/requestButton';
+import RequestButton from '../../components/requestButton';
 import { parseIcon, t } from '../../helpers';
+import { DevJsonContext } from '../../jsonForm';
 import { SaForm } from '../../posts/post';
 import { SaContext } from '../../posts/table';
 import { DndContext } from '../dnd-context';
+import { fieldColumn } from '../vars/model/fieldColumns';
 import { getModelColumns } from './baseFormColumns';
 import { ToolbarColumnTitle } from './title';
-import { SaDevContext } from '..';
-import { saReload, saReloadMenu } from '../../components/refresh';
-import ButtonModal from '../../action/buttonModal';
-import { isStr } from '../../checkers';
-import { modelFormColumns } from '@/pages/dev/model';
-import { ProFormInstance } from '@ant-design/pro-components';
-import ModelRelation from '@/pages/dev/modelRelation';
-import RequestButton, { RequestButtonProps } from '../../components/requestButton';
-import { DevJsonContext } from '../../jsonForm';
-import { fieldColumn } from '../vars/model/fieldColumns';
-import { isString } from 'es-toolkit';
 
 export const ToolBarDom = (props) => {
   const {
@@ -705,6 +706,7 @@ export const toolBarRender = (props) => {
           );
         }
         //这里如果后台没有传入enums的话 dom会返回空
+        //console.log('CustomerColumnRender', values);
         btns.push(
           <CustomerColumnRender
             key={'ccrender_' + index}

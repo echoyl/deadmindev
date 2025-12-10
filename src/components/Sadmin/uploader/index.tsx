@@ -1,13 +1,13 @@
 import { requestHeaders, request_prefix } from '@/components/Sadmin/lib/request';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Badge, Button, Image, Upload, theme } from 'antd';
+import ImgCrop, { ImgCropProps } from 'antd-img-crop';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import React, { useContext, useEffect, useState } from 'react';
-import './index.less';
-import { SaDevContext } from '../dev';
 import { isArr, isHttpLink, isStr } from '../checkers';
-import ImgCrop, { ImgCropProps } from 'antd-img-crop';
+import { SaDevContext } from '../dev';
 import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
+import './index.less';
 
 interface Props {
   max?: number;
@@ -212,7 +212,9 @@ const Uploader: React.FC<Props> = (props) => {
   };
 
   const listType = buttonType == 'card' || buttonType == 'table' ? 'picture-card' : 'text';
-  const className = `sa-upload-list sa-upload-list-${buttonType} sa-upload-list-${readonly ? 'readonly' : 'edit'}`;
+  const className = `sa-upload-list sa-upload-list-${buttonType} sa-upload-list-${
+    readonly ? 'readonly' : 'edit'
+  }`;
 
   return (
     <>
@@ -280,9 +282,9 @@ const Uploader: React.FC<Props> = (props) => {
         <div style={{ display: 'none' }}>
           <Image.PreviewGroup
             preview={{
-              visible,
+              open: visible,
               current,
-              onVisibleChange: (value) => {
+              onOpenChange: (value) => {
                 setVisible(value);
               },
               onChange: (current) => {

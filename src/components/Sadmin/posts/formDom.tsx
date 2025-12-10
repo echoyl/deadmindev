@@ -247,7 +247,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
 
         if (names.length > 0) {
           if (dependencyOn.type == 'render') {
-            if (v.valueType == 'dependency' || !v.valueType) {
+            if ((v.valueType == 'dependency' || !v.valueType) && columnsFun) {
               v.name = names;
               v.valueType = 'dependency';
               // ((body) => {
@@ -260,8 +260,8 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
                   valueType: 'dependency',
                   name: names,
                   columns: (d) => {
-                    const relcol = columnsFun?.(d);
-                    return relcol?.map((nv) => {
+                    //const relcol = columnsFun?.(d);
+                    return columnsFun(d)?.map((nv) => {
                       nv.title = <FormColumnTitle title={nv.title} uid={vuid} />;
                       return nv;
                     });

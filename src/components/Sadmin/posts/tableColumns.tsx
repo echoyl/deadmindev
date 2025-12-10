@@ -1,18 +1,18 @@
-import request, { messageLoadingKey } from '@/components/Sadmin/lib/request';
+import request from '@/components/Sadmin/lib/request';
 import { TableDropdown } from '@ant-design/pro-components';
 import { history, Link, useModel } from '@umijs/max';
 import { Space, Typography } from 'antd';
 import dayjs from 'dayjs';
+import { cloneDeep } from 'es-toolkit';
 import { useContext } from 'react';
 import { isArr, isUndefined } from '../checkers';
+import { DragHandle } from '../dev/dnd-context/dragSort';
+import { onHeaderCell } from '../dev/table/resizeableTitle';
 import { TableColumnTitle } from '../dev/table/title';
+import { tplToDate } from '../helper/functions';
 import { getFromObject, t, tplComplie } from '../helpers';
 import { defaultColumnsLabel } from './formDom';
 import { SaContext } from './table';
-import { tplToDate } from '../helper/functions';
-import { cloneDeep } from 'es-toolkit';
-import { DragHandle } from '../dev/dnd-context/dragSort';
-import { onHeaderCell } from '../dev/table/resizeableTitle';
 
 export const SaTableAction = (props) => {
   const { openType } = props;
@@ -279,8 +279,8 @@ export const getTableColumns = (props) => {
     const requestName = v.requestDataName
       ? v.requestDataName
       : v.fieldProps?.requestDataName
-        ? v.fieldProps.requestDataName
-        : false;
+      ? v.fieldProps.requestDataName
+      : false;
     if (requestName) {
       options = enums?.[requestName];
       delete v.fieldProps?.requestDataName;
@@ -342,6 +342,10 @@ export const getTableColumns = (props) => {
       ...v.fieldProps,
       dataindex: v.dataIndex,
     };
+
+    if (v.valueType == 'cascader') {
+      v.fieldProps.variant = 'filled';
+    }
 
     if (devEnable) {
       v.title = <TableColumnTitle {...v} />;

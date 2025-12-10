@@ -189,7 +189,7 @@ const CustomerColumnRender = (props) => {
               url={item.request?.url}
               postUrl={item.request?.postUrl}
               data={{ ...paramExtra, ...newRequestData }}
-              paramdata={{ ...item.request?.paramdata }}
+              paramdata={{ ...paramExtra, ...item.request?.paramdata }}
               afterActionType={item.request?.afterActionType}
               dataId={dataId}
               {...value}
@@ -397,12 +397,13 @@ const CustomerColumnRender = (props) => {
         } else if (item.action == 'alink') {
           const to = tplComplie(value?.href, { record, user: initialState?.currentUser });
           return (
-            <a key={key} href={to} target="_blank">
+            <a key={key} href={to} target="_blank" rel="noreferrer">
               {dom}
             </a>
           );
         } else if (item.action == 'iframe') {
-          return <OpenIframe key={key} trigger={dom} {...value} />;
+          const src = tplComplie(value?.src, { record, user: initialState?.currentUser });
+          return <OpenIframe key={key} trigger={dom} {...value} src={src} />;
         } else if (item.action == 'console') {
           return <ConsoleLogShowFormValue key={key} />;
         } else {
@@ -448,7 +449,7 @@ const CustomerColumnRender = (props) => {
       ) : itemsDom.length == 1 ? (
         itemsDom
       ) : (
-        <Space direction={direction}>{itemsDom}</Space>
+        <Space orientation={direction}>{itemsDom}</Space>
       )}
     </>
   );
@@ -456,7 +457,7 @@ const CustomerColumnRender = (props) => {
 export const CustomerColumnRenderTable = (text, props) => {
   const { fieldProps, record } = props;
   const { items } = fieldProps;
-  console.log('CustomerColumnRenderTable render', fieldProps);
+  //console.log('CustomerColumnRenderTable render', fieldProps);
   //const [formValue, setFormValue] = useState();
   //const { formRef } = useContext(SaContext);
   // if (!record) {

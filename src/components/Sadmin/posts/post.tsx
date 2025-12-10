@@ -413,7 +413,7 @@ const PostsForm: FC<saFormProps & { match?: boolean }> = (props) => {
   //console.log(value?.breadcrumb);
   return (
     <PageContainer404 title={formTitle} match={match} path={path}>
-      <ProCard bordered={false}>
+      <ProCard variant="borderless">
         <SaForm {...props} />
       </ProCard>
     </PageContainer404>

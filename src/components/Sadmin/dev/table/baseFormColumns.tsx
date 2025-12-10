@@ -1,7 +1,7 @@
 import { devDefaultFields, devTabelFields } from '@/pages/dev/model';
-import { TreeNodeProps } from 'antd';
-import { saFormColumnsType, saTableColumnsType } from '../../helpers';
+import type { TreeNodeProps } from 'antd';
 import { uniqBy } from 'es-toolkit';
+import type { saFormColumnsType, saTableColumnsType } from '../../helpers';
 //列表可选类型
 export const columnType = [
   { label: '日期 - date', value: 'date' },
@@ -32,6 +32,10 @@ export const columnType = [
   { label: '日期季度 - dateQuarter', value: 'dateQuarter' },
   { label: '日期月 - dateMonth', value: 'dateMonth' },
   { label: '日期周 - dateWeek', value: 'dateWeek' },
+  { label: '月份区间 - dateMonthRange', value: 'dateMonthRange' },
+  { label: '周区间 - dateWeekRange', value: 'dateWeekRange' },
+  { label: '年区间 - dateYearRange', value: 'dateYearRange' },
+  { label: '季度区间 - dateQuarterRange', value: 'dateQuarterRange' },
   { label: '时间 - time', value: 'time' },
 ];
 //表单可选类型
@@ -78,6 +82,11 @@ const formMoreType = [
   { label: '日期月 - dateMonth', value: 'dateMonth' },
   { label: '日期周 - dateWeek', value: 'dateWeek' },
   { label: '日期时间 - datetime', value: 'datetime' },
+  { label: '时间区间 - dateTimeRange', value: 'dateTimeRange' },
+  { label: '月份区间 - dateMonthRange', value: 'dateMonthRange' },
+  { label: '周区间 - dateWeekRange', value: 'dateWeekRange' },
+  { label: '年区间 - dateYearRange', value: 'dateYearRange' },
+  { label: '季度区间 - dateQuarterRange', value: 'dateQuarterRange' },
   { label: '时间 - time', value: 'time' },
   { label: '评分 - rate', value: 'rate' },
   { label: '滑动条 - slider', value: 'saSlider' },
@@ -88,7 +97,7 @@ const formMoreType = [
 export const getModelColumnsSelect = (id: number, allModels: any[], level = 1) => {
   const select_data = allModels?.find((v) => v.id == id);
   //console.log(allModels, select_data);
-  const fields: Array<TreeNodeProps> = select_data?.columns
+  const fields: TreeNodeProps[] = select_data?.columns
     ?.map((v) => ({
       label: v.label ? v.label : [v.title, v.name].join(' - '),
       value: v.name,
@@ -501,6 +510,7 @@ export const devBaseTableColumns = (props: devTabelFieldsProps) => {
         options: modelColumns2,
         showSearch: true,
         changeOnSelect: true,
+        variant: 'filled',
       },
     },
 
@@ -625,6 +635,7 @@ export const devBaseTableFormColumns = (props: devTabelFieldsProps): saFormColum
             options: modelColumns2,
             showSearch: true,
             changeOnSelect: true,
+            variant: 'filled',
           },
         },
         {
