@@ -1,8 +1,13 @@
 import CaptchaInput from '@/components/CaptchInput';
 import Footer from '@/components/Footer';
+import { SelectLang } from '@/components/RightContent';
 import ButtonModal from '@/components/Sadmin/action/buttonModal';
-import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
 import { parseAdminSeting, saGetSetting } from '@/components/Sadmin/components/refresh';
+import { SaDevContext } from '@/components/Sadmin/dev';
+import { useAdminStore } from '@/components/Sadmin/dev/context';
+import cache from '@/components/Sadmin/helper/cache';
+import { t, uid } from '@/components/Sadmin/helpers';
+import { WebSocketContext } from '@/components/Sadmin/hooks/websocket';
 import request, { setAdminSetting, setAdminToken } from '@/components/Sadmin/lib/request';
 import {
   LoadingOutlined,
@@ -11,23 +16,21 @@ import {
   UserOutlined,
   WechatOutlined,
 } from '@ant-design/icons';
+import type { ProFormInstance } from '@ant-design/pro-components';
 import {
   LoginForm,
+  ProCard,
   ProFormCaptcha,
   ProFormCheckbox,
   ProFormDependency,
-  ProFormInstance,
-  ProCard,
 } from '@ant-design/pro-components';
 import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
-import { Tabs, QRCode, Space, theme, GetProp, Tooltip, Flex, Form, Input } from 'antd';
-import React, { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
-import cache from '@/components/Sadmin/helper/cache';
+import type { GetProp } from 'antd';
+import { Flex, Form, Input, QRCode, Space, Tabs, theme, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
-import { SelectLang } from '@/components/RightContent';
-import { t } from '@/components/Sadmin/helpers';
-import { SaDevContext } from '@/components/Sadmin/dev';
+import type { CSSProperties } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
 const useStyles = () => {
   return createStyles(({ token, css }) => {
@@ -75,59 +78,10 @@ const Lang = () => {
   );
 };
 
-const LoginComponent: React.FC = () => {
-  return <LoginPage />;
-};
-
-const LoginPage: React.FC = () => {
-  const [setting, setSetting] = useState<any>();
-  const { styles } = useStyles();
-  useEffect(() => {
-    saGetSetting().then((v) => {
-      setSetting(v);
-    });
-  }, []);
-  const { token } = theme.useToken();
-  const containerStyle: CSSProperties = {};
-  if (setting?.navTheme == 'light') {
-    if (setting?.adminSetting?.loginBgImage) {
-      containerStyle.backgroundImage = `url("${setting?.adminSetting?.loginBgImage}")`;
-    } else {
-      containerStyle.backgroundImage = `url("${setting?.adminSetting?.baseurl}/login_bg.png")`;
-    }
-  } else {
-    containerStyle.background = token.colorBgBase;
-  }
-  return setting ? (
-    <div className={styles.container} style={{ ...containerStyle }}>
-      <Helmet>
-        <title>登录 - {setting?.title}</title>
-      </Helmet>
-      {setting?.adminSetting?.lang ? <Lang /> : null}
-      <div style={{ flex: '1' }}>
-        <Flex align="center" justify="center" style={{ height: '100%' }}>
-          <ProCard
-            style={{
-              //maxWidth: 440,
-              //margin: '0px auto',
-              // padding: '20px 0',
-              background:
-                setting?.navTheme == 'light' ? setting?.adminSetting?.loginBgCardColor : 'none',
-              width: 380,
-              marginTop: -72,
-            }}
-            bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
-          >
-            <Login setting={setting} />
-          </ProCard>
-        </Flex>
-      </div>
-      <Footer />
-    </div>
-  ) : null;
-};
-
-export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) => {
+export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'modal' }> = ({
+  setting,
+  type = 'page',
+}) => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const [captchaReload, setCaptchaReload] = useState(0);
   const [captchaPhoneReload, setCaptchaPhoneReload] = useState(0);
@@ -143,6 +97,8 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
     setting?.adminSetting?.loginTypeDefault || 'password',
   );
   const { styles } = useStyles();
+  const setShowLogin = useAdminStore((state) => state.setShowLogin);
+  const setPageKey = useAdminStore((state) => state.setPageKey);
   useEffect(() => {
     cache.get('Sa-ShowCaptcha').then((v) => {
       setShowCaptcha(v ? true : false);
@@ -167,10 +123,15 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
           baseurl = '',
         } = {},
       } = adminSetting || {};
-      const auto_redirect = autoRedirect ? searchParams.get('redirect') : '';
-      const redirect = auto_redirect || data.userinfo.redirect || defaultRedirectPage || '/';
-      const goUrl = redirect.replace(baseurl, '/');
-      history.push(goUrl);
+      if (type == 'page') {
+        const auto_redirect = autoRedirect ? searchParams.get('redirect') : '';
+        const redirect = auto_redirect || data.userinfo.redirect || defaultRedirectPage || '/';
+        const goUrl = redirect.replace(baseurl, '/');
+        history.push(goUrl);
+      } else {
+        setShowLogin(false);
+        setPageKey(uid()); //设置page组件key重载组件
+      }
     });
   };
 
@@ -212,7 +173,7 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
       then: (res: Record<string, any>) => {
         const { code, msg, data } = res;
         if (res.code) {
-          notificationApi?.error({ description: msg, message: '提示' });
+          notificationApi?.error({ description: msg, title: '提示' });
           if (loginType == 'phone' && res.code == 3) {
             setCaptchaPhoneReload(captchaReload + 1);
           }
@@ -248,7 +209,7 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
     return;
   };
 
-  const formRef = useRef<ProFormInstance>();
+  const formRef = useRef<ProFormInstance>(null);
   const intl = useIntl();
   const loginTypeItems = [
     {
@@ -398,7 +359,7 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
   ];
 
   const ThunderLogin: React.FC<{ styles?: Record<string, any> }> = (props) => {
-    const { styles = {} } = props;
+    const { styles: istyles = {} } = props;
     const [loading, setLoading] = useState<boolean>(false);
     const { url, desc } = setting?.adminSetting?.loginThunder;
     const click = async () => {
@@ -410,9 +371,13 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
     return (
       <Tooltip title={desc}>
         {loading ? (
-          <LoadingOutlined className={styles.action} style={{ fontSize: 22 }} />
+          <LoadingOutlined className={istyles.action} style={{ fontSize: 22 }} />
         ) : (
-          <ThunderboltOutlined className={styles.action} style={{ fontSize: 22 }} onClick={click} />
+          <ThunderboltOutlined
+            className={istyles.action}
+            style={{ fontSize: 22 }}
+            onClick={click}
+          />
         )}
       </Tooltip>
     );
@@ -423,7 +388,7 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
     const [status, setStatus] = useState<GetProp<typeof QRCode, 'status'>>('active');
     const expiredTimes = 3 * 60; //3分钟后过期
     let tout: string | number | undefined | NodeJS.Timeout;
-    const clock = (timestamp: number) => {
+    const clock = (itimestamp: number) => {
       const now = Date.now();
       // console.log(
       //   'timeis now',
@@ -431,13 +396,13 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
       //   timestamp + expiredTimes * 1000,
       //   now > timestamp + expiredTimes * 1000,
       // );
-      if (now > timestamp + expiredTimes * 1000) {
+      if (now > itimestamp + expiredTimes * 1000) {
         //过期了
         //setTimestamp(now);
         setStatus('expired');
         //tout = setTimeout(() => clock(now), 1000);
       } else {
-        tout = setTimeout(() => clock(timestamp), 1000);
+        tout = setTimeout(() => clock(itimestamp), 1000);
       }
     };
     const refresh = () => {
@@ -561,6 +526,58 @@ export const Login: React.FC<{ setting?: Record<string, any> }> = ({ setting }) 
       </div>
     </LoginForm>
   );
+};
+
+const LoginPage: React.FC = () => {
+  const [setting, setSetting] = useState<any>();
+  const { styles } = useStyles();
+  useEffect(() => {
+    saGetSetting().then((v) => {
+      setSetting(v);
+    });
+  }, []);
+  const { token } = theme.useToken();
+  const containerStyle: CSSProperties = {};
+  if (setting?.navTheme == 'light') {
+    if (setting?.adminSetting?.loginBgImage) {
+      containerStyle.backgroundImage = `url("${setting?.adminSetting?.loginBgImage}")`;
+    } else {
+      containerStyle.backgroundImage = `url("${setting?.adminSetting?.baseurl}/login_bg.png")`;
+    }
+  } else {
+    containerStyle.background = token.colorBgBase;
+  }
+  return setting ? (
+    <div className={styles.container} style={{ ...containerStyle }}>
+      <Helmet>
+        <title>登录 - {setting?.title}</title>
+      </Helmet>
+      {setting?.adminSetting?.lang ? <Lang /> : null}
+      <div style={{ flex: '1' }}>
+        <Flex align="center" justify="center" style={{ height: '100%' }}>
+          <ProCard
+            style={{
+              //maxWidth: 440,
+              //margin: '0px auto',
+              // padding: '20px 0',
+              background:
+                setting?.navTheme == 'light' ? setting?.adminSetting?.loginBgCardColor : 'none',
+              width: 380,
+              marginTop: -72,
+            }}
+            bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
+          >
+            <Login setting={setting} />
+          </ProCard>
+        </Flex>
+      </div>
+      <Footer />
+    </div>
+  ) : null;
+};
+
+const LoginComponent: React.FC = () => {
+  return <LoginPage />;
 };
 
 export default LoginComponent;

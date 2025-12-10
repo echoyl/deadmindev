@@ -1,11 +1,12 @@
 // @ts-ignore
 /* eslint-disable */
 import cache from '@/components/Sadmin/helper/cache';
-import { message, notification, modal } from '@/components/Sadmin/message';
+import { message, modal, notification } from '@/components/Sadmin/message';
 import { history } from '@umijs/max';
+import { trimEnd } from 'es-toolkit';
 import { extend } from 'umi-request';
 import { isUndefined } from '../../checkers';
-import { trimEnd } from 'es-toolkit';
+import { useAdminStore } from '../../dev/context';
 const codeMessage: { [key: string]: any } = {};
 
 export const request_prefix = '/sadmin/';
@@ -43,7 +44,7 @@ function errorHandler(error: Record<string, any>) {
     description: (
       <div style={{ color: 'red' }} dangerouslySetInnerHTML={{ __html: description }}></div>
     ),
-    message: '提示',
+    title: '提示',
   });
   return false;
   //throw new Error();
@@ -114,13 +115,15 @@ const goLoginUrl = () => {
 export const responseCodeAction = (code: number, method: string, drawer: boolean) => {
   //登录失效
   //const baseurl = process.env.NODE_ENV === 'production' ? './' : '/';
+  const setShowLogin = useAdminStore.getState().setShowLogin;
   if (code == 1001) {
     // if (window.location.pathname.replace(baseurl, '/') == loginPath) {
     //   return true;
     // }
-    const gourl = goLoginUrl();
+    //const gourl = goLoginUrl();
     //console.log('gourl', gourl);
-    history.push(gourl);
+    setShowLogin(true);
+    //history.push(gourl);
     return true;
   } else if (code == 401301) {
     //这里检测 是post还是get post传数据的话 不跳转页面。
@@ -167,7 +170,7 @@ request.interceptors.response.use(async (response, options) => {
     } else {
       //默认的操作设置
       if (code) {
-        notification.error({ description: msg, message: '提示' });
+        notification.error({ description: msg, title: '提示' });
         options.msgcls && options.msgcls({ code, msg, data, res });
       } else {
         if (msg) {
@@ -180,7 +183,7 @@ request.interceptors.response.use(async (response, options) => {
           }
         }
         if (notificationContent) {
-          notification.info({ description: notificationContent, message: '提示' });
+          notification.info({ description: notificationContent, title: '提示' });
         }
 
         //以下是根据返回数据中有的关键字然后进行的动作

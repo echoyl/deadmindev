@@ -1,10 +1,11 @@
 import { SaDevContext } from '@/components/Sadmin/dev';
-import { SaBreadcrumbRender, getBread } from '@/components/Sadmin/helpers';
+import { getBread, SaBreadcrumbRender } from '@/components/Sadmin/helpers';
 import { PageContainer } from '@ant-design/pro-components';
 import { history, useLocation, useModel, useNavigate } from '@umijs/max';
 import { Button, Result, theme } from 'antd';
-import React, { useContext, useEffect, lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useContext, useEffect } from 'react';
 import Loading from '../Loading';
+import { useAdminStore } from './dev/context';
 
 const PagePanel = lazy(() => import('@/components/Sadmin/pagePanel'));
 const PostsList = lazy(() => import('@/components/Sadmin/posts'));
@@ -35,53 +36,7 @@ const NoFoundPage: React.FC = () => (
   />
 );
 
-export const Page: React.FC = () => {
-  const localtion = useLocation();
-  let pathname = localtion.pathname;
-  const match = pathname.match(/\/(\d+)$/);
-
-  //检测路由是否包含数字
-  if (match) {
-    pathname = localtion.pathname.replace(match[0], '');
-  }
-  const { initialState } = useModel('@@initialState');
-  const menu = getBread(pathname, initialState?.currentUser);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!menu) {
-      return;
-    }
-
-    if (menu.data?.redirect) {
-      //history.push(menu.data?.redirect);
-      navigate(menu.data?.redirect, { replace: true });
-    } else {
-      if (menu.path != pathname) {
-        //如果有跳转页面 和当前页面路径不一样，则跳转路由
-        history.push(menu.path as string);
-      }
-    }
-  }, [localtion]);
-
-  if (!menu) {
-    return <NoFoundPage />;
-  }
-
-  return (
-    <>
-      {!menu.data?.redirect ? (
-        <PageTypes menu={menu} match={match} pathname={pathname} />
-      ) : (
-        <PageContainer404>
-          <Loading />
-        </PageContainer404>
-      )}
-    </>
-  );
-};
-
-export const PageContainer404: React.FC<{ [key: string]: any }> = (props) => {
+export const PageContainer404: React.FC<Record<string, any>> = (props) => {
   const { title = false, match = false, path } = props;
   const { setting } = useContext(SaDevContext);
   const { initialState } = useModel('@@initialState');
@@ -109,7 +64,7 @@ export const PageContainer404: React.FC<{ [key: string]: any }> = (props) => {
       }
       header={{
         style: setting?.layout == 'side' && setting?.fixedHeader ? style : {},
-        breadcrumbRender: (_, dom) => {
+        breadcrumbRender: () => {
           return <SaBreadcrumbRender match={match} path={path} />;
         },
       }}
@@ -119,8 +74,8 @@ export const PageContainer404: React.FC<{ [key: string]: any }> = (props) => {
   );
 };
 
-const ListPage: React.FC<{ [key: string]: any }> = (props) => {
-  const { menu, pathname, name, data, pagetype, ...rest } = props;
+const ListPage: React.FC<Record<string, any>> = (props) => {
+  const { menu, pathname, name, data, pagetype } = props;
   const level = menu?.data?.setting?.level || 0;
   return (
     <Suspense fallback={<Loading />}>
@@ -147,8 +102,9 @@ const ListPage: React.FC<{ [key: string]: any }> = (props) => {
   );
 };
 
-const PageTypes: React.FC<{ [key: string]: any }> = ({ menu, match, pathname }) => {
+const PageTypes: React.FC<Record<string, any>> = ({ menu, match, pathname }) => {
   const { data, page_type, name } = menu;
+
   //console.log('menu is', menu);
   if (match || page_type == 'form') {
     //post 页面
@@ -204,6 +160,52 @@ const PageTypes: React.FC<{ [key: string]: any }> = ({ menu, match, pathname }) 
         return null;
     }
   }
+};
+
+const Page: React.FC = () => {
+  const localtion = useLocation();
+  let pathname = localtion.pathname;
+  const match = pathname.match(/\/(\d+)$/);
+  const pageKey = useAdminStore((state) => state.pageKey);
+  //检测路由是否包含数字
+  if (match) {
+    pathname = localtion.pathname.replace(match[0], '');
+  }
+  const { initialState } = useModel('@@initialState');
+  const menu = getBread(pathname, initialState?.currentUser);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!menu) {
+      return;
+    }
+
+    if (menu.data?.redirect) {
+      //history.push(menu.data?.redirect);
+      navigate(menu.data?.redirect, { replace: true });
+    } else {
+      if (menu.path != pathname) {
+        //如果有跳转页面 和当前页面路径不一样，则跳转路由
+        history.push(menu.path as string);
+      }
+    }
+  }, [localtion]);
+
+  if (!menu) {
+    return <NoFoundPage />;
+  }
+
+  return (
+    <>
+      {!menu.data?.redirect ? (
+        <PageTypes key={pageKey} menu={menu} match={match} pathname={pathname} />
+      ) : (
+        <PageContainer404>
+          <Loading />
+        </PageContainer404>
+      )}
+    </>
+  );
 };
 
 export default Page;
