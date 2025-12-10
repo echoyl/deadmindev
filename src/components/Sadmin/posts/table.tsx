@@ -163,7 +163,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
   //console.log('tableprops', props);
   const [tbColumns, setTbColumns] = useState<saTableColumnsType>([]);
   const [enums, setEnums] = useState<Record<string, any>>();
-  const [summary, setSummary] = useState();
+  const [summary, setSummary] = useState(); //合计
+  const [footer, setFooter] = useState(); //footer设置
   const [columnData, setColumnData] = useState({});
   const [data, setData] = useState<Record<string, any>[]>([]);
   //当前数据总量
@@ -294,6 +295,9 @@ const SaTable: React.FC<saTableProps> = (props) => {
     //data = ret.data;
     if (ret.search.summary) {
       setSummary(ret.search.summary);
+    }
+    if (ret.search.footer) {
+      setFooter(ret.search.footer);
     }
     if (!initRequest) {
       setEnums({ ...ret.search });
@@ -699,6 +703,13 @@ const SaTable: React.FC<saTableProps> = (props) => {
               ) : null;
             }}
             //scroll={{ x: 900 }}
+            footer={
+              footer
+                ? () => {
+                    return <div dangerouslySetInnerHTML={{ __html: footer }}></div>;
+                  }
+                : undefined
+            }
             pagination={{
               showSizeChanger: true,
               showQuickJumper: true,
