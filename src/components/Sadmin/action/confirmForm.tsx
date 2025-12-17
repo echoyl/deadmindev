@@ -1,15 +1,15 @@
+import Loading from '@/components/Loading';
 import { ProFormInstance } from '@ant-design/pro-components';
-import { Button, ButtonProps, Drawer, GetProps, Modal } from 'antd';
-import { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
-import { history } from 'umi';
 import { useModel } from '@umijs/max';
-import { getBread, saFormColumnsType, saFormTabColumnsType, t } from '../helpers';
+import { Button, ButtonProps, Drawer, GetProps, Modal } from 'antd';
+import { FC, Key, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { history } from 'umi';
+import { isArr, isStr } from '../checkers';
+import { getBread, getMenuDataById, saFormColumnsType, saFormTabColumnsType, t } from '../helpers';
 import { SaForm, saFormProps } from '../posts/post';
 import { SaContext } from '../posts/table';
-import ButtonModal from './buttonModal';
 import ButtonDrawer from './buttonDrawer';
-import Loading from '@/components/Loading';
-import { isArr } from '../checkers';
+import ButtonModal from './buttonModal';
 
 interface actionConfirm {
   msg?: string;
@@ -19,7 +19,7 @@ interface actionConfirm {
   postUrl?: string;
   data?: {};
   paramdata?: {};
-  dataId?: number;
+  dataId?: Key;
   formColumns?: saFormColumnsType;
   tabs?: saFormTabColumnsType;
   callback?: (value: any) => void;
@@ -31,7 +31,7 @@ interface actionConfirm {
   width?: number;
   height?: number;
   maxHeight?: number;
-  page?: string;
+  page?: string | number;
   readonly?: boolean;
   xkey?: string;
   saFormProps?: saFormProps;
@@ -77,7 +77,9 @@ const InnerForm = (props) => {
   const [formOpen, setFormOpen] = useState<boolean>(false);
   useEffect(() => {
     if (page) {
-      const bread = getBread(page, initialState?.currentUser);
+      const bread = isStr(page)
+        ? getBread(page, initialState?.currentUser)
+        : getMenuDataById(initialState?.currentUser?.menuData, page);
       if (bread) {
         setTabs(bread?.data.tabs);
         setUrl(bread?.data.postUrl ? bread?.data.postUrl : bread?.data.url + '/show');

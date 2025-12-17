@@ -1,16 +1,17 @@
-import { saFormTabColumnsType, tplComplie, uid } from '@/components/Sadmin/helpers';
+import { SaDevContext } from '@/components/Sadmin/dev';
+import tableSet from '@/components/Sadmin/dev/vars/menu/set';
+import FormFromBread from '@/components/Sadmin/formFromBread';
+import type { saFormTabColumnsType } from '@/components/Sadmin/helpers';
+import { tplComplie, uid } from '@/components/Sadmin/helpers';
+import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 import Category from '@/components/Sadmin/posts/category';
+import TableFromBread from '@/components/Sadmin/tableFromBread';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
 import { CopyOutlined, EyeOutlined, ImportOutlined, RollbackOutlined } from '@ant-design/icons';
-import { ActionType } from '@ant-design/pro-components';
+import type { ActionType } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Space } from 'antd';
-import { useRef, useContext } from 'react';
-import { SaDevContext } from '@/components/Sadmin/dev';
-import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
-import tableSet from '@/components/Sadmin/dev/vars/menu/set';
-import TableFromBread from '@/components/Sadmin/tableFromBread';
-import FormFromBread from '@/components/Sadmin/formFromBread';
+import { useContext, useRef } from 'react';
 
 export const MenuFormColumn: saFormTabColumnsType = [
   {
@@ -225,7 +226,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
               saFormProps: {
                 devEnable: false,
               },
-              formColumns: tableSet,
+              tabs: tableSet,
             },
             colProps: { span: 6 },
           },

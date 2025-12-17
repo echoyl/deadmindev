@@ -67,7 +67,14 @@ export interface saTableProps {
   titleField?: string | Array<string>;
   formProps?: ProFormProps;
   //左侧分类菜单的 配置信息
-  leftMenu?: { name?: string; url_name?: string; field?: Object; title?: string; close?: boolean };
+  leftMenu?: {
+    name?: string;
+    url_name?: string;
+    field?: Object;
+    title?: string;
+    close?: boolean;
+    page?: number;
+  };
   categorysName?: string;
   //table组件 toolbar中menu 请求和url中参数name
   table_menu_key?: string; //列表头部tab切换读取的数据字段名称
@@ -94,6 +101,7 @@ export interface saTableProps {
   setting?: { [key: string]: any }; //其它配置统一放这里
   afterDelete?: (ret: any) => void | boolean; //删除数据后的回调
   afterFormPost?: (ret: any) => void | boolean | Promise<boolean | void>; //表单提交数据后的回调
+  initPageUid?: string; //控制页面刷新 非request
 }
 
 const components = {
@@ -159,6 +167,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     devEnable: pdevEnable = true,
     setting = {},
     afterDelete,
+    initPageUid,
   } = props;
   //console.log('tableprops', props);
   const [tbColumns, setTbColumns] = useState<saTableColumnsType>([]);
@@ -175,7 +184,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [initRequest, setInitRequest] = useState(false);
+  const [initRequest, setInitRequest] = useState<boolean>(false);
+  const [initPage, setInitPage] = useState<boolean>(false); //是否已经初始化页面 table列变化
   //const url = 'posts/posts';
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   //记录当前的排序规则
@@ -299,8 +309,17 @@ const SaTable: React.FC<saTableProps> = (props) => {
     if (ret.search.footer) {
       setFooter(ret.search.footer);
     }
-    if (!initRequest) {
+    if (!initPage) {
+      //将页面开发参数变化的设置单独放这和initRequest区分开
       setEnums({ ...ret.search });
+      setColumnData({ ...ret.search }); //做成context 换一个名字
+    }
+
+    if (!initPage) {
+      setInitPage(true);
+    }
+
+    if (!initRequest) {
       //设置查询form的初始值
       if (!isArr(ret.search) && ret.search.values) {
         // const getfieldsValue = searchFormRef.current?.getFieldsValue();
@@ -313,8 +332,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
         const url_search = search2Obj();
         setUrlSearch({ ...searchDefaultValues, ...url_search });
       }
-
-      setColumnData({ ...ret.search }); //做成context 换一个名字
 
       //这里需要检测url参数 和 form表单的参数是否有不一致，如果有的话需要将多余的参数设置到paramExtra 中
       //因为点击search后会将这些参数过滤掉（通过带参数链接跳转的页面如果参数不在form中再搜索会导致参数丢失）
@@ -340,8 +357,9 @@ const SaTable: React.FC<saTableProps> = (props) => {
 
     //log('setEnums', ret.search);
     //获取分类父级路径
-
-    !initRequest && setInitRequest(true);
+    if (!initRequest) {
+      setInitRequest(true);
+    }
     if (ret.search?.table_menu && !initRequest && table_menu_key) {
       //如果后端传了tab id 那么主动重新设置一次
       if (ret.search?.table_menu_id) {
@@ -364,6 +382,13 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
     }
   }, [table_menu_key, enums, table_menu_all]);
+
+  useEffect(() => {
+    if (initPageUid) {
+      setInitPage(false);
+    }
+  }, [initPageUid]);
+
   const { modalApi, isMobile } = useContext(SaDevContext);
 
   const remove = (id: number | string, msg: string) => {
@@ -490,8 +515,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
   }, [initialState?.settings?.devDisable]);
 
   useEffect(() => {
-    setTbColumns(getTableColumnsRender(tableColumns));
-  }, [tableColumns, initRequest, devEnable]);
+    if (enums) {
+      setTbColumns(getTableColumnsRender(tableColumns));
+    }
+  }, [tableColumns, initRequest, devEnable, enums]);
 
   const tableDesigner = useTableDesigner({
     pageMenu,

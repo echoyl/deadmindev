@@ -1,64 +1,65 @@
-import { findParents, search2Obj } from '@/components/Sadmin/helpers';
-//import { PageContainer } from '@ant-design/pro-layout';
+import { PageContainer404 } from '@/components/Sadmin/404';
+import { search2Obj, uid } from '@/components/Sadmin/helpers';
 import { useSearchParams } from '@umijs/max';
-import { Col, Row, Splitter, Tree, Typography } from 'antd';
-import Title from 'antd/lib/typography/Title';
-import React, { useState } from 'react';
+import { Col, Row } from 'antd';
+import type { Key } from 'react';
+import { useState } from 'react';
 import './style.less';
 import type { saTableProps } from './table';
 import SaTable from './table';
-import { PageContainer404 } from '@/components/Sadmin/404';
+import TreeMenu from './treeMenu';
 
 const PostsList: React.FC<saTableProps> = (props) => {
-  const { tableTitle = false, path, leftMenu } = props;
+  const { tableTitle = false, path, leftMenu, setting } = props;
   const {
     name: categorysName = 'categorys',
     title: treeTitle = '分类选择',
     url_name: category_id_name = 'category_id',
-    field: treeFieldNams = { title: 'label', key: 'value', children: 'children' },
+    field,
     close: leftMenuClose = false,
-  } = leftMenu || { close: true };
+    page = 0,
+  } = setting?.leftMenu || leftMenu || { close: true };
 
-  const [categorys, setCategorys] = useState([]);
+  const [categorys, setCategorys] = useState<any[]>([]);
 
   //const setUrlSearch = useUrlSearchParams({}, { disabled: false })[1];
   const [searchParams, setUrlSearch] = useSearchParams();
 
   //console.log(searchParams, 333);
   const searchCategoryId = searchParams.get(category_id_name);
-  const [category_id, setKey] = useState(
+  const [category_id, setKey] = useState<Key>(
     searchCategoryId
-      ? isNaN(searchCategoryId)
+      ? Number.isNaN(searchCategoryId)
         ? searchCategoryId
         : parseInt(searchCategoryId)
       : 0,
   );
-  const [expandedKeys, setExpandedKeys] = useState([]);
+  const onSelect = (keys: Key[]) => {
+    const key = keys.length > 0 ? keys[keys.length - 1] : 0;
+    setKey(key);
+    const url_search_obj = search2Obj([category_id_name]);
+    if (key) {
+      url_search_obj[category_id_name] = key + '';
+    }
+    setUrlSearch({ ...url_search_obj });
+  };
+  const [reloadUid, setReloadUid] = useState<string>('');
+  const [resetCategorys, setResetCategorys] = useState<boolean>(false);
   return (
     <PageContainer404 title={tableTitle} path={path}>
       <Row gutter={[30, 0]} style={categorys.length > 1 ? { marginLeft: 0 } : {}}>
         {categorys.length > 1 && (
-          <Col span={3} title={treeTitle} style={{ background: '#fff',padding:10 }}>
-            <Typography.Text strong> {treeTitle}</Typography.Text>
-            <Tree
-              selectedKeys={[category_id]}
-              expandedKeys={expandedKeys}
+          <Col span={3} style={{ paddingInline: 0 }}>
+            <TreeMenu
               treeData={categorys}
-              fieldNames={treeFieldNams}
-              onSelect={(keys) => {
-                let key = 0;
-                if (keys.length > 0) {
-                  key = keys.pop();
-                }
-                setKey(key);
-                let url_search_obj = search2Obj([category_id_name]);
-                if (key) {
-                  url_search_obj[category_id_name] = key + '';
-                }
-                setUrlSearch({ ...url_search_obj });
-              }}
-              onExpand={(keys) => {
-                setExpandedKeys(keys);
+              onSelect={onSelect}
+              fieldNames={field}
+              selectedKeys={[category_id]}
+              title={treeTitle}
+              page={page}
+              onReload={() => {
+                setResetCategorys(false);
+                setReloadUid(uid());
               }}
             />
           </Col>
@@ -66,34 +67,38 @@ const PostsList: React.FC<saTableProps> = (props) => {
         <Col span={categorys.length > 1 ? 21 : 24}>
           <SaTable
             {...props}
+            initPageUid={reloadUid}
             paramExtra={
               category_id
                 ? {
                     ...props.paramExtra,
                     [category_id_name]: category_id,
+                    reloadUid,
                   }
-                : { ...props.paramExtra }
+                : { ...props.paramExtra, reloadUid }
             }
             beforeTableGet={(ret) => {
               if (leftMenuClose) {
                 return;
               }
-              if (categorys.length > 0 || !ret.search?.[categorysName]) {
+
+              if ((categorys.length > 0 && resetCategorys) || !ret.search?.[categorysName]) {
                 return;
               }
+              setResetCategorys(true);
 
               //开始左侧菜单才设置数据
               setCategorys([...ret.search[categorysName]]);
 
               //获取分类父级路径
-              if (category_id && expandedKeys.length < 1) {
-                const category_parent_keys = findParents(ret.search[categorysName], category_id, {
-                  id: 'value',
-                  children: 'children',
-                });
-                //console.log(category_parent_keys, 111);
-                setExpandedKeys(category_parent_keys);
-              }
+              // if (category_id && expandedKeys.length < 1) {
+              //   const category_parent_keys = findParents(ret.search[categorysName], category_id, {
+              //     id: 'value',
+              //     children: 'children',
+              //   });
+              //   //console.log(category_parent_keys, 111);
+              //   setExpandedKeys(category_parent_keys);
+              // }
             }}
           />
         </Col>

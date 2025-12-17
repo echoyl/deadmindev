@@ -1,9 +1,8 @@
 import type { saFormColumnsType } from '@/components/Sadmin/helpers';
 
-const tableSet: saFormColumnsType = [
+const table: saFormColumnsType = [
   {
     valueType: 'group',
-    title: '列表设置',
     columns: [
       {
         dataIndex: ['showType'],
@@ -17,27 +16,6 @@ const tableSet: saFormColumnsType = [
             { label: 'card', value: 'card' },
           ],
         },
-        colProps: { span: 12 },
-      },
-      {
-        dataIndex: ['table', 'styles', 'section', 'minHeight'],
-        title: '最小高度',
-        valueType: 'digit',
-        width: '100%',
-        colProps: { span: 12 },
-      },
-      {
-        dataIndex: ['table', 'scroll', 'y'],
-        title: '滚动高度',
-        valueType: 'digit',
-        width: '100%',
-        colProps: { span: 12 },
-      },
-      {
-        dataIndex: ['table', 'scroll', 'x'],
-        title: '滚动宽度',
-        valueType: 'digit',
-        width: '100%',
         colProps: { span: 12 },
       },
       {
@@ -55,12 +33,48 @@ const tableSet: saFormColumnsType = [
         },
         colProps: { span: 12 },
       },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['table', 'scroll', 'y'],
+        title: '滚动高度',
+        valueType: 'digit',
+        width: '100%',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['table', 'scroll', 'x'],
+        title: '滚动宽度',
+        valueType: 'digit',
+        width: '100%',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['table', 'styles', 'section', 'minHeight'],
+        title: '最小高度',
+        valueType: 'digit',
+        width: '100%',
+        colProps: { span: 12 },
+      },
       {
         dataIndex: ['table', 'checkHoverDisable'],
         title: '禁用勾选框悬浮效果',
         valueType: 'switch',
         colProps: { span: 12 },
       },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
       {
         dataIndex: ['table', 'bordered'],
         title: 'Bordered',
@@ -77,53 +91,6 @@ const tableSet: saFormColumnsType = [
   },
   {
     valueType: 'group',
-    title: '卡片列表设置',
-    columns: [
-      {
-        dataIndex: ['card', 'grid', 'column'],
-        title: '列数',
-        valueType: 'digit',
-        fieldProps: {
-          defaultValue: 6,
-        },
-        width: '100%',
-        colProps: { span: 12 },
-      },
-      {
-        dataIndex: ['card', 'grid', 'gutter'],
-        title: '间隔',
-        valueType: 'digit',
-        fieldProps: {
-          defaultValue: 16,
-        },
-        width: '100%',
-        colProps: { span: 12 },
-      },
-      {
-        dataIndex: ['card', 'grid', 'coverImageHeight'],
-        title: '封面图高度',
-        valueType: 'digit',
-        fieldProps: {
-          defaultValue: 180,
-        },
-        width: '100%',
-        colProps: { span: 12 },
-      },
-      {
-        dataIndex: ['card', 'grid', 'descriptionRows'],
-        title: '描述行数',
-        valueType: 'digit',
-        fieldProps: {
-          defaultValue: 2,
-        },
-        width: '100%',
-        colProps: { span: 12 },
-      },
-    ],
-  },
-  {
-    valueType: 'group',
-    title: '分页设置',
     columns: [
       {
         dataIndex: ['pagination', 'pageSize'],
@@ -146,9 +113,64 @@ const tableSet: saFormColumnsType = [
       },
     ],
   },
+];
+
+const card: saFormColumnsType = [
   {
     valueType: 'group',
-    title: '表单设置',
+    columns: [
+      {
+        dataIndex: ['card', 'grid', 'column'],
+        title: '列数',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 6,
+        },
+        width: '100%',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['card', 'grid', 'gutter'],
+        title: '间隔',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 16,
+        },
+        width: '100%',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['card', 'grid', 'coverImageHeight'],
+        title: '封面图高度',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 180,
+        },
+        width: '100%',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['card', 'grid', 'descriptionRows'],
+        title: '描述行数',
+        valueType: 'digit',
+        fieldProps: {
+          defaultValue: 2,
+        },
+        width: '100%',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+];
+
+const form: saFormColumnsType = [
+  {
+    valueType: 'group',
     columns: [
       {
         dataIndex: 'formWidth',
@@ -163,6 +185,11 @@ const tableSet: saFormColumnsType = [
         valueType: 'switch',
         colProps: { span: 12 },
       },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
       {
         dataIndex: ['form', 'layout'],
         title: '标签布局',
@@ -195,6 +222,8 @@ const tableSet: saFormColumnsType = [
       },
     ],
   },
+];
+const other: saFormColumnsType = [
   {
     valueType: 'group',
     title: '分类设置',
@@ -238,4 +267,81 @@ const tableSet: saFormColumnsType = [
   },
 ];
 
-export default tableSet;
+const leftmenu: saFormColumnsType = [
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['leftMenu', 'close'],
+        title: '是否关闭',
+        valueType: 'switch',
+        colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: true,
+        },
+      },
+      {
+        dataIndex: ['leftMenu', 'title'],
+        title: '显示标题',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['leftMenu', 'name'],
+        title: '数据源name',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['leftMenu', 'url_name'],
+        title: 'URL name',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['leftMenu', 'field', 'title'],
+        title: '字段title',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['leftMenu', 'field', 'key'],
+        title: '字段key',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['leftMenu', 'field', 'children'],
+        title: '字段children',
+        colProps: { span: 12 },
+      },
+      {
+        dataIndex: ['leftMenu', 'page'],
+        title: '关联页面',
+        tooltip: '选择关联页面后会开启编辑删除修改的功能',
+        valueType: 'menuSelect',
+        colProps: {
+          span: 12,
+        },
+      },
+    ],
+  },
+];
+
+export default [
+  { title: '列表设置', formColumns: table },
+  { title: '卡片列表设置', formColumns: card },
+  { title: '表单设置', formColumns: form },
+  { title: '左侧菜单', formColumns: leftmenu },
+  { title: '其它设置', formColumns: other },
+];
