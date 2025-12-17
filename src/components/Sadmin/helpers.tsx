@@ -43,6 +43,7 @@ import { DropdownActionMap } from './valueTypeMap/dropdownAction';
 import { Guiges } from './valueTypeMap/guigePanel';
 import IconSelect, { IconSelectRender, iconToElement } from './valueTypeMap/iconSelect';
 import JsonEditor from './valueTypeMap/jsonEditor';
+import { MenuSelectRender } from './valueTypeMap/menuSelect';
 import SaSliderMap from './valueTypeMap/saSlider';
 import SearchSelect from './valueTypeMap/search/select';
 import { wxMenuRender } from './wxMenu';
@@ -100,12 +101,16 @@ export const loopMenuLocale = (
 ): any[] => {
   return menus?.map(({ [fieldNames.children]: children, ...item }) => {
     const msg = tplComplie(item.label);
-    return {
+    const ret: Record<string, any> = {
       ...item,
       title: msg,
       label: msg,
-      [fieldNames.children]: children && loopMenuLocale(children),
     };
+    if (children && children.length > 0) {
+      ret[fieldNames.children] = loopMenuLocale(children, fieldNames);
+    }
+
+    return ret;
   });
 };
 
@@ -157,6 +162,7 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'dropdownAction'
   | 'saSlider'
   | 'alert'
+  | 'menuSelect'
 >;
 type saFormColumnsTypeFn<T> = (d: T) => saFormColumnsType;
 export declare type saFormTabColumnsType = {
@@ -461,6 +467,10 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   alert: {
     render: AlertRender,
     renderFormItem: AlertRender,
+  },
+  menuSelect: {
+    render: MenuSelectRender,
+    renderFormItem: MenuSelectRender,
   },
 };
 export const t = (id?: string, intl?: any) => {
