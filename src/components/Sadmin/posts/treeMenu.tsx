@@ -17,6 +17,8 @@ type TreeMenuProps = {
   selectedKeys?: GetProp<TreeProps, 'selectedKeys'>;
   onSelect?: (keys: Key[]) => void;
   onReload?: () => void;
+  defaultExpandAll?: boolean;
+  showLine?: boolean;
 };
 
 const DeleteColumn: FC<{
@@ -56,6 +58,8 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
     selectedKeys,
     onSelect,
     onReload,
+    defaultExpandAll = true,
+    showLine = true,
   } = props;
   const [formOpen, setFormOpen] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
@@ -65,8 +69,9 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   const pageMenu = getMenuDataById(initialState?.currentUser?.menuData, page);
   const level = pageMenu?.data?.level || 0;
   const { title: ftitle = 'label', key: fkey = 'value', children = 'children' } = fieldNames;
+  const otherProps = defaultExpandAll ? { defaultExpandAll } : { expandedKeys };
   useEffect(() => {
-    if (selectedKeys && selectedKeys[0] && expandedKeys.length < 1) {
+    if (!defaultExpandAll && selectedKeys && selectedKeys[0] && expandedKeys.length < 1) {
       const category_parent_keys = findParents(treeData, selectedKeys[0], {
         id: fieldNames.key as string,
         children,
@@ -138,7 +143,8 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
       />
       <Tree
         selectedKeys={selectedKeys}
-        expandedKeys={expandedKeys}
+        {...otherProps}
+        showLine={showLine}
         treeData={treeData}
         fieldNames={fieldNames}
         titleRender={(nodeData: Record<string, any>) => {
