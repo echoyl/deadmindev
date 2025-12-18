@@ -1,9 +1,9 @@
-import { isArr, isObj, isStr } from '@/components/Sadmin/checkers';
+import { isArr, isObj, isPlainObj, isStr } from '@/components/Sadmin/checkers';
 import { getFromObject } from '@/components/Sadmin/helpers';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
-import { Badge, Tag, Typography } from 'antd';
-import { BadgeProps } from 'antd/lib';
-import { FC } from 'react';
+import type { GetProp } from 'antd';
+import { Badge, Space, Tag, Typography } from 'antd';
+import type { FC, Key } from 'react';
 const ItemTag: FC<{
   color?: string;
   title?: string;
@@ -26,7 +26,7 @@ const ItemTag: FC<{
 };
 
 const ItemTags: FC<{
-  tags?: { color?: string; title?: string; status?: BadgeProps['status'] }[];
+  tags?: { color?: string; title?: string; status?: GetProp<typeof Badge, 'status'> }[];
   color?: string;
   dataindex?: string | string[];
   bordered?: boolean;
@@ -52,7 +52,7 @@ const ItemTags: FC<{
 
   const getOptions = (index?: string | string[]) => {
     const option = getFromObject(data, index);
-    if (option && isObj(option)) {
+    if (option && isPlainObj(option)) {
       return [option];
     }
     //检测dataindex中是否存在_id字符串，读取去掉_id后数据
@@ -66,28 +66,25 @@ const ItemTags: FC<{
   };
 
   const options = getOptions(dataindex);
-  return (
-    <>
-      {tags.map((tag, i) => {
-        let xtag = tag;
-        if (!isObj(tag)) {
-          const opt = isArr(options) ? options?.find((v) => v.id == tag) : false;
-          xtag = opt ? opt : { color, title: tag == 0 ? '0' : tag, icon, status: 'success' };
-        }
-        return xtag.title !== '' ? (
-          type == 'tag' ? (
-            <ItemTag key={i} {...xtag} bordered={bordered} ellipsis={ellipsis} />
-          ) : xtag.status ? (
-            <Badge key={i} status={xtag.status} text={xtag.title} />
-          ) : (
-            <Badge key={i} color={xtag.color} text={xtag.title} />
-          )
-        ) : (
-          '-'
-        );
-      })}
-    </>
-  );
+  const tagsDom = tags.map((tag, i) => {
+    let xtag = tag;
+    if (!isObj(tag)) {
+      const opt = isArr(options) ? options?.find((v) => v.id == tag) : false;
+      xtag = opt ? opt : { color, title: tag == 0 ? '0' : tag, icon, status: 'success' };
+    }
+    return xtag.title !== '' ? (
+      type == 'tag' ? (
+        <ItemTag key={i as Key} {...xtag} bordered={bordered} ellipsis={ellipsis} />
+      ) : xtag.status ? (
+        <Badge key={i as Key} status={xtag.status} text={xtag.title} />
+      ) : (
+        <Badge key={i as Key} color={xtag.color} text={xtag.title} />
+      )
+    ) : (
+      '-'
+    );
+  });
+  return tags.length > 1 ? <Space>{tagsDom}</Space> : tagsDom;
 };
 
 export default ItemTags;
