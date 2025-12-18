@@ -1,4 +1,3 @@
-import { Footer } from '@/components';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { ProConfigProvider, SettingDrawer, useBreakpoint } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
@@ -16,6 +15,7 @@ import type { Locale } from 'antd/es/locale';
 import type { JSX } from 'react';
 import React, { useEffect, useMemo, useState } from 'react';
 import defaultSettings from '../config/defaultSettings';
+import { Footer } from './components';
 import { actionsRender } from './components/RightContent';
 import { AvatarDropdown } from './components/RightContent/AvatarDropdown';
 import LoginModal from './components/Sadmin/components/login';

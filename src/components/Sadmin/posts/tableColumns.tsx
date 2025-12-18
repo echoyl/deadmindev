@@ -15,94 +15,22 @@ import { getFromObject, t, tplComplie } from '../helpers';
 import { defaultColumnsLabel } from './formDom';
 import { SaContext } from './table';
 
-export const SaTableAction = (props) => {
-  const { openType } = props;
-  return openType == 'drawer' || openType == 'modal' ? (
-    <DrawerAction {...props} />
-  ) : (
-    <LinkAction {...props} />
-  );
-};
-
-const LinkAction = (props) => {
-  const { record, path, editable, deleteable, level, openType, viewable } = props;
-
-  return (
-    <Space>
-      {viewable ? (
-        <Link key="viewLink" to={(path ? path + '/' : './') + record?.id + '?readonly=1'}>
-          {t('view')}
-        </Link>
-      ) : null}
-      {editable ? (
-        <Link key="editLink" to={(path ? path + '/' : './') + record?.id}>
-          {t('edit')}
-        </Link>
-      ) : null}
-      <DeleteActionRender
-        record={record}
-        level={level}
-        deleteable={deleteable}
-        openType={openType}
-      />
-    </Space>
-  );
-};
-
-const DrawerAction = (props) => {
-  const { record, editable, deleteable, level, openType, viewable } = props;
-  const { saTableContext } = useContext(SaContext);
-  const { Link } = Typography;
-  const items: Array<'view' | 'edit' | 'delete' | ''> = [
-    viewable ? 'view' : '',
-    editable ? 'edit' : '',
-    deleteable ? 'delete' : '',
-  ];
-  return (
-    <Space>
-      {items.map((item) => {
-        if (!item) {
-          return null;
-        }
-        return item == 'delete' ? (
-          <DeleteActionRender
-            key={item}
-            record={record}
-            level={level}
-            deleteable={deleteable}
-            openType={openType}
-          />
-        ) : (
-          <Link
-            key={item}
-            onClick={async (e: any) => {
-              saTableContext?.[item](record);
-            }}
-          >
-            {t(item)}
-          </Link>
-        );
-      })}
-    </Space>
-  );
-};
-
 const DeleteActionRender = (props) => {
   const { record, level, deleteable, openType } = props;
   const { saTableContext } = useContext(SaContext);
   const { initialState } = useModel('@@initialState');
-  const { Link, Text } = Typography;
+  const { Link: Tlink, Text } = Typography;
   //console.log('level and record', level, record);
   return isUndefined(record?._level) || record?._level + 1 >= level ? (
     deleteable ? (
-      <Link
+      <Tlink
         key="deleteItem"
         onClick={async (e: any) => {
           saTableContext?.delete(record);
         }}
       >
         <Text type="danger">{t('delete')}</Text>
-      </Link>
+      </Tlink>
     ) : null
   ) : (
     <TableDropdown
@@ -163,8 +91,80 @@ const DeleteActionRender = (props) => {
   );
 };
 
+const LinkAction = (props) => {
+  const { record, path, editable, deleteable, level, openType, viewable } = props;
+
+  return (
+    <Space>
+      {viewable ? (
+        <Link key="viewLink" to={(path ? path + '/' : './') + record?.id + '?readonly=1'}>
+          {t('view')}
+        </Link>
+      ) : null}
+      {editable ? (
+        <Link key="editLink" to={(path ? path + '/' : './') + record?.id}>
+          {t('edit')}
+        </Link>
+      ) : null}
+      <DeleteActionRender
+        record={record}
+        level={level}
+        deleteable={deleteable}
+        openType={openType}
+      />
+    </Space>
+  );
+};
+
+const DrawerAction = (props) => {
+  const { record, editable, deleteable, level, openType, viewable } = props;
+  const { saTableContext } = useContext(SaContext);
+  const { Link: Tlink } = Typography;
+  const items: ('view' | 'edit' | 'delete' | '')[] = [
+    viewable ? 'view' : '',
+    editable ? 'edit' : '',
+    deleteable ? 'delete' : '',
+  ];
+  return (
+    <Space>
+      {items.map((item) => {
+        if (!item) {
+          return null;
+        }
+        return item == 'delete' ? (
+          <DeleteActionRender
+            key={item}
+            record={record}
+            level={level}
+            deleteable={deleteable}
+            openType={openType}
+          />
+        ) : (
+          <Tlink
+            key={item}
+            onClick={async () => {
+              saTableContext?.[item](record);
+            }}
+          >
+            {t(item)}
+          </Tlink>
+        );
+      })}
+    </Space>
+  );
+};
+
+export const SaTableAction = (props) => {
+  const { openType } = props;
+  return openType == 'drawer' || openType == 'modal' ? (
+    <DrawerAction {...props} />
+  ) : (
+    <LinkAction {...props} />
+  );
+};
+
 export const onCell = (props) => {
-  const { record, index, setData, data, url, dataIndex, type = 'number' } = props;
+  const { record, setData, data, url, dataIndex, type = 'number' } = props;
   const ret = {
     record,
     editable: true,
@@ -179,12 +179,12 @@ export const onCell = (props) => {
 
       record[dataIndex] = newV;
       setData([...data]);
-      const ret = await request.post(url, {
+      const iret = await request.post(url, {
         data: { base: { id: row.id, [dataIndex]: newV }, actype: dataIndex, [dataIndex]: newV }, //兼容actype
       });
 
       //const success = true;
-      if (ret.code) {
+      if (iret.code) {
         //失败后将数据设置回去
         record[dataIndex] = oldV;
         setData([...data]);
@@ -256,6 +256,18 @@ export const getTableColumns = (props) => {
   const customerColumns =
     typeof columns == 'function' ? columns(enums, actionRef) : cloneDeep(columns);
   //const allColumns = [...defaulColumns, ...customerColumns];
+  const defaulColumnsRender = (type: string, customer: any) => {
+    if (type == 'coption') {
+      type = 'option';
+    }
+    if (defaulColumns[type]) {
+      //console.log(defaulColumns[c]);
+      const title = customer?.title || defaulColumns[type]?.title;
+      const v = { ...defaulColumns[type], ...customer, title };
+      return v;
+    }
+    return false;
+  };
 
   const parseColumns = (v) => {
     //加入if条件控制
@@ -384,18 +396,7 @@ export const getTableColumns = (props) => {
 
     return v;
   };
-  const defaulColumnsRender = (type: string, customer: any) => {
-    if (type == 'coption') {
-      type = 'option';
-    }
-    if (defaulColumns[type]) {
-      //console.log(defaulColumns[c]);
-      const title = customer?.title || defaulColumns[type]?.title;
-      const v = { ...defaulColumns[type], ...customer, title };
-      return v;
-    }
-    return false;
-  };
+
   const _columns = customerColumns
     ?.map((c) => {
       if (typeof c == 'string') {
