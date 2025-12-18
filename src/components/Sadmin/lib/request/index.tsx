@@ -240,6 +240,7 @@ request.interceptors.response.use(async (response, options) => {
     return response;
   } catch (e) {
     //接口未返回json格式都报错误
+    console.log('出错了', e);
     const body = await response.clone().text();
     throw new Error(body);
   }

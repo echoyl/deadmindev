@@ -65,14 +65,14 @@ export function useTableDesigner(props: tableDesignerInstance) {
   //const sortUrl = config[type].sortUrl;
   const reflush = (data: any) => {
     //重新设置列表列
-    setColumns?.(getColumnsRender?.(data.columns)); //设置这个可以快速响应 排序tab可能会卡一点
+    setColumns?.(getColumnsRender?.(data?.columns || [])); //设置这个可以快速响应 排序tab可能会卡一点
     //更新schema
     //pageMenu.schema = data.schema;
     //pageMenu.data = { ...pageMenu.data, ...data.data };
     if (data.currentUser) {
       setInitialState((s) => ({
         ...s,
-        currentUser: { ...s.currentUser, ...data.currentUser },
+        currentUser: { ...s?.currentUser, ...data.currentUser },
       }));
     }
   };
@@ -80,7 +80,7 @@ export function useTableDesigner(props: tableDesignerInstance) {
     //后台请求
     const ret = await request.post(url, {
       data: { ...data, ...json },
-      msgcls: ({ idata }) => {
+      msgcls: ({ data: idata }: { data: any }) => {
         reflush(idata);
       },
     });
@@ -129,7 +129,7 @@ interface SchemaSettingsContextProps {
 
 export const SchemaSettingsContext = createContext<SchemaSettingsContextProps>({});
 
-export function useSchemaSettings<T = any>() {
+export function useSchemaSettings() {
   return useContext(SchemaSettingsContext) as SchemaSettingsContextProps;
 }
 

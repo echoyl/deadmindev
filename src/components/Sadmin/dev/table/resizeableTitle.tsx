@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import { css } from '@emotion/css';
 import type { TableColumnsType } from 'antd';
+import { default as cls } from 'classnames';
+import React, { useContext } from 'react';
 import type { ResizeCallbackData } from 'react-resizable';
 import { Resizable } from 'react-resizable';
-import './index.css';
 import { SaContext } from '../../posts/table';
-import { css } from '@emotion/css';
-import { default as cls } from 'classnames';
+import './index.css';
 
 interface DataType {
   key: React.Key;
@@ -27,7 +27,8 @@ const ResizableTitle: React.FC<Readonly<React.HTMLAttributes<any> & TitlePropsTy
     tableDesigner: { setColumns, tbColumns, setColumnWidth, pageMenu, devEnable },
   } = useContext(SaContext);
   const index = tbColumns?.findIndex((col) => col.uid === uid);
-  if (index < 0 || !devEnable) {
+  if (index < 0 || index + 1 == tbColumns.length || !devEnable) {
+    //未找到或最后一个元素或未启用开发模式 直接原样返回
     return <th {...restProps} />;
   }
   //console.log('width', width, uid, props);
