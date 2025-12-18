@@ -1,11 +1,11 @@
 import request from '@/components/Sadmin/lib/request';
-import {
+import type {
   ActionType,
-  FooterToolbar,
   ProFormInstance,
   ProFormProps,
   ProTableProps,
 } from '@ant-design/pro-components';
+import { FooterToolbar } from '@ant-design/pro-components';
 import { history, useModel, useSearchParams } from '@umijs/max';
 import { Table } from 'antd';
 import dayjs from 'dayjs';
@@ -16,20 +16,15 @@ import { SaDevContext } from '../dev';
 import { DndContext } from '../dev/dnd-context';
 import sortDragEnd from '../dev/dnd-context/displayorder';
 import DndKitContext from '../dev/dnd-context/dragSort';
-import { tableDesignerInstance, useTableDesigner } from '../dev/table/designer';
+import type { tableDesignerInstance } from '../dev/table/designer';
+import { useTableDesigner } from '../dev/table/designer';
 import { TableForm } from '../dev/table/form';
 import ResizableTitle from '../dev/table/resizeableTitle';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
 import { tplToDate } from '../helper/functions';
-import {
-  getFromObject,
-  saFormColumnsType,
-  saFormTabColumnsType,
-  saTableColumnsType,
-  search2Obj,
-  t,
-} from '../helpers';
+import type { saFormColumnsType, saFormTabColumnsType, saTableColumnsType } from '../helpers';
+import { getFromObject, search2Obj, t } from '../helpers';
 import { EditableCell, EditableRow } from './editable';
 import './style.less';
 import { getTableColumns } from './tableColumns';
@@ -64,13 +59,13 @@ export interface saTableProps {
   /**
    * 删除操作时 弹出提示数据所展示的字段
    */
-  titleField?: string | Array<string>;
+  titleField?: string | string[];
   formProps?: ProFormProps;
   //左侧分类菜单的 配置信息
   leftMenu?: {
     name?: string;
     url_name?: string;
-    field?: Object;
+    field?: Record<string, any>;
     title?: string;
     close?: boolean;
     page?: number;
@@ -86,19 +81,19 @@ export interface saTableProps {
   formRef?: ProFormInstance;
   pageType?: 'page' | 'drawer'; //table页面是page还是在弹出层中
   rowOnSelected?: any; //当列表checkbox被点击时触发事件
-  paramExtra?: { [key: string]: any }; //后台其它设置中添加的请求额外参数，table request的时候会带上这些参数
-  postExtra?: { [key: string]: any }; //表单提交时 额外传输的数据 不放在base中
+  paramExtra?: Record<string, any>; //后台其它设置中添加的请求额外参数，table request的时候会带上这些参数
+  postExtra?: Record<string, any>; //表单提交时 额外传输的数据 不放在base中
   addable?: boolean; //是否可以新建 控制显示新建按钮
   editable?: boolean; //form打开后没有底部提交按钮
   deleteable?: boolean; //table中是否可以删除数据
   path?: string; //当前页面的路径
   checkEnable?: boolean; //数据是否可以check
-  toolBarButton?: Array<{ title?: string; valueType?: string; [key: string]: any }>; //操作栏按钮设置
+  toolBarButton?: { title?: string; valueType?: string; [key: string]: any }[]; //操作栏按钮设置
   selectRowRender?: (rowdom: any) => void | boolean;
-  selectRowBtns?: Array<{ [key: string]: any }>;
-  pageMenu?: { [key: string]: any }; //当前菜单信息
+  selectRowBtns?: Record<string, any>[];
+  pageMenu?: Record<string, any>; //当前菜单信息
   devEnable?: boolean; //是否开启开发模式
-  setting?: { [key: string]: any }; //其它配置统一放这里
+  setting?: Record<string, any>; //其它配置统一放这里
   afterDelete?: (ret: any) => void | boolean; //删除数据后的回调
   afterFormPost?: (ret: any) => void | boolean | Promise<boolean | void>; //表单提交数据后的回调
   initPageUid?: string; //控制页面刷新 非request
@@ -121,15 +116,15 @@ const components = {
   },
 };
 interface saTableContextProps {
-  edit: (...record: Array<{ [key: string]: any }>) => void;
+  edit: (...record: Record<string, any>[]) => void;
   view: (id: any) => void;
   delete: (id: any) => void;
 }
 export const SaContext = createContext<{
   actionRef?: any;
   formRef?: any;
-  columnData?: { [key: string]: any } | boolean;
-  searchData?: { [key: string]: any };
+  columnData?: Record<string, any> | boolean;
+  searchData?: Record<string, any>;
   url?: string;
   tableDesigner?: tableDesignerInstance;
   saTableContext?: saTableContextProps;
@@ -140,10 +135,8 @@ export const SaContext = createContext<{
 const SaTable: React.FC<saTableProps> = (props) => {
   const {
     url = '',
-    level = 1,
     tableColumns,
     openType = 'page',
-    labels = {},
     beforeTableGet,
     titleField = 'title',
     table_menu_key,
@@ -151,7 +144,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
     table_menu_default = '',
     pageType = 'page',
     paramExtra = {},
-    editable = true,
     deleteable = true,
     path,
     checkEnable = true,
@@ -196,7 +188,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   //const actionRef = props.actionRef ? props.actionRef : useRef<ActionType>();
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
 
-  const searchFormRef = useRef<ProFormInstance>();
+  const searchFormRef = useRef<ProFormInstance>(null);
   const [currentRow, setCurrentRow] = useState({});
 
   const [searchParams, setUrlSearch] = useSearchParams();
@@ -527,6 +519,20 @@ const SaTable: React.FC<saTableProps> = (props) => {
     devEnable,
     tbColumns,
   });
+  const [minHeight, setMinHeight] = useState<number>(238);
+  useEffect(() => {
+    let defaultHeight = 238;
+    if (footer) {
+      defaultHeight += 38;
+    }
+    if (tableProps.pagination !== false) {
+      defaultHeight += 40;
+    }
+    if (search_config.length > 0) {
+      defaultHeight += 80;
+    }
+    setMinHeight(defaultHeight);
+  }, [footer, tableProps.pagination, search_config]);
   return (
     <SaContext.Provider
       value={{
@@ -746,6 +752,25 @@ const SaTable: React.FC<saTableProps> = (props) => {
             }}
             {...tableProps}
             {...setting?.table}
+            scroll={
+              setting?.scollYFullscreen
+                ? {
+                    ...setting?.table?.scroll,
+                    y: `calc(100vh - ${minHeight + 47}px)`,
+                  }
+                : setting?.table?.scroll
+            }
+            styles={
+              setting?.minHeightFullscreen !== false
+                ? {
+                    ...setting.table?.styles,
+                    section: {
+                      minHeight:
+                        setting.table?.styles?.section?.minHeight || `calc(100vh - ${minHeight}px)`,
+                    },
+                  }
+                : setting.table?.styles
+            }
             rowKey="id"
           />
         </DndKitContext>

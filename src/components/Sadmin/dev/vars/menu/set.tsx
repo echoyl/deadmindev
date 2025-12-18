@@ -41,16 +41,20 @@ const table: saFormColumnsType = [
       {
         dataIndex: ['table', 'scroll', 'y'],
         title: '滚动高度',
-        valueType: 'digit',
-        width: '100%',
-        colProps: { span: 12 },
+        colProps: { span: 6 },
+      },
+      {
+        dataIndex: 'scollYFullscreen',
+        title: '滚动自动全屏',
+        valueType: 'switch',
+        colProps: { span: 6 },
+        tooltip: '开启后页面自动计算table的滚动高度，如果屏幕过矮可能导致table无高度',
       },
       {
         dataIndex: ['table', 'scroll', 'x'],
         title: '滚动宽度',
-        valueType: 'digit',
-        width: '100%',
         colProps: { span: 12 },
+        tooltip: '输入 max-content 即可',
       },
     ],
   },
@@ -60,9 +64,17 @@ const table: saFormColumnsType = [
       {
         dataIndex: ['table', 'styles', 'section', 'minHeight'],
         title: '最小高度',
-        valueType: 'digit',
-        width: '100%',
-        colProps: { span: 12 },
+        colProps: { span: 6 },
+      },
+      {
+        dataIndex: 'minHeightFullscreen',
+        title: '最小高度自动全屏',
+        valueType: 'switch',
+        colProps: { span: 6 },
+        tooltip: '开启后页面自动计算table的最小高度,开启时不要自定义填写左侧的最小高度',
+        fieldProps: {
+          defaultValue: true,
+        },
       },
       {
         dataIndex: ['table', 'checkHoverDisable'],
@@ -332,6 +344,29 @@ const leftmenu: saFormColumnsType = [
         valueType: 'menuSelect',
         colProps: {
           span: 12,
+        },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['leftMenu', 'defaultExpandAll'],
+        title: '是否全部展开',
+        valueType: 'switch',
+        colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: true,
+        },
+      },
+      {
+        dataIndex: ['leftMenu', 'showLine'],
+        title: '是否显示连接线',
+        valueType: 'switch',
+        colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: true,
         },
       },
     ],
