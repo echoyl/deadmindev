@@ -1,15 +1,16 @@
-import { FC, useContext } from 'react';
+import { useModel } from '@umijs/max';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { isBool, isUndefined } from '../checkers';
 import { getBread, getMenuDataById, tplComplie } from '../helpers';
 import { SaForm } from '../posts/post';
 import { SaContext } from '../posts/table';
-import { useModel } from '@umijs/max';
 
 const FormFromBread: FC<{
   fieldProps?: any;
   record?: any;
   readonly?: string | boolean; //支持条件判断
-  currentRow?: { [key: string]: any };
+  currentRow?: Record<string, any>;
   contentRender?: any;
   menu_page_id?: number; //引用已有菜单的id
 }> = (props) => {
@@ -24,8 +25,8 @@ const FormFromBread: FC<{
   const readonly_result = isBool(readonly)
     ? readonly
     : isUndefined(readonly)
-      ? true
-      : tplComplie(readonly, { record });
+    ? true
+    : tplComplie(readonly, { record });
   const readonlyProps = readonly_result
     ? { addable: false, editable: false, deleteable: false, checkEnable: false }
     : { addable: true, editable: true, deleteable: true, checkEnable: true };
@@ -64,7 +65,7 @@ const FormFromBread: FC<{
   }
   return <SaForm {...fieldProps.props} showTabs={false} align="left" pageType="drawer" />;
 };
-export const formFromBreadRender = (text, props) => {
+export const FormFromBreadRender = (text, props) => {
   //console.log('saFormTable here', props);
   const { fieldProps } = props;
   const { formRef } = useContext(SaContext);

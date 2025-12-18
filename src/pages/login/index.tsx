@@ -33,7 +33,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 const useStyles = () => {
-  return createStyles(({ token, css }) => {
+  return createStyles(({ token }) => {
     return {
       action: {
         marginLeft: '8px',
@@ -82,12 +82,10 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
   setting,
   type = 'page',
 }) => {
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { setInitialState } = useModel('@@initialState');
   const [captchaReload, setCaptchaReload] = useState(0);
   const [captchaPhoneReload, setCaptchaPhoneReload] = useState(0);
   const [showCaptcha, setShowCaptcha] = useState(false);
-
-  const [isQrcode, setIsQrcode] = useState(false);
 
   const [searchParams] = useSearchParams();
 
@@ -123,13 +121,13 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
           baseurl = '',
         } = {},
       } = adminSetting || {};
+      setShowLogin(false);
       if (type == 'page') {
         const auto_redirect = autoRedirect ? searchParams.get('redirect') : '';
         const redirect = auto_redirect || data.userinfo.redirect || defaultRedirectPage || '/';
         const goUrl = redirect.replace(baseurl, '/');
         history.push(goUrl);
       } else {
-        setShowLogin(false);
         setPageKey(uid()); //设置page组件key重载组件
       }
     });
@@ -461,7 +459,6 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
       onFinish={async (values) => {
         await handleSubmit(values as API.LoginParams);
       }}
-      //submitter={isQrcode ? false : undefined}
       actions={
         setting?.adminSetting?.loginActions ? (
           <Space>
@@ -494,7 +491,6 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
           activeKey={loginType}
           onChange={(activeKey) => {
             setLoginType(activeKey);
-            setIsQrcode(activeKey == 'phone');
           }}
           items={setting?.adminSetting?.loginType?.map((v: string) => {
             return loginTypeItems.find((item) => item.key == v);

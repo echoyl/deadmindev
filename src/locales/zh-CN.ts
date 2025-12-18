@@ -1,10 +1,10 @@
 import component from './zh-CN/component';
 import globalHeader from './zh-CN/globalHeader';
 import menu from './zh-CN/menu';
+import pages from './zh-CN/pages';
 import pwa from './zh-CN/pwa';
 import settingDrawer from './zh-CN/settingDrawer';
 import settings from './zh-CN/settings';
-import pages from './zh-CN/pages';
 import tabs from './zh-CN/tabs';
 
 export default {
@@ -29,6 +29,6 @@ export default {
   edit: '编辑',
   add: '新增',
   delete: '删除',
-  addchild: '添加子级',
+  addchild: '下级',
   all: '全部',
 };

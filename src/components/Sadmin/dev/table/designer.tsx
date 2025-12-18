@@ -1,36 +1,36 @@
 import request from '@/components/Sadmin/lib/request';
-import { css } from '@emotion/css';
 import { useModel } from '@umijs/max';
-import { Dropdown, DropdownProps } from 'antd';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
-import React, { ReactNode, createContext, useContext, useState, useTransition } from 'react';
+import type { DropdownProps, GetProp } from 'antd';
+import { Dropdown } from 'antd';
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useState, useTransition } from 'react';
 import { DevJsonContext } from '../../jsonForm';
 
 export type tableDesignerInstance = {
   type?: 'table' | 'form' | 'panel';
-  pageMenu?: { [key: string]: any };
+  pageMenu?: Record<string, any>;
   sort?: (id: number, cls: any[], type: string) => void;
   sortFormColumns?: (id: number, cls: any[]) => void;
   setColumns?: any;
   getColumnsRender?: any;
-  add?: (data: { [key: string]: any }) => void;
+  add?: (data: Record<string, any>) => void;
   addUrl?: string;
-  edit?: (data: { [key: string]: any }) => void;
+  edit?: (data: Record<string, any>) => void;
   editUrl?: string;
-  reflush?: (data: { [key: string]: any }) => void;
+  reflush?: (data: Record<string, any>) => void;
   deleteUrl?: string;
-  delete?: (data: { [key: string]: any }) => void;
+  delete?: (data: Record<string, any>) => void;
   devEnable?: boolean; //开启的必要条件
   sourceData?: any;
-  setColumnWidth?: (data: { [key: string]: any }) => void;
+  setColumnWidth?: (data: Record<string, any>) => void;
   [key: string]: any;
 };
 
 export function useTableDesigner(props: tableDesignerInstance) {
-  const { setColumns, getColumnsRender, pageMenu = {}, type = 'table', devEnable = true } = props;
+  const { setColumns, getColumnsRender, type = 'table' } = props;
   const { setInitialState } = useModel('@@initialState');
   const { json = {}, setJson } = useContext(DevJsonContext); //读取本地化的配置信息
-  const config: { [key: string]: { [key: string]: string } } = {
+  const config: Record<string, Record<string, string>> = {
     form: {
       deleteUrl: 'dev/menu/deleteFormColumn',
       editUrl: 'dev/menu/editFormColumn',
@@ -76,12 +76,12 @@ export function useTableDesigner(props: tableDesignerInstance) {
       }));
     }
   };
-  const post = async (url, data: { [key: string]: any }) => {
+  const post = async (url: string, data: Record<string, any>) => {
     //后台请求
     const ret = await request.post(url, {
       data: { ...data, ...json },
-      msgcls: ({ data }) => {
-        reflush(data);
+      msgcls: ({ idata }) => {
+        reflush(idata);
       },
     });
     return ret;
@@ -92,10 +92,10 @@ export function useTableDesigner(props: tableDesignerInstance) {
     deleteUrl,
     addUrl,
     reflush,
-    sort: (id: number, columns: any, type: 'table' | 'form' | 'toolbar' | 'tab') => {
+    sort: (id: number, columns: any, itype: 'table' | 'form' | 'toolbar' | 'tab') => {
       //后台请求
       //setColumns(getColumnsRender(columns));
-      const url = config[type].sortUrl;
+      const url = config[itype].sortUrl;
       post(url, { columns, id }).then(({ code, data }) => {
         if (!code) {
           setJson?.(data?.data);
@@ -103,17 +103,17 @@ export function useTableDesigner(props: tableDesignerInstance) {
       });
       return;
     },
-    edit: async (data: { [key: string]: any }) => {
+    edit: async (data: Record<string, any>) => {
       //后台请求
       await post(editUrl, data);
       return;
     },
-    add: async (data: { [key: string]: any }) => {
+    add: async (data: Record<string, any>) => {
       //后台请求
       await post(addUrl, data);
       return;
     },
-    setColumnWidth: async (data: { [key: string]: any }) => {
+    setColumnWidth: async (data: Record<string, any>) => {
       //后台请求
       await post(setWidthUrl, data);
       return;
@@ -121,15 +121,16 @@ export function useTableDesigner(props: tableDesignerInstance) {
   };
 }
 
-interface SchemaSettingsContextProps<T = any> {
+interface SchemaSettingsContextProps {
   setVisible?: any;
   visible?: any;
+  [key: string]: any;
 }
 
-export const SchemaSettingsContext = createContext<SchemaSettingsContextProps>(null);
+export const SchemaSettingsContext = createContext<SchemaSettingsContextProps>({});
 
 export function useSchemaSettings<T = any>() {
-  return useContext(SchemaSettingsContext) as SchemaSettingsContextProps<T>;
+  return useContext(SchemaSettingsContext) as SchemaSettingsContextProps;
 }
 
 interface SchemaSettingsProviderProps {
@@ -150,7 +151,7 @@ export const SchemaSettingsProvider: React.FC<SchemaSettingsProviderProps> = (pr
 export interface SchemaSettingsProps {
   title?: any;
   children?: ReactNode;
-  items?: ItemType[];
+  items?: GetProp<DropdownProps, 'menu'>['items'];
 }
 
 export const SchemaSettingsDropdown: React.FC<SchemaSettingsProps> = (props) => {

@@ -1,19 +1,19 @@
-import { SyncOutlined } from '@ant-design/icons';
-import { useModel } from '@umijs/max';
-import { FloatButton } from 'antd';
-import { useContext, useState } from 'react';
-import defaultSettings from '../../../../config/defaultSettings';
-import { SaDevContext } from '../dev';
-import { uid } from '../helpers';
-import { message } from '@/components/Sadmin/message';
-import { getTheme } from '../themeSwitch';
 import request, {
   currentUser,
   getAdminSetting,
   messageLoadingKey,
   setAdminSetting,
 } from '@/components/Sadmin/lib/request';
+import { message } from '@/components/Sadmin/message';
+import { SyncOutlined } from '@ant-design/icons';
+import { useModel } from '@umijs/max';
+import { FloatButton } from 'antd';
 import { merge } from 'es-toolkit';
+import { useContext, useState } from 'react';
+import defaultSettings from '../../../../config/defaultSettings';
+import { SaDevContext } from '../dev';
+import { uid } from '../helpers';
+import { getTheme } from '../themeSwitch';
 export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
   const theme = getTheme(localsetting);
   const navTheme: { [key: string]: any } =
@@ -48,7 +48,7 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
     token: newToken,
   };
 };
-export const saGetSetting = async (force: boolean = false): Promise<{ [key: string]: any }> => {
+export const saGetSetting = async (force: boolean = false): Promise<Record<string, any>> => {
   let localsetting = await getAdminSetting();
   if (force || !localsetting) {
     const { data } = await request.get('setting');

@@ -24,6 +24,6 @@ export default {
   edit: '編輯',
   add: '新增',
   delete: '刪除',
-  addchild: '添加子級',
+  addchild: '下級',
   all: '全部',
 };

@@ -1,4 +1,5 @@
 import request from '@/components/Sadmin/lib/request';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { TableDropdown } from '@ant-design/pro-components';
 import { history, Link, useModel } from '@umijs/max';
 import { Space, Typography } from 'antd';
@@ -126,10 +127,37 @@ const DeleteActionRender = (props) => {
       menus={
         deleteable
           ? [
-              { key: 'add', name: t('addchild') },
-              { key: 'delete', name: t('delete'), danger: true },
+              {
+                key: 'add',
+                name: (
+                  <Space>
+                    <PlusOutlined />
+                    {t('addchild')}
+                  </Space>
+                ),
+              },
+              {
+                key: 'delete',
+                name: (
+                  <Space>
+                    <DeleteOutlined />
+                    {t('delete')}
+                  </Space>
+                ),
+                danger: true,
+              },
             ]
-          : [{ key: 'add', name: t('addchild') }]
+          : [
+              {
+                key: 'add',
+                name: (
+                  <Space>
+                    <PlusOutlined />
+                    {t('addchild')}
+                  </Space>
+                ),
+              },
+            ]
       }
     />
   );

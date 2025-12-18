@@ -1,12 +1,11 @@
 import request from '@/components/Sadmin/lib/request';
-import { Button, ButtonProps, Modal, Popconfirm } from 'antd';
-import React, { FC, ReactElement, useContext, useMemo } from 'react';
-import { SaContext } from '../posts/table';
-import cache from '../helper/cache';
-import { SaDevContext } from '../dev';
-import { MessageInstance } from 'antd/es/message/interface';
-import { tplComplie } from '../helpers';
+import { Button, ButtonProps, Popconfirm } from 'antd';
+import React, { FC, Key, ReactElement, useContext, useMemo } from 'react';
 import { isArr } from '../checkers';
+import { SaDevContext } from '../dev';
+import cache from '../helper/cache';
+import { tplComplie } from '../helpers';
+import { SaContext } from '../posts/table';
 
 interface actionConfirm {
   msg?: string | React.ReactNode;
@@ -14,7 +13,7 @@ interface actionConfirm {
   method?: 'post' | 'delete' | 'get';
   url?: string;
   data?: {};
-  dataId?: number;
+  dataId?: Key;
   callback?: (value: any) => void;
   //trigger?: (value: any) => ReactNode;
   trigger?: JSX.Element | boolean;
