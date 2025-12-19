@@ -361,7 +361,7 @@ const WxMenu: React.FC<{
         </DndKitContext>
         {menus?.length < menuMaxLength ? (
           <>
-            {menus?.length > 0 ? <Divider type="vertical" /> : null}
+            {menus?.length > 0 ? <Divider orientation="vertical" /> : null}
             <Button type="dashed" onClick={addMenu}>
               +
             </Button>
