@@ -18,6 +18,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
     field,
     close: leftMenuClose = false,
     page = 0,
+    ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
 
   const [categorys, setCategorys] = useState<any[]>([]);
@@ -47,8 +48,8 @@ const PostsList: React.FC<saTableProps> = (props) => {
   const [resetCategorys, setResetCategorys] = useState<boolean>(false);
   return (
     <PageContainer404 title={tableTitle} path={path}>
-      <Row gutter={[30, 0]} style={categorys.length > 1 ? { marginLeft: 0 } : {}}>
-        {categorys.length > 1 && (
+      <Row gutter={[30, 0]} style={!leftMenuClose && categorys.length > 0 ? { marginLeft: 0 } : {}}>
+        {!leftMenuClose && categorys.length > 0 && (
           <Col span={3} style={{ paddingInline: 0 }}>
             <TreeMenu
               treeData={categorys}
@@ -61,10 +62,11 @@ const PostsList: React.FC<saTableProps> = (props) => {
                 setResetCategorys(false);
                 setReloadUid(uid());
               }}
+              {...treeMenuRest}
             />
           </Col>
         )}
-        <Col span={categorys.length > 1 ? 21 : 24}>
+        <Col span={!leftMenuClose && categorys.length > 0 ? 21 : 24}>
           <SaTable
             {...props}
             initPageUid={reloadUid}
@@ -78,9 +80,9 @@ const PostsList: React.FC<saTableProps> = (props) => {
                 : { ...props.paramExtra, reloadUid }
             }
             beforeTableGet={(ret) => {
-              if (leftMenuClose) {
-                return;
-              }
+              // if (leftMenuClose) {
+              //   return;
+              // }
 
               if ((categorys.length > 0 && resetCategorys) || !ret.search?.[categorysName]) {
                 return;
@@ -89,16 +91,6 @@ const PostsList: React.FC<saTableProps> = (props) => {
 
               //开始左侧菜单才设置数据
               setCategorys([...ret.search[categorysName]]);
-
-              //获取分类父级路径
-              // if (category_id && expandedKeys.length < 1) {
-              //   const category_parent_keys = findParents(ret.search[categorysName], category_id, {
-              //     id: 'value',
-              //     children: 'children',
-              //   });
-              //   //console.log(category_parent_keys, 111);
-              //   setExpandedKeys(category_parent_keys);
-              // }
             }}
           />
         </Col>

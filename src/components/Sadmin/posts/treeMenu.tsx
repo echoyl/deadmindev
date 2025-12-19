@@ -54,7 +54,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
     title,
     page = 0,
     treeData = [],
-    fieldNames = { title: 'label', key: 'value', children: 'children' },
+    fieldNames = {},
     selectedKeys,
     onSelect,
     onReload,
@@ -68,12 +68,21 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   const { initialState } = useModel('@@initialState');
   const pageMenu = getMenuDataById(initialState?.currentUser?.menuData, page);
   const level = pageMenu?.data?.level || 0;
-  const { title: ftitle = 'label', key: fkey = 'value', children = 'children' } = fieldNames;
-  const otherProps = defaultExpandAll ? { defaultExpandAll } : { expandedKeys };
+  const ftitle = fieldNames.title || 'label';
+  const fkey = fieldNames.key || 'value';
+  const children = fieldNames.children || 'children';
+  const otherProps = defaultExpandAll
+    ? { defaultExpandAll }
+    : {
+        expandedKeys,
+        onExpand: (keys: Key[]) => {
+          setExpandedKeys(keys);
+        },
+      };
   useEffect(() => {
     if (!defaultExpandAll && selectedKeys && selectedKeys[0] && expandedKeys.length < 1) {
       const category_parent_keys = findParents(treeData, selectedKeys[0], {
-        id: fieldNames.key as string,
+        id: fkey,
         children,
       });
       setExpandedKeys(category_parent_keys);
@@ -146,7 +155,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
         {...otherProps}
         showLine={showLine}
         treeData={treeData}
-        fieldNames={fieldNames}
+        fieldNames={{ title: ftitle, key: fkey, children }}
         titleRender={(nodeData: Record<string, any>) => {
           const nodeTitle = nodeData[ftitle];
           const nodeKey = nodeData[fkey];
@@ -223,9 +232,6 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
         }}
         onSelect={(keys) => {
           onSelect?.(keys);
-        }}
-        onExpand={(keys) => {
-          setExpandedKeys(keys);
         }}
       />
     </Card>
