@@ -321,11 +321,17 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'field', 'title'],
         title: '字段title',
         colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: 'label',
+        },
       },
       {
         dataIndex: ['leftMenu', 'field', 'key'],
         title: '字段key',
         colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: 'value',
+        },
       },
     ],
   },
@@ -336,6 +342,9 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'field', 'children'],
         title: '字段children',
         colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: 'children',
+        },
       },
       {
         dataIndex: ['leftMenu', 'page'],
