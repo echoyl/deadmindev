@@ -3,7 +3,6 @@ import {
   CodeOutlined,
   CopyOutlined,
   DeleteColumnOutlined,
-  DragOutlined,
   EditOutlined,
   InsertRowBelowOutlined,
   InsertRowRightOutlined,
@@ -13,15 +12,22 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
+import type { GetProp, MenuProps } from 'antd';
 import { Button, Space, Switch, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import { FC, useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '..';
 import Confirm from '../../action/confirm';
 import ConfirmForm from '../../action/confirmForm';
 import { getCustomerColumn } from '../../action/customerColumn/dev';
+import { getJson, isArr } from '../../checkers';
+import { loopMenuLocale, tplComplie } from '../../helpers';
+import { DevJsonContext } from '../../jsonForm';
 import { SaContext } from '../../posts/table';
 import { DragHandler, SortableItem } from '../dnd-context/SortableItem';
+import FormCodePhp from '../formCodePhp';
+import DevSwitch from '../switch';
 import {
   devBaseFormFormColumns,
   devBaseTableFormColumns,
@@ -30,13 +36,6 @@ import {
 } from './baseFormColumns';
 import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
 import { ColumnsSelector, ToolBarMenu } from './toolbar';
-import { loopMenuLocale, tplComplie } from '../../helpers';
-import DevSwitch from '../switch';
-import { getJson, isArr } from '../../checkers';
-import { createStyles } from 'antd-style';
-import FormCodePhp from '../formCodePhp';
-import { DevJsonContext } from '../../jsonForm';
-import type { GetProp, MenuProps } from 'antd';
 export const useDesignerCss = createStyles(({ token }) => {
   return {
     saSortItem: {
@@ -195,57 +194,57 @@ const BaseForm = (props) => {
             },
           ]
         : ctype == 'formGroup'
-          ? [
-              {
-                title: 'title',
-                dataIndex: ['props', 'title'],
-                colProps: { span: 12 },
-              },
-            ]
-          : ctype == 'copyToMenu'
-            ? [
+        ? [
+            {
+              title: 'title',
+              dataIndex: ['props', 'title'],
+              colProps: { span: 12 },
+            },
+          ]
+        : ctype == 'copyToMenu'
+        ? [
+            {
+              valueType: 'group',
+              columns: [
                 {
-                  valueType: 'group',
-                  columns: [
-                    {
-                      dataIndex: ['props', 'toMenuId'],
-                      title: '复制到',
-                      valueType: 'treeSelect',
-                      fieldProps: {
-                        options: allMenus,
-                        treeLine: { showLeafIcon: true },
-                        treeDefaultExpandAll: true,
-                        showSearch: true,
-                      },
-                      colProps: { span: 12 },
-                    },
-                    {
-                      dataIndex: ['props', 'type'],
-                      title: '类型',
-                      valueType: 'radioButton',
-                      fieldProps: {
-                        buttonStyle: 'solid',
-                        defaultValue: 'updateOrInsert',
-                        options: [
-                          { label: '覆盖', value: 'updateOrInsert' },
-                          { label: '新增', value: 'insert' },
-                        ],
-                      },
-                      tooltip: '覆盖会删除原有的配置,新增不会检测是否之前有过记录，直接新增',
-                      colProps: { span: 12 },
-                    },
-                  ],
+                  dataIndex: ['props', 'toMenuId'],
+                  title: '复制到',
+                  valueType: 'treeSelect',
+                  fieldProps: {
+                    options: allMenus,
+                    treeLine: { showLeafIcon: true },
+                    treeDefaultExpandAll: true,
+                    showSearch: true,
+                  },
+                  colProps: { span: 12 },
                 },
-              ]
-            : type == 'table'
-              ? devBaseTableFormColumns({
-                  model_id: pageMenu?.model_id,
-                  dev: setting?.adminSetting?.dev,
-                })
-              : devBaseFormFormColumns({
-                  model_id: pageMenu?.model_id,
-                  dev: setting?.adminSetting?.dev,
-                });
+                {
+                  dataIndex: ['props', 'type'],
+                  title: '类型',
+                  valueType: 'radioButton',
+                  fieldProps: {
+                    buttonStyle: 'solid',
+                    defaultValue: 'updateOrInsert',
+                    options: [
+                      { label: '覆盖', value: 'updateOrInsert' },
+                      { label: '新增', value: 'insert' },
+                    ],
+                  },
+                  tooltip: '覆盖会删除原有的配置,新增不会检测是否之前有过记录，直接新增',
+                  colProps: { span: 12 },
+                },
+              ],
+            },
+          ]
+        : type == 'table'
+        ? devBaseTableFormColumns({
+            model_id: pageMenu?.model_id,
+            dev: setting?.adminSetting?.dev,
+          })
+        : devBaseFormFormColumns({
+            model_id: pageMenu?.model_id,
+            dev: setting?.adminSetting?.dev,
+          });
 
     setColumns(columns);
     noMore || setColumnsMore(getCustomerColumn(relations, allMenus, modelColumns));
@@ -576,38 +575,38 @@ export const DevTableColumnTitle = (props) => {
           deleteitem,
         ]
       : type == 'formGroup'
-        ? [
-            baseform,
-            addCol,
-            addEmptyGroup,
-            copyToMenu,
-            {
-              type: 'divider',
-            },
+      ? [
+          baseform,
+          addCol,
+          addEmptyGroup,
+          copyToMenu,
+          {
+            type: 'divider',
+          },
 
-            deleteitem,
-          ]
-        : type == 'toolbar'
-          ? [
-              uid ? baseform : null,
-              addCol,
-              {
-                type: 'divider',
-              },
-              deleteitem,
-            ]
-          : [
-              baseform,
-              addCol,
-              copyToMenu,
-              itemJson,
-              {
-                type: 'divider',
-              },
-              deleteitem,
-              type == 'form' ? formItemReadOnly : null,
-              type == 'form' ? formItemRequired : null,
-            ];
+          deleteitem,
+        ]
+      : type == 'toolbar'
+      ? [
+          uid ? baseform : null,
+          addCol,
+          {
+            type: 'divider',
+          },
+          deleteitem,
+        ]
+      : [
+          baseform,
+          addCol,
+          copyToMenu,
+          itemJson,
+          {
+            type: 'divider',
+          },
+          deleteitem,
+          type == 'form' ? formItemReadOnly : null,
+          type == 'form' ? formItemRequired : null,
+        ];
   //表单的话 加一个最小宽度
   const styles: Record<string, any> = {
     form: {
@@ -648,7 +647,7 @@ export const DevTableColumnTitle = (props) => {
       </div>
       <div role="button">
         {title ? tplComplie(title) : 'dev'}
-        {dataIndexSpan ? (
+        {dataIndexSpan && false ? (
           <span style={{ color: token.colorTextTertiary, fontWeight: 'normal', paddingLeft: 6 }}>
             {dataIndexSpan}
           </span>
