@@ -1,12 +1,12 @@
-import SaTable from '@/components/Sadmin/posts/table';
-import { TreeNodeProps, TreeSelect } from 'antd';
-import { useContext, useState } from 'react';
-import { devDefaultFields } from './model';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import { getModelColumns } from '@/components/Sadmin/dev/table/baseFormColumns';
-import { CopyOutlined } from '@ant-design/icons';
-import { uniqBy } from 'es-toolkit';
 import settingColumns from '@/components/Sadmin/dev/vars/relation/settingColumns';
+import SaTable from '@/components/Sadmin/posts/table';
+import { CopyOutlined } from '@ant-design/icons';
+import { TreeNodeProps, TreeSelect } from 'antd';
+import { uniqBy } from 'es-toolkit';
+import { useContext } from 'react';
+import { devDefaultFields } from './model';
 
 //生成关联模型的字段及其管理模型
 export const getModelColumnsTree = (id: number, allModels, pid: string = '', level = 1) => {
@@ -65,12 +65,13 @@ export default (props) => {
       // afterDelete={reData}
       //toolBarRender={false}
       tableColumns={[
-        { dataIndex: 'title', title: '名称' },
+        { dataIndex: 'title', title: '名称', search: false },
         {
           dataIndex: 'name',
           title: 'name',
+          search: false,
         },
-        { dataIndex: 'type', title: '类型' },
+        { dataIndex: 'type', title: '类型', search: false },
         {
           title: '额外操作',
           dataIndex: 'type',
@@ -414,6 +415,7 @@ export default (props) => {
       ]}
       pageType="drawer"
       openType="drawer"
+      setting={{ scollYFullscreen: true }}
     />
   );
 };

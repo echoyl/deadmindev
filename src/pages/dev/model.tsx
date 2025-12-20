@@ -1,3 +1,7 @@
+import { SaDevContext } from '@/components/Sadmin/dev';
+import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
+import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
+import tagOptions from '@/components/Sadmin/helper/tagOptions';
 import { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import {
@@ -11,10 +15,6 @@ import { Space } from 'antd';
 import { useContext, useRef } from 'react';
 import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
-import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
-import { SaDevContext } from '@/components/Sadmin/dev';
-import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
-import tagOptions from '@/components/Sadmin/helper/tagOptions';
 /**
  * 默认数据库有的字段
  */
@@ -351,9 +351,7 @@ export default () => {
         // afterFormPost={reData}
         // afterDelete={reData}
         devEnable={false}
-        tableProps={{
-          scroll: { y: 600 },
-        }}
+        setting={{ scollYFullscreen: true }}
         toolBarButton={[
           {
             valueType: 'export',

@@ -590,9 +590,9 @@ export default () => {
         expandAll={false}
         level={setting?.adminSetting?.menu_max_level ? setting?.adminSetting?.menu_max_level : 4}
         tableProps={{
-          scroll: { y: 600 },
           size: 'small',
         }}
+        setting={{ scollYFullscreen: true }}
         afterFormPost={reload}
         afterDelete={reload}
         url="dev/menu"

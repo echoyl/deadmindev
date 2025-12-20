@@ -533,6 +533,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
     }
     if (search_config.length > 0) {
       defaultHeight += 80;
+    } else {
+      if (pageType == 'drawer') {
+        defaultHeight -= 16;
+      }
     }
     setMinHeight(defaultHeight);
   }, [footer, tableProps.pagination, search_config]);
