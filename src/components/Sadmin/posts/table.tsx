@@ -609,7 +609,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                         return false;
                       }
                       if (type === 'get') {
-                        for (var i in values) {
+                        for (let i in values) {
                           if (/^\d+$/.test(values[i])) {
                             if (!enumNames || enumNames.findIndex((v) => v == i) < 0) {
                               //如果长度过长 那应该不是数字不要格式化它
@@ -619,8 +619,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
                             }
                           }
                         }
-                        for (var i in values) {
-                          let jval = getJson(values[i], '');
+                        for (let i in values) {
+                          const jval = getJson(values[i], '');
                           if (isObj(jval)) {
                             values[i] = jval;
                           } else {
