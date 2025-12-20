@@ -271,6 +271,7 @@ const CustomerColumnRender = (props) => {
                 fieldProps={fieldProps}
                 menu_page_id={modal?.page}
                 record={record}
+                type="modal"
               />
             </ButtonModal>
           );
@@ -293,7 +294,7 @@ const CustomerColumnRender = (props) => {
                 record={record}
                 menu_page_id={modal?.page}
                 type="drawer"
-                scrollHeight="calc(100vh - 330px)"
+                //scrollHeight="calc(100vh - 330px)"
               />
             </ButtonDrawer>
           );

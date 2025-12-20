@@ -35,6 +35,7 @@ export const tableFromBreadRender = (text, props) => {
         alwaysenable={fieldProps.alwaysenable}
         fieldProps={{ ...fieldProps, props: { tableProps: { search: false } } }}
         readonly={fieldProps.readonly}
+        type="modal"
       />
     </Suspense>
   );

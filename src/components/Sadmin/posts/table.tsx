@@ -79,7 +79,7 @@ export interface saTableProps {
   actionRef?: React.MutableRefObject<ActionType>;
   //表单实例
   formRef?: ProFormInstance;
-  pageType?: 'page' | 'drawer'; //table页面是page还是在弹出层中
+  pageType?: 'page' | 'drawer' | 'modal'; //table页面是page还是在弹出层中
   rowOnSelected?: any; //当列表checkbox被点击时触发事件
   paramExtra?: Record<string, any>; //后台其它设置中添加的请求额外参数，table request的时候会带上这些参数
   postExtra?: Record<string, any>; //表单提交时 额外传输的数据 不放在base中
@@ -521,7 +521,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
   });
   const [minHeight, setMinHeight] = useState<number>(238);
   useEffect(() => {
-    let defaultHeight = 238;
+    let defaultHeight = 224;
+    if (pageType == 'drawer') {
+      defaultHeight -= 51;
+    }
     if (footer) {
       defaultHeight += 38;
     }
@@ -590,7 +593,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
             revalidateOnFocus={false}
             form={
               pageType != 'page'
-                ? { variant: setting?.form?.variant ? setting?.form?.variant : 'filled' }
+                ? {
+                    variant: setting?.form?.variant ? setting?.form?.variant : 'filled',
+                    style: { padding: 16 },
+                  }
                 : {
                     variant: setting?.form?.variant ? setting?.form?.variant : 'filled',
                     ignoreRules: false,
@@ -753,15 +759,17 @@ const SaTable: React.FC<saTableProps> = (props) => {
             {...tableProps}
             {...setting?.table}
             scroll={
-              setting?.scollYFullscreen
+              tableProps?.scroll
+                ? tableProps?.scroll
+                : setting?.scollYFullscreen
                 ? {
                     ...setting?.table?.scroll,
-                    y: `calc(100vh - ${minHeight + 47}px)`,
+                    y: pageType == 'modal' ? false : `calc(100vh - ${minHeight + 47}px)`,
                   }
                 : setting?.table?.scroll
             }
             styles={
-              setting?.minHeightFullscreen !== false
+              setting?.minHeightFullscreen !== false && pageType != 'modal'
                 ? {
                     ...setting.table?.styles,
                     section: {

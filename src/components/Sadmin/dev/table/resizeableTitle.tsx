@@ -27,7 +27,19 @@ const ResizableTitle: React.FC<Readonly<React.HTMLAttributes<any> & TitlePropsTy
     tableDesigner: { setColumns, tbColumns, setColumnWidth, pageMenu, devEnable },
   } = useContext(SaContext);
   const index = tbColumns?.findIndex((col) => col.uid === uid);
-  if (index < 0 || index + 1 == tbColumns.length || !devEnable) {
+  //找到有fixed right的列
+
+  let isLastCol: boolean = index + 1 == tbColumns.length;
+
+  if (index > -1) {
+    const fixedRight = tbColumns?.filter((col) => col.fixed === 'right');
+    const fixedRightLength = fixedRight?.length;
+    if (fixedRightLength > 0) {
+      isLastCol = tbColumns?.[index].uid == fixedRight[fixedRightLength - 1].uid ? true : false;
+    }
+    //console.log('tbColumns?.[index]', tbColumns?.[index], fixedRight[fixedRightLength - 1]);
+  }
+  if (index < 0 || isLastCol || !devEnable) {
     //未找到或最后一个元素或未启用开发模式 直接原样返回
     return <th {...restProps} />;
   }

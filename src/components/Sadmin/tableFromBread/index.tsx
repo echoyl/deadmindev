@@ -1,17 +1,18 @@
-import React, { FC, useCallback, useContext, useRef, useState } from 'react';
+import { useModel } from '@umijs/max';
+import { isUndefined } from 'es-toolkit';
+import type { FC } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isBool } from '../checkers';
 import { getBread, getFromObject, getMenuDataById, tplComplie } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
-import { useModel } from '@umijs/max';
-import { isUndefined } from 'es-toolkit';
 
 const TableFromBread: FC<{
   fieldProps?: any;
   record?: any;
   readonly?: string | boolean; //支持条件判断
   alwaysenable?: boolean; //是否一直可用 默认false 当是表单是 如果无主数据表格不会展示，true 都会展示
-  type?: 'drawer' | 'page'; //列表所在页面类型.如果是drawer selectdom会设置在footer
+  type?: 'drawer' | 'page' | 'modal'; //列表所在页面类型.如果是drawer selectdom会设置在footer
   scrollHeight?: number | string; //外部高度
   contentRender?: any;
   menu_page_id?: number; //引用已有菜单的id
@@ -23,7 +24,7 @@ const TableFromBread: FC<{
     alwaysenable = false,
     type = 'page',
     contentRender,
-    scrollHeight = 400,
+    scrollHeight = 0,
     menu_page_id = 0,
   } = props;
   //console.log('fieldProps', fieldProps);
@@ -97,10 +98,13 @@ const TableFromBread: FC<{
     );
   }, []);
   //console.log('alwaysenable', props, alwaysenable, post_key);
+  if (scrollHeight) {
+    fieldProps.props.tableProps.scorll = { y: scrollHeight };
+  }
   return (
     <>
       <SaTable
-        pageType="drawer"
+        pageType={type == 'modal' ? 'modal' : 'drawer'}
         openType="drawer"
         name={fieldProps.name}
         tableTitle={fieldProps.name}
@@ -113,7 +117,6 @@ const TableFromBread: FC<{
         }}
         {...fieldProps.props}
         tableProps={{
-          scroll: { y: scrollHeight },
           size: 'small',
           className: 'sa-modal-table sa-form-table',
           cardBordered: true,

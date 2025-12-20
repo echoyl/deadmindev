@@ -48,8 +48,8 @@ const PostsList: React.FC<saTableProps> = (props) => {
   const [resetCategorys, setResetCategorys] = useState<boolean>(false);
   return (
     <PageContainer404 title={tableTitle} path={path}>
-      <Row gutter={[30, 0]} style={!leftMenuClose && categorys.length > 0 ? { marginLeft: 0 } : {}}>
-        {!leftMenuClose && categorys.length > 0 && (
+      <Row gutter={[30, 0]} style={!leftMenuClose && categorys.length > 1 ? { marginLeft: 0 } : {}}>
+        {!leftMenuClose && categorys.length > 1 && (
           <Col span={3} style={{ paddingInline: 0 }}>
             <TreeMenu
               treeData={categorys}
@@ -66,7 +66,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
             />
           </Col>
         )}
-        <Col span={!leftMenuClose && categorys.length > 0 ? 21 : 24}>
+        <Col span={!leftMenuClose && categorys.length > 1 ? 21 : 24}>
           <SaTable
             {...props}
             initPageUid={reloadUid}
@@ -84,7 +84,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
               //   return;
               // }
 
-              if ((categorys.length > 0 && resetCategorys) || !ret.search?.[categorysName]) {
+              if ((categorys.length > 1 && resetCategorys) || !ret.search?.[categorysName]) {
                 return;
               }
               setResetCategorys(true);
