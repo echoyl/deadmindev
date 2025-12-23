@@ -280,6 +280,9 @@ const SaTable: React.FC<saTableProps> = (props) => {
       }
       params[i] = paramsFormat(_tableColumns, params[i], i);
     }
+    if (!params.reloadUid) {
+      delete params.reloadUid;
+    }
     setSort(sort);
     //检测分页信息，如果已全部返回数据 分页或修改pagesize后不再请后接口数据
     if (pageIsChange && data && data.length > 0 && data.length == total) {

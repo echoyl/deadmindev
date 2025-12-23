@@ -98,9 +98,6 @@ const TableFromBread: FC<{
     );
   }, []);
   //console.log('alwaysenable', props, alwaysenable, post_key);
-  if (scrollHeight) {
-    fieldProps.props.tableProps.scorll = { y: scrollHeight };
-  }
   return (
     <>
       <SaTable
@@ -120,7 +117,7 @@ const TableFromBread: FC<{
           size: 'small',
           className: 'sa-modal-table sa-form-table',
           cardBordered: true,
-          ...fieldProps.props.tableProps,
+          scroll:scrollHeight ? { y: scrollHeight } : undefined,
         }}
         //readonly={readonly}
       />

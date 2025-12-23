@@ -71,7 +71,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
             {...props}
             initPageUid={reloadUid}
             paramExtra={
-              category_id
+              !leftMenuClose
                 ? {
                     ...props.paramExtra,
                     [category_id_name]: category_id,
