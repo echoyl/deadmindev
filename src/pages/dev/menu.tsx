@@ -47,16 +47,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
           {
             title: '上级菜单',
             dataIndex: 'parent_id',
-            valueType: 'treeSelect',
-            requestDataName: 'menus',
-            fieldProps: {
-              treeLine: { showLeafIcon: true },
-              treeDefaultExpandAll: true,
-              allowClear: true,
-              treeTitleRender: (item) => {
-                return item ? (item.label ? tplComplie(item.label) : item.label) : '-';
-              },
-            },
+            valueType: 'menuSelect',
             colProps: { span: 12 },
           },
           {
@@ -89,13 +80,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
           {
             dataIndex: 'admin_model_id',
             title: '关联模型',
-            valueType: 'treeSelect',
-            requestDataName: 'admin_model_ids',
-            fieldProps: {
-              treeLine: { showLeafIcon: true },
-              treeDefaultExpandAll: true,
-              allowClear: true,
-            },
+            valueType: 'modelSelect',
             colProps: { span: 12 },
           },
           {

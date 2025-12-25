@@ -1,7 +1,7 @@
-import { saFormColumnsType, saFormTabColumnsType } from '../../../helpers';
+import type { saFormColumnsType, saFormTabColumnsType } from '../../../helpers';
 import { getModelColumns } from '../../table/baseFormColumns';
 
-export default (model_id: number, dev: { [key: string]: any }): saFormTabColumnsType => {
+export default (model_id: number, dev: Record<string, any>): saFormTabColumnsType => {
   //const columns: any[] = [];
   const styleColumns = (name?: string): saFormColumnsType => {
     const getname = (rname: string, tname?: string) => {
