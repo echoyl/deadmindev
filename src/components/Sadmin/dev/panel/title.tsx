@@ -1,30 +1,24 @@
 import {
   DeleteColumnOutlined,
-  DragOutlined,
   EditOutlined,
   InsertRowRightOutlined,
   MenuOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { css } from '@emotion/css';
+import type { DropdownProps, GetProp } from 'antd';
 import { Space } from 'antd';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
-import { SaDevContext } from '..';
 import ConfirmForm from '../../action/confirmForm';
 import { SaContext } from '../../posts/table';
 import { DragHandler, SortableItem } from '../dnd-context/SortableItem';
 import { SchemaSettingsContext, SchemaSettingsDropdown } from '../table/designer';
 import { DeleteColumn, useDesignerCss } from '../table/title';
 import baseFormColumns, { baseRowColumns } from './vars/base';
-
-const BaseForm = (props) => {
+type ItemType = GetProp<DropdownProps, 'menu'>['items'];
+const BaseForm = (props: Record<string, any>) => {
   const { title, uid, data, type = 'col', extpost } = props;
-  const {
-    tableDesigner: { pageMenu, reflush, editUrl, sourceData },
-  } = useContext(SaContext);
-  const { setting } = useContext(SaDevContext);
+  const { tableDesigner: { pageMenu, reflush, editUrl, sourceData } = {} } = useContext(SaContext);
   const { setVisible } = useContext(SchemaSettingsContext);
 
   const [value, setValue] = useState({});
@@ -57,8 +51,8 @@ const BaseForm = (props) => {
         value={value}
         postUrl={editUrl}
         data={{ id: pageMenu?.id, uid, ...extpost }}
-        callback={({ data }) => {
-          reflush(data);
+        callback={({ data: rdata }) => {
+          reflush?.(rdata);
           return true;
         }}
         saFormProps={{ devEnable: false }}
@@ -67,14 +61,12 @@ const BaseForm = (props) => {
   );
 };
 
-export const DevPanelColumnTitle = (props) => {
+export const DevPanelColumnTitle = (props: Record<string, any>) => {
   const { title, uid, devData, col, row, otitle, style } = props;
   //console.log('title is title', title);
   //const designable = true;
   const { itemType = 'row' } = devData;
-  const {
-    tableDesigner: { devEnable },
-  } = useContext(SaContext);
+  const { tableDesigner: { devEnable } = {} } = useContext(SaContext);
   const addCol = (level = 0) => {
     return {
       label: (
@@ -144,7 +136,7 @@ export const DevPanelColumnTitle = (props) => {
     ),
     key: 'editCol',
   };
-  const deleteItem = (type) => {
+  const deleteItem = (type: string) => {
     return {
       label: (
         <DeleteColumn
@@ -162,7 +154,7 @@ export const DevPanelColumnTitle = (props) => {
       danger: true,
     };
   };
-  const items: ItemType[] =
+  const items: ItemType =
     itemType == 'row'
       ? [
           editRow,

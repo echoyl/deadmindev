@@ -2,7 +2,7 @@ import { SaDevContext } from '@/components/Sadmin/dev';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
-import { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
+import type { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import {
   CopyOutlined,
@@ -10,7 +10,7 @@ import {
   FolderOutlined,
   InsertRowLeftOutlined,
 } from '@ant-design/icons';
-import { ProFormInstance } from '@ant-design/pro-components';
+import type { ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
 import { useContext, useRef } from 'react';
 import ModelRelation from './modelRelation';
@@ -288,10 +288,6 @@ export default () => {
             domtype: 'button',
             modal: {
               title: '{{record.title + " - 关联管理"}}',
-              drawerProps: {
-                width: 1000,
-                styles: { body: { padding: 16 } },
-              },
               childrenRender: (record: Record<string, any>) => <ModelRelation model={record} />,
             },
             action: 'drawer',
@@ -305,13 +301,10 @@ export default () => {
               formColumns: [
                 {
                   dataIndex: 'toid',
-                  width: 'md',
                   title: '复制到文件夹',
-                  valueType: 'treeSelect',
+                  valueType: 'modelSelect',
                   fieldProps: {
-                    options: setting?.adminSetting?.dev?.folderModelsTree,
-                    treeLine: { showLeafIcon: true },
-                    treeDefaultExpandAll: true,
+                    type: 'folder',
                   },
                 },
               ],
@@ -324,6 +317,11 @@ export default () => {
             //   </Tooltip>
             // ),
             btn: { text: '', size: 'small', icon: <CopyOutlined />, tooltip: '复制模型' },
+            fieldProps: {
+              value: {
+                saFormProps: { devEnable: false, grid: true },
+              },
+            },
           },
         ],
       },
@@ -363,17 +361,7 @@ export default () => {
             },
           },
         ]}
-        toolBar={() => {
-          return (
-            <>
-              <QuickCreate
-                menus={setting?.adminSetting?.dev?.allMenus}
-                models={setting?.adminSetting?.dev?.allModelsTree}
-                foldermodels={setting?.adminSetting?.dev?.folderModelsTree}
-              />
-            </>
-          );
-        }}
+        toolBar={() => <QuickCreate />}
         expandAll={false}
         level={4}
         url="dev/model"

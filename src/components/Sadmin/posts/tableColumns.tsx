@@ -4,7 +4,6 @@ import { TableDropdown } from '@ant-design/pro-components';
 import { history, Link, useModel } from '@umijs/max';
 import { Space, Typography } from 'antd';
 import dayjs from 'dayjs';
-import { cloneDeep } from 'es-toolkit';
 import { useContext } from 'react';
 import { isArr, isUndefined } from '../checkers';
 import { DragHandle } from '../dev/dnd-context/dragSort';
@@ -253,8 +252,7 @@ export const getTableColumns = (props) => {
       render: () => <DragHandle />,
     },
   };
-  const customerColumns =
-    typeof columns == 'function' ? columns(enums, actionRef) : cloneDeep(columns);
+  const customerColumns = typeof columns == 'function' ? columns(enums, actionRef) : columns;
   //const allColumns = [...defaulColumns, ...customerColumns];
   const defaulColumnsRender = (type: string, customer: any) => {
     if (type == 'coption') {
@@ -302,7 +300,7 @@ export const getTableColumns = (props) => {
     if (df) {
       df.uid = v.uid;
       const fixed = v.fixed;
-      v = cloneDeep(df);
+      v = df;
       //设置fixed
       if (fixed) {
         v.fixed = fixed;

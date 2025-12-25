@@ -1,10 +1,12 @@
-import {
+import type {
   MenuDataItem,
-  ProBreadcrumb,
   ProColumns,
-  ProFormCascader,
   ProFormColumnsType,
   ProRenderFieldPropsType,
+} from '@ant-design/pro-components';
+import {
+  ProBreadcrumb,
+  ProFormCascader,
   RouteContext,
   getMenuData,
 } from '@ant-design/pro-components';
@@ -16,7 +18,6 @@ import { Link } from 'react-router-dom';
 import DebounceSelect from './DebounceSelect';
 import { ConfirmRender } from './action/confirm';
 import CustomerColumnRender from './action/customerColumn';
-import CustomerColumnRenderDev from './action/customerColumn/dev';
 import ModalJson from './action/modalJson';
 import CarBrand from './carBrand';
 import { getJson, isObj, isStr } from './checkers';
@@ -39,11 +40,11 @@ import {
 } from './valueTypeMap';
 import SaAutoCompleteMap from './valueTypeMap/autoComplete';
 import { ColorPickerMap, ColorPickerRenderMap } from './valueTypeMap/colorPicker';
+import devTypeMap from './valueTypeMap/dev';
 import { DropdownActionMap } from './valueTypeMap/dropdownAction';
 import { Guiges } from './valueTypeMap/guigePanel';
 import IconSelect, { IconSelectRender, iconToElement } from './valueTypeMap/iconSelect';
 import JsonEditor from './valueTypeMap/jsonEditor';
-import { MenuSelectRender } from './valueTypeMap/menuSelect';
 import SaSliderMap from './valueTypeMap/saSlider';
 import SearchSelect from './valueTypeMap/search/select';
 import { wxMenuRender } from './wxMenu';
@@ -149,7 +150,6 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'confirmForm'
   | 'modalSelect'
   | 'customerColumn'
-  | 'customerColumnDev'
   | 'cdependency'
   | 'wxMenu'
   | 'formCalendar'
@@ -163,6 +163,10 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'saSlider'
   | 'alert'
   | 'menuSelect'
+  | 'modelSelect'
+  | 'devColumnSelect'
+  | 'devColumnTreeSelect'
+  | 'devColumnRelationSelect'
 >;
 type saFormColumnsTypeFn<T> = (d: T) => saFormColumnsType;
 export declare type saFormTabColumnsType = {
@@ -416,10 +420,6 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       return <CustomerColumnRender {...fieldProps} type="form" record={{}} text={text} />;
     },
   },
-  customerColumnDev: {
-    renderFormItem: CustomerColumnRenderDev,
-    render: CustomerColumnRenderDev,
-  },
   formCalendar: {
     renderFormItem: FormCalendarRender,
     render: FormCalendarRender,
@@ -468,10 +468,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     render: AlertRender,
     renderFormItem: AlertRender,
   },
-  menuSelect: {
-    render: MenuSelectRender,
-    renderFormItem: MenuSelectRender,
-  },
+  ...devTypeMap,
 };
 export const t = (id?: string, intl?: any) => {
   //if(!id)return;

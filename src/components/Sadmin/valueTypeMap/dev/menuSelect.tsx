@@ -22,9 +22,14 @@ const MenuSelect: FC<MenuSelectProps> = (props) => {
   );
 };
 
-export const MenuSelectRender = (_, props) => {
+const MenuSelectRender = (_: any, props: any) => {
   const { fieldProps } = props;
   return <MenuSelect {...fieldProps} />;
+};
+
+export const menuSelect = {
+  render: MenuSelectRender,
+  renderFormItem: MenuSelectRender,
 };
 
 export default MenuSelect;

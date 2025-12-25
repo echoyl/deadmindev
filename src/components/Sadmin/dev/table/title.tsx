@@ -16,24 +16,19 @@ import type { GetProp, MenuProps } from 'antd';
 import { Button, Space, Switch, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
-import { FC, useContext, useEffect, useState } from 'react';
-import { SaDevContext } from '..';
+import type { FC, Key } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Confirm from '../../action/confirm';
 import ConfirmForm from '../../action/confirmForm';
 import { getCustomerColumn } from '../../action/customerColumn/dev';
 import { getJson, isArr } from '../../checkers';
-import { loopMenuLocale, tplComplie } from '../../helpers';
+import { tplComplie } from '../../helpers';
 import { DevJsonContext } from '../../jsonForm';
 import { SaContext } from '../../posts/table';
 import { DragHandler, SortableItem } from '../dnd-context/SortableItem';
 import FormCodePhp from '../formCodePhp';
 import DevSwitch from '../switch';
-import {
-  devBaseFormFormColumns,
-  devBaseTableFormColumns,
-  getModelColumns,
-  getModelRelations,
-} from './baseFormColumns';
+import { devBaseFormFormColumns, devBaseTableFormColumns } from './baseFormColumns';
 import { SchemaSettingsContext, SchemaSettingsDropdown } from './designer';
 import { ColumnsSelector, ToolBarMenu } from './toolbar';
 export const useDesignerCss = createStyles(({ token }) => {
@@ -84,7 +79,7 @@ export const useDesignerCss = createStyles(({ token }) => {
   };
 });
 
-const getValue = (uid, pageMenu, type, dataName = 'schema') => {
+const getValue = (uid: Key, pageMenu: any, type: string, dataName = 'schema') => {
   //无uid表示插入列
   if (!uid) {
     return {};
@@ -103,21 +98,21 @@ const getValue = (uid, pageMenu, type, dataName = 'schema') => {
 
   const pconfig = getJson(config, []);
   if (type == 'table' || type == 'toolbar') {
-    return pconfig?.find((v) => v.uid == uid);
+    return pconfig?.find((v: any) => v.uid == uid);
   } else {
     //form获取组或列信息
     let value = {};
     //console.log('config', config);
-    pconfig?.tabs?.map((tab) => {
+    pconfig?.tabs?.map((tab: any) => {
       if (tab.uid == uid) {
         //tab支持编辑修改其属性
         value = tab;
       } else {
-        tab[config_name]?.map((group) => {
+        tab[config_name]?.map((group: any) => {
           if (group.uid == uid) {
             value = group;
           } else {
-            group.columns?.map((column) => {
+            group.columns?.map((column: any) => {
               if (column.uid == uid) {
                 value = column;
               }
@@ -130,26 +125,14 @@ const getValue = (uid, pageMenu, type, dataName = 'schema') => {
   }
 };
 
-const BaseForm = (props) => {
+const BaseForm = (props: Record<string, any>) => {
   const { title, uid, ctype, data, extpost, actionType = 'edit' } = props;
-  const {
-    tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' },
-  } = useContext(SaContext);
-  const { setting } = useContext(SaDevContext);
+  const { tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' } = {} } =
+    useContext(SaContext);
 
   const [value, setValue] = useState(data);
-  const [columns, setColumns] = useState([]);
-  const [columnsMore, setColumnsMore] = useState([]);
-
-  const [relations, setRelations] = useState<any[]>([]);
-  const [modelColumns, setModelColumns] = useState<any[]>([]);
-  const [allMenus, setAllMenus] = useState<any[]>([]);
-  //const { allMenus = [] } = setting?.adminSetting?.dev;
-  useEffect(() => {
-    setRelations(getModelRelations(pageMenu?.model_id, setting?.adminSetting?.dev));
-    setModelColumns(getModelColumns(pageMenu?.model_id, setting?.adminSetting?.dev));
-    setAllMenus(loopMenuLocale(setting?.adminSetting?.dev?.allMenus));
-  }, []);
+  const [columns, setColumns] = useState<any[]>([]);
+  const [columnsMore, setColumnsMore] = useState<any[]>([]);
   const noMore = ctype == 'copyToMenu';
   const { json = {}, setJson } = useContext(DevJsonContext);
 
@@ -177,7 +160,7 @@ const BaseForm = (props) => {
       }
     }
 
-    const columns =
+    const _columns =
       ctype == 'tab'
         ? [
             {
@@ -209,13 +192,7 @@ const BaseForm = (props) => {
                 {
                   dataIndex: ['props', 'toMenuId'],
                   title: '复制到',
-                  valueType: 'treeSelect',
-                  fieldProps: {
-                    options: allMenus,
-                    treeLine: { showLeafIcon: true },
-                    treeDefaultExpandAll: true,
-                    showSearch: true,
-                  },
+                  valueType: 'menuSelect',
                   colProps: { span: 12 },
                 },
                 {
@@ -237,19 +214,15 @@ const BaseForm = (props) => {
             },
           ]
         : type == 'table'
-        ? devBaseTableFormColumns({
-            model_id: pageMenu?.model_id,
-            dev: setting?.adminSetting?.dev,
-          })
-        : devBaseFormFormColumns({
-            model_id: pageMenu?.model_id,
-            dev: setting?.adminSetting?.dev,
-          });
+        ? devBaseTableFormColumns(pageMenu?.model_id)
+        : devBaseFormFormColumns(pageMenu?.model_id);
 
-    setColumns(columns);
-    noMore || setColumnsMore(getCustomerColumn(relations, allMenus, modelColumns));
+    setColumns(_columns);
+    if (!noMore) {
+      setColumnsMore(getCustomerColumn(pageMenu?.model_id));
+    }
     //console.log('base value is ', value, uid);
-  }, [pageMenu, data, modelColumns]);
+  }, [pageMenu, data]);
   //console.log('tableDesigner?.pageMenu', setTbColumns, getTableColumnsRender);
   //const value = getValue(uid, pageMenu, type);
 
@@ -268,14 +241,14 @@ const BaseForm = (props) => {
       trigger={<div style={{ width: '100%' }}>{title}</div>}
       tabs={[
         { title: '基础', formColumns: columns },
-        !noMore ? { title: '更多', formColumns: columnsMore } : null,
+        { title: '更多', formColumns: columnsMore },
       ].filter((v) => v)}
       value={value}
       postUrl={editUrl}
       data={{ id: pageMenu?.id, uid, ...extpost, ...json }}
-      callback={({ data }) => {
-        reflush(data);
-        setJson?.(data?.data);
+      callback={({ data: rdata }) => {
+        reflush?.(rdata);
+        setJson?.(rdata?.data);
       }}
       saFormProps={{ devEnable: false }}
       width={1000}
@@ -283,13 +256,11 @@ const BaseForm = (props) => {
   );
 };
 
-const ItemJson = (props) => {
+const ItemJson = (props: Record<string, any>) => {
   const { title, uid, type } = props;
   const [value, setValue] = useState<Record<string, any>>();
   const { json = {} } = useContext(DevJsonContext);
-  const {
-    tableDesigner: { pageMenu },
-  } = useContext(SaContext);
+  const { tableDesigner: { pageMenu } = {} } = useContext(SaContext);
   useEffect(() => {
     const pageMenuData =
       pageMenu && Object.keys(pageMenu)?.length > 0
@@ -310,12 +281,10 @@ const ItemJson = (props) => {
   );
 };
 
-export const DeleteColumn = (props) => {
+export const DeleteColumn = (props: Record<string, any>) => {
   const { title, uid, extpost } = props;
   const { json = {}, setJson } = useContext(DevJsonContext);
-  const {
-    tableDesigner: { pageMenu, reflush, deleteUrl = '' },
-  } = useContext(SaContext);
+  const { tableDesigner: { pageMenu, reflush, deleteUrl = '' } = {} } = useContext(SaContext);
   return (
     <Confirm
       trigger={<div style={{ width: '100%' }}>{title}</div>}
@@ -323,7 +292,7 @@ export const DeleteColumn = (props) => {
       data={{ base: { id: pageMenu?.id, uid, ...extpost, ...json } }}
       msg="确定要删除吗"
       callback={({ data }) => {
-        reflush(data);
+        reflush?.(data);
         setJson?.(data?.data);
         return true;
       }}
@@ -336,20 +305,18 @@ export const DeleteColumn = (props) => {
  * @param props
  * @returns
  */
-const MenuItemSwtich = (props) => {
-  const { title, uid, extpost, name } = props;
+const MenuItemSwtich = (props: Record<string, any>) => {
+  const { title, uid, name } = props;
   const { json = {}, setJson } = useContext(DevJsonContext);
-  const {
-    tableDesigner: { pageMenu, reflush, editUrl = '' },
-  } = useContext(SaContext);
+  const { tableDesigner: { pageMenu, reflush, editUrl = '' } = {} } = useContext(SaContext);
   const [value, setValue] = useState<Record<string, any>>({});
   useEffect(() => {
     const pageMenuData =
-      Object.keys(pageMenu)?.length > 0
+      pageMenu && Object.keys(pageMenu)?.length > 0
         ? pageMenu
         : { schema: { form_config: json?.config?.form_config } };
-    const value = getValue(uid, pageMenuData, 'form');
-    setValue(value);
+    const newvalue = getValue(uid, pageMenuData, 'form');
+    setValue(newvalue);
   }, [pageMenu]);
 
   const onChange = (checked: boolean) => {
@@ -369,7 +336,7 @@ const MenuItemSwtich = (props) => {
             [name]: !checked,
           });
         } else {
-          reflush(data);
+          reflush?.(data);
           setJson?.(data.data);
         }
       });
@@ -384,18 +351,16 @@ const MenuItemSwtich = (props) => {
   );
 };
 
-export const AddEmptyGroup = (props) => {
+export const AddEmptyGroup = (props: Record<string, any>) => {
   const { title, uid, extpost } = props;
   const { json = {}, setJson } = useContext(DevJsonContext);
-  const {
-    tableDesigner: { pageMenu, reflush, editUrl = '' },
-  } = useContext(SaContext);
+  const { tableDesigner: { pageMenu, reflush, editUrl = '' } = {} } = useContext(SaContext);
 
   const add = async () => {
     const { data } = await request.post(editUrl, {
       data: { base: { id: pageMenu?.id, uid, ...extpost, ...json } },
     });
-    reflush(data);
+    reflush?.(data);
     setJson?.(data.data);
   };
 
@@ -406,7 +371,7 @@ export const AddEmptyGroup = (props) => {
   );
 };
 
-const MenuLabel = (props) => {
+const MenuLabel = (props: Record<string, any>) => {
   const { setVisible } = useContext(SchemaSettingsContext);
   return (
     <div
@@ -421,7 +386,7 @@ const MenuLabel = (props) => {
   );
 };
 
-export const DevTableColumnTitle = (props) => {
+export const DevTableColumnTitle = (props: Record<string, any>) => {
   const { title, uid, devData, data, style = {} } = props;
   //console.log('title is title', title);
   //const designable = true;
@@ -656,7 +621,7 @@ export const DevTableColumnTitle = (props) => {
     </SortableItem>
   );
 };
-export const AddTabItem = (props) => {
+export const AddTabItem = () => {
   return (
     <BaseForm
       title={<Button type="text" icon={<PlusOutlined />} title="添加Tab" />}
@@ -666,16 +631,14 @@ export const AddTabItem = (props) => {
   );
 };
 
-export const FormAddTab = (props) => {
+export const FormAddTab = (props: Record<string, any>) => {
   const { pageMenu, type = 'form', style = {} } = props;
-  const { initialState } = useModel('@@initialState');
   const buttonType = type == 'formTab' ? 'text' : 'default';
   return (
     <Space style={style}>
       <ColumnsSelector
         key="devcolumns"
         trigger={<Button type={buttonType} icon={<UnorderedListOutlined />} />}
-        dev={initialState?.settings?.adminSetting?.dev}
       />
       <ToolBarMenu
         key="devsetting"
@@ -693,7 +656,7 @@ export const FormAddTab = (props) => {
   );
 };
 
-const DevContain = (props) => {
+const DevContain = (props: Record<string, any>) => {
   const { children, title } = props;
   const { initialState } = useModel('@@initialState');
   const dev = initialState?.settings?.adminSetting?.dev ? true : false;
@@ -707,7 +670,7 @@ export const TableColumnTitle: FC = (props) => {
     </DevContain>
   );
 };
-export const FormColumnTitle: FC = (props) => {
+export const FormColumnTitle: FC = (props: Record<string, any>) => {
   const title = props.valueType == 'group' && !props.title ? [props.uid].join(' - ') : props.title;
   const devType = props.valueType == 'group' ? 'formGroup' : 'form';
   return (

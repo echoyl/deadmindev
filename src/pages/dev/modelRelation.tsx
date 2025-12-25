@@ -1,49 +1,8 @@
-import { SaDevContext } from '@/components/Sadmin/dev';
-import { getModelColumns } from '@/components/Sadmin/dev/table/baseFormColumns';
 import settingColumns from '@/components/Sadmin/dev/vars/relation/settingColumns';
 import SaTable from '@/components/Sadmin/posts/table';
 import { CopyOutlined } from '@ant-design/icons';
-import { TreeNodeProps, TreeSelect } from 'antd';
-import { uniqBy } from 'es-toolkit';
-import { useContext } from 'react';
-import { devDefaultFields } from './model';
-
-//生成关联模型的字段及其管理模型
-export const getModelColumnsTree = (id: number, allModels, pid: string = '', level = 1) => {
-  const select_data = allModels?.find((v) => v.id == id);
-  //console.log(foreign_model_id, allModels, select_data);
-  const fields: Array<TreeNodeProps> = select_data
-    ? uniqBy(
-        [...select_data?.columns, ...devDefaultFields].map((v) => ({
-          title: v.label ? v.label : [v.title, v.name].join(' - '),
-          value: pid ? [pid, v.name ? v.name : v.value].join('-') : v.name ? v.name : v.value,
-        })),
-        (item) => item.value,
-      )
-    : [];
-  level += 1;
-
-  if (level > 4) {
-    //4层迭代后 直接终止 防止出现无限循环
-    return fields;
-  }
-  //关联模型
-  const guanlian: Array<TreeNodeProps> = select_data?.relations?.map((v) => ({
-    title: [v.title, v.name].join(' - '),
-    value: pid ? [pid, v.name, ''].join('-') : [v.name, ''].join('-'),
-    children: getModelColumnsTree(
-      v.foreign_model_id,
-      allModels,
-      pid ? [pid, v.id].join('-') : v.id,
-      level,
-    ),
-  }));
-  return [...fields, ...(guanlian || [])];
-};
-
-export default (props) => {
+export default (props: Record<string, any>) => {
   const { model, contentRender } = props;
-  const { setting } = useContext(SaDevContext);
   // const actionRef = useRef<ActionType>();
   // const { initialState, setInitialState } = useModel('@@initialState');
   //console.log('props', props);
@@ -96,12 +55,7 @@ export default (props) => {
                         {
                           dataIndex: 'toid',
                           title: '复制到模型',
-                          valueType: 'treeSelect',
-                          fieldProps: {
-                            options: setting?.adminSetting?.dev?.allModelsTree,
-                            treeLine: { showLeafIcon: true },
-                            treeDefaultExpandAll: true,
-                          },
+                          valueType: 'modelSelect',
                           colProps: { span: 12 },
                         },
                         {
@@ -168,10 +122,9 @@ export default (props) => {
                 {
                   dataIndex: 'local_key',
                   title: '本地字段',
-                  valueType: 'select',
+                  valueType: 'devColumnSelect',
                   fieldProps: {
-                    showSearch: true,
-                    options: getModelColumns(model?.id, setting?.adminSetting?.dev, true),
+                    modelId: model?.id,
                   },
                   colProps: { span: 12 },
                 },
@@ -190,12 +143,7 @@ export default (props) => {
                 {
                   dataIndex: 'foreign_model_id',
                   title: '关联模型',
-                  valueType: 'treeSelect',
-                  fieldProps: {
-                    options: setting?.adminSetting?.dev?.allModelsTree,
-                    treeLine: { showLeafIcon: true },
-                    treeDefaultExpandAll: true,
-                  },
+                  valueType: 'modelSelect',
                   colProps: { span: 12 },
                 },
                 {
@@ -209,14 +157,9 @@ export default (props) => {
                       {
                         dataIndex: 'foreign_key',
                         title: '关联模型字段',
-                        valueType: 'select',
+                        valueType: 'devColumnSelect',
                         fieldProps: {
-                          options: getModelColumns(
-                            foreign_model_id,
-                            setting?.adminSetting?.dev,
-                            true,
-                          ),
-                          showSearch: true,
+                          modelId: foreign_model_id,
                         },
                         colProps: { span: 12 },
                       },
@@ -246,14 +189,10 @@ export default (props) => {
                       {
                         dataIndex: 'search_columns',
                         title: '搜索包含字段',
-                        valueType: 'select',
+                        valueType: 'devColumnSelect',
                         colProps: { span: 12 },
                         fieldProps: {
-                          options: getModelColumns(
-                            foreign_model_id,
-                            setting?.adminSetting?.dev,
-                            true,
-                          ),
+                          modelId: foreign_model_id,
                           mode: 'multiple',
                         },
                       },
@@ -281,14 +220,10 @@ export default (props) => {
                         {
                           dataIndex: 'with_sum',
                           title: '求和包含字段',
-                          valueType: 'select',
+                          valueType: 'devColumnSelect',
                           colProps: { span: 12 },
                           fieldProps: {
-                            options: getModelColumns(
-                              foreign_model_id,
-                              setting?.adminSetting?.dev,
-                              true,
-                            ),
+                            modelId: foreign_model_id,
                             mode: 'multiple',
                           },
                         },
@@ -324,17 +259,10 @@ export default (props) => {
                         dataIndex: 'select_columns',
                         title: '关联模型包含字段',
                         tooltip: '不选表示全部获取',
-                        valueType: 'treeSelect',
+                        valueType: 'devColumnTreeSelect',
                         colProps: { span: 12 },
                         fieldProps: {
-                          options: getModelColumnsTree(
-                            foreign_model_id,
-                            setting?.adminSetting?.dev?.allModels,
-                          ),
-                          multiple: true,
-                          treeLine: { showLeafIcon: false },
-                          showCheckedStrategy: TreeSelect.SHOW_PARENT,
-                          treeCheckable: true,
+                          modelId: foreign_model_id,
                         },
                       },
                     ];
@@ -368,16 +296,11 @@ export default (props) => {
                           title: '关联模型包含字段(选择数据所查询的字段)',
                           tooltip:
                             '默认使用字段配置中设置的label和value。未设置则使用id,title。勾选with_in_page后不选表示全部获取',
-                          valueType: 'select',
+                          valueType: 'devColumnSelect',
                           colProps: { span: 12 },
                           fieldProps: {
-                            options: getModelColumns(
-                              foreign_model_id,
-                              setting?.adminSetting?.dev,
-                              true,
-                            ),
+                            modelId: foreign_model_id,
                             mode: 'multiple',
-                            multiple: true,
                           },
                         },
                       ],

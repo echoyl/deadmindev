@@ -1,6 +1,7 @@
-import { saFormColumnsType } from '../../helpers';
+import type { Key } from 'react';
+import type { saFormColumnsType } from '../../helpers';
 
-export const dependencyOn = (columns: any[]): saFormColumnsType => {
+export const dependencyOn = (modelId: Key): saFormColumnsType => {
   const show: saFormColumnsType = [
     {
       dataIndex: 'condition_type',
@@ -23,13 +24,11 @@ export const dependencyOn = (columns: any[]): saFormColumnsType => {
           columns: [
             {
               title: '字段选择',
-              valueType: 'cascader',
+              valueType: 'devColumnRelationSelect',
               dataIndex: 'name',
               width: 240,
               fieldProps: {
-                options: columns,
-                showSearch: true,
-                changeOnSelect: true,
+                modelId,
               },
             },
             {
@@ -66,12 +65,10 @@ export const dependencyOn = (columns: any[]): saFormColumnsType => {
           columns: [
             {
               title: '字段选择',
-              valueType: 'cascader',
+              valueType: 'devColumnRelationSelect',
               dataIndex: 'name',
               fieldProps: {
-                options: columns,
-                showSearch: true,
-                changeOnSelect: true,
+                modelId,
               },
               width: 'md',
             },

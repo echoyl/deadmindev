@@ -2,17 +2,14 @@ import ConfirmForm from '@/components/Sadmin/action/confirmForm';
 import { inArray } from '@/components/Sadmin/checkers';
 import { saReload } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
-import { tplComplie } from '@/components/Sadmin/helpers';
 import { SaContext } from '@/components/Sadmin/posts/table';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { Button } from 'antd';
-import { FC, useContext } from 'react';
-interface SaReord {
-  [key: string]: any;
-}
-const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }> = (props) => {
-  const { menus, models, foldermodels } = props;
+import type { FC } from 'react';
+import { useContext } from 'react';
+
+const QuickCreate: FC = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const { setSetting } = useContext(SaDevContext);
   const { actionRef } = useContext(SaContext);
@@ -69,11 +66,8 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
                     {
                       title: '指定已有分类模型',
                       dataIndex: 'category_id',
-                      valueType: 'treeSelect',
+                      valueType: 'modelSelect',
                       fieldProps: {
-                        options: models,
-                        treeLine: { showLeafIcon: true },
-                        treeDefaultExpandAll: true,
                         placeholder: '不选择的自动创建新的分类模型',
                       },
                       colProps: { span: 12 },
@@ -85,11 +79,8 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
                     {
                       title: '指定商品模型',
                       dataIndex: 'goods_id',
-                      valueType: 'treeSelect',
+                      valueType: 'modelSelect',
                       fieldProps: {
-                        options: models,
-                        treeLine: { showLeafIcon: true },
-                        treeDefaultExpandAll: true,
                         placeholder: '必选',
                       },
                       formItemProps: {
@@ -100,11 +91,8 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
                     {
                       title: '用户模型',
                       dataIndex: 'user_id',
-                      valueType: 'treeSelect',
+                      valueType: 'modelSelect',
                       fieldProps: {
-                        options: models,
-                        treeLine: { showLeafIcon: true },
-                        treeDefaultExpandAll: true,
                         placeholder: '不选择则不关联用户信息',
                       },
                       colProps: { span: 12 },
@@ -138,11 +126,9 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
               dataIndex: 'model_to_id',
               colProps: { span: 12 },
               title: '模型创建到',
-              valueType: 'treeSelect',
+              valueType: 'modelSelect',
               fieldProps: {
-                options: foldermodels,
-                treeLine: { showLeafIcon: true },
-                treeDefaultExpandAll: true,
+                type: 'folder',
                 placeholder: '不选择的话创建到根',
               },
             },
@@ -150,15 +136,9 @@ const QuickCreate: FC<{ menus: SaReord; models: SaReord; foldermodels: SaReord }
               dataIndex: 'menu_to_id',
               colProps: { span: 12 },
               title: '菜单创建到',
-              valueType: 'treeSelect',
+              valueType: 'menuSelect',
               fieldProps: {
-                options: menus,
-                treeLine: { showLeafIcon: true },
-                treeDefaultExpandAll: true,
                 placeholder: '不选择的话创建到根',
-                treeTitleRender: (item) => {
-                  return item ? (item.label ? tplComplie(item.label) : item.label) : '-';
-                },
               },
             },
           ],

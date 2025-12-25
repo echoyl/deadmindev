@@ -1,26 +1,14 @@
-import { ProCard, ProForm, ProFormInstance } from '@ant-design/pro-components';
-import { Button, Modal, Typography } from 'antd';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import { Typography } from 'antd';
+import type { Key } from 'react';
 import { inArray } from '../../checkers';
 import { dependencyOn } from '../../dev/vars/dependencyOn';
 import rules from '../../dev/vars/rules';
 import tagConfig from '../../dev/vars/tag';
-import { parseIcon, saFormColumnsType } from '../../helpers';
-import { GetFormFields, getFormFieldColumns } from '../../posts/formDom';
-interface CustomerColumnProps {
-  ok?: (value: any) => void;
-  value?: any;
-  relationModel?: any;
-  allMenus?: any;
-  modelColumns?: any;
-}
-const defaultBtn = {
-  domtype: 'button',
-  //type: 'default',
-};
+import type { saFormColumnsType } from '../../helpers';
+import { parseIcon } from '../../helpers';
 
-export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumns: any[]) => {
-  const dependencyOnVars = dependencyOn(modelColumns);
+export const getCustomerColumn = (modelId: Key) => {
+  const dependencyOnVars = dependencyOn(modelId);
   const fieldPorpsColumn = {
     dataIndex: 'fieldProps',
     title: 'fieldProps',
@@ -119,13 +107,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
           dataIndex: ['props', 'page'],
           title: '关联页面',
           tooltip: '如果类型为formlist等，选择后自动读取所选菜单的columns配置',
-          valueType: 'treeSelect',
-          fieldProps: {
-            options: allMenus,
-            treeLine: { showLeafIcon: true },
-            treeDefaultExpandAll: true,
-            variant: 'filled',
-          },
+          valueType: 'menuSelect',
           colProps: {
             span: 12,
           },
@@ -312,13 +294,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                     {
                       dataIndex: 'page',
                       title: '关联菜单',
-                      valueType: 'treeSelect',
-                      width: 200,
-                      fieldProps: {
-                        options: allMenus,
-                        treeLine: { showLeafIcon: true },
-                        treeDefaultExpandAll: true,
-                      },
+                      valueType: 'menuSelect',
                       colProps: {
                         span: 6,
                       },
@@ -531,12 +507,7 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                     {
                                       dataIndex: 'page',
                                       title: '表单选择',
-                                      valueType: 'treeSelect',
-                                      fieldProps: {
-                                        options: allMenus,
-                                        treeLine: { showLeafIcon: true },
-                                        treeDefaultExpandAll: true,
-                                      },
+                                      valueType: 'menuSelect',
                                     },
                                   ],
                                 },
@@ -603,24 +574,21 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                     {
                                       dataIndex: 'model',
                                       title: '关联模型',
-                                      valueType: 'cascader',
+                                      valueType: 'devColumnRelationSelect',
                                       fieldProps: {
-                                        options: relationModel,
-                                        changeOnSelect: true,
+                                        modelId,
+                                      },
+                                      formItemProps: {
+                                        extra: '如果选择的话，需要选择关联项而不是选择某个字段',
                                       },
                                     },
                                     {
                                       dataIndex: 'page',
                                       title: '表单选择',
-                                      valueType: 'treeSelect',
+                                      valueType: 'menuSelect',
                                       formItemProps: {
                                         extra:
                                           '如果模型有多个菜单已关联，需要手动指定菜单，否则默认读取第一个',
-                                      },
-                                      fieldProps: {
-                                        options: allMenus,
-                                        treeLine: { showLeafIcon: true },
-                                        treeDefaultExpandAll: true,
                                       },
                                     },
                                     {
@@ -707,13 +675,16 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
                                         {
                                           dataIndex: 'model',
                                           title: '数据源',
-                                          //valueType: 'select',
-                                          valueType: 'cascader',
+                                          valueType: 'devColumnRelationSelect',
                                           fieldProps: {
-                                            options: relationModel,
+                                            modelId,
+                                          },
+                                          formItemProps: {
+                                            extra: '如果选择的话，需要选择关联项而不是选择某个字段',
                                           },
                                           colProps: { span: 12 },
                                         },
+
                                         {
                                           dataIndex: 'modelName',
                                           title: '数据源名称',
@@ -892,167 +863,3 @@ export const getCustomerColumn = (relationModel = [], allMenus = [], modelColumn
   ];
   return columns;
 };
-
-const CustomerColumn: FC<CustomerColumnProps> = (props) => {
-  const { ok, value, relationModel, allMenus = [], modelColumns = [] } = props;
-  //console.log('relationModel', relationModel, allMenus, modelColumns);
-
-  interface saRequestData {
-    url?: string;
-    data?: object;
-  }
-  // const [items, setItems] = useState<
-  //   [
-  //     {
-  //       text?: string;
-  //       type?: ButtonType;
-  //       danger?: boolean;
-  //       domtype?: string;
-  //       action?: string;
-  //       formColumns?: [];
-  //       request?: saRequestData;
-  //     },
-  //   ]
-  // >(value?.items ? value.items : []);
-  // const [record, setRecord] = useState<Record<string, any>>(
-  //   value?.record ? value.record : { id: 1 },
-  // );
-  const [columns, setColumns] = useState([]);
-  useEffect(() => {
-    const cols = getCustomerColumn(relationModel, allMenus, modelColumns);
-
-    setColumns(
-      getFormFieldColumns({
-        initRequest: true,
-        columns: cols,
-        devEnable: false,
-      }),
-    );
-  }, []);
-  const formRef = useRef<ProFormInstance<any>>({} as any);
-  useEffect(() => {
-    //console.log('value is ', value, { props: value });
-    formRef?.current?.setFieldsValue?.({ props: value });
-  }, [value]);
-
-  return (
-    <>
-      {/* <ProCard title="效果展示,只做展示作用">
-        <CustomerColumnRender items={items} record={record} />
-      </ProCard> */}
-      <ProCard title="配置">
-        <ProForm
-          submitter={false}
-          formRef={formRef}
-          request={() => {
-            return { props: value };
-          }}
-          onValuesChange={(v, allValues) => {
-            //console.log(v);
-            // const parseDatas: any = [];
-            // allValues.items?.map((item) => {
-            //   const parseValues = {};
-            //   if (item.btn) {
-            //     parseValues.btn = parseButton(item.btn);
-            //   }
-            //   let show = true;
-            //   if (item.if) {
-            //     show = tplComplie(item.if, { record: allValues.record });
-            //   }
-            //   if (show) {
-            //     parseDatas.push({ ...item, ...parseValues });
-            //   }
-            // });
-            // if (v.items) {
-            //   setItems([...allValues.items]);
-            // }
-            // if (v.record) {
-            //   setRecord(allValues.record);
-            // }
-            ok && ok(allValues?.props);
-          }}
-        >
-          <GetFormFields columns={columns} />
-        </ProForm>
-      </ProCard>
-    </>
-  );
-};
-
-export const CustomerColumnRenderDevReal = (props) => {
-  const { fieldProps } = props;
-  const [open, setOpen] = useState(false);
-  const {
-    value,
-    onChange,
-    relationModel,
-    btnText = '点击配置',
-    allMenus,
-    modelColumns,
-  } = fieldProps;
-  const [values, setValues] = useState();
-  const [loading, setLoading] = useState(false);
-  //原本项获取整行的值但是好像formlist没法获取当前行的值 只有当前字段的值
-  const onOk = async () => {
-    //console.log('值变化了', values, onChange, value, 'props is', props);
-    setLoading(true);
-    await onChange?.(values);
-    setLoading(false);
-    setOpen(false);
-  };
-  useEffect(() => {
-    setValues(value);
-  }, [value]);
-  const btnDom =
-    typeof btnText == 'string' ? (
-      <Button
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        {btnText}
-      </Button>
-    ) : (
-      React.cloneElement(btnText, {
-        key: 'trigger',
-        ...btnText.props,
-        onClick: async (e: any) => {
-          setOpen(true);
-          btnText?.props?.onClick?.(e);
-        },
-      })
-    );
-  return (
-    <>
-      {btnDom}
-
-      <Modal
-        open={open}
-        confirmLoading={loading}
-        onCancel={() => setOpen(false)}
-        onOk={onOk}
-        width={1600}
-        styles={{ body: { maxHeight: 650, overflowY: 'auto' } }}
-      >
-        {/* {value ? (
-          
-        ) : null} */}
-        <CustomerColumn
-          value={value}
-          relationModel={relationModel}
-          allMenus={allMenus}
-          modelColumns={modelColumns}
-          ok={(values) => {
-            //console.log(values);
-            setValues(values);
-          }}
-        />
-      </Modal>
-    </>
-  );
-};
-
-const CustomerColumnRenderDev = (_, props) => {
-  return <CustomerColumnRenderDevReal {...props} />;
-};
-export default CustomerColumnRenderDev;

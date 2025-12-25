@@ -495,15 +495,16 @@ export const ToolBarMenu = (props) => {
 };
 
 export const ColumnsSelector = (props) => {
-  const { trigger, dev } = props;
+  const { trigger } = props;
+  const { setting } = useContext(SaDevContext);
+  const dev = setting.adminSetting?.dev;
   const [treeData, setTreeData] = useState<any[]>();
   const [treeChecked, setTreeChecked] = useState<any[]>();
-  const {
-    tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' },
-  } = useContext(SaContext);
+  const { tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' } = {} } =
+    useContext(SaContext);
 
-  const getDataByType = (type: string) => {
-    if (type == 'table') {
+  const getDataByType = (_type: string) => {
+    if (_type == 'table') {
       return pageMenu?.data?.tableColumns;
     } else {
       //表单需要处理数据
@@ -545,7 +546,7 @@ export const ColumnsSelector = (props) => {
       });
     setTreeChecked(defaultChecked);
     //console.log('editUrl', editUrl, type);
-  }, [dev.allModels]);
+  }, [dev?.allModels]);
   const post = async (e) => {
     const { data } = await request.post(editUrl, {
       data: {
@@ -555,7 +556,7 @@ export const ColumnsSelector = (props) => {
         return;
       },
     });
-    reflush(data);
+    reflush?.(data);
   };
   const onCheck = async (keys, e) => {
     //将数据提交到后台
@@ -689,11 +690,7 @@ export const toolBarRender = (props) => {
       }
       if (btn.valueType == 'devcolumns') {
         btns.push(
-          <ColumnsSelector
-            key={index}
-            trigger={<Button title="快速选择" icon={btn.icon} />}
-            dev={initialState?.settings?.adminSetting?.dev}
-          />,
+          <ColumnsSelector key={index} trigger={<Button title="快速选择" icon={btn.icon} />} />,
         );
       }
       if (btn.valueType == 'toolbar') {
