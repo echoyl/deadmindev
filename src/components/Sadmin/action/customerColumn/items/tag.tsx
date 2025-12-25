@@ -13,7 +13,11 @@ const ItemTag: FC<{
 }> = (props) => {
   const { color, title, bordered = true, icon, ellipsis = true } = props;
   return title ? (
-    <Tag color={color} bordered={bordered} icon={icon ? iconToElement(icon) : false}>
+    <Tag
+      color={color}
+      variant={bordered ? 'outlined' : 'filled'}
+      icon={icon ? iconToElement(icon) : false}
+    >
       {ellipsis ? (
         <Typography.Text style={{ maxWidth: 80, color: 'inherit' }} ellipsis={{ tooltip: title }}>
           {title}
