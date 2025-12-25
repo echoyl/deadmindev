@@ -1,5 +1,7 @@
-import { Drawer, DrawerProps } from 'antd';
-import React, { FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { DrawerProps } from 'antd';
+import { Drawer } from 'antd';
+import type { FC, JSX, ReactNode } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface actionConfirm {
@@ -23,6 +25,8 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
     afterOpenChange,
   } = props;
   const [iopen, setOpen] = useState(open);
+  const [size, setSize] = useState(width);
+  //console.log('drawer props', width);
   //下面这段参考 drawerForm组件
   const footerRef = useRef<HTMLDivElement | null>(null);
   const [, forceUpdate] = useState([]);
@@ -110,7 +114,7 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
   //     footer: drawerProps.footerStyle,
   //   };
   // }
-
+  const { styles, ...restProps } = drawerProps;
   return (
     <>
       {triggerDom}
@@ -120,18 +124,23 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
           //onOk?.();
           setOpen(false);
         }}
-        width={width}
+        closable={{ placement: 'end' }}
+        size={size}
+        resizable={{
+          onResize: (newSize) => setSize(newSize),
+        }}
         title={title}
         footer={<div ref={footerDomRef} />}
         maskClosable={false}
-        {...drawerProps}
         styles={{
           footer: {
             padding: 0,
             border: 'none',
           },
-          ...drawerProps?.styles,
+          body: { padding: 16 },
+          ...styles,
         }}
+        {...restProps}
         loading={loading}
       >
         <div

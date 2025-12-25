@@ -30,19 +30,11 @@ const CustomerColumnRender = (props) => {
     dataindex,
   } = props;
   const { initialState } = useModel('@@initialState');
-  //console.log('props ', props);
-  const {
-    actionRef,
-    formRef,
-    columnData,
-    url,
-    saTableContext,
-    searchData = {},
-  } = useContext(SaContext);
+  const { actionRef, formRef, saTableContext, searchData = {} } = useContext(SaContext);
 
   //const formValue = formRef?.current?.getFieldsValue?.(true);
   const [record, setRecord] = useState(orecord);
-  const [modalApi, modalHolder] = Modal.useModal();
+  const [, modalHolder] = Modal.useModal();
   //console.log('CustomerColumnRender record is  ', orecord, !formRef.current);
   //console.log('formRef', formRef);
   //console.log('dependencies', dependencies);
@@ -286,7 +278,7 @@ const CustomerColumnRender = (props) => {
               key={key}
               trigger={dom}
               title={tplComplie(modal?.title, { record })}
-              drawerProps={{ ...modal?.drawerProps, styles: { body: { padding: 16 } } }}
+              drawerProps={modal?.drawerProps}
               width={1000}
             >
               <TableFromBread
@@ -303,10 +295,11 @@ const CustomerColumnRender = (props) => {
             <ButtonDrawer
               key={key}
               trigger={dom}
-              title={tplComplie(item.modal?.title, { record })}
-              drawerProps={item.modal?.drawerProps}
+              title={tplComplie(modal?.title, { record })}
+              drawerProps={modal?.drawerProps}
+              width={modal?.width}
             >
-              {item.modal?.childrenRender?.(record)}
+              {modal?.childrenRender?.(record)}
             </ButtonDrawer>
           );
         } else if (item.action == 'dropdown') {
