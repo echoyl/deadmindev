@@ -230,7 +230,7 @@ export const ImportButton = ({
 };
 
 export const ToolMenuForm = (props) => {
-  const { setInitialState, initialState } = useModel('@@initialState');
+  const { setInitialState } = useModel('@@initialState');
   const { json = {} } = useContext(DevJsonContext);
   const { pageMenu = { id: 0 }, trigger } = props;
   const MenuForm = (mprops) => {
@@ -244,9 +244,9 @@ export const ToolMenuForm = (props) => {
         postExtra={{ id: pageMenu?.id }}
         grid={true}
         devEnable={false}
-        msgcls={async ({ code, data }) => {
+        msgcls={async ({ code }) => {
           if (!code) {
-            saReloadMenu(initialState, setInitialState);
+            saReloadMenu({ setInitialState });
           }
           setOpen(false);
           return;
@@ -283,12 +283,12 @@ export const ToolModelForm = (props) => {
     const { contentRender, setOpen } = mprops;
     const formRef = useRef<ProFormInstance<any>>({} as any);
 
-    const { setting, setSetting } = useContext(SaDevContext);
+    const { devData, setDevData } = useContext(SaDevContext);
     return (
       <SaForm
         formRef={formRef}
         formColumns={(detail) => {
-          return modelFormColumns(detail, formRef, setting?.adminSetting);
+          return modelFormColumns(detail, devData);
         }}
         url="dev/model/show"
         dataId={pageMenu?.model_id}
@@ -296,12 +296,11 @@ export const ToolModelForm = (props) => {
         postExtra={{ id: pageMenu?.model_id }}
         grid={true}
         devEnable={false}
-        msgcls={async ({ code, data }) => {
-          if (!code) {
-            saReload(initialState, setInitialState, setSetting);
-          }
+        msgcls={({ code }) => {
           setOpen(false);
-          return;
+          if (!code) {
+            saReload({ initialState, setInitialState, setDevData });
+          }
         }}
         formProps={{
           contentRender,
@@ -334,21 +333,26 @@ export const ToolModelFieldsForm = (props) => {
     const { contentRender, setOpen } = mprops;
     const formRef = useRef<ProFormInstance<any>>({} as any);
 
-    const { setting, setSetting } = useContext(SaDevContext);
+    const { setDevData } = useContext(SaDevContext);
     return (
       <SaForm
         formRef={formRef}
-        formColumns={[
-          fieldColumn,
+        tabs={[
           {
-            title: '提交后',
-            dataIndex: 'afterPostOptions',
-            valueType: 'checkbox',
-            tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
-            fieldProps: {
-              options: [{ label: '生成表', value: 'createModelSchema' }],
-              defaultValue: ['createModelSchema'],
-            },
+            tab: { title: '基本信息' },
+            formColumns: [
+              fieldColumn,
+              {
+                title: '提交后',
+                dataIndex: 'afterPostOptions',
+                valueType: 'checkbox',
+                tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
+                fieldProps: {
+                  options: [{ label: '生成表', value: 'createModelSchema' }],
+                  defaultValue: ['createModelSchema'],
+                },
+              },
+            ],
           },
         ]}
         url="dev/model/show"
@@ -357,12 +361,11 @@ export const ToolModelFieldsForm = (props) => {
         postExtra={{ id: pageMenu?.model_id }}
         grid={true}
         devEnable={false}
-        msgcls={async ({ code, data }) => {
-          if (!code) {
-            saReload(initialState, setInitialState, setSetting);
-          }
+        msgcls={({ code }) => {
           setOpen(false);
-          return;
+          if (!code) {
+            saReload({ initialState, setInitialState, setDevData });
+          }
         }}
         formProps={{
           contentRender,
@@ -496,8 +499,7 @@ export const ToolBarMenu = (props) => {
 
 export const ColumnsSelector = (props) => {
   const { trigger } = props;
-  const { setting } = useContext(SaDevContext);
-  const dev = setting.adminSetting?.dev;
+  const { devData } = useContext(SaDevContext);
   const [treeData, setTreeData] = useState<any[]>();
   const [treeChecked, setTreeChecked] = useState<any[]>();
   const { tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' } = {} } =
@@ -531,7 +533,7 @@ export const ColumnsSelector = (props) => {
   };
 
   useEffect(() => {
-    const _treeData = getModelColumns(pageMenu?.model_id, dev);
+    const _treeData = getModelColumns(pageMenu?.model_id, devData);
 
     setTreeData(
       _treeData.map((v) => {
@@ -546,7 +548,7 @@ export const ColumnsSelector = (props) => {
       });
     setTreeChecked(defaultChecked);
     //console.log('editUrl', editUrl, type);
-  }, [dev?.allModels]);
+  }, [devData?.allModels]);
   const post = async (e) => {
     const { data } = await request.post(editUrl, {
       data: {

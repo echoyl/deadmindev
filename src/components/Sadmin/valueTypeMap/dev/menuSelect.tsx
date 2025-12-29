@@ -8,8 +8,8 @@ import { loopMenuLocale } from '../../helpers';
 type MenuSelectProps = GetProps<typeof TreeSelect>;
 
 const MenuSelect: FC<MenuSelectProps> = (props) => {
-  const { setting } = useContext(SaDevContext);
-  const treeData = loopMenuLocale(setting?.adminSetting?.dev?.allMenus);
+  const { devData } = useContext(SaDevContext);
+  const treeData = loopMenuLocale(devData?.allMenus);
   return (
     <TreeSelect
       treeData={treeData}
@@ -29,7 +29,7 @@ const MenuSelectRender = (_: any, props: any) => {
 
 export const menuSelect = {
   render: MenuSelectRender,
-  renderFormItem: MenuSelectRender,
+  formItemRender: MenuSelectRender,
 };
 
 export default MenuSelect;

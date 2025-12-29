@@ -188,7 +188,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       image = getJson(image, image);
       return <UploaderRender {...props.fieldProps} value={image} buttonType="table" readonly />;
     },
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <UploaderRender {...props.fieldProps} />;
     },
   },
@@ -196,7 +196,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     render: (image, props) => {
       return <>-</>; //列表默认不显示
     },
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       //return null;
       return <AliyunVideoRender {...props.fieldProps} />;
     },
@@ -206,27 +206,27 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       console.log('read only');
       return text;
     },
-    renderFormItem: tableFromBreadRender,
+    formItemRender: tableFromBreadRender,
   },
   wxMenu: {
     render: wxMenuRender,
-    renderFormItem: wxMenuRender,
+    formItemRender: wxMenuRender,
   },
   tinyEditor: {
     render: (text) => text,
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <TinyEditor {...props.fieldProps} />;
     },
   },
   guigePanel: {
     render: (text, props) => <Guiges {...props.fieldProps} />,
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <Guiges {...props.fieldProps} />;
     },
   },
   saEditorTable: {
     render: (text) => text,
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <SaEditorTable {...props.fieldProps} />;
     },
   },
@@ -234,7 +234,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     render: (text, props) => {
       return <JsonEditor {...props.fieldProps} value={text} readOnly={true} />;
     },
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <JsonEditor {...props.fieldProps} />;
     },
   },
@@ -250,7 +250,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
       const { fieldProps } = props;
       return <PcaRender text={text} level={fieldProps.level} topcode={fieldProps.topCode} />;
     },
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       //console.log('pca props', props, props?.fieldProps);
       // return <SaPcaRender {...props.fieldProps} />;
       const level = props.fieldProps.level ? props.fieldProps.level : 3;
@@ -285,14 +285,14 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
   },
   permGroup: {
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       // console.log('permGroup', props);
       return <PermGroup {...props.fieldProps} />;
     },
     render: (text) => text,
   },
   debounceSelect: {
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       //console.log('debounceSelect', props, 'text');
       //return <SearchSelect {...props.fieldProps} />;
       return <DebounceSelect {...props.fieldProps} />;
@@ -303,7 +303,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
   },
   searchSelect: {
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <SearchSelect {...props.fieldProps} />;
     },
     render: (text, props) => {
@@ -311,7 +311,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
   },
   jsonForm: {
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <JsonForm {...props.fieldProps} />;
     },
     render: (text, props) => {
@@ -319,7 +319,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
   },
   carBrand: {
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <CarBrand {...props.fieldProps} />;
     },
   },
@@ -358,7 +358,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
   },
   saFormList: {
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       //console.log('out', props);
       const { fieldProps } = props;
       const name = fieldProps.dataindex ? fieldProps.dataindex : fieldProps.id;
@@ -384,12 +384,12 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     render: (_, props) => {
       return <ConfirmFormRender record={props.record} {...props.fieldProps} />;
     },
-    renderFormItem: (_, props) => {
+    formItemRender: (_, props) => {
       return <ConfirmFormRender {...props.fieldProps} />;
     },
   },
   modalJson: {
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       //console.log('props', props);
       return <ModalJson {...props.fieldProps} />;
     },
@@ -397,7 +397,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
   },
   modalSelect: {
     render: ModalSelectRender,
-    renderFormItem: ModalSelectRender,
+    formItemRender: ModalSelectRender,
   },
   customerColumn: {
     render: (text, props) => {
@@ -413,60 +413,60 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
         />
       );
     },
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       const { fieldProps } = props;
       //const { items } = fieldProps;
-      //console.log('renderFormItem here');
+      //console.log('formItemRender here');
       return <CustomerColumnRender {...fieldProps} type="form" record={{}} text={text} />;
     },
   },
   formCalendar: {
-    renderFormItem: FormCalendarRender,
+    formItemRender: FormCalendarRender,
     render: FormCalendarRender,
   },
   saTransfer: {
     render: SaTransferRender,
-    renderFormItem: SaTransferRender,
+    formItemRender: SaTransferRender,
   },
   html: {
     render: (text, props) => {
       return <div dangerouslySetInnerHTML={{ __html: text }}></div>;
     },
-    renderFormItem: (text, props) => {
+    formItemRender: (text, props) => {
       return <div dangerouslySetInnerHTML={{ __html: text }}></div>;
     },
   },
   colorPicker: {
     render: ColorPickerRenderMap,
-    renderFormItem: ColorPickerMap,
+    formItemRender: ColorPickerMap,
   },
   mdEditor: {
     render: (_, props) => {
       return _;
     },
-    renderFormItem: MDEditorRender,
+    formItemRender: MDEditorRender,
   },
   iconSelect: {
     render: IconSelectRender,
-    renderFormItem: IconSelect,
+    formItemRender: IconSelect,
   },
   saAutoComplete: {
     render: (_) => {
       return _;
     },
-    renderFormItem: SaAutoCompleteMap,
+    formItemRender: SaAutoCompleteMap,
   },
   dropdownAction: {
     render: DropdownActionMap,
-    renderFormItem: DropdownActionMap,
+    formItemRender: DropdownActionMap,
   },
   saSlider: {
     render: SaSliderMap,
-    renderFormItem: SaSliderMap,
+    formItemRender: SaSliderMap,
   },
   alert: {
     render: AlertRender,
-    renderFormItem: AlertRender,
+    formItemRender: AlertRender,
   },
   ...devTypeMap,
 };
@@ -647,7 +647,6 @@ export const getBread = (path: string, currentUser?: Record<string, any>) => {
   if (!path) {
     return null;
   }
-  //const { admin } = useContext(SaDevContext);
   const { breadcrumb } = getMenuData(currentUser?.menuData);
   if (path == '/') {
     //首页默认跳转第一个菜单

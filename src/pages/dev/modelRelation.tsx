@@ -7,11 +7,6 @@ export default (props: Record<string, any>) => {
   // const { initialState, setInitialState } = useModel('@@initialState');
   //console.log('props', props);
   const relationType = ['one', 'many', 'cascaders', 'cascader'];
-  // const reData = async () => {
-  //   actionRef?.current?.reload();
-  //   saReloadSetting(initialState, setInitialState, setSetting);
-  //   return true;
-  // };
   //const [toolbar, setToolbar] = useState();
   return (
     <SaTable

@@ -34,15 +34,17 @@
   "browserslist": [
     "defaults"
   ],
+  "resolutions": {
+    "@ant-design/pro-components": "3.1.0-0"
+  },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
     "@ant-design/plots": "^2.1.5",
-    "@ant-design/pro-components": "^2.6.44",
+    "@ant-design/pro-components": "3.1.0-0",
     "@antv/l7": "^2.20.13",
     "@antv/l7-maps": "^2.20.13",
     "@antv/l7-react": "^2.4.3",
     "@monaco-editor/react": "^4.7.0",
-    "@testing-library/dom": "^10.4.0",
     "@tinymce/tinymce-react": "^6.2.0",
     "ali-oss": "^6.18.1",
     "antd": "^6.0.0",
@@ -51,10 +53,8 @@
     "classnames": "^2.5.1",
     "dayjs": "^1.11.10",
     "es-toolkit": "^1.32.0",
-    "immutability-helper": "^3.1.1",
     "localforage": "^1.10.0",
     "numeral": "^2.0.6",
-    "querystring": "^0.2.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-resizable": "^3.0.5",

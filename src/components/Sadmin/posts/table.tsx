@@ -8,6 +8,7 @@ import type {
 import { FooterToolbar } from '@ant-design/pro-components';
 import { history, useModel, useSearchParams } from '@umijs/max';
 import { Table } from 'antd';
+import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import { size } from 'es-toolkit/compat';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -76,9 +77,9 @@ export interface saTableProps {
   table_menu_all?: boolean; //tab 是否需要自动加入全部选项
   table_menu_default?: string; //默认的tab值
   //actionRef 实例
-  actionRef?: React.MutableRefObject<ActionType>;
+  actionRef?: React.RefObject<ActionType>;
   //表单实例
-  formRef?: ProFormInstance;
+  formRef?: React.RefObject<ProFormInstance>;
   pageType?: 'page' | 'drawer' | 'modal'; //table页面是page还是在弹出层中
   rowOnSelected?: any; //当列表checkbox被点击时触发事件
   paramExtra?: Record<string, any>; //后台其它设置中添加的请求额外参数，table request的时候会带上这些参数
@@ -155,13 +156,14 @@ const SaTable: React.FC<saTableProps> = (props) => {
     tableProps = {
       size: 'middle',
     },
-    pageMenu,
+    pageMenu: oPageMenu,
     devEnable: pdevEnable = true,
     setting = {},
     afterDelete,
     initPageUid,
   } = props;
   //console.log('tableprops', props);
+  const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
   const [tbColumns, setTbColumns] = useState<saTableColumnsType>([]);
   const [enums, setEnums] = useState<Record<string, any>>();
   const [summary, setSummary] = useState(); //合计
@@ -517,6 +519,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
 
   const tableDesigner = useTableDesigner({
     pageMenu,
+    setPageMenu,
     setColumns: setTbColumns,
     getColumnsRender: getTableColumnsRender,
     devEnable,
@@ -543,6 +546,23 @@ const SaTable: React.FC<saTableProps> = (props) => {
     }
     setMinHeight(defaultHeight);
   }, [footer, tableProps.pagination, search_config]);
+  const useStyles = createStyles(({ css }, { height }: { height: string | boolean }) => {
+    return height
+      ? {
+          body: css`
+            .ant-table-body {
+              min-height: ${height};
+            }
+          `,
+        }
+      : {};
+  });
+  const { styles } = useStyles({
+    height:
+      setting?.minHeightFullscreen !== false && pageType != 'modal'
+        ? `calc(100vh - ${minHeight + 47}px)`
+        : false,
+  });
   return (
     <SaContext.Provider
       value={{
@@ -571,8 +591,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
             devEnable={devEnable}
             allProps={{ ...props, setSelectedRowKeys, selectedRowKeys }}
             components={components}
-            className="sa-pro-table"
-            rowClassName={() => 'editable-row'}
+            className={['sa-pro-table', styles.body]}
+            //classNames={{ root: 'sa-pro-table' }}
             actionRef={actionRef}
             onLoad={() => {
               return onTableReload();
@@ -723,7 +743,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                       onChange: (key: string) => {
                         setTableMenuId(key as string);
                         if (pageType == 'page') {
-                          let url_search = search2Obj();
+                          const url_search = search2Obj();
                           //return;
                           url_search[table_menu_key] = key;
                           setUrlSearch(url_search);
@@ -775,17 +795,17 @@ const SaTable: React.FC<saTableProps> = (props) => {
                   }
                 : setting?.table?.scroll
             }
-            styles={
-              setting?.minHeightFullscreen !== false && pageType != 'modal'
-                ? {
-                    ...setting.table?.styles,
-                    section: {
-                      minHeight:
-                        setting.table?.styles?.section?.minHeight || `calc(100vh - ${minHeight}px)`,
-                    },
-                  }
-                : setting.table?.styles
-            }
+            // styles={
+            //   setting?.minHeightFullscreen !== false && pageType != 'modal'
+            //     ? {
+            //         ...setting.table?.styles,
+            //         section: {
+            //           minHeight:
+            //             setting.table?.styles?.section?.minHeight || `calc(100vh - ${minHeight}px)`,
+            //         },
+            //       }
+            //     : setting.table?.styles
+            // }
             rowKey="id"
           />
         </DndKitContext>
@@ -795,10 +815,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
           handleModalVisible={handleModalVisible}
           paramExtra={paramExtra}
           currentRow={currentRow}
-          afterFormPost={async (ret) => {
-            const re = await props?.afterFormPost?.(ret);
+          afterFormPost={(ret) => {
+            const re = props?.afterFormPost?.(ret);
             if (re != true) {
-              actionRef?.current?.reload();
+              setTimeout(() => actionRef?.current?.reload(), 100);
             }
           }}
         />

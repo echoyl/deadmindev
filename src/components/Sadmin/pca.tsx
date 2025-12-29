@@ -1,5 +1,5 @@
 import request from '@/components/Sadmin/lib/request';
-import { ProFormCascader } from '@ant-design/pro-form';
+import { ProFormCascader } from '@ant-design/pro-components';
 import { FC, useEffect, useState } from 'react';
 import cache from './helper/cache';
 

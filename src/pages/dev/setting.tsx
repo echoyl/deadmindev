@@ -1,34 +1,14 @@
 import { inArray } from '@/components/Sadmin/checkers';
-import { DevLinks, SaDevContext } from '@/components/Sadmin/dev';
-import { message } from '@/components/Sadmin/message';
+import { saReload } from '@/components/Sadmin/components/refresh';
+import { SaDevContext } from '@/components/Sadmin/dev';
+import type { saValueTypeMapType } from '@/components/Sadmin/helpers';
 import PostsForm from '@/components/Sadmin/posts/post';
-import { saGetSetting } from '@/components/Sadmin/components/refresh';
-import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { useModel } from '@umijs/max';
 import { useContext } from 'react';
-
 export default () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { setting, setSetting } = useContext(SaDevContext);
-  const reload = async () => {
-    message.loading({ key: messageLoadingKey, content: 'loading...' });
-    const msg = await currentUser();
-    //const msg = await cuser();
-    const setting = await saGetSetting(true);
-    await request.get('dev/menu/clearCache');
-    setInitialState((s) => ({
-      ...s,
-      settings: setting,
-    })).then(() => {
-      setSetting?.({
-        ...initialState?.settings,
-        ...setting,
-      });
-      message.success({ key: messageLoadingKey, content: '刷新成功' });
-    });
+  const { setSetting } = useContext(SaDevContext);
 
-    return msg.data;
-  };
   return (
     <>
       <PostsForm
@@ -385,7 +365,7 @@ export default () => {
                 name: ['loginActions'],
                 columns: ({ loginActions }) => {
                   //console.log('loginActions', loginActions);
-                  const _columns = [];
+                  const _columns: saValueTypeMapType[] = [];
                   if (loginActions) {
                     if (inArray('wechat', loginActions) > -1) {
                       _columns.push({
@@ -686,7 +666,7 @@ export default () => {
         ]}
         msgcls={async ({ code }) => {
           if (!code) {
-            await reload();
+            saReload({ initialState, setInitialState, setSetting });
           }
           return;
         }}

@@ -1,10 +1,10 @@
+import HeaderDropdown from '@/components/HeaderDropdown';
 import { GlobalOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import { lightDefaultToken } from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
-import HeaderDropdown from '@/components/HeaderDropdown';
 
 type ThemeType = 'realDark' | 'light' | undefined;
 
@@ -18,7 +18,7 @@ const getCheckedValue = (local: any, adminSetting: Record<string, any>): string 
 };
 
 export const getTheme = (
-  adminSetting: { [key: string]: any } | undefined,
+  adminSetting: Record<string, any> | undefined,
   itheme: ThemeType = undefined,
 ): ThemeType => {
   let theme = itheme ? itheme : localStorage.getItem('navTheme');
@@ -56,7 +56,7 @@ function getLocalStorageItemSync(key: string) {
   });
 }
 
-const ThemeSwitch = (props) => {
+const ThemeSwitch = (props: Record<string, any>) => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const { setSetting, setting } = useContext(SaDevContext);
   const { style } = props;

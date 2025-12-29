@@ -1,11 +1,10 @@
 import { SettingOutlined } from '@ant-design/icons';
-import { useModel } from '@umijs/max';
 import { Button } from 'antd';
-import { FC, useState, createContext, useContext, useEffect } from 'react';
+import { createContext, FC, useContext, useEffect, useState } from 'react';
 import ConfirmForm from '../action/confirmForm';
-import { SaContext } from '../posts/table';
-import request from '../lib/request';
 import { getJson } from '../checkers';
+import request from '../lib/request';
+import { SaContext } from '../posts/table';
 
 export const DevJsonContext = createContext<{
   json?: any;
@@ -51,16 +50,12 @@ const JsonForm: FC<{
 }> = (props) => {
   const { value, config, uid, onChange } = props;
   //console.log('json form init props', props);
-  const { initialState } = useModel('@@initialState');
-  const dev = initialState?.settings?.adminSetting?.dev ? true : false;
   const trigger = <Button icon={<SettingOutlined />}>详情</Button>;
-  const {
-    tableDesigner: { pageMenu, reflush, editUrl = '' },
-  } = useContext(SaContext);
+  const { tableDesigner: { pageMenu, reflush, editUrl = '' } = {} } = useContext(SaContext);
   const [cvalue, setCvalue] = useState<Record<string, any>>({});
   useEffect(() => {
-    const value = getValue(uid, pageMenu);
-    setCvalue(value);
+    const nvalue = getValue(uid, pageMenu);
+    setCvalue(nvalue);
   }, [pageMenu]);
   return (
     <DevJsonContext.Provider
@@ -81,7 +76,7 @@ const JsonForm: FC<{
             })
             .then(({ data, code }) => {
               if (!code) {
-                reflush(data);
+                reflush?.(data);
               }
             });
         },

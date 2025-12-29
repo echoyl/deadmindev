@@ -24,7 +24,7 @@ interface TitlePropsType {
 const ResizableTitle: React.FC<Readonly<React.HTMLAttributes<any> & TitlePropsType>> = (props) => {
   const { width, uid, ...restProps } = props;
   const {
-    tableDesigner: { setColumns, tbColumns, setColumnWidth, pageMenu, devEnable },
+    tableDesigner: { setColumns, tbColumns = [], setColumnWidth, pageMenu, devEnable } = {},
   } = useContext(SaContext);
   const index = tbColumns?.findIndex((col) => col.uid === uid);
   //找到有fixed right的列
@@ -57,11 +57,11 @@ const ResizableTitle: React.FC<Readonly<React.HTMLAttributes<any> & TitlePropsTy
           ...newColumns[index],
           width: size.width,
         };
-        setColumns(newColumns);
+        setColumns?.(newColumns);
       }}
       onResizeStop={(_: React.SyntheticEvent<Element>, { size }: ResizeCallbackData) => {
         //resize 完成后提交数据 更新列宽
-        setColumnWidth({ uid, width: size.width, id: pageMenu?.id });
+        setColumnWidth?.({ uid, width: size.width, id: pageMenu?.id });
       }}
       draggableOpts={{ enableUserSelectHack: false }}
     >
@@ -82,7 +82,7 @@ const ResizableTitle: React.FC<Readonly<React.HTMLAttributes<any> & TitlePropsTy
   );
 };
 
-export const onHeaderCell = (column: TableColumnsType<DataType>[number]) => ({
+export const onHeaderCell = (column: TableColumnsType<DataType>[number] & { uid?: string }) => ({
   width: column.width,
   uid: column?.uid,
 });

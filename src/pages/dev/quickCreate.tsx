@@ -11,11 +11,11 @@ import { useContext } from 'react';
 
 const QuickCreate: FC = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { setSetting } = useContext(SaDevContext);
+  const { setSetting, setDevData } = useContext(SaDevContext);
   const { actionRef } = useContext(SaContext);
 
   const reload = async () => {
-    await saReload(initialState, setInitialState, setSetting);
+    await saReload({ initialState, setInitialState, setSetting, setDevData });
     return;
   };
   return (

@@ -82,7 +82,7 @@ const AliyunVideo: FC<Props> = (props) => {
   const { initialState } = useModel('@@initialState');
   const baseUrl = initialState?.settings?.adminSetting?.baseurl;
   const createUploader = (e) => {
-    var uploader = new AliyunUpload.Vod({
+    const uploader = new AliyunUpload.Vod({
       timeout: 600000,
       partSize: 1048576,
       parallel: 5,

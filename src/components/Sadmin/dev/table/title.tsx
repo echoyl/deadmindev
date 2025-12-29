@@ -137,27 +137,14 @@ const BaseForm = (props: Record<string, any>) => {
   const { json = {}, setJson } = useContext(DevJsonContext);
 
   useEffect(() => {
-    //setValue(getValue(uid, pageMenu, ctype ? ctype : type));
-    //setValue(data);
     if (actionType != 'add') {
-      if (ctype == 'tabxx') {
-        //not used
-        setValue(data);
-      } else {
-        // console.log(
-        //   'get value',
-        //   uid,
-        //   ctype,
-        //   pageMenu,
-        //   getValue(uid, pageMenu, ctype ? ctype : type),
-        // );
-        const pageMenuData =
-          pageMenu && Object.keys(pageMenu)?.length > 0
-            ? pageMenu
-            : { schema: { form_config: json?.config?.form_config } };
-        //console.log('pageMenuData', pageMenuData);
-        setValue(getValue(uid, pageMenuData, ctype ? ctype : type));
-      }
+      const pageMenuData =
+        pageMenu && Object.keys(pageMenu)?.length > 0
+          ? pageMenu
+          : { schema: { form_config: json?.config?.form_config } };
+
+      const newValue = getValue(uid, pageMenuData, ctype ? ctype : type);
+      setValue(newValue);
     }
 
     const _columns =
@@ -222,7 +209,7 @@ const BaseForm = (props: Record<string, any>) => {
       setColumnsMore(getCustomerColumn(pageMenu?.model_id));
     }
     //console.log('base value is ', value, uid);
-  }, [pageMenu, data]);
+  }, [pageMenu]);
   //console.log('tableDesigner?.pageMenu', setTbColumns, getTableColumnsRender);
   //const value = getValue(uid, pageMenu, type);
 
@@ -248,7 +235,9 @@ const BaseForm = (props: Record<string, any>) => {
       data={{ id: pageMenu?.id, uid, ...extpost, ...json }}
       callback={({ data: rdata }) => {
         reflush?.(rdata);
-        setJson?.(rdata?.data);
+        if (rdata?.data) {
+          setJson?.(rdata.data);
+        }
       }}
       saFormProps={{ devEnable: false }}
       width={1000}

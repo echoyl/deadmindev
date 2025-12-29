@@ -29,7 +29,6 @@ const ButtonModal: FC<actionConfirm> = (props) => {
     minHeight = 0,
     modalProps,
     afterOpenChange,
-    confirmLoading = false,
     formFooter = true,
     readonly = false,
   } = props;
@@ -112,7 +111,6 @@ const ButtonModal: FC<actionConfirm> = (props) => {
         {...modalProps}
         centered={true}
         destroyOnHidden={true}
-        confirmLoading={confirmLoading}
         footer={
           readonly
             ? null

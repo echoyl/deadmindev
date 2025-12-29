@@ -25,12 +25,19 @@ import { ToolMenuForm } from './table/toolbar';
 export const SaDevContext = createContext<{
   setting?: any;
   setSetting?: (setting: any) => void;
+  devData?: any;
+  setDevData?: (setting: any) => void;
   // admin?: any;
   // setAdmin?: (admin: any) => void;
   messageApi?: MessageInstance;
   modalApi?: HookAPI;
   notificationApi?: NotificationInstance;
   isMobile?: boolean;
+}>({});
+
+export const SaDevDataContext = createContext<{
+  devData?: any;
+  setDevData?: (setting: any) => void;
 }>({});
 
 export const DevLinks = (props: any) => {

@@ -1,5 +1,5 @@
-﻿import type { GenerateStyle, ProAliasToken } from '@ant-design/pro-provider';
-import { useStyle as useAntdStyle } from '@ant-design/pro-provider';
+﻿import type { GenerateStyle, ProAliasToken } from '@ant-design/pro-components';
+import { useStyle as useAntdStyle } from '@ant-design/pro-components';
 
 interface GlobalHeaderToken extends ProAliasToken {
   componentCls: string;

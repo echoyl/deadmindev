@@ -37,7 +37,7 @@ import Message from './components/Sadmin/message';
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings> & {
-    adminSetting?: { [key: string]: any };
+    adminSetting?: Record<string, any>;
     [key: string]: any;
   };
   currentUser?: API.CurrentUser;
@@ -86,21 +86,18 @@ export async function getInitialState(): Promise<{
  * @param container
  * @returns
  */
-export function rootContainer(container: JSX.Element, args: any) {
-  // console.log('args', args);
-  // args.plugin.hooks.getInitialState[0]().then((v) => {
-  //   console.log('v', v);
-  // });
-
+export function rootContainer(container: JSX.Element) {
   const Provider = (props: any) => {
     //const { initialState } = useModel('@@initialState');
     const [setting, setSetting] = useState<any>(defaultSettings);
-    const [currentLocale, setCurrentLocale] = useState<string>(getLocale());
+    const [devData, setDevData] = useState<any>();
+    //const [currentLocale, setCurrentLocale] = useState<string>(getLocale());
+    const currentLocale = getLocale();
     const [messageApi, messageHolder] = message.useMessage();
     const [modalApi, modalHolder] = Modal.useModal();
     const [notificationApi, notificationHolder] = notification.useNotification();
     //const [admin, setAdmin] = useState<any>();
-    const supportLocale: { [key: string]: Locale } = {
+    const supportLocale: Record<string, Locale> = {
       'en-US': enUS,
       'zh-CN': zhCN,
       'zh-TW': zhTW,
@@ -110,11 +107,28 @@ export function rootContainer(container: JSX.Element, args: any) {
     const isMobile = useMemo(() => {
       return colSize === 'sm' || colSize === 'xs';
     }, [colSize]);
+
+    const contextValue = useMemo(
+      () => ({
+        setting,
+        setSetting,
+        messageApi,
+        modalApi,
+        notificationApi,
+        isMobile,
+        devData,
+        setDevData,
+      }),
+      [setting, messageApi, modalApi, notificationApi, isMobile, devData],
+    );
+
     useEffect(() => {
       //console.log('root get');
       //dayjs.locale(currentLocale.toLocaleLowerCase());
       saGetSetting().then((v) => {
-        setSetting(v);
+        const { devData: ddata, ...rest } = v;
+        setSetting(rest);
+        setDevData(ddata);
         v?.adminSetting?.locales?.map((lo: Record<string, any>) => {
           addLocale(lo.name, lo.configs);
         });
@@ -165,17 +179,7 @@ export function rootContainer(container: JSX.Element, args: any) {
         }
       >
         <App>
-          <SaDevContext.Provider
-            value={{
-              //setting: initialState?.settings,
-              setting,
-              setSetting,
-              messageApi,
-              modalApi,
-              notificationApi,
-              isMobile,
-            }}
-          >
+          <SaDevContext value={contextValue}>
             {/* <WebSocketProvider>
               <WebSocketListen />
               {props.children}
@@ -185,7 +189,7 @@ export function rootContainer(container: JSX.Element, args: any) {
             {modalHolder}
             {notificationHolder}
             <Message />
-          </SaDevContext.Provider>
+          </SaDevContext>
         </App>
       </ConfigProvider>
     );
@@ -244,6 +248,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     //disableContentMargin: false,
     waterMarkProps: {
       content: checkWaterMark(),
+      gap: [200, 250],
     },
     footerRender: () => <Footer />,
     onPageChange: () => {

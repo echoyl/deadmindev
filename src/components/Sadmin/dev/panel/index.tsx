@@ -228,7 +228,7 @@ const ItemRow = (props) => {
     <>
       {noTitle ? null : (
         <DevPanelColumnTitle
-          style={{ width: '25%', margin: '-14px 0' }}
+          style={{ width: '25%', margin: index == 0 ? '0 0 -14px 0':'-14px 0' }}
           otitle={null}
           title={row?.title ? row?.title : '分组 - ' + row?.uid}
           uid={row?.uid}

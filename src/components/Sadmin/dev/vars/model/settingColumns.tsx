@@ -1,7 +1,7 @@
 import type { saFormColumnsType, saFormTabColumnsType } from '../../../helpers';
 import { getModelColumns } from '../../table/baseFormColumns';
 
-export default (model_id: number, dev: Record<string, any>): saFormTabColumnsType => {
+export default (model_id: number, devData: Record<string, any>): saFormTabColumnsType => {
   //const columns: any[] = [];
   const styleColumns = (name?: string): saFormColumnsType => {
     const getname = (rname: string, tname?: string) => {
@@ -63,7 +63,7 @@ export default (model_id: number, dev: Record<string, any>): saFormTabColumnsTyp
       },
     ];
   };
-  const modelColumns2: any[] = getModelColumns(model_id, dev);
+  const modelColumns2: any[] = getModelColumns(model_id, devData);
   const columnsSetting: saFormTabColumnsType = [
     {
       title: '设置',

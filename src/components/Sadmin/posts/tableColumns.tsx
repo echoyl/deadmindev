@@ -24,7 +24,7 @@ const DeleteActionRender = (props) => {
     deleteable ? (
       <Tlink
         key="deleteItem"
-        onClick={async (e: any) => {
+        onClick={async () => {
           saTableContext?.delete(record);
         }}
       >

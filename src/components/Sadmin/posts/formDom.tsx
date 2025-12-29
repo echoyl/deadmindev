@@ -2,7 +2,7 @@ import request from '@/components/Sadmin/lib/request';
 import { BetaSchemaForm, ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
 import dayjs from 'dayjs';
-import { cloneDeep, isString } from 'es-toolkit';
+import { isString } from 'es-toolkit';
 import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
 import TranslationModal from '../dev/form/translation';
@@ -78,7 +78,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
 
   //console.log('inner detail', detail);
   const customerColumns =
-    typeof columns == 'function' ? columns(detail) : isArr(columns) ? cloneDeep(columns) : [];
+    typeof columns == 'function' ? columns(detail) : isArr(columns) ? columns : [];
   //console.log(detail);
   //const { initialState } = useModel('@@initialState');
   const hiddenColumns: any = [];

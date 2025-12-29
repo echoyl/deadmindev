@@ -14,9 +14,10 @@ import defaultSettings from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
 import { getTheme } from '../themeSwitch';
-export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
+export const parseAdminSeting: any = (localsetting: Record<string, any>) => {
+  const { devData, ...restLocalsetting } = localsetting;
   const theme = getTheme(localsetting);
-  const navTheme: { [key: string]: any } =
+  const navTheme: Record<string, any> =
     theme == 'light' ? { navTheme: theme } : { navTheme: theme };
   //之后会将adpro的设置 存到一个字段下面，
 
@@ -41,13 +42,20 @@ export const parseAdminSeting: any = (localsetting: { [key: string]: any }) => {
 
   return {
     ...defaultSettings,
-    adminSetting: localsetting,
+    adminSetting: restLocalsetting,
     ...navTheme,
     ...antdproRest,
     logo: localsetting.logo,
     token: newToken,
+    devData,
   };
 };
+
+/**
+ * 重新读取后台setting配置信息 会存储在缓存中
+ * @param force 是否强制刷新 会重新请求后端数据
+ * @returns
+ */
 export const saGetSetting = async (force: boolean = false): Promise<Record<string, any>> => {
   let localsetting = await getAdminSetting();
   if (force || !localsetting) {
@@ -62,13 +70,23 @@ export const saGetSetting = async (force: boolean = false): Promise<Record<strin
   return parseAdminSeting(localsetting);
 };
 
-export const saReload = async (initialState, setInitialState, setSetting) => {
+/**
+ * 刷新配置信息，刷新后会重新加载用户信息及开发配置信息
+ * @param param0
+ * @returns
+ */
+export const saReload = async ({
+  initialState,
+  setInitialState,
+  setSetting,
+  setDevData,
+}: Record<string, any> = {}) => {
   message?.loading({ key: messageLoadingKey, content: '刷新配置中' });
   const msg = await currentUser();
   //const msg = await cuser();
-  const setting = await saGetSetting(true);
+  const { devData, ...setting } = await saGetSetting(true);
   const uidx = uid();
-  setInitialState((s) => ({
+  setInitialState?.((s: any) => ({
     ...s,
     currentUser: { ...msg.data, uidx },
     settings: setting,
@@ -77,34 +95,23 @@ export const saReload = async (initialState, setInitialState, setSetting) => {
       ...initialState?.settings,
       ...setting,
     });
+    setDevData?.(devData);
     message?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
   });
   return;
 };
 
-export const saReloadSetting = async (initialState, setInitialState, setSetting) => {
-  message?.loading({ key: messageLoadingKey, content: '刷新开发数据中' });
-  //const msg = await cuser();
-  const setting = await saGetSetting(true);
-  setInitialState((s) => ({
-    ...s,
-    settings: setting,
-  })).then(() => {
-    setSetting?.({
-      ...initialState?.settings,
-      ...setting,
-    });
-    message?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
-  });
-  return;
-};
-
-export const saReloadMenu = async (initialState, setInitialState) => {
+/**
+ * 刷新用户信息 编辑菜单后调用可刷新左侧菜单信息
+ * @param param0
+ * @returns
+ */
+export const saReloadMenu = async ({ setInitialState }: Record<string, any> = {}) => {
   message?.loading({ key: messageLoadingKey, content: '刷新配置中' });
   const msg = await currentUser();
   //const msg = await cuser();
   const uidx = uid();
-  setInitialState((s) => ({
+  setInitialState?.((s: any) => ({
     ...s,
     currentUser: { ...msg.data, uidx },
   })).then(() => {
@@ -115,11 +122,11 @@ export const saReloadMenu = async (initialState, setInitialState) => {
 
 export default () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { setSetting } = useContext(SaDevContext);
+  const { setSetting, setDevData } = useContext(SaDevContext);
   const [spin, setSpin] = useState(false);
   const reload = async () => {
     setSpin(true);
-    await saReload(initialState, setInitialState, setSetting);
+    await saReload({ initialState, setInitialState, setSetting, setDevData });
     setSpin(false);
   };
 

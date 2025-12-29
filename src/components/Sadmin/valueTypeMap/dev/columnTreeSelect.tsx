@@ -46,8 +46,8 @@ const getModelColumnsTree = (
 
 const ColumnTreeSelect: FC<MenuSelectProps & { modelId?: Key }> = (props) => {
   const { modelId = 0, ...rest } = props;
-  const { setting } = useContext(SaDevContext);
-  const treeData = getModelColumnsTree(modelId, setting?.adminSetting?.dev?.allModels);
+  const { devData } = useContext(SaDevContext);
+  const treeData = getModelColumnsTree(modelId, devData?.allModels);
   return (
     <TreeSelect
       treeData={treeData}
@@ -69,6 +69,6 @@ const render = (_: any, props: any) => {
 
 export const devColumnTreeSelect = {
   render,
-  renderFormItem: render,
+  formItemRender: render,
 };
 export default ColumnTreeSelect;

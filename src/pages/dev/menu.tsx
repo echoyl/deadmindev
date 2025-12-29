@@ -1,9 +1,9 @@
+import { saReloadMenu } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import tableSet from '@/components/Sadmin/dev/vars/menu/set';
 import FormFromBread from '@/components/Sadmin/formFromBread';
-import type { saFormTabColumnsType } from '@/components/Sadmin/helpers';
-import { tplComplie, uid } from '@/components/Sadmin/helpers';
-import request, { currentUser, messageLoadingKey } from '@/components/Sadmin/lib/request';
+import type { saFormTabColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
+import { tplComplie } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import TableFromBread from '@/components/Sadmin/tableFromBread';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
@@ -280,21 +280,11 @@ export const MenuFormColumn: saFormTabColumnsType = [
 ];
 
 export default () => {
-  const actionRef = useRef<ActionType>();
-  const { messageApi, setting } = useContext(SaDevContext);
+  const actionRef = useRef<ActionType>(null);
+  const { setting } = useContext(SaDevContext);
   const { setInitialState } = useModel('@@initialState');
-  const reload = async () => {
-    messageApi?.loading({ key: messageLoadingKey, content: 'loading...' });
-    const msg = await currentUser();
-    //const msg = await cuser();
-    await request.get('dev/menu/clearCache');
-    const uidx = uid();
-    setInitialState((s) => ({
-      ...s,
-      currentUser: { ...msg.data, uidx },
-    })).then(() => {
-      messageApi?.success({ key: messageLoadingKey, content: '刷新成功' });
-    });
+  const reload = () => {
+    saReloadMenu({ setInitialState });
     return;
   };
   /**复制或移动的表单项 */
@@ -312,7 +302,7 @@ export default () => {
     },
   ];
 
-  const tableColumns = (enums) => [
+  const tableColumns: saTableColumnsType = [
     {
       title: '菜单名称',
       dataIndex: 'title2',
@@ -436,9 +426,7 @@ export default () => {
             if: '{{!record?.status && record?.page_type == "table"}}',
             modal: {
               title: '{{record.title + " - 预览"}}',
-              drawerProps: {
-                width: 1200,
-              },
+              width: 1200,
               childrenRender: (record) => (
                 <TableFromBread type="drawer" menu_page_id={record?.id} alwaysenable={true} />
               ),
@@ -451,9 +439,7 @@ export default () => {
             if: '{{!record?.status && record?.page_type == "form"}}',
             modal: {
               title: '{{record.title + " - 预览"}}',
-              drawerProps: {
-                width: 1200,
-              },
+              width: 1200,
               childrenRender: (record) => (
                 <FormFromBread
                   menu_page_id={record?.id}
@@ -491,7 +477,7 @@ export default () => {
               data: {
                 actype: 'state',
               },
-              callback: async (ret) => {
+              callback: async () => {
                 await reload();
                 return;
               },
@@ -517,8 +503,8 @@ export default () => {
               data: {
                 actype: 'status',
               },
-              callback: async (ret) => {
-                await reload();
+              callback: () => {
+                reload();
                 return;
               },
             },

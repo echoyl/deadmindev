@@ -1,10 +1,10 @@
 import { saFormColumnsType, saValueTypeMapType } from '@/components/Sadmin/helpers';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { SaDevContext } from '../..';
 import request from '@/components/Sadmin/lib/request';
-import { Badge, Button, Input, Space } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons';
 import { SaContext } from '@/components/Sadmin/posts/table';
+import { PlusCircleOutlined } from '@ant-design/icons';
+import { Badge, Button, Input, Space } from 'antd';
+import { useContext, useEffect, useState } from 'react';
+import { SaDevContext } from '../..';
 
 export const SchemaToJsonButton = (props) => {
   const { formRef } = useContext(SaContext);
@@ -23,15 +23,15 @@ export const SchemaToJsonButton = (props) => {
     //console.log(type);
     const category = [
       { title: 'id', name: 'id', type: 'int' },
-      { title: '名称', name: 'title', type: 'vachar' },
-      { title: '描述', name: 'desc', type: 'vachar', form_type: 'textarea' },
-      { title: '颜色', name: 'color', type: 'vachar', form_type: 'colorPicker' },
-      { title: 'Icon', name: 'icon', type: 'vachar', form_type: 'iconSelect' },
+      { title: '名称', name: 'title', type: 'varchar' },
+      { title: '描述', name: 'desc', type: 'varchar', form_type: 'textarea' },
+      { title: '颜色', name: 'color', type: 'varchar', form_type: 'colorPicker' },
+      { title: 'Icon', name: 'icon', type: 'varchar', form_type: 'iconSelect' },
       { title: '父级Id', name: 'parent_id', type: 'int', desc: '' },
       {
         title: '图片',
         name: 'titlepic',
-        type: 'vachar',
+        type: 'varchar',
         form_type: 'image',
         setting: {
           image_count: 1,
@@ -52,17 +52,17 @@ export const SchemaToJsonButton = (props) => {
 
     const normal = [
       { title: 'id', name: 'id', type: 'int' },
-      { title: '名称', name: 'title', type: 'vachar' },
+      { title: '名称', name: 'title', type: 'varchar' },
       {
         title: '图片',
         name: 'titlepic',
-        type: 'vachar',
+        type: 'varchar',
         form_type: 'image',
         setting: {
           image_count: 1,
         },
       },
-      { title: '描述', name: 'desc', type: 'vachar', form_type: 'textarea' },
+      { title: '描述', name: 'desc', type: 'varchar', form_type: 'textarea' },
       {
         title: '状态',
         name: 'state',
@@ -78,19 +78,19 @@ export const SchemaToJsonButton = (props) => {
     ];
     const user = [
       { title: 'id', name: 'id', type: 'int' },
-      { title: '用户名', name: 'username', type: 'vachar' },
-      { title: '昵称', name: 'nickname', type: 'vachar' },
+      { title: '用户名', name: 'username', type: 'varchar' },
+      { title: '昵称', name: 'nickname', type: 'varchar' },
       {
         title: '头像',
         name: 'titlepic',
-        type: 'vachar',
+        type: 'varchar',
         form_type: 'image',
         setting: {
           image_count: 1,
         },
       },
-      { title: '手机号码', name: 'mobile', type: 'vachar' },
-      { title: '描述', name: 'desc', type: 'vachar', form_type: 'textarea' },
+      { title: '手机号码', name: 'mobile', type: 'varchar' },
+      { title: '描述', name: 'desc', type: 'varchar', form_type: 'textarea' },
       {
         title: '状态',
         name: 'state',

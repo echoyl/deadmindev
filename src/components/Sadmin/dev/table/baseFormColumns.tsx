@@ -128,10 +128,10 @@ export const getModelById = (model_id: Key, models: any[]) => {
 
 export const getModelColumns = (
   model_id: Key,
-  dev: Record<string, any> = { allModels: [] },
+  devData: Record<string, any> = { allModels: [] },
   justTop: boolean = false,
 ) => {
-  const { allModels = [] } = dev;
+  const { allModels = [] } = devData;
   //console.log('model_id', model_id, allModels);
   const model = getModelById(model_id, allModels);
   const allColumns = getModelColumnsSelect(model_id, allModels, justTop ? 100 : 1);

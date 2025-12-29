@@ -122,7 +122,7 @@ export default defineConfig({
     configProvider: {
       theme: {
         token: {
-          fontFamily: 'Avenir, AlibabaSans, sans-serif',
+          fontFamily: 'AlibabaSans, sans-serif',
         },
       },
     },
@@ -171,12 +171,13 @@ export default defineConfig({
   mock: {
     include: ['mock/**/*', 'src/pages/**/_mock.ts'],
   },
+  //utoopack: {},
   /**
    * @name 是否开启 mako
    * @description 使用 mako 极速研发
    * @doc https://umijs.org/docs/api/config#mako
    */
-  //mako: {},
+  mako: {},
   esbuildMinifyIIFE: true,
   requestRecord: {},
   //exportStatic: {},

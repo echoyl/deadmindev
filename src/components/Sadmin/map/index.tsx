@@ -287,7 +287,7 @@ export const MapInput: FC = (props: MapInputProps) => {
 
 export const MapinputRender = {
   render: (text) => text,
-  renderFormItem: (text, props) => {
+  formItemRender: (text, props) => {
     return <MapInput {...props.fieldProps} />;
   },
 };
@@ -298,7 +298,7 @@ export const MapShowRender = {
     const _text = getJson(text, {});
     return <MapShow {..._text} />;
   },
-  renderFormItem: (text) => {
+  formItemRender: (text) => {
     const _text = getJson(text, {});
     return <MapShow {..._text} />;
   },

@@ -13,12 +13,12 @@ import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../dev';
 import { DndContext } from '../dev/dnd-context';
 import { useTableDesigner } from '../dev/table/designer';
-import { AddTabItem, FormAddTab, TabColumnTitle } from '../dev/table/title';
+import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 
-import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
-import { SaContext, saTableProps } from './table';
 import { PageContainer404 } from '@/components/Sadmin/404';
 import { isUndefined } from 'es-toolkit';
+import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
+import { SaContext, saTableProps } from './table';
 
 export interface saFormProps extends saTableProps {
   msgcls?: (value: { [key: string]: any }) => void; //提交数据后的 回调
@@ -70,13 +70,14 @@ export const SaForm: FC<saFormProps> = (props) => {
     onTabChange,
     setting,
     resetForm = false,
-    pageMenu,
+    pageMenu: oPageMenu,
     grid = true,
     devEnable: pdevEnable = true,
   } = props;
   //console.log('init props', props);
   //const url = 'posts/posts';
   //读取后台数据
+  const [pageMenu, setPageMenu] = useState(oPageMenu);
   const [detail, setDetail] = useState<{ [key: string]: any } | boolean>(
     props.formProps?.initialValues ? props.formProps?.initialValues : false,
   );
@@ -109,28 +110,28 @@ export const SaForm: FC<saFormProps> = (props) => {
       }
     }
 
-    const ret = await request.post(postTo, {
-      data: { base: { ...postExtra, ...postBase } },
-      msgcls: callback ? callback : msgcls,
-      then,
-      messageApi,
-    });
+    return request
+      .post(postTo, {
+        data: { base: { ...postExtra, ...postBase } },
+        msgcls: callback ? callback : msgcls,
+        then,
+        messageApi,
+      })
+      .then((ret) => {
+        props.afterPost?.(ret);
 
-    props.afterPost?.(ret);
-
-    if (setting?.steps_form) {
-    } else {
-      //console.log('re set data', ret.data, formRef?.current);
-      //setDetail({ ...ret.data });
-      if ((resetForm || pageType == 'page') && !ret.code) {
-        //当强制刷新form 或者页面类型是page时，且请求成功时，重置表单
-        formRef?.current?.resetFields();
-        //formRef?.current?.setFieldsValue({});
-        formRef?.current?.setFieldsValue({ ...ret.data });
-      }
-    }
-
-    return ret;
+        if (setting?.steps_form) {
+        } else {
+          //console.log('re set data', ret.data, formRef?.current);
+          //setDetail({ ...ret.data });
+          if ((resetForm || pageType == 'page') && !ret.code) {
+            //当强制刷新form 或者页面类型是page时，且请求成功时，重置表单
+            formRef?.current?.resetFields();
+            //formRef?.current?.setFieldsValue({});
+            formRef?.current?.setFieldsValue({ ...ret.data });
+          }
+        }
+      });
   };
 
   const params = { ...useParams(), ...paramExtra };
@@ -195,7 +196,6 @@ export const SaForm: FC<saFormProps> = (props) => {
       return;
     }
     //tabs不能设置默认值 不然这里会一直执行
-    //console.log('form has changed here', tabs);
 
     if (isUndefined(tabs)) {
       const defaultTabs = formColumns
@@ -229,6 +229,7 @@ export const SaForm: FC<saFormProps> = (props) => {
 
   const tableDesigner = useTableDesigner({
     pageMenu,
+    setPageMenu,
     setColumns: setFormColumns,
     getColumnsRender: getFormColumnsRender,
     type: 'form',
@@ -246,7 +247,7 @@ export const SaForm: FC<saFormProps> = (props) => {
       }}
     >
       <DndContext>
-        {initialState?.settings?.adminSetting?.dev && pdevEnable && !showTabs ? (
+        {initialState?.settings?.adminSetting?.dev && pdevEnable && !showTabs && !devEnable ? (
           <FormAddTab pageMenu={pageMenu} style={pageType != 'page' ? { marginTop: 16 } : {}} />
         ) : null}
         {setting?.steps_form ? (

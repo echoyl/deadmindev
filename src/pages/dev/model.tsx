@@ -3,6 +3,7 @@ import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
 import type { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
+import request, { getAdminSetting, setAdminSetting } from '@/components/Sadmin/lib/request';
 import Category from '@/components/Sadmin/posts/category';
 import {
   CopyOutlined,
@@ -12,7 +13,7 @@ import {
 } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
-import { useContext, useRef } from 'react';
+import { use, useRef } from 'react';
 import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
 /**
@@ -35,8 +36,7 @@ export const devTabelFields = [];
 
 export const modelFormColumns = (
   detail: Record<string, any>,
-  formRef: ProFormInstance<any> | any,
-  setting: Record<string, any>,
+  devData: Record<string, any>,
 ): saFormColumnsType => {
   const modelType = ['category', 'normal', 'auth'];
   const searchColumnType = ['=', 'like', 'whereBetween', 'whereIn', 'has', 'doesntHave'];
@@ -136,7 +136,7 @@ export const modelFormColumns = (
               title: '设置',
               size: 'middle',
             },
-            tabs: settingColumns(detail.id, setting?.dev),
+            tabs: settingColumns(detail.id, devData),
             saFormProps: { devEnable: false, grid: true },
             //showType: 'drawer',
           },
@@ -253,16 +253,12 @@ export const modelFormColumns = (
 };
 
 export default () => {
-  const { setting } = useContext(SaDevContext);
-  // const actionRef = useRef<ActionType>();
-  // const { initialState, setInitialState } = useModel('@@initialState');
-  // const { setSetting } = useContext(SaDevContext);
-
+  const { devData, setDevData } = use(SaDevContext);
   const tableColumns: saTableColumnsType = [
     {
       title: '标题',
       dataIndex: 'title',
-      render: (dom, record) => (
+      render: (dom: any, record: Record<string, any>) => (
         <Space>
           {record.type == 1 ? <FileOutlined /> : <FolderOutlined />}
           {record.title}
@@ -331,11 +327,27 @@ export default () => {
 
   const formRef = useRef<ProFormInstance<any>>({} as any);
 
-  // const reData = async () => {
-  //   actionRef?.current?.reload();
-  //   saReloadSetting(initialState, setInitialState, setSetting);
-  //   return true;
-  // };
+  const flushModelData = (model: Record<string, any>) => {
+    const index = devData?.allModels?.findIndex((item: Record<string, any>) => item.id == model.id);
+    const allModels = [...devData?.allModels];
+    if (index != -1) {
+      allModels[index] = model;
+    } else {
+      allModels.push(model);
+    }
+    const newDevData = {
+      ...devData,
+      allModels,
+    };
+    getAdminSetting().then((adminSetting) => {
+      const newAdminSetting = {
+        ...adminSetting,
+        devData: newDevData,
+      };
+      setAdminSetting(newAdminSetting);
+      setDevData?.(newDevData);
+    });
+  };
 
   return (
     <>
@@ -346,7 +358,15 @@ export default () => {
         table_menu_key="admin_type"
         table_menu_all={false}
         tableColumns={tableColumns}
-        // afterFormPost={reData}
+        afterFormPost={({ data, code }) => {
+          if (!code) {
+            //生成后端代码及格式化文件
+            request.get(`dev/formatFile/${data.id}`).then(() => {
+              flushModelData(data);
+            });
+          }
+          //return true;
+        }}
         // afterDelete={reData}
         devEnable={false}
         setting={{ scollYFullscreen: true }}
@@ -366,7 +386,7 @@ export default () => {
         level={4}
         url="dev/model"
         formColumns={(detail) => {
-          return modelFormColumns(detail, formRef, setting?.adminSetting);
+          return modelFormColumns(detail, devData);
         }}
         openType="modal"
       />

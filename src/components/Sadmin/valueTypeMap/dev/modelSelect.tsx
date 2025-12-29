@@ -8,14 +8,10 @@ type MenuSelectProps = GetProps<typeof TreeSelect>;
 
 const ModelSelect: FC<MenuSelectProps & { type?: 'model' | 'folder' }> = (props) => {
   const { type = 'model' } = props; //model-选择模型 folder-选择文件夹
-  const { setting } = useContext(SaDevContext);
+  const { devData } = useContext(SaDevContext);
   return (
     <TreeSelect
-      treeData={
-        type == 'model'
-          ? setting?.adminSetting?.dev?.allModelsTree
-          : setting?.adminSetting?.dev?.folderModelsTree
-      }
+      treeData={type == 'model' ? devData?.allModelsTree : devData?.folderModelsTree}
       treeLine={{ showLeafIcon: true }}
       treeDefaultExpandAll={true}
       allowClear={true}
@@ -32,6 +28,6 @@ const render = (_: any, props: any) => {
 
 export const modelSelect = {
   render,
-  renderFormItem: render,
+  formItemRender: render,
 };
 export default ModelSelect;

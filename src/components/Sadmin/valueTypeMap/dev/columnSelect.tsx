@@ -9,8 +9,8 @@ type MenuCascaderProps = GetProps<typeof Cascader>;
 
 const ColumnSelect: FC<MenuSelectProps & { modelId?: Key }> = (props) => {
   const { modelId = 0, ...rest } = props;
-  const { setting } = useContext(SaDevContext);
-  const options = getModelColumns(modelId, setting?.adminSetting?.dev, true);
+  const { devData } = useContext(SaDevContext);
+  const options = getModelColumns(modelId, devData, true);
   return <Select options={options} allowClear placeholder={'请选择字段'} showSearch {...rest} />;
 };
 
@@ -21,13 +21,13 @@ const render = (_: any, props: any) => {
 
 export const devColumnSelect = {
   render,
-  renderFormItem: render,
+  formItemRender: render,
 };
 
 const ColumnRelationSelect: FC<MenuCascaderProps & { modelId?: Key }> = (props) => {
   const { modelId = 0, ...rest } = props;
-  const { setting } = useContext(SaDevContext);
-  const options = getModelColumns(modelId, setting?.adminSetting?.dev);
+  const { devData } = useContext(SaDevContext);
+  const options = getModelColumns(modelId, devData);
   return (
     <Cascader
       options={options}
@@ -40,14 +40,14 @@ const ColumnRelationSelect: FC<MenuCascaderProps & { modelId?: Key }> = (props) 
   );
 };
 
-const renderFormItem = (_: any, props: any) => {
+const formItemRender = (_: any, props: any) => {
   const { fieldProps } = props;
   return <ColumnRelationSelect {...fieldProps} />;
 };
 
 export const devColumnRelationSelect = {
-  render: renderFormItem,
-  renderFormItem,
+  render: formItemRender,
+  formItemRender,
 };
 
 export default ColumnSelect;

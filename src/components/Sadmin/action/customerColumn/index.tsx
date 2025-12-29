@@ -352,7 +352,7 @@ const CustomerColumnRender = (props) => {
           return dom
             ? React.cloneElement(dom, {
                 key: xkey,
-                onClick: async (e: any) => {
+                onClick: async () => {
                   saTableContext?.[item.action](record, value);
                 },
               })

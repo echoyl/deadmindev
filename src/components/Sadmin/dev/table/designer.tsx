@@ -2,8 +2,9 @@ import request from '@/components/Sadmin/lib/request';
 import { useModel } from '@umijs/max';
 import type { DropdownProps, GetProp } from 'antd';
 import { Dropdown } from 'antd';
-import type { ReactNode } from 'react';
+import type { Key, ReactNode } from 'react';
 import React, { createContext, useContext, useState, useTransition } from 'react';
+import { getMenuDataById } from '../../helpers';
 import { DevJsonContext } from '../../jsonForm';
 
 export type tableDesignerInstance = {
@@ -13,6 +14,7 @@ export type tableDesignerInstance = {
   sortFormColumns?: (id: number, cls: any[]) => void;
   setColumns?: any;
   getColumnsRender?: any;
+  setPageMenu?: (data: Record<string, any>) => void;
   add?: (data: Record<string, any>) => void;
   addUrl?: string;
   edit?: (data: Record<string, any>) => void;
@@ -27,8 +29,8 @@ export type tableDesignerInstance = {
 };
 
 export function useTableDesigner(props: tableDesignerInstance) {
-  const { setColumns, getColumnsRender, type = 'table' } = props;
-  const { setInitialState } = useModel('@@initialState');
+  const { setColumns, getColumnsRender, setPageMenu, type = 'table' } = props;
+  const { initialState, setInitialState } = useModel('@@initialState');
   const { json = {}, setJson } = useContext(DevJsonContext); //读取本地化的配置信息
   const config: Record<string, Record<string, string>> = {
     form: {
@@ -69,7 +71,30 @@ export function useTableDesigner(props: tableDesignerInstance) {
     //更新schema
     //pageMenu.schema = data.schema;
     //pageMenu.data = { ...pageMenu.data, ...data.data };
+    const set = (menus = [], id: Key, setData: any) => {
+      menus.forEach((item: any, index: number, arr: any[]) => {
+        if (item.id == id) {
+          arr[index] = { ...item, ...setData };
+        } else {
+          if (item.routes?.length > 0) {
+            arr[index].routes = set(item.routes, id, setData);
+          }
+        }
+      });
+      return menus;
+    };
+    if (data.setData && data.id) {
+      //找到菜单 然后设置返回生成好的数据
+      const menuData = set(initialState?.currentUser?.menuData, data.id, data.setData);
+      const pageMenu = getMenuDataById(menuData, data.id);
+      setPageMenu?.(pageMenu);
+      setInitialState((s) => ({
+        ...s,
+        currentUser: { ...s?.currentUser, menuData },
+      }));
+    }
     if (data.currentUser) {
+      //这个已失效，主要太卡了
       setInitialState((s) => ({
         ...s,
         currentUser: { ...s?.currentUser, ...data.currentUser },

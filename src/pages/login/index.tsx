@@ -108,7 +108,7 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
     //删除showCaptcha
     cache.remove('Sa-ShowCaptcha');
     setAdminSetting(data.setting);
-    const adminSetting = parseAdminSeting(data.setting);
+    const { devData, ...adminSetting } = parseAdminSeting(data.setting);
     setInitialState((s) => ({
       ...s,
       currentUser: data.userinfo,
@@ -562,6 +562,7 @@ const LoginPage: React.FC = () => {
               marginTop: -72,
             }}
             bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
+            variant="borderless"
           >
             <Login setting={setting} />
           </ProCard>
