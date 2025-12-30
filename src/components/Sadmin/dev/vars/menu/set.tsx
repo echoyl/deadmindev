@@ -228,6 +228,7 @@ const form: saFormColumnsType = [
             { label: 'outlined', value: 'outlined' },
             { label: 'borderless', value: 'borderless' },
             { label: 'filled', value: 'filled' },
+            { label: 'underlined', value: 'underlined' },
           ],
         },
         colProps: { span: 12 },

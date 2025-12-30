@@ -12,7 +12,7 @@ const ConsoleLogShowFormValue = (props: any) => {
     setValue(v);
   };
   return (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <Space orientation="vertical" style={{ width: '100%' }}>
       <Button onClick={onClick}>console.log</Button>
       <JsonEditor value={value} readOnly={true} />
     </Space>

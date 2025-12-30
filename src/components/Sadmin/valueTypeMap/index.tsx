@@ -56,5 +56,6 @@ export const MDEditorRender = (_, props) => {
 };
 
 export const AlertRender = (_, props) => {
-  return <Alert title={_} type="info" showIcon {...props.fieldProps} />;
+  const { message = '', title = '', ...restProps } = props.fieldProps;
+  return <Alert title={_} type="info" showIcon title={title ? title : message} {...restProps} />;
 };

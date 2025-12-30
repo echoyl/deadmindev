@@ -1,6 +1,7 @@
 import { Link, useModel } from '@umijs/max';
 import { Divider, Dropdown, Image, Modal, Popover, QRCode, Space, Table, Timeline } from 'antd';
 import dayjs from 'dayjs';
+import { isFunction } from 'es-toolkit';
 import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr } from '../../checkers';
 import { RequestButtonRender } from '../../components/requestButton';
@@ -67,7 +68,7 @@ const CustomerColumnRender = (props) => {
     //const { fieldProps = {}, modal } = item;
     //const { value = {} } = fieldProps;
     if (item.domtype == 'divider') {
-      return <Divider key={i} type="vertical" />;
+      return <Divider key={i} orientation="vertical" />;
     } else if (item.domtype == 'timeline') {
       //处理icon
       //console.log('timeline', item);
@@ -152,7 +153,8 @@ const CustomerColumnRender = (props) => {
   };
   const getItemsDom = (items, percentNum = -1) => {
     return items
-      ?.map((item, i) => {
+      ?.map((itemx, i) => {
+        const item = isFunction(itemx) ? itemx() : itemx;
         const dom = parseDom(item, i, percentNum);
         const styleProps = percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {};
         //key为固定值，之前用动态uid后导致一些bug

@@ -275,7 +275,7 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
         <ProFormCascader
           noStyle
           {...props.fieldProps}
-          fieldProps={{ variant: 'filled', ...props.fieldProps }}
+          fieldProps={{ ...props.fieldProps }}
           request={async () => {
             const data = await getPca(level, topCode);
             return data;

@@ -1,6 +1,48 @@
 import settingColumns from '@/components/Sadmin/dev/vars/relation/settingColumns';
 import SaTable from '@/components/Sadmin/posts/table';
 import { CopyOutlined } from '@ant-design/icons';
+const copyColumns = () => ({
+  domtype: 'button',
+  fieldProps: {
+    value: {
+      saFormProps: { devEnable: false, grid: true },
+    },
+  },
+  modal: {
+    msg: '请选择复制到',
+    formColumns: [
+      {
+        valueType: 'group',
+        columns: [
+          {
+            dataIndex: 'toid',
+            title: '复制到模型',
+            valueType: 'modelSelect',
+            colProps: { span: 12 },
+          },
+          {
+            dataIndex: 'type',
+            title: '方式',
+            valueType: 'radioButton',
+            fieldProps: {
+              options: [
+                { label: '插入', value: 'create' },
+                { label: '覆盖', value: 'update' },
+                { label: '复制', value: 'copy' },
+              ],
+              buttonStyle: 'solid',
+              defaultValue: 'create',
+            },
+            colProps: { span: 12 },
+          },
+        ],
+      },
+    ],
+  },
+  request: { url: 'dev/relation/copyToModel' },
+  action: 'confirmForm',
+  btn: { text: '', size: 'small', icon: <CopyOutlined />, tooltip: '复制关联' },
+});
 export default (props: Record<string, any>) => {
   const { model, contentRender } = props;
   // const actionRef = useRef<ActionType>();
@@ -33,50 +75,7 @@ export default (props: Record<string, any>) => {
           search: false,
           readonly: true,
           fieldProps: {
-            items: [
-              {
-                domtype: 'button',
-                fieldProps: {
-                  value: {
-                    saFormProps: { devEnable: false, grid: true },
-                  },
-                },
-                modal: {
-                  msg: '请选择复制到',
-                  formColumns: [
-                    {
-                      valueType: 'group',
-                      columns: [
-                        {
-                          dataIndex: 'toid',
-                          title: '复制到模型',
-                          valueType: 'modelSelect',
-                          colProps: { span: 12 },
-                        },
-                        {
-                          dataIndex: 'type',
-                          title: '方式',
-                          valueType: 'radioButton',
-                          fieldProps: {
-                            options: [
-                              { label: '插入', value: 'create' },
-                              { label: '覆盖', value: 'update' },
-                              { label: '复制', value: 'copy' },
-                            ],
-                            buttonStyle: 'solid',
-                            defaultValue: 'create',
-                          },
-                          colProps: { span: 12 },
-                        },
-                      ],
-                    },
-                  ],
-                },
-                request: { url: 'dev/relation/copyToModel' },
-                action: 'confirmForm',
-                btn: { text: '', size: 'small', icon: <CopyOutlined />, tooltip: '复制关联' },
-              },
-            ],
+            items: [copyColumns],
           },
         },
         'option',

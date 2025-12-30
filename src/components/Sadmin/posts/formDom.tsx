@@ -2,7 +2,7 @@ import request from '@/components/Sadmin/lib/request';
 import { BetaSchemaForm, ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
 import dayjs from 'dayjs';
-import { isString } from 'es-toolkit';
+import { cloneDeep, isString } from 'es-toolkit';
 import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
 import TranslationModal from '../dev/form/translation';
@@ -78,11 +78,17 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
 
   //console.log('inner detail', detail);
   const customerColumns =
-    typeof columns == 'function' ? columns(detail) : isArr(columns) ? columns : [];
+    typeof columns == 'function'
+      ? columns(detail)
+      : isArr(columns)
+      ? devEnable
+        ? cloneDeep(columns)
+        : columns
+      : [];
   //console.log(detail);
   //const { initialState } = useModel('@@initialState');
   const hiddenColumns: any = [];
-  const defaulColumns: { [key: string]: any } = {
+  const defaulColumns: Record<string, any> = {
     id: {
       dataIndex: 'id',
       formItemProps: { hidden: true },
@@ -92,7 +98,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       formItemProps: { hidden: true },
     },
   };
-  const checkCondition = (vals: { [key: string]: any }, dependency: { [key: string]: any }) => {
+  const checkCondition = (vals: Record<string, any>, dependency: Record<string, any>) => {
     let ret = true;
     const { condition = [], condition_type = 'all' } = dependency;
     for (var i in condition) {
@@ -420,7 +426,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.width = v.width || '100%';
       }
       if (v.valueType == 'cascader') {
-        v.fieldProps.variant = 'filled';
+        //v.fieldProps.variant = 'filled';
       }
 
       return v;

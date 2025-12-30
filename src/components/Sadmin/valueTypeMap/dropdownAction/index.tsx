@@ -1,10 +1,10 @@
+import { DownOutlined } from '@ant-design/icons';
 import { Badge, Button, Dropdown, Space, Tag } from 'antd';
 import React, { useContext } from 'react';
-import { SaContext } from '../../posts/table';
-import { SaDevContext } from '../../dev';
 import { ConfirmTriggerClick } from '../../action/confirm';
+import { SaDevContext } from '../../dev';
+import { SaContext } from '../../posts/table';
 import { iconToElement } from '../iconSelect';
-import { DownOutlined } from '@ant-design/icons';
 
 const DropdownAction: React.FC = (props: {
   fieldNames?: string;
@@ -44,7 +44,7 @@ const DropdownAction: React.FC = (props: {
     const icon = v.icon ? iconToElement(v.icon) : false;
     if (type == 'tag') {
       return (
-        <Tag color={v.color} icon={icon} bordered={false} style={{ marginInlineEnd: 0 }}>
+        <Tag color={v.color} icon={icon} variant="filled" style={{ marginInlineEnd: 0 }}>
           {v[label]}
         </Tag>
       );

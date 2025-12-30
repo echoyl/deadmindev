@@ -546,11 +546,17 @@ const SaTable: React.FC<saTableProps> = (props) => {
     }
     setMinHeight(defaultHeight);
   }, [footer, tableProps.pagination, search_config]);
+  //根据table尺寸来计算最小高度值
+  const heightSizes = {
+    small: -1,
+    middle: -7,
+    large: -23,
+  };
   const useStyles = createStyles(({ css }, { height }: { height: string | boolean }) => {
     return height
       ? {
           body: css`
-            .ant-table-body {
+            .ant-table-content {
               min-height: ${height};
             }
           `,
@@ -560,7 +566,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const { styles } = useStyles({
     height:
       setting?.minHeightFullscreen !== false && pageType != 'modal'
-        ? `calc(100vh - ${minHeight + 47}px)`
+        ? `calc(100vh - ${minHeight - heightSizes[setting?.table?.size || 'middel']}px)`
         : false,
   });
   return (

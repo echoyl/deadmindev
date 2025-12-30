@@ -2,10 +2,10 @@ import request from '@/components/Sadmin/lib/request';
 import { ProFormSelect } from '@ant-design/pro-components';
 import { useLocation } from '@umijs/max';
 import type { SelectProps } from 'antd/es/select';
+import { isEqual } from 'es-toolkit';
 import React, { useEffect, useState } from 'react';
 import { isArr, isObj, isStr, isUndefined } from '../../checkers';
 import { tplComplie, uid } from '../../helpers';
-import { isEqual } from 'es-toolkit';
 export interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
   fetchOptions: (search: { [key: string]: any }) => Promise<ValueType[]> | string;

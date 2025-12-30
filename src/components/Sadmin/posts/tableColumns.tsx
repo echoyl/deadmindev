@@ -4,6 +4,7 @@ import { TableDropdown } from '@ant-design/pro-components';
 import { history, Link, useModel } from '@umijs/max';
 import { Space, Typography } from 'antd';
 import dayjs from 'dayjs';
+import { cloneDeep } from 'es-toolkit';
 import { useContext } from 'react';
 import { isArr, isUndefined } from '../checkers';
 import { DragHandle } from '../dev/dnd-context/dragSort';
@@ -252,7 +253,14 @@ export const getTableColumns = (props) => {
       render: () => <DragHandle />,
     },
   };
-  const customerColumns = typeof columns == 'function' ? columns(enums, actionRef) : columns;
+  //table中的columns 尽量不要太复杂，这里cloneDeep会很低
+  //为开启devEnable时，不进行cloneDeep
+  const customerColumns =
+    typeof columns == 'function'
+      ? columns(enums, actionRef)
+      : devEnable
+      ? cloneDeep(columns)
+      : columns;
   //const allColumns = [...defaulColumns, ...customerColumns];
   const defaulColumnsRender = (type: string, customer: any) => {
     if (type == 'coption') {

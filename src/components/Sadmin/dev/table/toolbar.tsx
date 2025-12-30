@@ -326,7 +326,6 @@ export const ToolModelForm = (props) => {
 };
 
 export const ToolModelFieldsForm = (props) => {
-  const { setInitialState, initialState } = useModel('@@initialState');
   const { pageMenu = { model_id: 0 }, trigger } = props;
   const ModelForm = (mprops) => {
     const { contentRender, setOpen } = mprops;

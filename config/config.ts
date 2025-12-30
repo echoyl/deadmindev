@@ -2,6 +2,7 @@
 
 import { defineConfig } from '@umijs/max';
 import { join } from 'node:path';
+import path from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
@@ -177,7 +178,7 @@ export default defineConfig({
    * @description 使用 mako 极速研发
    * @doc https://umijs.org/docs/api/config#mako
    */
-  mako: {},
+  //mako: {},
   esbuildMinifyIIFE: true,
   requestRecord: {},
   //exportStatic: {},
@@ -189,5 +190,8 @@ export default defineConfig({
   },
   codeSplitting: {
     jsStrategy: 'granularChunks',
+  },
+  alias: {
+    'antd/lib': path.resolve(__dirname, '../node_modules/antd/es'),
   },
 });
