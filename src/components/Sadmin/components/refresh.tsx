@@ -120,6 +120,39 @@ export const saReloadMenu = async ({ setInitialState }: Record<string, any> = {}
   return;
 };
 
+export const saReloadModel = (
+  { devData, setDevData }: Record<string, any> = {},
+  model: Record<string, any>,
+) => {
+  if (!model) {
+    return;
+  }
+  const flushModelData = () => {
+    const index = devData?.allModels?.findIndex((item: Record<string, any>) => item.id == model.id);
+    const allModels = [...devData?.allModels];
+    if (index != -1) {
+      allModels[index] = model;
+    } else {
+      allModels.push(model);
+    }
+    const newDevData = {
+      ...devData,
+      allModels,
+    };
+    getAdminSetting().then((adminSetting) => {
+      const newAdminSetting = {
+        ...adminSetting,
+        devData: newDevData,
+      };
+      setAdminSetting(newAdminSetting);
+      setDevData?.(newDevData);
+    });
+  };
+  request.get(`dev/formatFile/${model.id}`).then(() => {
+    flushModelData();
+  });
+};
+
 export default () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const { setSetting, setDevData } = useContext(SaDevContext);

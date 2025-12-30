@@ -27,7 +27,7 @@ import ButtonDrawer from '../../action/buttonDrawer';
 import ButtonModal from '../../action/buttonModal';
 import CustomerColumnRender from '../../action/customerColumn';
 import { isStr } from '../../checkers';
-import { saReload, saReloadMenu } from '../../components/refresh';
+import { saReloadMenu, saReloadModel } from '../../components/refresh';
 import type { RequestButtonProps } from '../../components/requestButton';
 import RequestButton from '../../components/requestButton';
 import { parseIcon, t } from '../../helpers';
@@ -277,7 +277,6 @@ export const ToolMenuForm = (props) => {
 };
 
 export const ToolModelForm = (props) => {
-  const { setInitialState, initialState } = useModel('@@initialState');
   const { pageMenu = { model_id: 0 }, trigger } = props;
   const ModelForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
@@ -296,10 +295,10 @@ export const ToolModelForm = (props) => {
         postExtra={{ id: pageMenu?.model_id }}
         grid={true}
         devEnable={false}
-        msgcls={({ code }) => {
+        msgcls={({ code, data }) => {
           setOpen(false);
           if (!code) {
-            saReload({ initialState, setInitialState, setDevData });
+            saReloadModel({ devData, setDevData }, data);
           }
         }}
         formProps={{
@@ -333,7 +332,7 @@ export const ToolModelFieldsForm = (props) => {
     const { contentRender, setOpen } = mprops;
     const formRef = useRef<ProFormInstance<any>>({} as any);
 
-    const { setDevData } = useContext(SaDevContext);
+    const { devData, setDevData } = useContext(SaDevContext);
     return (
       <SaForm
         formRef={formRef}
@@ -361,10 +360,10 @@ export const ToolModelFieldsForm = (props) => {
         postExtra={{ id: pageMenu?.model_id }}
         grid={true}
         devEnable={false}
-        msgcls={({ code }) => {
+        msgcls={({ code, data }) => {
           setOpen(false);
           if (!code) {
-            saReload({ initialState, setInitialState, setDevData });
+            saReloadModel({ devData, setDevData }, data);
           }
         }}
         formProps={{

@@ -1,9 +1,9 @@
+import { saReloadModel } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
 import type { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
-import request, { getAdminSetting, setAdminSetting } from '@/components/Sadmin/lib/request';
 import Category from '@/components/Sadmin/posts/category';
 import {
   CopyOutlined,
@@ -327,28 +327,6 @@ export default () => {
 
   const formRef = useRef<ProFormInstance<any>>({} as any);
 
-  const flushModelData = (model: Record<string, any>) => {
-    const index = devData?.allModels?.findIndex((item: Record<string, any>) => item.id == model.id);
-    const allModels = [...devData?.allModels];
-    if (index != -1) {
-      allModels[index] = model;
-    } else {
-      allModels.push(model);
-    }
-    const newDevData = {
-      ...devData,
-      allModels,
-    };
-    getAdminSetting().then((adminSetting) => {
-      const newAdminSetting = {
-        ...adminSetting,
-        devData: newDevData,
-      };
-      setAdminSetting(newAdminSetting);
-      setDevData?.(newDevData);
-    });
-  };
-
   return (
     <>
       <Category
@@ -361,9 +339,7 @@ export default () => {
         afterFormPost={({ data, code }) => {
           if (!code) {
             //生成后端代码及格式化文件
-            request.get(`dev/formatFile/${data.id}`).then(() => {
-              flushModelData(data);
-            });
+            saReloadModel({ devData, setDevData }, data);
           }
           //return true;
         }}
