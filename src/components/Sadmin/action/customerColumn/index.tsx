@@ -71,15 +71,16 @@ const CustomerColumnRender = (props) => {
       return <Divider key={i} orientation="vertical" />;
     } else if (item.domtype == 'timeline') {
       //处理icon
-      //console.log('timeline', item);
+
       const name = item.props?.name || dataindex;
-      const items = record?.[name]?.map((it) => {
-        if (it.icon) {
-          it.dot = parseIcon(it.icon);
+      const timeline_items = record?.[name]?.map((it: any) => {
+        const new_it = { ...it };
+        if (new_it.icon) {
+          new_it.icon = parseIcon(it.icon);
         }
-        return it;
+        return new_it;
       });
-      return <Timeline style={{ paddingTop: 10 }} key={i} items={items} {...item.props} />;
+      return <Timeline style={{ paddingTop: 10 }} key={i} items={timeline_items} {...item.props} />;
     } else if (item.domtype == 'button' || item.domtype == 'text') {
       //tooltip也支持变量读取
       if (item.btn) {
