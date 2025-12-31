@@ -181,7 +181,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         intl,
         devSetting,
         isMobile,
-        variant:setting?.form?.variant || 'filled'
+        variant: setting?.form?.variant || 'filled',
       });
     });
   };
@@ -320,7 +320,7 @@ export const SaForm: FC<saFormProps> = (props) => {
             form={props.form}
             formRef={formRef}
             variant="filled"
-            style={pageType == 'page' ? { margin: 'auto', maxWidth: width } : {}}
+            style={pageType == 'page' ? { margin: 'auto', maxWidth: width || 800 } : {}}
             //style={pageType == 'page' ? { maxWidth: 688 } : {}}
             //layout="vertical"
             //layout="horizontal"

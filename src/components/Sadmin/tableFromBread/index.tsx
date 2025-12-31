@@ -114,10 +114,11 @@ const TableFromBread: FC<{
         }}
         {...fieldProps.props}
         tableProps={{
+          ...fieldProps?.props?.tableProps,
           size: 'small',
           className: 'sa-modal-table sa-form-table',
           cardBordered: true,
-          scroll:scrollHeight ? { y: scrollHeight } : undefined,
+          scroll: scrollHeight ? { y: scrollHeight } : undefined,
         }}
         //readonly={readonly}
       />

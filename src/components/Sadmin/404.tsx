@@ -121,6 +121,7 @@ const PageTypes: React.FC<Record<string, any>> = ({ menu, match, pathname }) => 
           match={match ? true : false}
           pageMenu={menu}
           {...data}
+          width={data?.setting?.formWidth}
           msgcls={({ code }) => {
             if (!data.noBack) {
               if (!code) {

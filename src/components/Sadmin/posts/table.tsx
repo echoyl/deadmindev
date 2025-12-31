@@ -619,7 +619,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
               search_config.length > 0
                 ? {
                     span: isMobile ? 24 : 6, //手机端占满一行
-                    className: 'posts-table posts-table-' + pageType,
+                    //className: 'posts-table posts-table-' + pageType,
                     labelWidth: 'auto',
                   }
                 : false
@@ -628,11 +628,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
             form={
               pageType != 'page'
                 ? {
-                    variant: setting?.form?.variant ? setting?.form?.variant : 'filled',
+                    variant: setting?.form?.variant || 'filled',
                     style: { padding: 16 },
                   }
                 : {
-                    variant: setting?.form?.variant ? setting?.form?.variant : 'filled',
+                    variant: setting?.form?.variant || 'filled',
                     ignoreRules: false,
                     syncToInitialValues: false,
                     style: { padding: 16 },
