@@ -567,7 +567,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const { styles } = useStyles({
     height:
       setting?.minHeightFullscreen !== false && pageType != 'modal'
-        ? `calc(100vh - ${minHeight - heightSizes[setting?.table?.size || 'middel']}px)`
+        ? `calc(100vh - ${minHeight - heightSizes[setting?.table?.size || 'middle']}px)`
         : false,
   });
   return (
