@@ -51,7 +51,8 @@ interface formFieldsProps {
   devEnable?: boolean;
   devSetting?: Record<string, any>;
   intl?: any;
-  isMobile?: Boolean; //是否是移动端
+  isMobile?: boolean; //是否是移动端
+  [key: string]: any;
 }
 
 export const GetFormFields: React.FC<{
@@ -73,6 +74,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     intl,
     devSetting,
     isMobile,
+    variant = 'filled',
   } = props;
   if (!initRequest) return [];
 
@@ -207,6 +209,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         dataindex: v.dataIndex,
         olddataindex: v.dataIndex,
         uid: v.uid,
+        variant,
       };
       if (v.valueType == 'modalSelect' && !v.fieldProps.name) {
         //将name设置到属性当中 因为 valueTypeMap 中会丢失name 先在这里添加修改下

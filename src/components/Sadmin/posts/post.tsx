@@ -181,6 +181,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         intl,
         devSetting,
         isMobile,
+        variant:setting?.form?.variant || 'filled'
       });
     });
   };

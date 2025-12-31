@@ -499,6 +499,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       devEnable,
       viewable: setting?.viewable,
       checkDisable: !checkEnable || setting?.checkDisable,
+      variant: setting?.form?.variant || 'filled',
       ...props,
     });
   };

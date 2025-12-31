@@ -194,7 +194,7 @@ export const onCell = (props) => {
   return ret;
 };
 
-export const getTableColumns = (props) => {
+export const getTableColumns = (props: Record<string, any>) => {
   const {
     setData,
     data,
@@ -214,6 +214,7 @@ export const getTableColumns = (props) => {
     devEnable = true,
     viewable = false,
     checkDisable = false,
+    variant = 'filled',
   } = props;
 
   if (!initRequest) return [];
@@ -387,11 +388,8 @@ export const getTableColumns = (props) => {
     v.fieldProps = {
       ...v.fieldProps,
       dataindex: v.dataIndex,
+      variant,
     };
-
-    if (v.valueType == 'cascader') {
-      v.fieldProps.variant = 'filled';
-    }
 
     if (devEnable) {
       v.title = <TableColumnTitle {...v} />;
