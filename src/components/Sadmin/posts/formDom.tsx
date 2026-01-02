@@ -78,7 +78,6 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
   } = props;
   if (!initRequest) return [];
 
-  //console.log('inner detail', detail);
   const customerColumns =
     typeof columns == 'function'
       ? columns(detail)
@@ -87,7 +86,6 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         ? cloneDeep(columns)
         : columns
       : [];
-  //console.log(detail);
   //const { initialState } = useModel('@@initialState');
   const hiddenColumns: any = [];
   const defaulColumns: Record<string, any> = {
@@ -360,19 +358,22 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
 
       //关联page检测
       if (v.page) {
-        const relateMenu = getMenuDataById(user?.menuData, v.page);
-        if (relateMenu) {
-          v.columns = relateMenu.data.formColumns
-            ? relateMenu.data.formColumns
-            : relateMenu.data.tabs[0]?.formColumns;
-        }
         //将page传入page.id中
-        v.fieldProps.page = { ...v.fieldProps.page, id: v.page };
-      } else {
-        //如果时formlist 没有page 且没有columns 默认给一个 防止无属性不渲染dom
-        if (v.valueType == 'formList' && !v.columns) {
-          v.columns = [];
+        if (inArray(v.valueType, ['formList']) > -1) {
+          //暂时只有formlist 关联了page后需要读取关联菜单的columns信息 这里要clonedeep否则会修改关联菜单的columns
+          const relateMenu = getMenuDataById(user?.menuData, v.page);
+          if (relateMenu) {
+            const relateColumns = relateMenu.data.formColumns
+              ? relateMenu.data.formColumns
+              : relateMenu.data.tabs[0]?.formColumns;
+            v.columns = cloneDeep(relateColumns);
+          }
         }
+        v.fieldProps.page = { ...v.fieldProps.page, id: v.page };
+      }
+      //如果是formlist 没有page 且没有columns 默认给一个 防止无属性不渲染dom
+      if (v.valueType == 'formList' && !v.columns) {
+        v.columns = [];
       }
 
       if (v.columns && Array.isArray(v.columns)) {
