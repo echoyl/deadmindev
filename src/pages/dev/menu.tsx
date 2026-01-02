@@ -283,9 +283,8 @@ export default () => {
   const actionRef = useRef<ActionType>(null);
   const { setting } = useContext(SaDevContext);
   const { setInitialState } = useModel('@@initialState');
-  const reload = () => {
-    saReloadMenu({ setInitialState });
-    return;
+  const reload = async () => {
+    return saReloadMenu({ setInitialState });
   };
   /**复制或移动的表单项 */
   const toFormColumns = [
@@ -477,10 +476,7 @@ export default () => {
               data: {
                 actype: 'state',
               },
-              callback: async () => {
-                await reload();
-                return;
-              },
+              callback: reload,
             },
           },
         ],

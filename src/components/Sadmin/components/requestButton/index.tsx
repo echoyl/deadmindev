@@ -1,16 +1,16 @@
-import { useModel } from '@umijs/max';
-import React from 'react';
-import { parseIcon, tplComplie } from '../../helpers';
-import { Button, Space, Tooltip, Typography } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useModel } from '@umijs/max';
+import { Button, Space, Tooltip, Typography } from 'antd';
+import React from 'react';
 import { isObj } from '../../checkers';
+import { parseIcon, tplComplie } from '../../helpers';
 
 export type RequestButtonProps = {
   title?: any;
   request?: Record<string, any>;
   requestUrl?: string;
   btn?: Record<string, any>;
-  afterAction?: any;
+  afterAction?: (p: any) => Promise<Record<string, any> | boolean>;
   uploadProps?: Record<string, any>;
   record?: Record<string, any>;
   fieldProps?: Record<string, any>;

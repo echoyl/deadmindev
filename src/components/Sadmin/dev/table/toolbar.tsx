@@ -1,4 +1,8 @@
-import request, { getFullUrl, requestHeaders } from '@/components/Sadmin/lib/request';
+import request, {
+  getFullUrl,
+  messageLoadingKey,
+  requestHeaders,
+} from '@/components/Sadmin/lib/request';
 import { MenuFormColumn } from '@/pages/dev/menu';
 import { modelFormColumns } from '@/pages/dev/model';
 import ModelRelation from '@/pages/dev/modelRelation';
@@ -161,7 +165,7 @@ export const ImportButton = ({
   title = '导入',
   request: requestParam,
   uploadProps: ups = {},
-  afterAction = false,
+  afterAction,
   btn = {},
   ...restProps
 }: RequestButtonProps) => {
@@ -199,18 +203,24 @@ export const ImportButton = ({
         if (info.file.status === 'done') {
           //console.log('donenenene');
           setLoading(false);
-          const { code, msg, data } = info.file.response;
+          const { code, msg } = info.file.response;
           if (!code) {
-            messageApi?.success(`${info.file.name} ${msg}`);
-            if (afterAction) {
-              afterAction?.(info.file.response).then((v) => {
-                if (v != true) {
+            messageApi?.success({
+              content: `${info.file.name} ${msg}`,
+              key: messageLoadingKey,
+              duration: 1,
+              onClose: () => {
+                if (afterAction) {
+                  afterAction?.(info.file.response).then((v) => {
+                    if (v != true) {
+                      actionRef.current?.reload();
+                    }
+                  });
+                } else {
                   actionRef.current?.reload();
                 }
-              });
-            } else {
-              actionRef.current?.reload();
-            }
+              },
+            });
           } else {
             //上传失败了
             messageApi?.error(msg);
@@ -221,10 +231,7 @@ export const ImportButton = ({
         }
       }}
     >
-      <RequestButton
-        btn={{ icon: <CloudDownloadOutlined />, loading, text: title, ...btn }}
-        {...restProps}
-      />
+      <RequestButton btn={{ icon, loading, text: title, ...btn }} {...restProps} />
     </Upload>
   );
 };
