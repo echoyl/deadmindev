@@ -345,7 +345,7 @@ export default () => {
         }}
         // afterDelete={reData}
         devEnable={false}
-        setting={{ scollYFullscreen: true }}
+        setting={{ scollYFullscreen: true, minHeightFullscreen: true }}
         toolBarButton={[
           {
             valueType: 'export',

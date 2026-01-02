@@ -288,7 +288,6 @@ const ModalSelect = (props) => {
             //pagination: { pageSize: 20 },
             scroll: { y: 400 },
             size: 'small',
-            className: 'sa-modal-table',
             cardBordered: true,
           }}
           devEnable={false}

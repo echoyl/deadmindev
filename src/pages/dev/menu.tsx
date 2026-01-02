@@ -556,10 +556,11 @@ export default () => {
         openType="modal"
         expandAll={false}
         level={setting?.adminSetting?.menu_max_level ? setting?.adminSetting?.menu_max_level : 4}
-        tableProps={{
-          size: 'small',
+        setting={{
+          scollYFullscreen: true,
+          minHeightFullscreen: true,
+          table: { scroll: { x: 'max-content' } },
         }}
-        setting={{ scollYFullscreen: true }}
         afterFormPost={reload}
         afterDelete={reload}
         url="dev/menu"

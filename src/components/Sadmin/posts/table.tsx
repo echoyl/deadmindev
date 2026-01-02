@@ -7,7 +7,7 @@ import type {
 } from '@ant-design/pro-components';
 import { FooterToolbar } from '@ant-design/pro-components';
 import { history, useModel, useSearchParams } from '@umijs/max';
-import { Table } from 'antd';
+import { GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
 import { size } from 'es-toolkit/compat';
@@ -94,8 +94,11 @@ export interface saTableProps {
   selectRowBtns?: Record<string, any>[];
   pageMenu?: Record<string, any>; //当前菜单信息
   devEnable?: boolean; //是否开启开发模式
-  setting?: Record<string, any>; //其它配置统一放这里
-  afterDelete?: (ret: any) => void | boolean; //删除数据后的回调
+  setting?: {
+    table?: GetProps<typeof Table> & { checkHoverDisable?: boolean };
+    [key: string]: any;
+  }; //其它配置统一放这里
+  afterDelete?: (ret: any) => void | boolean | Promise<boolean | void>; //删除数据后的回调
   afterFormPost?: (ret: any) => void | boolean | Promise<boolean | void>; //表单提交数据后的回调
   initPageUid?: string; //控制页面刷新 非request
 }
@@ -526,16 +529,17 @@ const SaTable: React.FC<saTableProps> = (props) => {
     devEnable,
     tbColumns,
   });
-  const [minHeight, setMinHeight] = useState<number>(238);
+  const [minHeight, setMinHeight] = useState<number>(209);
+
   useEffect(() => {
-    let defaultHeight = 224;
+    let defaultHeight = 209;
     if (pageType == 'drawer') {
-      defaultHeight -= 51;
+      defaultHeight -= 50;
     }
     if (footer) {
       defaultHeight += 38;
     }
-    if (tableProps.pagination !== false) {
+    if (tableProps.pagination !== false && data.length > 0) {
       defaultHeight += 40;
     }
     if (search_config.length > 0) {
@@ -545,30 +549,44 @@ const SaTable: React.FC<saTableProps> = (props) => {
         defaultHeight -= 16;
       }
     }
+    if (tableMenu && table_menu_key) {
+      defaultHeight += 14;
+    }
     setMinHeight(defaultHeight);
-  }, [footer, tableProps.pagination, search_config]);
-  //根据table尺寸来计算最小高度值
-  const heightSizes = {
-    small: -1,
-    middle: -7,
-    large: -23,
-  };
-  const useStyles = createStyles(({ css }, { height }: { height: string | boolean }) => {
-    return height
-      ? {
+  }, [footer, tableProps.pagination, search_config, tableMenu, table_menu_key, data]);
+
+  const useStyles = createStyles(
+    (
+      { css },
+      { height, tableSize }: { height: number; tableSize: 'small' | 'middle' | 'large' },
+    ) => {
+      //table组件中关闭scroll类名为ant-table-content开启scroll 是 ant-table-body 不包含头部所以需要计算头部高度
+      //根据table尺寸来计算最小高度值
+      const heightSizes = {
+        small: 0,
+        middle: 8,
+        large: 16,
+      };
+      const dis_header_height = heightSizes[tableSize];
+      if (height) {
+        return {
           body: css`
             .ant-table-content {
-              min-height: ${height};
+              min-height: calc(100vh - ${height}px);
+            }
+            .ant-table-body {
+              min-height: calc(100vh - ${height + 39 + dis_header_height}px);
             }
           `,
-        }
-      : {};
-  });
+        };
+      } else {
+        return {};
+      }
+    },
+  );
   const { styles } = useStyles({
-    height:
-      setting?.minHeightFullscreen !== false && pageType != 'modal'
-        ? `calc(100vh - ${minHeight - heightSizes[setting?.table?.size || 'middle']}px)`
-        : false,
+    height: setting?.minHeightFullscreen !== false && pageType != 'modal' ? minHeight : 0,
+    tableSize: tableProps.size || setting?.table?.size || 'middle',
   });
   return (
     <SaContext.Provider
@@ -598,7 +616,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             devEnable={devEnable}
             allProps={{ ...props, setSelectedRowKeys, selectedRowKeys }}
             components={components}
-            className={['sa-pro-table', styles.body]}
+            className={['sa-pro-table', `sa-${pageType}-table`, styles.body]}
             //classNames={{ root: 'sa-pro-table' }}
             actionRef={actionRef}
             onLoad={() => {
