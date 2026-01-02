@@ -281,14 +281,18 @@ const ModalSelect = (props) => {
           tableColumns={[...breadTableColumns, ...columns, radioSelect]}
           addable={false}
           deleteable={false}
-          pageType="drawer"
+          pageType="modal"
           openType="drawer"
           checkEnable={false}
           tableProps={{
             //pagination: { pageSize: 20 },
             scroll: { y: 400 },
-            size: 'small',
             cardBordered: true,
+          }}
+          setting={{
+            scollYFullscreen: true,
+            minHeightFullscreen: true,
+            table: { scroll: { x: 'max-content' }, size: 'small' },
           }}
           devEnable={false}
         />
