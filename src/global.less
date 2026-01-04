@@ -89,6 +89,42 @@ ol {
 .deadmin-dark .ant-pro-page-container-affix .ant-affix .ant-pro-page-container-warp {
   box-shadow: none;
 }
+/* hack style 如果pro-components 支持动态切换主题后可删除 */
+.deadmin-dark.ant-pro-layout .ant-pro-layout-bg-list {
+  background: linear-gradient(#141414, #000000 28%);
+}
+
+.deadmin-light.ant-pro-layout .ant-pro-layout-bg-list {
+  background: linear-gradient(#ffffff, #f5f5f5 28%);
+}
+
+.deadmin-light .ant-pro-card {
+  background: #ffffff;
+}
+.deadmin-dark .ant-pro-card {
+  background: #141414;
+}
+
+.deadmin-light .ant-pro-page-container-affix .ant-affix .ant-pro-page-container-warp {
+  background-color: #ffffff;
+}
+.deadmin-light .ant-pro-sider-collapsed-button {
+  color: rgba(0, 0, 0, 0.25);
+  background-color: #ffffff;
+}
+
+.deadmin-dark .ant-pro-page-container-affix .ant-affix .ant-pro-page-container-warp {
+  background-color: #1f1f1f;
+}
+.deadmin-dark .ant-pro-sider-collapsed-button {
+  color: rgba(255, 255, 255, 0.25);
+  background-color: #1f1f1f;
+}
+.deadmin-dark.deadmin-header-dark .ant-layout-header {
+  background-color: #001529 !important;
+}
+/* hack style - end */
+
 @media (max-width: 768px) {
   .ant-table {
     width: 100%;

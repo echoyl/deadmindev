@@ -79,11 +79,11 @@ const ThemeSwitch = (props: Record<string, any>) => {
     })).then(() => {
       //set cache
       setSetting?.({
-        ...initialState?.settings,
+        ...setting,
         navTheme: cal_theme,
         navThemeVar: theme,
-        //token: { ...initialState?.settings?.token, ...token },
       });
+
       const local = theme ? theme : 'light';
       localStorage.setItem('navTheme', local);
       setLocalChecked(local);
