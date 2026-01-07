@@ -221,8 +221,8 @@ const ModalSelect = (props) => {
     }
   };
   const tagPlusStyle: React.CSSProperties = {
-    background: token.colorBgContainer,
-    borderStyle: 'dashed',
+    //background: token.colorBgContainer,
+    //borderStyle: 'dashed',
     cursor: 'pointer',
   };
   const selectButton =
@@ -372,9 +372,16 @@ const ModalSelectList = (props) => {
             <Tag
               key={i}
               closable={true}
+              style={!multiple ? { cursor: 'pointer' } : {}}
               onClose={(e) => {
                 close(i);
                 e.preventDefault();
+              }}
+              onClick={() => {
+                if (!multiple) {
+                  //单选支持点击重新选择而不需要清空当前数据
+                  setOpen(true);
+                }
               }}
             >
               {title}
