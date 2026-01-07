@@ -21,7 +21,7 @@ import { useContext, useEffect, useState } from 'react';
 import Confirm from '../../action/confirm';
 import ConfirmForm from '../../action/confirmForm';
 import { getCustomerColumn } from '../../action/customerColumn/dev';
-import { getJson, isArr } from '../../checkers';
+import { getJson, inArray, isArr } from '../../checkers';
 import { tplComplie } from '../../helpers';
 import { DevJsonContext } from '../../jsonForm';
 import { SaContext } from '../../posts/table';
@@ -137,7 +137,7 @@ const BaseForm = (props: Record<string, any>) => {
   const { json = {}, setJson } = useContext(DevJsonContext);
 
   useEffect(() => {
-    if (actionType != 'add') {
+    if (inArray(actionType, ['add', 'addTab']) < 0) {
       const pageMenuData =
         pageMenu && Object.keys(pageMenu)?.length > 0
           ? pageMenu

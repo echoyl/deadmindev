@@ -1,15 +1,12 @@
 import request from '@/components/Sadmin/lib/request';
-import {
-  FooterToolbar,
-  ProCard,
-  ProForm,
-  ProFormInstance,
-  StepsForm,
-} from '@ant-design/pro-components';
+import type { ProFormInstance } from '@ant-design/pro-components';
+import { FooterToolbar, ProCard, ProForm, StepsForm } from '@ant-design/pro-components';
 //import { PageContainer } from '@ant-design/pro-layout';
 import { history, useIntl, useModel, useParams, useSearchParams } from '@umijs/max';
-import { Col, GetProps, Row, Space, Tabs } from 'antd';
-import { FC, useContext, useEffect, useRef, useState } from 'react';
+import type { GetProps } from 'antd';
+import { Col, Row, Space, Tabs } from 'antd';
+import type { FC } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../dev';
 import { DndContext } from '../dev/dnd-context';
 import { useTableDesigner } from '../dev/table/designer';
@@ -18,10 +15,11 @@ import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 import { PageContainer404 } from '@/components/Sadmin/404';
 import { isUndefined } from 'es-toolkit';
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
-import { SaContext, saTableProps } from './table';
+import type { saTableProps } from './table';
+import { SaContext } from './table';
 
 export interface saFormProps extends saTableProps {
-  msgcls?: (value: { [key: string]: any }) => void; //提交数据后的 回调
+  msgcls?: (value: Record<string, any>) => void; //提交数据后的 回调
   submitter?: string;
   showTabs?: boolean;
   align?: 'center' | 'left'; //表单对齐位置 center居中显示
@@ -78,7 +76,7 @@ export const SaForm: FC<saFormProps> = (props) => {
   //const url = 'posts/posts';
   //读取后台数据
   const [pageMenu, setPageMenu] = useState(oPageMenu);
-  const [detail, setDetail] = useState<{ [key: string]: any } | boolean>(
+  const [detail, setDetail] = useState<Record<string, any> | boolean>(
     props.formProps?.initialValues ? props.formProps?.initialValues : false,
   );
   const [_formColumns, setFormColumns] = useState<any[]>([]);
@@ -101,7 +99,7 @@ export const SaForm: FC<saFormProps> = (props) => {
 
     const postBase = { ...base };
     _formColumns.map((cl) => {
-      beforePost(postBase, cl);
+      beforePost(postBase, cl.columns);
     });
 
     if (props.beforePost) {
@@ -140,11 +138,13 @@ export const SaForm: FC<saFormProps> = (props) => {
   const query = search.toString();
   if (query) {
     query.split('&').map((v) => {
-      let [key, value] = v.split('=');
+      const [key, value] = v.split('=');
       params[key] = value;
     });
   }
-  params['*'] && delete params['*'];
+  if (params['*']) {
+    delete params['*'];
+  }
 
   //获取数据
   //console.log('post params', params, url);
@@ -169,20 +169,23 @@ export const SaForm: FC<saFormProps> = (props) => {
     setDetail(data);
     return data;
   };
-  const getFormColumnsRender = (tabs) => {
-    return tabs?.map((tab) => {
-      return getFormFieldColumns({
-        detail,
-        labels,
-        initRequest: true,
-        columns: tab.formColumns,
-        user: initialState?.currentUser,
-        devEnable,
-        intl,
-        devSetting,
-        isMobile,
-        variant: setting?.form?.variant || 'filled',
-      });
+  const getFormColumnsRender = (_tabs: Record<string, any>[]) => {
+    return _tabs?.map((tab) => {
+      return {
+        ...tab,
+        columns: getFormFieldColumns({
+          detail,
+          labels,
+          initRequest: true,
+          columns: tab.formColumns,
+          user: initialState?.currentUser,
+          devEnable,
+          intl,
+          devSetting,
+          isMobile,
+          variant: setting?.form?.variant || 'filled',
+        }),
+      };
     });
   };
   useEffect(() => {
@@ -270,13 +273,13 @@ export const SaForm: FC<saFormProps> = (props) => {
               },
             }}
           >
-            {tabs?.map((cl, index) => {
+            {_formColumns?.map((cl, index) => {
               //console.log('cl', cl);
               return (
                 <StepsForm.StepForm
                   key={index}
                   name={'step_' + index}
-                  title={cl.title ? cl.title : cl.tab?.title}
+                  title={cl.title || cl.tab?.title || '基础信息'}
                   onFinish={async () => {
                     //每一步都将之前的表单信息提交到url
                     let data = { step_index: index };
@@ -285,15 +288,15 @@ export const SaForm: FC<saFormProps> = (props) => {
                     });
                     return post(
                       data,
-                      index + 1 == tabs.length ? undefined : () => null,
-                      index + 1 == tabs.length ? undefined : () => {},
+                      index + 1 == _formColumns.length ? undefined : () => null,
+                      index + 1 == _formColumns.length ? undefined : () => {},
                     ).then(({ code, data, msg }) => {
                       //将传回的数据又重新赋值一遍
                       if (code) {
-                        messageApi.error(msg);
+                        messageApi?.error(msg);
                         return false;
                       }
-                      if (index + 1 == tabs.length) {
+                      if (index + 1 == _formColumns.length) {
                         //最后一步 重置表单
                         setStepFormCurrent(0);
                         formMapRef?.current?.forEach((formInstanceRef) => {
@@ -309,7 +312,9 @@ export const SaForm: FC<saFormProps> = (props) => {
                   }}
                   style={pageType == 'page' ? { margin: 'auto', maxWidth: width } : {}}
                 >
-                  {_formColumns[index] ? <GetFormFields columns={_formColumns[index]} /> : null}
+                  {_formColumns[index] ? (
+                    <GetFormFields columns={_formColumns[index]?.columns} />
+                  ) : null}
                 </StepsForm.StepForm>
               );
             })}
@@ -380,26 +385,22 @@ export const SaForm: FC<saFormProps> = (props) => {
                 onChange={(activeKey) => {
                   onTabChange?.(activeKey);
                 }}
-                items={_formColumns.map((cl, index) => {
-                  const thistab = tabs ? tabs[index] : {};
-                  const label = tabs
-                    ? tabs[index]?.title
-                      ? tabs[index]?.title
-                      : tabs[index]?.tab?.title
-                    : '基础信息';
+                items={_formColumns.map((thistab, index) => {
+                  const label = thistab.title || thistab.tab?.title || '基础信息';
+                  const { uid } = thistab || {};
                   return {
-                    label: devEnable ? <TabColumnTitle uid={thistab?.uid} title={label} /> : label,
-                    key: thistab?.uid ? thistab?.uid : index + '', //key为字符串 如果是数字造成tab过多后点击切换失败的bug
-                    children: <GetFormFields columns={cl} />,
+                    label: devEnable ? <TabColumnTitle uid={uid} title={label} /> : label,
+                    key: uid || index + '', //key为字符串 如果是数字造成tab过多后点击切换失败的bug
+                    children: <GetFormFields columns={thistab.columns} />,
                     forceRender: true, //如果关闭，其它tab的数据不会传输
-                    ...tabs?.[index]?.tab?.props,
+                    ...thistab?.props,
                   };
                 })}
                 {...props.tabsProps}
               />
             ) : (
               _formColumns.map((cl, index) => {
-                if (index == 0) return <GetFormFields key={index} columns={cl} />;
+                if (index == 0) return <GetFormFields key={index} columns={cl.columns} />;
               })
             )}
           </ProForm>

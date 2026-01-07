@@ -42,7 +42,7 @@ export const beforeGet = (data: Record<string, any>) => {};
 interface formFieldsProps {
   formColumnsIndex?: string[];
   labels?: Record<string, any>;
-  detail?: Record<string, any>;
+  detail?: Record<string, any> | boolean;
   columns?: ReactNode | ((value: any) => void);
   enums?: Record<string, any>;
   initRequest?: boolean;
@@ -424,8 +424,19 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
 
       //增加如果是date datetime digit类型没有设置width的话自动加上100%
       if (
-        inArray(v.valueType, ['date', 'dateTime', 'digit', 'dateMonth', 'dateYear', 'dateWeek']) >
-        -1
+        inArray(v.valueType, [
+          'date',
+          'dateTime',
+          'digit',
+          'dateMonth',
+          'dateYear',
+          'dateWeek',
+          'dateTimeRange',
+          'dateMonthRange',
+          'dateWeekRange',
+          'dateYearRange',
+          'dateQuarterRange',
+        ]) > -1
       ) {
         v.width = v.width || '100%';
       }
