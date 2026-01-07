@@ -248,7 +248,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     //disableContentMargin: false,
     waterMarkProps: {
       content: checkWaterMark(),
-      gap: [200, 250],
+      gap: [250, 300],
+      offset: [200, 200],
     },
     footerRender: () => <Footer />,
     onPageChange: () => {

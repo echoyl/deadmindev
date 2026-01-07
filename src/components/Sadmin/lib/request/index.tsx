@@ -163,6 +163,55 @@ request.interceptors.response.use(async (response, options) => {
         return false;
       }
     }
+    //以下是根据返回数据中有的关键字然后进行的动作
+    const action = async (data: Record<string, any>) => {
+      //添加导出跳转下载页面功能
+      if (data?.download) {
+        const a = document.createElement('a');
+        a.target = '_blank';
+        a.download = data.download;
+        a.href = data.url;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      //打开新窗口
+      if (data?.ifram_url) {
+        const { ifram_title = '详情', ifram_width = 1000, ifram_url, ifram_height = 700 } = data;
+        modal.info({
+          title: ifram_title,
+          width: ifram_width, //两边padding48px
+          content: (
+            <>
+              <iframe
+                src={ifram_url}
+                width={ifram_width - 48}
+                height={ifram_height}
+                style={{ border: 'none' }}
+              />
+            </>
+          ),
+          okText: null,
+          icon: null,
+          footer: null,
+          closable: true,
+        });
+      }
+
+      if (data?.logout) {
+        message.loading({
+          content: '退出登录中...',
+          duration: 0,
+          key: messageLoadingKey,
+        });
+        await loginOut(() => {
+          message.destroy(messageLoadingKey);
+        });
+      } else {
+        options.msgcls && options.msgcls({ code, msg, data, res });
+      }
+    };
 
     if (options.then) {
       //自定义接管之后的操作设置
@@ -173,66 +222,24 @@ request.interceptors.response.use(async (response, options) => {
         notification.error({ description: msg, title: '提示' });
         options.msgcls && options.msgcls({ code, msg, data, res });
       } else {
+        if (notificationContent) {
+          notification.info({ description: notificationContent, title: '提示' });
+        }
         if (msg) {
           if (options.method == 'POST' || options.method == 'DELETE') {
             message.success({
               key: messageLoadingKey,
               content: msg,
               duration: 1,
+              onClose: () => {
+                action(data);
+              },
             });
+          } else {
+            action(data);
           }
-        }
-        if (notificationContent) {
-          notification.info({ description: notificationContent, title: '提示' });
-        }
-
-        //以下是根据返回数据中有的关键字然后进行的动作
-
-        //添加导出跳转下载页面功能
-        if (data?.download) {
-          const a = document.createElement('a');
-          a.target = '_blank';
-          a.download = data.download;
-          a.href = data.url;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
-
-        //打开新窗口
-        if (data?.ifram_url) {
-          const { ifram_title = '详情', ifram_width = 1000, ifram_url, ifram_height = 700 } = data;
-          modal.info({
-            title: ifram_title,
-            width: ifram_width, //两边padding48px
-            content: (
-              <>
-                <iframe
-                  src={ifram_url}
-                  width={ifram_width - 48}
-                  height={ifram_height}
-                  style={{ border: 'none' }}
-                />
-              </>
-            ),
-            okText: null,
-            icon: null,
-            footer: null,
-            closable: true,
-          });
-        }
-
-        if (data?.logout) {
-          message.loading({
-            content: '退出登录中...',
-            duration: 0,
-            key: messageLoadingKey,
-          });
-          await loginOut(() => {
-            message.destroy(messageLoadingKey);
-          });
         } else {
-          options.msgcls && options.msgcls({ code, msg, data, res });
+          action(data);
         }
       }
     }

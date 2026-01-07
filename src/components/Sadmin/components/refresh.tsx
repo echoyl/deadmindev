@@ -129,7 +129,10 @@ export const saReloadModel = (
   }
   const flushModelData = () => {
     const index = devData?.allModels?.findIndex((item: Record<string, any>) => item.id == model.id);
-    const allModels = [...devData?.allModels];
+    const allModels = [...(devData?.allModels || [])];
+    if (allModels.length < 1) {
+      return;
+    }
     if (index != -1) {
       allModels[index] = model;
     } else {
@@ -148,9 +151,7 @@ export const saReloadModel = (
       setDevData?.(newDevData);
     });
   };
-  request.get(`dev/formatFile/${model.id}`).then(() => {
-    flushModelData();
-  });
+  request.get(`dev/formatFile/${model.id}`).then(() => flushModelData());
 };
 
 export default () => {
