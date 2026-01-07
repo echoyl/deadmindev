@@ -546,9 +546,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
       defaultHeight += 80;
     } else {
       if (pageType == 'drawer') {
-        defaultHeight -= 16;
+        defaultHeight -= 2;
       }
     }
+
     if (tableMenu && table_menu_key) {
       defaultHeight += 14;
     }
