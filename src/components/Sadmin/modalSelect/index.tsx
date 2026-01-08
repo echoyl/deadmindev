@@ -222,7 +222,7 @@ const ModalSelect = (props) => {
   };
   const tagPlusStyle: React.CSSProperties = {
     //background: token.colorBgContainer,
-    //borderStyle: 'dashed',
+    borderStyle: 'dashed',
     cursor: 'pointer',
   };
   const selectButton =
@@ -243,6 +243,7 @@ const ModalSelect = (props) => {
     ) : (
       <Tag
         style={tagPlusStyle}
+        variant="outlined"
         onClick={() => {
           setOpen(true);
         }}
