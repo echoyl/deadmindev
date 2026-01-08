@@ -297,3 +297,36 @@ export async function loginOut(cb?: Function) {
     },
   });
 }
+
+export const dataRequestManager = {
+  promise: {} as Record<string, Promise<any> | null>,
+  data: {} as Record<string, any>,
+
+  async getData(url: string, params?: any, key?: string) {
+    // 如果已经有数据，直接返回
+    key = key || url;
+    if (this.data?.[key]) {
+      return this.data[key];
+    }
+
+    // 如果有正在进行的请求，返回该 Promise
+    if (this.promise[key]) {
+      return this.promise[key];
+    }
+
+    // 发起新的请求
+    this.promise[key] = request
+      .get(url, params)
+      .then((data) => {
+        this.data = { ...this.data, [key]: data };
+        this.promise[key] = null;
+        return data;
+      })
+      .catch((error) => {
+        this.promise[key] = null;
+        throw error;
+      });
+
+    return this.promise[key];
+  },
+};

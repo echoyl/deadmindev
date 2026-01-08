@@ -1,5 +1,6 @@
 import request, {
   currentUser,
+  dataRequestManager,
   getAdminSetting,
   messageLoadingKey,
   setAdminSetting,
@@ -59,7 +60,7 @@ export const parseAdminSeting: any = (localsetting: Record<string, any>) => {
 export const saGetSetting = async (force: boolean = false): Promise<Record<string, any>> => {
   let localsetting = await getAdminSetting();
   if (force || !localsetting) {
-    const { data } = await request.get('setting');
+    const { data } = await dataRequestManager.getData('setting');
     localsetting = data;
     setAdminSetting(data);
   }
