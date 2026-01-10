@@ -281,10 +281,10 @@ export const MenuFormColumn: saFormTabColumnsType = [
 
 export default () => {
   const actionRef = useRef<ActionType>(null);
-  const { setting } = useContext(SaDevContext);
+  const { setting, devData, setDevData } = useContext(SaDevContext);
   const { setInitialState } = useModel('@@initialState');
-  const reload = async () => {
-    return saReloadMenu({ setInitialState });
+  const reload = (ret: any) => {
+    saReloadMenu({ setInitialState, ret, devData, setDevData });
   };
   /**复制或移动的表单项 */
   const toFormColumns = [

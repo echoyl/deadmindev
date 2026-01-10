@@ -10,6 +10,7 @@ import { history, useModel, useSearchParams } from '@umijs/max';
 import { GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
+import { delay } from 'es-toolkit';
 import { size } from 'es-toolkit/compat';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getJson, inArray, isArr, isFn, isObj, isPlainObj, isStr, isUndefined } from '../checkers';
@@ -23,7 +24,7 @@ import { TableForm } from '../dev/table/form';
 import ResizableTitle from '../dev/table/resizeableTitle';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
-import { tplToDate } from '../helper/functions';
+import { columnHasSearch, hasSearch, tplToDate } from '../helper/functions';
 import type { saFormColumnsType, saFormTabColumnsType, saTableColumnsType } from '../helpers';
 import { getFromObject, search2Obj, t } from '../helpers';
 import { EditableCell, EditableRow } from './editable';
@@ -143,7 +144,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     openType = 'page',
     beforeTableGet,
     titleField = 'title',
-    table_menu_key,
+    //table_menu_key,
     table_menu_all = true,
     table_menu_default = '',
     pageType = 'page',
@@ -165,8 +166,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
     afterDelete,
     initPageUid,
   } = props;
-  //console.log('tableprops', props);
   const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
+  const table_menu_key = pageMenu?.data?.table_menu_key; //直接读取pagemenu中的信息，不再使用props中的参数，开发模式下会更新pagemenu
   const [tbColumns, setTbColumns] = useState<saTableColumnsType>([]);
   const [enums, setEnums] = useState<Record<string, any>>();
   const [summary, setSummary] = useState(); //合计
@@ -212,11 +213,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
     : [];
   const enumNames = _tableColumns?.filter((v) => v.valueEnum).map((v) => v.dataIndex);
   const searchDefaultValues: Record<string, any> = {};
+
+  const [searchLength, setSearchLength] = useState(hasSearch(_tableColumns));
+  //search_config只做初始化用
   const search_config = _tableColumns?.filter((v: Record<string, any>) => {
-    const is_search =
-      isObj(v) &&
-      (isUndefined(v.search) || v.search) &&
-      !['displayorder', 'option'].includes(v.valueType);
+    const is_search = columnHasSearch(v);
     if (is_search && !isUndefined(v.initialValue)) {
       searchDefaultValues[v.dataIndex] = tplToDate(v.initialValue);
     }
@@ -227,8 +228,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const [devEnable, setDevEnable] = useState(
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev,
   );
-  // const [enumNames, setEnumNames] = useState<any[]>([]);
-  // const [search_config, setSearch_config] = useState<any[]>([]);
   const paramsFormat = (cols, value, key) => {
     const tcolumn = cols?.find((v) => v.dataIndex == key);
     if (tcolumn && value) {
@@ -403,12 +402,9 @@ const SaTable: React.FC<saTableProps> = (props) => {
         if (!ret) {
           return;
         }
-        const re = await afterDelete?.(ret);
+        afterDelete?.(ret);
         if (!ret.code) {
-          if (re != true) {
-            actionRef.current?.reload();
-          }
-
+          actionRef.current?.reload();
           setSelectedRowKeys([]);
         }
       },
@@ -525,6 +521,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     pageMenu,
     setPageMenu,
     setColumns: setTbColumns,
+    setActions: { setSearchLength },
     getColumnsRender: getTableColumnsRender,
     devEnable,
     tbColumns,
@@ -542,7 +539,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     if (tableProps.pagination !== false && data.length > 0) {
       defaultHeight += 40;
     }
-    if (search_config.length > 0) {
+    if (searchLength) {
       defaultHeight += 80;
     } else {
       if (pageType == 'drawer') {
@@ -554,7 +551,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
       defaultHeight += 14;
     }
     setMinHeight(defaultHeight);
-  }, [footer, tableProps.pagination, search_config, tableMenu, table_menu_key, data]);
+  }, [footer, tableProps.pagination, searchLength, tableMenu, table_menu_key, data]);
 
   const useStyles = createStyles(
     (
@@ -635,7 +632,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
               return <DndContext>{d}</DndContext>;
             }}
             search={
-              search_config.length > 0
+              searchLength
                 ? {
                     span: isMobile ? 24 : 6, //手机端占满一行
                     //className: 'posts-table posts-table-' + pageType,
@@ -842,10 +839,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
           paramExtra={paramExtra}
           currentRow={currentRow}
           afterFormPost={(ret) => {
-            const re = props?.afterFormPost?.(ret);
-            if (re != true) {
-              setTimeout(() => actionRef?.current?.reload(), 100);
-            }
+            delay(1000).then(() => {
+              props?.afterFormPost?.(ret);
+              actionRef?.current?.reload();
+            });
+            //props?.afterFormPost?.(ret);
           }}
         />
 

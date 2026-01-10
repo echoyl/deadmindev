@@ -339,7 +339,7 @@ export default () => {
         afterFormPost={({ data, code }) => {
           if (!code) {
             //生成后端代码及格式化文件
-            saReloadModel({ devData, setDevData }, data);
+            saReloadModel({ setDevData }, data);
           }
           //return true;
         }}

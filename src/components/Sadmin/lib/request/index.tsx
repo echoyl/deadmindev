@@ -231,16 +231,10 @@ request.interceptors.response.use(async (response, options) => {
               key: messageLoadingKey,
               content: msg,
               duration: 1,
-              onClose: () => {
-                action(data);
-              },
             });
-          } else {
-            action(data);
           }
-        } else {
-          action(data);
         }
+        action(data);
       }
     }
 
@@ -300,14 +294,14 @@ export async function loginOut(cb?: Function) {
 
 export const dataRequestManager = {
   promise: {} as Record<string, Promise<any> | null>,
-  data: {} as Record<string, any>,
+  //data: {} as Record<string, any>,
 
   async getData(url: string, params?: any, key?: string) {
     // 如果已经有数据，直接返回
     key = key || url;
-    if (this.data?.[key]) {
-      return this.data[key];
-    }
+    // if (this.data?.[key]) {
+    //   return this.data[key];
+    // }
 
     // 如果有正在进行的请求，返回该 Promise
     if (this.promise[key]) {
@@ -318,7 +312,7 @@ export const dataRequestManager = {
     this.promise[key] = request
       .get(url, params)
       .then((data) => {
-        this.data = { ...this.data, [key]: data };
+        //this.data = { ...this.data, [key]: data };
         this.promise[key] = null;
         return data;
       })

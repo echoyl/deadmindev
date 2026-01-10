@@ -9,7 +9,7 @@ import { message } from '@/components/Sadmin/message';
 import { SyncOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { FloatButton } from 'antd';
-import { merge } from 'es-toolkit';
+import { delay, merge } from 'es-toolkit';
 import { useContext, useState } from 'react';
 import defaultSettings from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
@@ -107,52 +107,47 @@ export const saReload = async ({
  * @param param0
  * @returns
  */
-export const saReloadMenu = async ({ setInitialState }: Record<string, any> = {}) => {
-  message?.loading({ key: messageLoadingKey, content: '刷新配置中' });
-  const msg = await currentUser();
+export const saReloadMenu = async ({
+  setInitialState,
+  ret,
+  setDevData,
+  devData,
+}: Record<string, any> = {}) => {
+  const { code, data } = ret || {};
+  if (code !== 0) {
+    return;
+  }
+  const key = 'loadmenu';
+  message?.loading({ key, content: '刷新配置中' });
+  //const msg = await currentUser();
   //const msg = await cuser();
+  await delay(1000);
+  const { currentUser: newCurrentUser, allMenus } = data || {};
+  setDevData({ ...devData, allMenus });
   const uidx = uid();
   setInitialState?.((s: any) => ({
     ...s,
-    currentUser: { ...msg.data, uidx },
+    currentUser: { ...newCurrentUser, uidx },
   })).then(() => {
-    message?.success({ key: messageLoadingKey, content: '刷新成功', duration: 1 });
+    message?.success({ key, content: '刷新成功', duration: 1 });
   });
+
   return;
 };
 
 export const saReloadModel = (
-  { devData, setDevData }: Record<string, any> = {},
-  model: Record<string, any>,
+  { setDevData }: Record<string, any> = {},
+  model?: Record<string, any>,
 ) => {
-  if (!model) {
-    return;
-  }
-  const flushModelData = () => {
-    const index = devData?.allModels?.findIndex((item: Record<string, any>) => item.id == model.id);
-    const allModels = [...(devData?.allModels || [])];
-    if (allModels.length < 1) {
-      return;
+  message?.loading({ key: messageLoadingKey, content: '同步模型数据中' });
+  //const msg = await cuser();
+  saGetSetting(true).then(({ devData }) => {
+    setDevData?.(devData);
+    message?.success({ key: messageLoadingKey, content: '同步成功', duration: 1 });
+    if (model) {
+      request.get(`dev/formatFile/${model.id}`);
     }
-    if (index != -1) {
-      allModels[index] = model;
-    } else {
-      allModels.push(model);
-    }
-    const newDevData = {
-      ...devData,
-      allModels,
-    };
-    getAdminSetting().then((adminSetting) => {
-      const newAdminSetting = {
-        ...adminSetting,
-        devData: newDevData,
-      };
-      setAdminSetting(newAdminSetting);
-      setDevData?.(newDevData);
-    });
-  };
-  request.get(`dev/formatFile/${model.id}`).then(() => flushModelData());
+  });
 };
 
 export default () => {

@@ -238,6 +238,7 @@ export const ImportButton = ({
 
 export const ToolMenuForm = (props) => {
   const { setInitialState } = useModel('@@initialState');
+  const { devData, setDevData } = useContext(SaDevContext);
   const { json = {} } = useContext(DevJsonContext);
   const { pageMenu = { id: 0 }, trigger } = props;
   const MenuForm = (mprops) => {
@@ -251,11 +252,9 @@ export const ToolMenuForm = (props) => {
         postExtra={{ id: pageMenu?.id }}
         grid={true}
         devEnable={false}
-        msgcls={async ({ code }) => {
-          if (!code) {
-            saReloadMenu({ setInitialState });
-          }
+        msgcls={(ret: any) => {
           setOpen(false);
+          saReloadMenu({ setInitialState, ret, devData, setDevData });
           return;
         }}
         formProps={{
@@ -305,7 +304,7 @@ export const ToolModelForm = (props) => {
         msgcls={({ code, data }) => {
           setOpen(false);
           if (!code) {
-            saReloadModel({ devData, setDevData }, data);
+            saReloadModel({ setDevData }, data);
           }
         }}
         formProps={{
@@ -369,7 +368,7 @@ export const ToolModelFieldsForm = (props) => {
         msgcls={({ code, data }) => {
           setOpen(false);
           if (!code) {
-            saReloadModel({ devData, setDevData }, data);
+            saReloadModel({ setDevData }, data);
           }
         }}
         formProps={{

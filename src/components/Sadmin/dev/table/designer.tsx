@@ -4,6 +4,7 @@ import type { DropdownProps, GetProp } from 'antd';
 import { Dropdown } from 'antd';
 import type { Key, ReactNode } from 'react';
 import React, { createContext, useContext, useState, useTransition } from 'react';
+import { hasSearch } from '../../helper/functions';
 import { getMenuDataById } from '../../helpers';
 import { DevJsonContext } from '../../jsonForm';
 
@@ -15,6 +16,7 @@ export type tableDesignerInstance = {
   setColumns?: any;
   getColumnsRender?: any;
   setPageMenu?: (data: Record<string, any>) => void;
+  setActions?: Record<string, any>;
   add?: (data: Record<string, any>) => void;
   addUrl?: string;
   edit?: (data: Record<string, any>) => void;
@@ -29,7 +31,7 @@ export type tableDesignerInstance = {
 };
 
 export function useTableDesigner(props: tableDesignerInstance) {
-  const { setColumns, getColumnsRender, setPageMenu, type = 'table' } = props;
+  const { setColumns, getColumnsRender, setPageMenu, type = 'table', setActions = {} } = props;
   const { initialState, setInitialState } = useModel('@@initialState');
   const { json = {}, setJson } = useContext(DevJsonContext); //读取本地化的配置信息
   const config: Record<string, Record<string, string>> = {
@@ -65,9 +67,14 @@ export function useTableDesigner(props: tableDesignerInstance) {
   const addUrl = config[type].addUrl;
   const setWidthUrl = config[type].setWidthUrl;
   //const sortUrl = config[type].sortUrl;
-  const reflush = (data: any) => {
+  const reflush = async (data: any) => {
     //重新设置列表列
-    setColumns?.(getColumnsRender?.(data?.columns || [])); //设置这个可以快速响应 排序tab可能会卡一点
+    const columns = getColumnsRender?.(data?.columns || []);
+    const { setSearchLength } = setActions;
+    if (setSearchLength) {
+      setSearchLength(hasSearch(columns));
+    }
+    setColumns?.(columns); //设置这个可以快速响应 排序tab可能会卡一点
     //更新schema
     //pageMenu.schema = data.schema;
     //pageMenu.data = { ...pageMenu.data, ...data.data };

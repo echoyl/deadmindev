@@ -19,7 +19,7 @@ import type { saTableProps } from './table';
 import { SaContext } from './table';
 
 export interface saFormProps extends saTableProps {
-  msgcls?: (value: Record<string, any>) => void; //提交数据后的 回调
+  msgcls?: boolean | ((value: Record<string, any>) => void); //提交数据后的 回调
   submitter?: string;
   showTabs?: boolean;
   align?: 'center' | 'left'; //表单对齐位置 center居中显示
@@ -32,6 +32,7 @@ export interface saFormProps extends saTableProps {
   resetForm?: boolean; //提交数据后 是否重置表单
   grid?: boolean; //form是否开启grid布局
   tabsProps?: GetProps<typeof Tabs>;
+  requestOptions?: Record<string, any>;
 }
 
 export const SaForm: FC<saFormProps> = (props) => {
@@ -71,6 +72,7 @@ export const SaForm: FC<saFormProps> = (props) => {
     pageMenu: oPageMenu,
     grid = true,
     devEnable: pdevEnable = true,
+    requestOptions,
   } = props;
   //console.log('init props', props);
   //const url = 'posts/posts';
@@ -107,13 +109,13 @@ export const SaForm: FC<saFormProps> = (props) => {
         return;
       }
     }
-
+    requestOptions?.beforeAction?.();
     return request
       .post(postTo, {
         data: { base: { ...postExtra, ...postBase } },
         msgcls: callback ? callback : msgcls,
         then,
-        messageApi,
+        ...requestOptions,
       })
       .then((ret) => {
         props.afterPost?.(ret);
