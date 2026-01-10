@@ -99,7 +99,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   };
   useEffect(() => {
     render(treeData);
-  }, [treeData]);
+  }, [treeData, fieldNames]);
   return (
     <Card
       title={title}
