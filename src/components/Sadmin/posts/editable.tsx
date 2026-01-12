@@ -1,7 +1,8 @@
-import { Form, Input, InputRef } from 'antd';
-import { FormInstance } from 'antd/lib/form';
+import type { InputRef } from 'antd';
+import { Form, Input } from 'antd';
+import type { FormInstance } from 'antd/lib/form';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { isNum, isNumberLike } from '../checkers';
+import { isNumberLike } from '../checkers';
 import { DragItem } from '../dev/dnd-context/dragSort';
 
 interface EditableRowProps {
@@ -28,8 +29,8 @@ interface EditableCellProps {
   editable: boolean;
   children: React.ReactNode;
   dataIndex: string;
-  record: object;
-  handleSave: (record: object) => void;
+  record: Record<string, any>;
+  handleSave: (record: Record<string, any>) => void;
   type: string;
 }
 
@@ -54,12 +55,12 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
-    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
+    form?.setFieldsValue({ [dataIndex]: record[dataIndex] });
   };
 
   const save = async () => {
     try {
-      const values = await form.validateFields();
+      const values = await form?.validateFields();
 
       toggleEdit();
       handleSave({ ...record, ...values });
