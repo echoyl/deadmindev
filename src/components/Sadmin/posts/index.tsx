@@ -34,7 +34,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
         ? searchCategoryId
         : parseInt(searchCategoryId)
       : 0,
-  ); //为空或0时 参数会清除
+  );
   const onSelect = (keys: Key[]) => {
     const key = keys.length > 0 ? keys[keys.length - 1] : 0;
     setKey(key);
@@ -71,10 +71,10 @@ const PostsList: React.FC<saTableProps> = (props) => {
             {...props}
             initPageUid={reloadUid}
             paramExtra={
-              !leftMenuClose && category_id
+              !leftMenuClose
                 ? {
                     ...props.paramExtra,
-                    [category_id_name]: category_id,
+                    [category_id_name]: category_id || '',
                     reloadUid,
                   }
                 : { ...props.paramExtra, reloadUid }
