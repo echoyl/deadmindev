@@ -90,7 +90,7 @@ export function useTableDesigner(props: tableDesignerInstance) {
       });
       return menus;
     };
-    if (data.setData && data.id) {
+    if (data?.setData && data?.id) {
       //找到菜单 然后设置返回生成好的数据
       const menuData = set(initialState?.currentUser?.menuData, data.id, data.setData);
       const pageMenu = getMenuDataById(menuData, data.id);
@@ -112,8 +112,10 @@ export function useTableDesigner(props: tableDesignerInstance) {
     //后台请求
     const ret = await request.post(url, {
       data: { ...data, ...json },
-      msgcls: ({ data: idata }: { data: any }) => {
-        reflush(idata);
+      msgcls: ({ data: idata, code }: { data: any; code: any }) => {
+        if (!code) {
+          reflush(idata);
+        }
       },
     });
     return ret;
