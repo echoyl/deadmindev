@@ -90,7 +90,12 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
   const [searchParams] = useSearchParams();
 
   const { clientId, messageData, bind } = useContext(WebSocketContext);
-  const { messageApi, notificationApi, setSetting: setSettingDev } = useContext(SaDevContext);
+  const {
+    messageApi,
+    notificationApi,
+    setSetting: setSettingDev,
+    setDevData,
+  } = useContext(SaDevContext);
   const [loginType, setLoginType] = useState<string>(
     setting?.adminSetting?.loginTypeDefault || 'password',
   );
@@ -114,6 +119,7 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
       currentUser: data.userinfo,
       settings: adminSetting,
     })).then(() => {
+      setDevData?.(devData);
       setSettingDev?.(adminSetting);
       const {
         adminSetting: {
@@ -207,7 +213,7 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
     return;
   };
 
-  const formRef = useRef<ProFormInstance>(null);
+  const formRef = useRef<ProFormInstance>(undefined);
   const intl = useIntl();
   const loginTypeItems = [
     {
