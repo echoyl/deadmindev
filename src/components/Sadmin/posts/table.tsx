@@ -526,18 +526,37 @@ const SaTable: React.FC<saTableProps> = (props) => {
     devEnable,
     tbColumns,
   });
-  const [minHeight, setMinHeight] = useState<number>(209);
 
+  const tableHeaderHeightArr = {
+    small: 39,
+    middle: 47,
+    large: 55,
+  };
+  const tableFooterHeightArr = {
+    small: 38,
+    middle: 46,
+    large: 54,
+  };
+  const tablePageHeightArr = {
+    small: 40,
+    middle: 40,
+    large: 48,
+  };
+  const tableSize = setting?.table?.size || tableProps.size || 'middle';
+  const [minHeight, setMinHeight] = useState<number>(209);
+  const tableHeaderHeight = tableHeaderHeightArr[tableSize];
+  const tableFooterHeight = tableFooterHeightArr[tableSize];
+  const tablePageHeight = tablePageHeightArr[tableSize];
   useEffect(() => {
     let defaultHeight = 209;
     if (pageType == 'drawer') {
       defaultHeight -= 50;
     }
     if (footer) {
-      defaultHeight += 38;
+      defaultHeight += tableFooterHeight;
     }
     if (tableProps.pagination !== false && data.length > 0) {
-      defaultHeight += 40;
+      defaultHeight += tablePageHeight;
     }
     if (searchLength) {
       defaultHeight += 80;
@@ -551,40 +570,28 @@ const SaTable: React.FC<saTableProps> = (props) => {
       defaultHeight += 14;
     }
     setMinHeight(defaultHeight);
-  }, [footer, tableProps.pagination, searchLength, tableMenu, table_menu_key, data]);
+  }, [footer, tableProps.pagination, searchLength, tableMenu, table_menu_key, data, tableSize]);
 
-  const useStyles = createStyles(
-    (
-      { css },
-      { height, tableSize }: { height: number; tableSize: 'small' | 'middle' | 'large' },
-    ) => {
-      //table组件中关闭scroll类名为ant-table-content开启scroll 是 ant-table-body 不包含头部所以需要计算头部高度
-      //根据table尺寸来计算最小高度值
-      const heightSizes = {
-        small: 0,
-        middle: 8,
-        large: 16,
+  const useStyles = createStyles(({ css }, { height, th }: { height: number; th: number }) => {
+    //table组件中关闭scroll类名为ant-table-content开启scroll 是 ant-table-body 不包含头部所以需要计算头部高度
+    if (height) {
+      return {
+        body: css`
+          .ant-table-content {
+            min-height: calc(100vh - ${height}px);
+          }
+          .ant-table-body {
+            min-height: calc(100vh - ${height + th}px);
+          }
+        `,
       };
-      const dis_header_height = heightSizes[tableSize];
-      if (height) {
-        return {
-          body: css`
-            .ant-table-content {
-              min-height: calc(100vh - ${height}px);
-            }
-            .ant-table-body {
-              min-height: calc(100vh - ${height + 39 + dis_header_height}px);
-            }
-          `,
-        };
-      } else {
-        return {};
-      }
-    },
-  );
+    } else {
+      return {};
+    }
+  });
   const { styles } = useStyles({
     height: setting?.minHeightFullscreen !== false && pageType != 'modal' ? minHeight : 0,
-    tableSize: tableProps.size || setting?.table?.size || 'middle',
+    th: tableHeaderHeight,
   });
   return (
     <SaContext.Provider
@@ -814,7 +821,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
                 : setting?.scollYFullscreen
                 ? {
                     ...setting?.table?.scroll,
-                    y: pageType == 'modal' ? false : `calc(100vh - ${minHeight + 47}px)`,
+                    y:
+                      pageType == 'modal'
+                        ? false
+                        : `calc(100vh - ${minHeight + tableHeaderHeight}px)`,
                   }
                 : setting?.table?.scroll
             }
