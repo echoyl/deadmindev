@@ -1,9 +1,10 @@
-import { useContext, useState, lazy, Suspense, useEffect, useRef } from 'react';
 import LoadingFullHeight from '@/components/LoadingFullHeight';
-import { SaDevContext } from '../../dev';
-import { isObj } from '../../checkers';
 import { loader } from '@monaco-editor/react';
+import { useModel } from '@umijs/max';
 import { Card, Typography } from 'antd';
+import { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react';
+import { isObj } from '../../checkers';
+import { SaDevContext } from '../../dev';
 
 const Editor = lazy(() => import('@monaco-editor/react'));
 
@@ -21,11 +22,14 @@ export const MonacoDefaultOptions = {
 };
 
 export const MonacoEditor = (props) => {
+  const { initialState } = useModel('@@initialState');
   useEffect(() => {
     loader.config({
       paths: {
-        vs: 'https://cdn.jsdmirror.com/npm/monaco-editor@0.54.0/min/vs',
-        //vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
+        //vs: 'https://cdn.jsdmirror.com/npm/monaco-editor@0.54.0/min/vs',
+        vs:
+          initialState?.settings?.adminSetting?.monaco_vs ||
+          'https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
       },
     });
   }, []);

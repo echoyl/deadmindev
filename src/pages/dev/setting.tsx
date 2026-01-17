@@ -118,6 +118,16 @@ export default () => {
                   },
                 ],
               },
+              {
+                valueType: 'group',
+                columns: [
+                  {
+                    title: 'monaco编辑器',
+                    tooltip: '不填写则使用默认的 https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
+                    dataIndex: 'monaco_vs',
+                  },
+                ]
+              },
             ],
           },
           {
