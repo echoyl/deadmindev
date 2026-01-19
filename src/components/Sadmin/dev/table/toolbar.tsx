@@ -211,11 +211,9 @@ export const ImportButton = ({
               duration: 1,
               onClose: () => {
                 if (afterAction) {
-                  afterAction?.(info.file.response).then((v) => {
-                    if (v != true) {
-                      actionRef.current?.reload();
-                    }
-                  });
+                  if (afterAction?.(info.file.response) != true) {
+                    actionRef.current?.reload();
+                  }
                 } else {
                   actionRef.current?.reload();
                 }

@@ -529,7 +529,7 @@ export default () => {
             uploadProps: {
               accept: '.sql',
             },
-            afterAction: reload,
+            //afterAction: reload,
           },
           {
             valueType: 'toolbar',

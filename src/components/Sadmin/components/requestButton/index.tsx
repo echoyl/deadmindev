@@ -10,7 +10,7 @@ export type RequestButtonProps = {
   request?: Record<string, any>;
   requestUrl?: string;
   btn?: Record<string, any>;
-  afterAction?: (p: any) => Promise<Record<string, any> | boolean>;
+  afterAction?: (p: any) => Promise<Record<string, any> | boolean> | any;
   uploadProps?: Record<string, any>;
   record?: Record<string, any>;
   fieldProps?: Record<string, any>;
