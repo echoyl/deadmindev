@@ -1,6 +1,7 @@
 import request from '@/components/Sadmin/lib/request';
 import type {
   ActionType,
+  ProColumns,
   ProFormInstance,
   ProFormProps,
   ProTableProps,
@@ -25,7 +26,7 @@ import ResizableTitle from '../dev/table/resizeableTitle';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
 import { columnHasSearch, hasSearch, tplToDate } from '../helper/functions';
-import type { saFormColumnsType, saFormTabColumnsType, saTableColumnsType } from '../helpers';
+import type { saFormColumnsType, saFormTabColumnsType, saTableColumnsType, saValueTypeMapType } from '../helpers';
 import { getFromObject, search2Obj, t } from '../helpers';
 import { EditableCell, EditableRow } from './editable';
 import './style.less';
@@ -168,7 +169,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   } = props;
   const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
   const table_menu_key = pageMenu?.data?.table_menu_key; //直接读取pagemenu中的信息，不再使用props中的参数，开发模式下会更新pagemenu
-  const [tbColumns, setTbColumns] = useState<saTableColumnsType>([]);
+  const [tbColumns, setTbColumns] = useState<(ProColumns | saValueTypeMapType)[]>([]);
   const [enums, setEnums] = useState<Record<string, any>>();
   const [summary, setSummary] = useState(); //合计
   const [footer, setFooter] = useState(); //footer设置
@@ -785,11 +786,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
             }
             tableAlertRender={false}
             summary={() => {
-              const isCheckEnable = !checkEnable || setting?.checkDisable ? false : true;
-              const tbc_length =
-                _tableColumns?.filter((v) => {
-                  return !v.hideInTable;
-                }).length + (isCheckEnable ? 1 : 0);
+              //const isCheckEnable = !checkEnable || setting?.checkDisable ? false : true;
+              const tbc_length = tbColumns?.filter((v) => {
+                return !v.hideInTable;
+              }).length;
               return summary ? (
                 <Table.Summary.Row>
                   <Table.Summary.Cell index={0} colSpan={tbc_length}>
@@ -798,7 +798,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
                 </Table.Summary.Row>
               ) : null;
             }}
-            //scroll={{ x: 900 }}
             footer={
               footer
                 ? () => {
@@ -828,17 +827,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
                   }
                 : setting?.table?.scroll
             }
-            // styles={
-            //   setting?.minHeightFullscreen !== false && pageType != 'modal'
-            //     ? {
-            //         ...setting.table?.styles,
-            //         section: {
-            //           minHeight:
-            //             setting.table?.styles?.section?.minHeight || `calc(100vh - ${minHeight}px)`,
-            //         },
-            //       }
-            //     : setting.table?.styles
-            // }
             rowKey="id"
           />
         </DndKitContext>
