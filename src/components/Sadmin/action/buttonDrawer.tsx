@@ -142,6 +142,7 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
         }}
         {...restProps}
         loading={loading}
+        focusable={{ trap: false }}
       >
         <div
           onKeyDown={(e) => {

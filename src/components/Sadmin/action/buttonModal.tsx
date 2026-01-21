@@ -109,6 +109,7 @@ const ButtonModal: FC<actionConfirm> = (props) => {
         width={width}
         title={title}
         {...modalProps}
+        focusable={{ trap: false }}
         centered={true}
         destroyOnHidden={true}
         footer={
