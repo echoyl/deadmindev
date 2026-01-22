@@ -16,7 +16,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
     title: treeTitle = '分类选择',
     url_name: category_id_name = 'category_id',
     field,
-    close: leftMenuClose = false,
+    close: leftMenuClose = true,
     page = 0,
     ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
