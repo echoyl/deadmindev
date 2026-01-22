@@ -1,6 +1,9 @@
+import { saReloadModel } from '@/components/Sadmin/components/refresh';
+import { SaDevContext } from '@/components/Sadmin/dev';
 import settingColumns from '@/components/Sadmin/dev/vars/relation/settingColumns';
 import SaTable from '@/components/Sadmin/posts/table';
 import { CopyOutlined } from '@ant-design/icons';
+import { use } from 'react';
 const copyColumns = () => ({
   domtype: 'button',
   fieldProps: {
@@ -45,6 +48,7 @@ const copyColumns = () => ({
 });
 export default (props: Record<string, any>) => {
   const { model, contentRender } = props;
+  const { setDevData } = use(SaDevContext);
   // const actionRef = useRef<ActionType>();
   // const { initialState, setInitialState } = useModel('@@initialState');
   //console.log('props', props);
@@ -333,6 +337,13 @@ export default (props: Record<string, any>) => {
       pageType="drawer"
       openType="drawer"
       setting={{ scollYFullscreen: true }}
+      afterFormPost={({ data, code }) => {
+        if (!code && data) {
+          //生成后端代码及格式化文件
+          saReloadModel({ setDevData }, { id: data.model_id });
+        }
+        //return true;
+      }}
     />
   );
 };
