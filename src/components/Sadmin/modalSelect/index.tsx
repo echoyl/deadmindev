@@ -3,7 +3,7 @@ import { CheckCard } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { App, Flex, Modal, Tag, Typography, theme } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
-import { inArray, isArr, isUndefined } from '../checkers';
+import { inArray, isArr, isObj, isUndefined } from '../checkers';
 import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
 import { getBread, getFromObject, getMenuDataById } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
@@ -123,24 +123,29 @@ const ModalSelect = (props) => {
           : [selected]
         : [];
       //console.log('selected', selected, props);
-      const query: { [key: string]: any } = {};
+      const newquery: { [key: string]: any } = {};
       const formValues = formRef.current?.getFieldsValue?.(true);
       for (let i in iquery) {
         if (!isUndefined(formValues[iquery[i]])) {
-          query[i] = formValues[iquery[i]];
+          newquery[i] = formValues[iquery[i]];
         } else {
-          query[i] = iquery[i];
+          newquery[i] = iquery[i];
         }
       }
-      const svalues = parseValue.map((v) => {
-        return multiple
-          ? { id: v.id ? v.id : 0, [dataName]: parseItem(v[dataName]) }
-          : parseItem(v);
-      });
+      const svalues = parseValue
+        .map((v) => {
+          if (!isObj(v)) {
+            return null;
+          }
+          return multiple
+            ? { id: v.id ? v.id : 0, [dataName]: parseItem(v[dataName]) }
+            : parseItem(v);
+        })
+        .filter((v) => v !== null);
       setSelectItems([...svalues]);
       //console.log('useEffect', svalues);
       setSelectedItems([...svalues]);
-      setQuery(query);
+      setQuery(newquery);
       setGetData(true);
     }
   }, [formRef?.current]);

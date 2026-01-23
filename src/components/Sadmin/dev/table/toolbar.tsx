@@ -597,7 +597,7 @@ export const toolBarRender = (props) => {
     setCurrentRow,
     handleModalVisible,
     path,
-    toolBarButton: toolBarButtonParam,
+    toolBarButton: toolBarButtonParam = [],
     url,
     paramExtra,
     enums,
