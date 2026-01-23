@@ -144,6 +144,8 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         return { ...defaulColumns[v] };
       }
     } else {
+      //fix：重复修改数据的title后无限追加的问题
+      v.originTitle = v.originTitle || v.title;
       //加入if条件控制
       if (v.fieldProps?.if && !devEnable) {
         const show = tplComplie(v.fieldProps?.if, {
@@ -404,7 +406,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       if (v.fieldProps?.localesopen) {
         v.title = (
           <Space>
-            {v.title}
+            {v.originTitle}
             <TranslationModal column={{ ...v }} />
           </Space>
         );
