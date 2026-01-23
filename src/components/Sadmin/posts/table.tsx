@@ -738,10 +738,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
               table_menu_key,
               selectedRowKeys,
               devEnable,
-              pageMenu,
               sort,
               actionRef,
               ...props,
+              pageMenu,
             })}
             rowSelection={
               !checkEnable || setting?.checkDisable

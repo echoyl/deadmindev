@@ -24,7 +24,7 @@ import {
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { FormattedMessage, Link, useModel } from '@umijs/max';
 import { Button, Dropdown, Popover, Space, Tree, Upload } from 'antd';
-import { isString } from 'es-toolkit';
+import { cloneDeep, isString } from 'es-toolkit';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '..';
 import ButtonDrawer from '../../action/buttonDrawer';
@@ -597,7 +597,7 @@ export const toolBarRender = (props) => {
     setCurrentRow,
     handleModalVisible,
     path,
-    toolBarButton = [],
+    toolBarButton: toolBarButtonParam,
     url,
     paramExtra,
     enums,
@@ -628,7 +628,9 @@ export const toolBarRender = (props) => {
   if (table_menu_key) {
     values[table_menu_key] = tableMenuId;
   }
-
+  const toolBarButton = pageMenu?.data?.toolBarButton
+    ? cloneDeep(pageMenu?.data?.toolBarButton)
+    : toolBarButtonParam;
   //const _btns = cloneDeep(toolBarButton);
   const _btns: any[] = [];
   if (devEnable) {
