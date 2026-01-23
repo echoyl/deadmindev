@@ -794,10 +794,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
             }
             tableAlertRender={false}
             summary={() => {
-              //const isCheckEnable = !checkEnable || setting?.checkDisable ? false : true;
-              const tbc_length = tbColumns?.filter((v) => {
-                return !v.hideInTable;
-              }).length;
+              const isCheckEnable = !checkEnable || setting?.checkDisable ? false : true;
+              const tbc_length =
+                tbColumns?.filter((v) => {
+                  return !v.hideInTable;
+                }).length + (isCheckEnable ? 1 : 0);
               return summary ? (
                 <Table.Summary.Row>
                   <Table.Summary.Cell index={0} colSpan={tbc_length}>
