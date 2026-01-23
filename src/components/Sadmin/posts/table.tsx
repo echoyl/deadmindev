@@ -26,7 +26,12 @@ import ResizableTitle from '../dev/table/resizeableTitle';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
 import { columnHasSearch, hasSearch, tplToDate } from '../helper/functions';
-import type { saFormColumnsType, saFormTabColumnsType, saTableColumnsType, saValueTypeMapType } from '../helpers';
+import type {
+  saFormColumnsType,
+  saFormTabColumnsType,
+  saTableColumnsType,
+  saValueTypeMapType,
+} from '../helpers';
 import { getFromObject, search2Obj, t } from '../helpers';
 import { EditableCell, EditableRow } from './editable';
 import './style.less';
@@ -422,8 +427,11 @@ const SaTable: React.FC<saTableProps> = (props) => {
         });
         modals?.destroy();
         if (!ret.code) {
-          actionRef.current?.reload();
           setSelectedRowKeys([]);
+          delay(1000).then(() => {
+            props?.afterFormPost?.(ret);
+            actionRef.current?.reload();
+          });
         }
       },
     });
