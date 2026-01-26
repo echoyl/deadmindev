@@ -152,6 +152,14 @@ const CustomerColumnRender = (props) => {
     }
     return '';
   };
+  const getRequestData = (_rqdata: Record<string, any>) => {
+    const rqdata: Record<string, any> = {};
+    Object.keys(_rqdata).map((k) => {
+      const tplc = tplComplie(_rqdata[k], { record });
+      rqdata[k] = tplc ? tplc : '';
+    });
+    return rqdata;
+  };
   const getItemsDom = (items, percentNum = -1) => {
     return items
       ?.map((itemx, i) => {
@@ -165,12 +173,8 @@ const CustomerColumnRender = (props) => {
         const { fieldProps = {}, modal } = item;
         const { value = {} } = fieldProps;
         //解析request.data 支持读取record中的数据
-        const newRequestData: Record<string, any> = {};
-        Object.keys(item.request?.data || {}).map((k) => {
-          const tplc = tplComplie(item.request?.data[k], { record });
-          newRequestData[k] = tplc ? tplc : '';
-        });
-
+        const newRequestData = getRequestData(item.request?.data || {});
+        const newRequestGetData = getRequestData(item.request?.paramdata || {});
         if (item.action == 'confirmForm') {
           const { idName = 'id' } = value;
           const dataId = getFromObject(record, idName);
@@ -184,7 +188,7 @@ const CustomerColumnRender = (props) => {
               url={item.request?.url}
               postUrl={item.request?.postUrl}
               data={{ ...paramExtra, ...newRequestData }}
-              paramdata={{ ...paramExtra, ...item.request?.paramdata }}
+              paramdata={{ ...paramExtra, ...newRequestGetData }}
               afterActionType={item.request?.afterActionType}
               dataId={dataId}
               {...value}
