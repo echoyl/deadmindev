@@ -18,6 +18,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
     field,
     close: leftMenuClose = true,
     page = 0,
+    span = 3,
     ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
 
@@ -50,7 +51,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
     <PageContainer404 title={tableTitle} path={path}>
       <Row gutter={[30, 0]} style={!leftMenuClose && categorys.length > 1 ? { marginLeft: 0 } : {}}>
         {!leftMenuClose && categorys.length > 1 && (
-          <Col span={3} style={{ paddingInline: 0 }}>
+          <Col span={span} style={{ paddingInline: 0 }}>
             <TreeMenu
               treeData={categorys}
               onSelect={onSelect}
@@ -66,7 +67,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
             />
           </Col>
         )}
-        <Col span={!leftMenuClose && categorys.length > 1 ? 21 : 24}>
+        <Col span={!leftMenuClose && categorys.length > 1 ? 24 - span : 24}>
           <SaTable
             {...props}
             initPageUid={reloadUid}

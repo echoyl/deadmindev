@@ -77,6 +77,7 @@ export interface saTableProps {
     title?: string;
     close?: boolean;
     page?: number;
+    span?: number; //宽度 n/24
   };
   categorysName?: string;
   //table组件 toolbar中menu 请求和url中参数name

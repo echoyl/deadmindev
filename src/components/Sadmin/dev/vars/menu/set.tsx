@@ -288,9 +288,18 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'close'],
         title: '是否关闭',
         valueType: 'switch',
-        colProps: { span: 12 },
+        colProps: { span: 6 },
         fieldProps: {
           defaultValue: true,
+        },
+      },
+      {
+        dataIndex: ['leftMenu', 'span'],
+        title: '宽度n/24',
+        valueType: 'digit',
+        colProps: { span: 6 },
+        fieldProps: {
+          defaultValue: 3,
         },
       },
       {
