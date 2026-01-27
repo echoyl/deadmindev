@@ -291,13 +291,7 @@ export default () => {
     {
       dataIndex: 'toid',
       title: '复制到',
-      valueType: 'treeSelect',
-      fieldProps: {
-        requestDataName: 'menus',
-        treeLine: { showLeafIcon: true },
-        treeDefaultExpandAll: true,
-        showSearch: true,
-      },
+      valueType: 'menuSelect',
     },
   ];
 
@@ -499,8 +493,8 @@ export default () => {
               data: {
                 actype: 'status',
               },
-              callback: () => {
-                reload();
+              callback: (ret) => {
+                reload(ret);
                 return;
               },
             },
