@@ -124,7 +124,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         } else {
           //console.log('re set data', ret.data, formRef?.current);
           //setDetail({ ...ret.data });
-          if ((resetForm || pageType == 'page') && !ret.code) {
+          if ((resetForm || pageType == 'page') && ret && !ret.code) {
             //当强制刷新form 或者页面类型是page时，且请求成功时，重置表单
             formRef?.current?.resetFields();
             //formRef?.current?.setFieldsValue({});
