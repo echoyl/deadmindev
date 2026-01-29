@@ -176,7 +176,7 @@ const getColumns = (
       } else {
         return {
           title: (
-            <Space direction="vertical">
+            <Space orientation="vertical">
               {item.tooltip ? <Tooltip title={item.tooltip}>{item.title}</Tooltip> : item.title}
               <PiliangInput name={item.name} type={item.valueType} action={piliangAction} />
             </Space>
@@ -468,7 +468,7 @@ const GuigePanel: FC<{
         arrowSort={true}
         itemRender={({ listDom, action }, { index }) => (
           <ProCard
-            bordered
+            variant="outlined"
             style={{ marginBlockEnd: 8 }}
             title={
               <ProFormText
