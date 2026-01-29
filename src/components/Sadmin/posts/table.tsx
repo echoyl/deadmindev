@@ -575,13 +575,27 @@ const SaTable: React.FC<saTableProps> = (props) => {
         defaultHeight -= 2;
       }
     }
+    if (!checkEnable || setting?.checkDisable) {
+      //不能选中后 表头不会渲染高度差为22 未获取到数据时才需要
+      if (!initRequest) {
+        defaultHeight -= 22;
+      }
+    }
 
     if (tableMenu && table_menu_key) {
       defaultHeight += 14;
     }
     setMinHeight(defaultHeight);
-  }, [footer, tableProps.pagination, searchLength, tableMenu, table_menu_key, data, tableSize]);
-
+  }, [
+    footer,
+    tableProps.pagination,
+    searchLength,
+    tableMenu,
+    table_menu_key,
+    data,
+    tableSize,
+    initRequest,
+  ]);
   const useStyles = createStyles(({ css }, { height, th }: { height: number; th: number }) => {
     //table组件中关闭scroll类名为ant-table-content开启scroll 是 ant-table-body 不包含头部所以需要计算头部高度
     if (height) {
