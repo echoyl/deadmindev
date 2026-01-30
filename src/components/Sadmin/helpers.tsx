@@ -653,7 +653,9 @@ export const getBread = (path: string, currentUser?: Record<string, any>) => {
     if (currentUser?.redirect && currentUser?.redirect != path) {
       path = currentUser?.redirect;
     } else {
-      path = currentUser?.menuData[0]?.path;
+      //读取第一个非hideInMenu的菜单
+      const firstShowMenu = currentUser?.menuData?.find((v) => !v.hideInMenu);
+      path = firstShowMenu?.path;
     }
   }
 
