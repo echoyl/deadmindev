@@ -20,7 +20,7 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { Button, Flex, Input, InputNumber, Space, Switch, Tooltip } from 'antd';
-import type { FC } from 'react';
+import type { FC, Key } from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 const getData = (attributes: any[], values: any) => {
   const tableRows: any[] = [];
@@ -223,7 +223,6 @@ const GuigeTable: FC<{
   const parseTable = (setValue?: boolean) => {
     const attrs = formRef.current?.getFieldValue('attrs');
     const items = formRef.current?.getFieldValue('items');
-    //console.log('form get attrs and items are', attrs, items);
     const [_datas, _editableKeys] = getData(items, attrs);
     setDatas([..._datas]);
     setEditableKeys([..._editableKeys]);
@@ -243,16 +242,16 @@ const GuigeTable: FC<{
   }, [isSync, formRef]);
 
   useEffect(() => {
-    //console.log('now datas is ', datas);
-    if (datas.length > 0) {
+    if (datas.length > 0 && columns.length < 1) {
       const items = formRef.current?.getFieldValue('items');
       setColumns(
         getColumns(
           items,
           (name: string, value: number) => {
             //console.log('old data', datas, name, value, columns);
-            datas?.forEach((v) => {
+            datas?.forEach((v, index) => {
               v[name] = value;
+              tableForm?.current?.setRowData(index, v);
             });
             getGuiges([...datas]);
           },
@@ -388,8 +387,8 @@ const GuigePanel: FC<{
     localesopen = false,
     itemImg = false,
   } = props;
-  const formRef = useRef<ProFormInstance<any>>();
-  const tableForm = useRef<EditableFormInstance>();
+  const formRef = useRef<ProFormInstance<any>>(null);
+  const tableForm = useRef<EditableFormInstance>(null);
   const [isSync, setIsSync] = useState(0);
 
   return (
@@ -406,20 +405,20 @@ const GuigePanel: FC<{
           },
         },
       }}
-      onFinish={async (v) => {
+      onFinish={async (v2) => {
         try {
           await tableForm.current?.validateFields();
         } catch (errorInfo) {
           return;
         }
         //这里将未设置的值过滤掉
-
-        const items = [];
-        const attrs = [];
-        const items_id = [];
+        const v = formRef?.current?.getFieldsValue?.(true); //form组件会将没有设置的字段过滤掉 所以这里需要获取全部数据
+        const items: Record<string, any>[] = [];
+        const attrs: Record<string, any>[] = [];
+        const items_id: Key[] = [];
         v.items.forEach((item) => {
           if (item.name) {
-            const _items = [];
+            const _items: Record<string, any>[] = [];
             item.items.forEach((_item) => {
               if (_item.name) {
                 _items.push(_item);
