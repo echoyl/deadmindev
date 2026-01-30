@@ -397,6 +397,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
           v.colProps = { span: 24 };
         }
       }
+      const orign_title = v.title;
 
       if (devEnable && deep <= 1 && !React.isValidElement(v.title)) {
         v.title = <FormColumnTitle {...v} />;
@@ -407,7 +408,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.title = (
           <Space>
             {v.originTitle}
-            <TranslationModal column={{ ...v }} />
+            <TranslationModal column={{ ...v, title: orign_title }} />
           </Space>
         );
         //插入隐藏字段

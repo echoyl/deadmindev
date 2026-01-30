@@ -1,11 +1,11 @@
 import { TranslationOutlined } from '@ant-design/icons';
-import ConfirmForm from '../../action/confirmForm';
-import { saFormTabColumnsType } from '../../helpers';
+import { Tooltip } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '..';
-import { SaContext } from '../../posts/table';
-import { Tooltip } from 'antd';
+import ConfirmForm from '../../action/confirmForm';
 import { isArr } from '../../checkers';
+import type { saFormTabColumnsType } from '../../helpers';
+import { SaContext } from '../../posts/table';
 
 const TranslationModal = (props: {
   column?: Record<string, any>;
@@ -19,30 +19,31 @@ const TranslationModal = (props: {
   const { formRef } = useContext(SaContext);
 
   //console.log('formRef', formRef, formRef?.current?.getFieldsValue());
+  const tabs: saFormTabColumnsType = setting?.adminSetting?.locales.map(
+    (lo: Record<string, any>) => {
+      let index: string | string[] = '';
+      if (isArr(column?.dataIndex)) {
+        //获取最后一个元素后 解构剩余元素，最后一个元素和语言包名josn _
+        const or = [...column?.dataIndex];
+        index = or.pop();
 
-  const tabs: saFormTabColumnsType = setting?.adminSetting?.locales.map((lo) => {
-    let index: string | string[] = '';
-    if (isArr(column?.dataIndex)) {
-      //获取最后一个元素后 解构剩余元素，最后一个元素和语言包名josn _
-      const or = [...column?.dataIndex];
-      index = or.pop();
-
-      index = [...or, [index, lo.name].join('_')];
-      //console.log('index', index, or);
-    } else {
-      index = [column?.dataIndex, lo.name].join('_');
-    }
-    return {
-      title: lo.title,
-      formColumns: [
-        {
-          dataIndex: index,
-          title: column?.title,
-          valueType: column?.valueType,
-        },
-      ],
-    };
-  });
+        index = [...or, [index, lo.name].join('_')];
+        //console.log('index', index, or);
+      } else {
+        index = [column?.dataIndex, lo.name].join('_');
+      }
+      return {
+        title: lo.title,
+        formColumns: [
+          {
+            dataIndex: index,
+            title: column?.title,
+            valueType: column?.valueType,
+          },
+        ],
+      };
+    },
+  );
 
   const [value, setValue] = useState(values);
 
@@ -68,12 +69,12 @@ const TranslationModal = (props: {
       }
       saFormProps={{ devEnable: false }}
       value={value}
-      onChange={(values) => {
-        setValue(values);
+      onChange={(v) => {
+        setValue(v);
         if (onChange) {
-          onChange(values);
+          onChange(v);
         } else {
-          formRef?.current?.setFieldsValue(values);
+          formRef?.current?.setFieldsValue(v);
         }
 
         //console.log(values, formRef?.current?.getFieldsValue());
