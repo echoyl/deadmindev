@@ -578,7 +578,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
     if (!checkEnable || setting?.checkDisable) {
       //不能选中后 表头不会渲染高度差为22 未获取到数据时才需要
       if (!initRequest) {
-        defaultHeight -= 22;
+        if (setting?.scollYFullscreen) {
+          //开启全屏滚动高度时需要减去22
+          defaultHeight -= 22;
+        }
       }
     }
 
