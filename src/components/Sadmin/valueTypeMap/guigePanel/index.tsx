@@ -108,6 +108,12 @@ const PiliangInput = (props) => {
           }}
           variant="filled"
         />
+      ) : type == 'switch' ? (
+        <Switch
+          onChange={(v) => {
+            setValue(v);
+          }}
+        />
       ) : (
         <Input
           style={{ width: '100%' }}
@@ -155,6 +161,8 @@ const getColumns = (
       title: attr.name,
       dataIndex: attr.id,
       readonly: true,
+      fixed: 'left',
+      width: 120,
     });
   });
   const titlepicIndex = _columnsName.findIndex((v) => v == 'titlepic');
@@ -242,7 +250,7 @@ const GuigeTable: FC<{
   }, [isSync, formRef]);
 
   useEffect(() => {
-    if (datas.length > 0 && columns.length < 1) {
+    if (datas.length > 0) {
       const items = formRef.current?.getFieldValue('items');
       setColumns(
         getColumns(
@@ -538,12 +546,12 @@ export const Guiges = (props) => {
   //log('inner value is', value);
   const [hidden, setHidden] = useState(value.open ? false : true);
   const { columns = [], locale, itemImg } = props;
-  const columnsName = getColumnsName(columns);
+  const columnsNames = getColumnsName(columns);
   return (
     <>
       {hidden && (
         <ProForm.Group rowProps={{ gutter: 0 }}>
-          {columnsName.map((item) => {
+          {columnsNames.map((item) => {
             return (
               <ProForm.Item
                 key={item.name}
