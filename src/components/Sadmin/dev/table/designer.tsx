@@ -69,12 +69,15 @@ export function useTableDesigner(props: tableDesignerInstance) {
   //const sortUrl = config[type].sortUrl;
   const reflush = async (data: any) => {
     //重新设置列表列
+    const { setThisPage = true } = data;
     const columns = getColumnsRender?.(data?.columns || []);
     const { setSearchLength } = setActions;
     if (setSearchLength) {
       setSearchLength(hasSearch(columns));
     }
-    setColumns?.(columns); //设置这个可以快速响应 排序tab可能会卡一点
+    if (setThisPage) {
+      setColumns?.(columns); //设置这个可以快速响应 排序tab可能会卡一点
+    }
     //更新schema
     //pageMenu.schema = data.schema;
     //pageMenu.data = { ...pageMenu.data, ...data.data };
@@ -93,8 +96,10 @@ export function useTableDesigner(props: tableDesignerInstance) {
     if (data?.setData && data?.id) {
       //找到菜单 然后设置返回生成好的数据
       const menuData = set(initialState?.currentUser?.menuData, data.id, data.setData);
-      const pageMenu = getMenuDataById(menuData, data.id);
-      setPageMenu?.(pageMenu);
+      if (setThisPage) {
+        const pageMenu = getMenuDataById(menuData, data.id);
+        setPageMenu?.(pageMenu);
+      }
       setInitialState((s) => ({
         ...s,
         currentUser: { ...s?.currentUser, menuData },

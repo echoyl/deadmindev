@@ -69,7 +69,12 @@ export const getCustomerColumn = (modelId: Key) => {
             formColumns: [
               { dataIndex: 'placeholder', title: 'placeholder' },
               { dataIndex: 'tooltip', title: 'tooltip' },
-              { dataIndex: 'extra', title: 'extra', tooltip: '提示会追加显示到组件后面' },
+              {
+                dataIndex: 'extra',
+                title: 'extra',
+                valueType: 'textarea',
+                tooltip: '提示会追加显示到组件后面',
+              },
             ],
             saFormProps: { devEnable: false },
           },
