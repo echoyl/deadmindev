@@ -1,5 +1,5 @@
 import ButtonDrawer from '@/components/Sadmin/action/buttonDrawer';
-import { getJson, isStr } from '@/components/Sadmin/checkers';
+import { getJson, inArray, isStr } from '@/components/Sadmin/checkers';
 import TranslationModal from '@/components/Sadmin/dev/form/translation';
 import type { saFormColumnsType } from '@/components/Sadmin/helpers';
 import { getFromObject, uid } from '@/components/Sadmin/helpers';
@@ -15,13 +15,13 @@ import {
   EditableProTable,
   ProCard,
   ProForm,
-  ProFormDigit,
   ProFormList,
   ProFormText,
 } from '@ant-design/pro-components';
 import { Button, Flex, Input, InputNumber, Space, Switch, Tooltip } from 'antd';
 import type { FC, Key } from 'react';
 import React, { useEffect, useRef, useState } from 'react';
+import { GetFormFields } from '../../posts/formDom';
 const getData = (attributes: any[], values: any) => {
   const tableRows: any[] = [];
   const editableKeys: React.Key[] = [];
@@ -73,18 +73,82 @@ const columnsName: {
   required?: boolean;
   prefix?: string;
   valueType?: string;
+  fieldProps?: Record<string, any>;
+  disable?: boolean; //设置后就不是默认列
 }[] = [
-  { title: '价格', name: 'price', valueType: 'digit', required: true, prefix: '￥' },
-  { title: '库存', name: 'sku', valueType: 'digit', required: true, prefix: '' },
-  { title: '市场价', name: 'old_price', valueType: 'digit', prefix: '￥' },
-  { title: '结算价', name: 'jiesuan_price', valueType: 'digit', prefix: '￥' },
-  { title: '成本价', name: 'chengben_price', valueType: 'digit', prefix: '￥' },
-  { title: '每次最大购买', name: 'max', valueType: 'digit', prefix: '' },
+  {
+    title: '图片',
+    name: 'titlepic',
+    valueType: 'uploader',
+    fieldProps: {
+      buttonType: 'table',
+    },
+    disable: true,
+  },
+  {
+    title: '价格',
+    name: 'price',
+    valueType: 'digit',
+    required: true,
+    prefix: '￥',
+    fieldProps: {
+      style: { width: '100%' },
+    },
+  },
+  {
+    title: '库存',
+    name: 'sku',
+    valueType: 'digit',
+    required: true,
+    prefix: '',
+    fieldProps: {
+      style: { width: '100%' },
+    },
+  },
+  {
+    title: '市场价',
+    name: 'old_price',
+    valueType: 'digit',
+    prefix: '￥',
+    fieldProps: {
+      style: { width: '100%' },
+    },
+  },
+  {
+    title: '结算价',
+    name: 'jiesuan_price',
+    valueType: 'digit',
+    prefix: '￥',
+    fieldProps: {
+      style: { width: '100%' },
+    },
+  },
+  {
+    title: '成本价',
+    name: 'chengben_price',
+    valueType: 'digit',
+    prefix: '￥',
+    fieldProps: {
+      style: { width: '100%' },
+    },
+  },
+  {
+    title: '每次最大购买',
+    name: 'max',
+    valueType: 'digit',
+    prefix: '',
+    fieldProps: {
+      style: { width: '100%' },
+    },
+  },
 ];
 
 const PiliangInput = (props) => {
   const { name, action, type } = props;
   const [value, setValue] = useState<any>();
+  if (type == 'uploader') {
+    return null;
+  }
   const addonAfter = (
     <Button
       size="small"
@@ -129,11 +193,11 @@ const PiliangInput = (props) => {
   );
 };
 
-const getColumnsName = (_columns: Array<any>) => {
+const getColumnsName = (_columns: any[]) => {
   let _columnsName = [];
   if (_columns.length == 0) {
     //默认全部字段都选择
-    _columnsName = columnsName;
+    _columnsName = columnsName.filter((v) => !v.disable);
   } else {
     _columnsName = _columns
       .map((item) => {
@@ -165,18 +229,6 @@ const getColumns = (
       width: 120,
     });
   });
-  const titlepicIndex = _columnsName.findIndex((v) => v == 'titlepic');
-  if (titlepicIndex != -1) {
-    columns.push({
-      title: '图片',
-      dataIndex: 'titlepic',
-      valueType: 'uploader',
-      fieldProps: {
-        buttonType: 'table',
-      },
-    });
-  }
-
   const normalColumns: saFormColumnsType = _columnsName
     .map((item) => {
       if (isStr(item)) {
@@ -191,7 +243,11 @@ const getColumns = (
           ),
           dataIndex: item.name,
           valueType: item.valueType,
-          fieldProps: { prefix: item.prefix, style: { width: '100%' }, variant: 'filled' },
+          fieldProps: {
+            prefix: item.prefix,
+            variant: 'filled',
+            ...item.fieldProps,
+          },
           // React.Fragment 的属性错误 react 19
           formItemProps: item.required
             ? {
@@ -292,12 +348,16 @@ const GuigeTable: FC<{
 };
 
 const DraggableItem = (props) => {
-  const { action, localesopen, itemImg } = props;
+  const { action, localesopen, itemImg, topAction, index } = props;
 
   const changeData = (v) => {
+    //proform会丢失数据 这里手动修改当前数据和上层数据
     const old = action?.getCurrentRowData();
+    const top = topAction?.getCurrentRowData();
     const newval = { ...old, ...v };
     action?.setCurrentRowData?.({ ...newval });
+    top.items[index] = newval;
+    topAction?.setCurrentRowData?.({ ...top });
   };
   return (
     <Flex gap="small">
@@ -339,9 +399,11 @@ const DraggableItem = (props) => {
 const GuigeItems = ({
   localesopen = false,
   itemImg = false,
+  topAction,
 }: {
   localesopen?: boolean;
   itemImg?: boolean;
+  topAction?: any;
 }) => {
   return (
     <ProFormList
@@ -371,7 +433,15 @@ const GuigeItems = ({
       arrowSort={true}
     >
       {(f, index, inneraction) => {
-        return <DraggableItem action={inneraction} localesopen={localesopen} itemImg={itemImg} />;
+        return (
+          <DraggableItem
+            topAction={topAction}
+            index={index}
+            action={inneraction}
+            localesopen={localesopen}
+            itemImg={itemImg}
+          />
+        );
       }}
     </ProFormList>
   );
@@ -514,7 +584,9 @@ const GuigePanel: FC<{
         creatorRecord={() => ({ name: '', items: [{ name: '', id: uid() }], id: uid() })}
         //initialValue={[{ name: '', items: [{ name: '', id: uid() }], id: uid() }]}
       >
-        <GuigeItems localesopen={localesopen} itemImg={itemImg} />
+        {(f, index, action) => {
+          return <GuigeItems topAction={action} localesopen={localesopen} itemImg={itemImg} />;
+        }}
       </ProFormList>
       <ProFormText name="attrs" hidden />
       <ProForm.Item
@@ -550,20 +622,19 @@ export const Guiges = (props) => {
   return (
     <>
       {hidden && (
-        <ProForm.Group rowProps={{ gutter: 0 }}>
-          {columnsNames.map((item) => {
-            return (
-              <ProForm.Item
-                key={item.name}
-                label={item.title}
-                required={item.required}
-                tooltip={item.tooltip}
-              >
-                <ProFormDigit name={item.name} colProps={{ span: 20 }} />
-              </ProForm.Item>
-            );
-          })}
-        </ProForm.Group>
+        <GetFormFields
+          key="noguige"
+          columns={[
+            {
+              valueType: 'group',
+              columns: columnsNames
+                .map((v) => {
+                  return { dataIndex: v.name, ...v, colProps: { span: 6 } };
+                })
+                .filter((v) => inArray(v.name, ['titlepic', 'state']) < 0), //去掉商品已经有的图片和状态字段
+            },
+          ]}
+        />
       )}
       <ProForm.Item label="开启多规格">
         <Space>
