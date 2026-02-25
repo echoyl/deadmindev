@@ -129,8 +129,8 @@ export function rootContainer(container: JSX.Element) {
         const { devData: ddata, ...rest } = v;
         setSetting(rest);
         setDevData(ddata);
-        v?.adminSetting?.locales?.map((lo: Record<string, any>) => {
-          addLocale(lo.name, lo.configs);
+        v?.adminSetting?.locales?.forEach((lo: Record<string, any>) => {
+          (addLocale as any)(lo.name, lo.configs);
         });
         createFromIconfontCN({
           scriptUrl: v?.adminSetting?.iconfont?.urls?.map((v2: Record<string, any>) => v2.url),

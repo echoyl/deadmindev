@@ -3,9 +3,9 @@ import { useModel } from '@umijs/max';
 import { message, Tag } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { groupBy } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import NoticeIcon from './NoticeIcon';
-import { groupBy } from 'es-toolkit';
 dayjs.extend(relativeTime);
 export type GlobalHeaderRightProps = {
   fetchingNotices?: boolean;
@@ -50,7 +50,7 @@ const getNoticeData = (notices: API.NoticeIconItem[]): Record<string, API.Notice
 
     return newNotice;
   });
-  return groupBy(newNotices, (item) => item.type);
+  return groupBy(newNotices, (item) => item.type ?? '');
 };
 
 const getUnreadData = (noticeData: Record<string, API.NoticeIconItem[]>) => {
@@ -69,7 +69,7 @@ const getUnreadData = (noticeData: Record<string, API.NoticeIconItem[]>) => {
   return unreadMsg;
 };
 
-const NoticeIconView: React.FC = (props) => {
+const NoticeIconView = (props: { style?: any }) => {
   const { initialState } = useModel('@@initialState');
   const { style } = props;
   //const { currentUser } = initialState || {};

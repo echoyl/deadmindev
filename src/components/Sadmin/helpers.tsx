@@ -498,21 +498,21 @@ export const tplComplie = (exp: string | undefined, props: any = {}) => {
     );
     return msg;
   };
-  const cpl = (exp: string) => {
+  const cpl = (exp2: string) => {
     try {
       //检测是否有return
-      if (exp.indexOf('return') > -1) {
+      if (exp2.indexOf('return') > -1) {
         //console.log('has return', matched[1]);
         const fuc = ((body) => {
           return new Function(`return ${body}`)();
-        })(exp);
+        })(exp2);
         //console.log('func body is', fuc);
         return fuc({ ...props, t, intl });
       } else {
-        return new Function('$root', `with($root) { return (${exp}); }`)({ ...props, t, intl });
+        return new Function('$root', `with($root) { return (${exp2}); }`)({ ...props, t, intl });
       }
     } catch (e) {
-      console.log('表达式错误，请重写', exp, props, e);
+      console.log('表达式错误，请重写', exp2, props, e);
       return false;
     }
   };
