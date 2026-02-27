@@ -1,8 +1,9 @@
 import { requestHeaders, request_prefix } from '@/components/Sadmin/lib/request';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Badge, Button, Image, Upload, theme } from 'antd';
-import ImgCrop, { ImgCropProps } from 'antd-img-crop';
-import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
+import type { ImgCropProps } from 'antd-img-crop';
+import ImgCrop from 'antd-img-crop';
+import type { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import React, { useContext, useEffect, useState } from 'react';
 import { isArr, isHttpLink, isStr } from '../checkers';
 import { SaDevContext } from '../dev';
@@ -57,8 +58,8 @@ const Uploader: React.FC<Props> = (props) => {
     accept: accept,
   };
 
-  const parseImageUrl = (url: string): UploadFile & { value?: string } => {
-    url = isHttpLink(url) ? url : [setting?.adminSetting?.fileImagePrefix, url].join('');
+  const parseImageUrl = (_url: string): UploadFile & { value?: string } => {
+    const url = isHttpLink(_url) ? _url : [setting?.adminSetting?.fileImagePrefix, _url].join('');
     return { url, value: url, status: 'done', uid: url, name: url };
   };
 
@@ -216,66 +217,77 @@ const Uploader: React.FC<Props> = (props) => {
     readonly ? 'readonly' : 'edit'
   }`;
 
+  const UploadRender =
+    max == 1 || readonly ? (
+      <Upload
+        {...innerfieldProps}
+        headers={headers}
+        listType={listType}
+        className={className}
+        showUploadList={
+          fileList?.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
+        }
+        action={action}
+        fileList={fileList?.length ? [fileList[0]] : []}
+        onChange={fileChange}
+        itemRender={(originNode) => {
+          return fileList?.length > 1 && readonly ? (
+            <Badge
+              color={token.colorPrimary}
+              count={fileList?.length}
+              size="small"
+              offset={[-2, 2]}
+              styles={{ root: { height: '100%', width: '100%' } }}
+            >
+              {originNode}
+            </Badge>
+          ) : (
+            originNode
+          );
+        }}
+      >
+        {(fileList?.length && !loading) || readonly ? null : uploadButtonOne}
+      </Upload>
+    ) : (
+      <Upload
+        {...innerfieldProps}
+        headers={headers}
+        action={action}
+        listType={listType}
+        className={className}
+        itemRender={(originNode, file) => (
+          <DragItem item={file}>
+            <div style={{ width: '100%', height: '100%' }}>
+              {file.status == 'uploading' && buttonType == 'table' ? (
+                <div className="ant-upload-list-item" style={{ textAlign: 'center' }}>
+                  <LoadingOutlined style={{ margin: '0 auto' }} />
+                </div>
+              ) : (
+                originNode
+              )}
+            </div>
+          </DragItem>
+        )}
+        fileList={fileList}
+        onChange={fileChange}
+      >
+        {fileList?.length && fileList.length == max && !loading ? null : uploadButton}
+      </Upload>
+    );
+
   return (
     <>
       {max == 1 || readonly ? (
-        <ImgCrop aspectSlider={true} beforeCrop={beforeCrop} {...cropProps}>
-          <Upload
-            {...innerfieldProps}
-            headers={headers}
-            listType={listType}
-            className={className}
-            showUploadList={
-              fileList?.length && !loading ? { showRemoveIcon: readonly ? false : true } : false
-            }
-            action={action}
-            fileList={fileList?.length ? [fileList[0]] : []}
-            onChange={fileChange}
-            itemRender={(originNode) => {
-              return fileList?.length > 1 && readonly ? (
-                <Badge
-                  color={token.colorPrimary}
-                  count={fileList?.length}
-                  size="small"
-                  offset={[-2, 2]}
-                  styles={{ root: { height: '100%', width: '100%' } }}
-                >
-                  {originNode}
-                </Badge>
-              ) : (
-                originNode
-              );
-            }}
-          >
-            {(fileList?.length && !loading) || readonly ? null : uploadButtonOne}
-          </Upload>
-        </ImgCrop>
+        crop ? (
+          <ImgCrop aspectSlider={true} beforeCrop={beforeCrop} {...cropProps}>
+            {UploadRender}
+          </ImgCrop>
+        ) : (
+          UploadRender
+        )
       ) : (
         <DndKitContext onDragEnd={onDragEnd} list={fileList}>
-          <Upload
-            {...innerfieldProps}
-            headers={headers}
-            action={action}
-            listType={listType}
-            className={className}
-            itemRender={(originNode, file) => (
-              <DragItem item={file}>
-                <div style={{ width: '100%', height: '100%' }}>
-                  {file.status == 'uploading' && buttonType == 'table' ? (
-                    <div className="ant-upload-list-item" style={{ textAlign: 'center' }}>
-                      <LoadingOutlined style={{ margin: '0 auto' }} />
-                    </div>
-                  ) : (
-                    originNode
-                  )}
-                </div>
-              </DragItem>
-            )}
-            fileList={fileList}
-            onChange={fileChange}
-          >
-            {fileList?.length && fileList.length == max && !loading ? null : uploadButton}
-          </Upload>
+          {UploadRender}
         </DndKitContext>
       )}
       {fileList?.length > 0 && (
@@ -284,11 +296,11 @@ const Uploader: React.FC<Props> = (props) => {
             preview={{
               open: visible,
               current,
-              onOpenChange: (value) => {
-                setVisible(value);
+              onOpenChange: (v) => {
+                setVisible(v);
               },
-              onChange: (current) => {
-                setCurrent(current);
+              onChange: (index) => {
+                setCurrent(index);
               },
             }}
             items={fileList?.map((file) => {
