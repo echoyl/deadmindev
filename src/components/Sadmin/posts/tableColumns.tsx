@@ -215,9 +215,10 @@ export const getTableColumns = (props: Record<string, any>) => {
     viewable = false,
     checkDisable = false,
     variant = 'filled',
+    intl,
   } = props;
 
-  if (!initRequest) return [];
+  //if (!initRequest) return [];
   const allLabels = { ...defaultColumnsLabel, ...labels };
   const defaulColumns = {
     // displayorder: {
@@ -393,6 +394,11 @@ export const getTableColumns = (props: Record<string, any>) => {
 
     if (devEnable) {
       v.title = <TableColumnTitle {...v} />;
+    } else {
+      v.title = tplComplie(v.title, { intl });
+    }
+    if (v.fieldProps.placeholder) {
+      v.fieldProps.placeholder = tplComplie(v.fieldProps.placeholder, { intl }); //placehoder添加模板
     }
 
     //增加拖拽设置宽度
