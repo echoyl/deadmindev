@@ -131,7 +131,7 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
         }}
         title={title}
         footer={<div ref={footerDomRef} />}
-        maskClosable={false}
+        mask={{ closable: false }}
         styles={{
           footer: {
             padding: 0,
