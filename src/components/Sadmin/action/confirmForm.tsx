@@ -90,7 +90,9 @@ const InnerForm = (props) => {
     } else {
       //console.log('formColumns', formColumns);
       setTabs(
-        utabs ? utabs : [{ title: '基础信息', formColumns: formColumns ? [...formColumns] : [] }],
+        utabs
+          ? utabs
+          : [{ title: t('baseInfo'), formColumns: formColumns ? [...formColumns] : [] }],
       );
     }
     setFormOpen(true);
@@ -154,10 +156,10 @@ const InnerForm = (props) => {
         initialValues: value,
         submitter: editable
           ? {
-              searchConfig: {
-                resetText: '关闭',
-                submitText: url ? '提交' : '确定',
-              },
+              // searchConfig: {
+              //   resetText: '关闭',
+              //   submitText: url ? '提交' : '确定',
+              // },
               render: (props, doms) => {
                 return readonly
                   ? null
@@ -208,7 +210,7 @@ const InnerForm = (props) => {
 
 const ConfirmForm: FC<actionConfirm> = (props) => {
   const {
-    msg = '配置信息',
+    msg = t('config'),
     btn,
     method = 'post',
     url = '',
@@ -238,7 +240,7 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     initValue = (v) => v,
     returnData,
   } = props;
-  const defaultButton = { title: '操作', type: 'primary', danger: false, size: 'small' };
+  const defaultButton = { title: t('config'), type: 'primary', danger: false, size: 'small' };
   const _btn = { ...defaultButton, ...btn };
 
   //const [form] = Form.useForm<{ desc: string }>();

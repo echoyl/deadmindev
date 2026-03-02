@@ -8,6 +8,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { isArr, isHttpLink, isStr } from '../checkers';
 import { SaDevContext } from '../dev';
 import DndKitContext, { DragItem } from '../dev/dnd-context/dragSort';
+import { t } from '../helpers';
 import './index.less';
 
 interface Props {
@@ -113,7 +114,7 @@ const Uploader: React.FC<Props> = (props) => {
   //   fieldProps.accept = 'application/*,text/*';
   //   //'.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,.xls,.xlsx,.ppt,.rar,.zip,.chm,text/*';
   // }
-  const uploadText = type == 'image' ? '选图片' : '选文件';
+  const uploadText = type == 'image' ? t('choseImage') : t('choseFile');
 
   const uploadButton = (
     <div>

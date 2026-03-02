@@ -1,4 +1,5 @@
 import component from './en-US/component';
+import deadmin from './en-US/deadmin';
 import globalHeader from './en-US/globalHeader';
 import menu from './en-US/menu';
 import pages from './en-US/pages';
@@ -22,6 +23,7 @@ export default {
   ...pwa,
   ...component,
   ...pages,
+  ...deadmin,
   cancel: 'Cancel',
   view: 'View',
   edit: 'Edit',

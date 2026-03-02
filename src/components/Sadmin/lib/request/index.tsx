@@ -2,7 +2,7 @@
 /* eslint-disable */
 import cache from '@/components/Sadmin/helper/cache';
 import { message, modal, notification } from '@/components/Sadmin/message';
-import { history } from '@umijs/max';
+import { getLocale, history } from '@umijs/max';
 import { trimEnd } from 'es-toolkit';
 import { extend } from 'umi-request';
 import { isUndefined } from '../../checkers';
@@ -73,10 +73,12 @@ const request = extend({ errorHandler });
 export async function requestHeaders() {
   const token = await getAdminToken();
   const remember = await cache.get(rememberName);
+  const currentLocale = getLocale();
   return {
     Authorization: `Bearer ${token}`,
     'Sa-Remember': remember,
     'X-Requested-With': 'XMLHttpRequest',
+    Locale: currentLocale,
   };
 }
 

@@ -1,26 +1,24 @@
-import type { saFormColumnsType } from '../../helpers';
+import { t, type saFormColumnsType } from '../../helpers';
 
 const colProps = {
   colProps: {
     span: 3,
   },
 };
-const tagConfig: saFormColumnsType = [
+const tagConfig = (): saFormColumnsType => [
   {
     dataIndex: 'if',
-    title: '显示条件',
+    title: t('show'),
     valueType: 'modalJson',
     fieldProps: {
-      title: '编辑条件',
       type: 'textarea',
-      btn: { size: 'small' },
     },
     ...colProps,
   },
   {
     dataIndex: 'color',
     valueType: 'colorPicker',
-    title: '颜色选择',
+    title: 'Color',
     tooltip: '使用对象数据后，该设置失效',
     fieldProps: {
       size: 'small',
@@ -32,7 +30,6 @@ const tagConfig: saFormColumnsType = [
     valueType: 'iconSelect',
     title: 'icon',
     fieldProps: {
-      placeholder: '请选择图标',
       size: 'small',
     },
     ...colProps,
@@ -40,22 +37,18 @@ const tagConfig: saFormColumnsType = [
   {
     dataIndex: 'bordered',
     valueType: 'switch',
-    title: '是否有边框',
+    title: 'Border',
     fieldProps: {
       defaultChecked: true,
-      checkedChildren: '边框',
-      unCheckedChildren: '边框',
     },
     ...colProps,
   },
   {
     dataIndex: 'ellipsis',
     valueType: 'switch',
-    title: '开启ellipsis',
+    title: 'Ellipsis',
     fieldProps: {
       defaultChecked: true,
-      checkedChildren: 'ellipsis',
-      unCheckedChildren: 'ellipsis',
     },
     ...colProps,
   },

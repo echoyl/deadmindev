@@ -2,7 +2,7 @@ import { devDefaultFields, devTabelFields } from '@/pages/dev/model';
 import type { GetProps, TreeSelect } from 'antd';
 import { uniqBy } from 'es-toolkit';
 import type { Key } from 'react';
-import type { saFormColumnsType } from '../../helpers';
+import { t, type saFormColumnsType } from '../../helpers';
 //列表可选类型
 export const columnType = [
   { label: '日期 - date', value: 'date' },
@@ -293,7 +293,7 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
       columns: [
         {
           dataIndex: 'key',
-          title: '字段',
+          title: t('column'),
           colProps: { span: 12 },
           valueType: 'devColumnRelationSelect',
           fieldProps: {
@@ -304,7 +304,7 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
           dataIndex: 'type',
           colProps: { span: 12 },
           valueType: 'select',
-          title: '字段类型',
+          title: t('type'),
           fieldProps: {
             options: columnType,
             showSearch: true,
@@ -318,11 +318,11 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
       columns: [
         {
           dataIndex: ['props', 'title'],
-          title: '自定义Title',
+          title: t('customerTitle'),
           colProps: { span: 12 },
         },
         {
-          title: '自定义字段',
+          title: t('customerColumn'),
           tooltip: '如果选择器中无想要的字段名称，请填写在这里',
           dataIndex: ['props', 'dataIndex'],
           colProps: {
@@ -337,27 +337,27 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
         {
           dataIndex: 'can_search',
           valueType: 'checkbox',
-          title: '搜索',
+          title: t('search'),
           fieldProps: {
-            options: [{ label: '可搜索', value: 1 }],
+            options: [{ label: t('enable'), value: 1 }],
           },
           colProps: { span: 6 },
         },
         {
           dataIndex: 'hide_in_table',
           valueType: 'checkbox',
-          title: '表中隐藏',
+          title: t('hideInTable'),
           fieldProps: {
-            options: [{ label: '隐藏', value: 1 }],
+            options: [{ label: t('enable'), value: 1 }],
           },
           colProps: { span: 6 },
         },
         {
           dataIndex: 'table_menu',
           valueType: 'checkbox',
-          title: '开启tab',
+          title: t('tab'),
           fieldProps: {
-            options: [{ label: 'tab', value: 1 }],
+            options: [{ label: t('enable'), value: 1 }],
           },
           tooltip: '1.必须在模型中开启tab 2.数据必须是[{label,value}] 不能设置其它字段名称',
           colProps: { span: 6 },
@@ -365,9 +365,9 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
         {
           dataIndex: 'sort',
           valueType: 'checkbox',
-          title: '开启排序',
+          title: t('sort'),
           fieldProps: {
-            options: [{ label: '排序', value: 1 }],
+            options: [{ label: t('enable'), value: 1 }],
           },
           colProps: { span: 6 },
         },
@@ -379,9 +379,9 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
         {
           dataIndex: 'left_menu',
           valueType: 'checkbox',
-          title: '左侧菜单',
+          title: t('leftMenu'),
           fieldProps: {
-            options: [{ label: '左侧菜单', value: 1 }],
+            options: [{ label: t('enable'), value: 1 }],
           },
           colProps: { span: 6 },
         },
@@ -393,7 +393,7 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
               return [
                 {
                   dataIndex: 'left_menu_field',
-                  title: '左侧菜单配置',
+                  title: [t('leftMenu'), t('config')],
                   fieldProps: {
                     placeholder: '请输入左侧菜单label，value字段名称',
                   },
@@ -407,19 +407,19 @@ export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
         {
           dataIndex: 'rowSpan',
           valueType: 'switch',
-          title: '行合并',
+          title: t('rowSpan'),
           colProps: { span: 6 },
         },
         {
           dataIndex: 'editable',
           valueType: 'switch',
-          title: '表中编辑',
+          title: t('editable'),
           colProps: { span: 6 },
         },
         {
           dataIndex: 'editable_type',
           valueType: 'select',
-          title: '编辑类型',
+          title: t('editType'),
           colProps: { span: 6 },
           fieldProps: {
             options: [

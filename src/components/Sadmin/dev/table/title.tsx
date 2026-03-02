@@ -5,13 +5,12 @@ import {
   DeleteColumnOutlined,
   EditOutlined,
   InsertRowBelowOutlined,
-  InsertRowRightOutlined,
   MenuOutlined,
   PlusOutlined,
   SettingOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { useModel } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import type { GetProp, MenuProps } from 'antd';
 import { Button, Space, Switch, theme } from 'antd';
 import { createStyles } from 'antd-style';
@@ -22,7 +21,7 @@ import Confirm from '../../action/confirm';
 import ConfirmForm from '../../action/confirmForm';
 import { getCustomerColumn } from '../../action/customerColumn/dev';
 import { getJson, inArray, isArr } from '../../checkers';
-import { tplComplie } from '../../helpers';
+import { t, tplComplie } from '../../helpers';
 import { DevJsonContext } from '../../jsonForm';
 import { SaContext } from '../../posts/table';
 import { DragHandler, SortableItem } from '../dnd-context/SortableItem';
@@ -178,20 +177,20 @@ const BaseForm = (props: Record<string, any>) => {
               columns: [
                 {
                   dataIndex: ['props', 'toMenuId'],
-                  title: '复制到',
+                  title: t('copyTo'),
                   valueType: 'menuSelect',
                   colProps: { span: 12 },
                 },
                 {
                   dataIndex: ['props', 'type'],
-                  title: '类型',
+                  title: t('type'),
                   valueType: 'radioButton',
                   fieldProps: {
                     buttonStyle: 'solid',
                     defaultValue: 'updateOrInsert',
                     options: [
-                      { label: '覆盖', value: 'updateOrInsert' },
-                      { label: '新增', value: 'insert' },
+                      { label: t('updateOrInsert'), value: 'updateOrInsert' },
+                      { label: t('insert'), value: 'insert' },
                     ],
                   },
                   tooltip: '覆盖会删除原有的配置,新增不会检测是否之前有过记录，直接新增',
@@ -227,8 +226,8 @@ const BaseForm = (props: Record<string, any>) => {
     <ConfirmForm
       trigger={<div style={{ width: '100%' }}>{title}</div>}
       tabs={[
-        { title: '基础', formColumns: columns },
-        { title: '更多', formColumns: columnsMore },
+        { title: t('base'), formColumns: columns },
+        { title: t('more'), formColumns: columnsMore },
       ].filter((v) => v)}
       value={value}
       postUrl={editUrl}
@@ -274,12 +273,13 @@ export const DeleteColumn = (props: Record<string, any>) => {
   const { title, uid, extpost } = props;
   const { json = {}, setJson } = useContext(DevJsonContext);
   const { tableDesigner: { pageMenu, reflush, deleteUrl = '' } = {} } = useContext(SaContext);
+  const intl = useIntl();
   return (
     <Confirm
       trigger={<div style={{ width: '100%' }}>{title}</div>}
       url={deleteUrl}
       data={{ base: { id: pageMenu?.id, uid, ...extpost, ...json } }}
-      msg="确定要删除吗"
+      msg={t('confirmToDelete', intl)}
       callback={({ data }) => {
         reflush?.(data);
         setJson?.(data?.data);
@@ -388,7 +388,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
           title={
             <Space>
               <EditOutlined />
-              <span>编辑</span>
+              <span>{t('edit')}</span>
             </Space>
           }
           uid={uid}
@@ -425,8 +425,8 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
         <BaseForm
           title={
             <Space>
-              <InsertRowRightOutlined />
-              <span>+ 列</span>
+              <PlusOutlined />
+              <span>{t('column')}</span>
             </Space>
           }
           uid={uid}
@@ -444,7 +444,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
           title={
             <Space>
               <CopyOutlined />
-              <span>复制</span>
+              <span>{t('copy')}</span>
             </Space>
           }
           uid={uid}
@@ -462,7 +462,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
           title={
             <Space>
               <InsertRowBelowOutlined />
-              <span>+ 行</span>
+              <span>+ {t('row')}</span>
             </Space>
           }
           uid={uid}
@@ -479,7 +479,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
           title={
             <Space>
               <DeleteColumnOutlined />
-              <span>删除</span>
+              <span>{t('delete')}</span>
             </Space>
           }
           uid={uid}
@@ -490,11 +490,11 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
     danger: true,
   };
   const formItemReadOnly: ItemType = {
-    label: <MenuItemSwtich name="readonly" title="只读" uid={uid} />,
+    label: <MenuItemSwtich name="readonly" title={t('readonly')} uid={uid} />,
     key: 'formItemReadOnly',
   };
   const formItemRequired: ItemType = {
-    label: <MenuItemSwtich name="required" title="必填" uid={uid} />,
+    label: <MenuItemSwtich name="required" title={t('required')} uid={uid} />,
     key: 'formItemRequired',
   };
   const itemJson: ItemType = {
@@ -613,7 +613,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
 export const AddTabItem = () => {
   return (
     <BaseForm
-      title={<Button type="text" icon={<PlusOutlined />} title="添加Tab" />}
+      title={<Button type="text" icon={<PlusOutlined />} title={t('addTab')} />}
       ctype="tab"
       extpost={{ actionType: 'addTab' }}
     />

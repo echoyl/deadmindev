@@ -1,10 +1,11 @@
 import request from '@/components/Sadmin/lib/request';
+import { useIntl } from '@umijs/max';
 import { Button, ButtonProps, Popconfirm } from 'antd';
 import React, { FC, Key, ReactElement, useContext, useMemo } from 'react';
 import { isArr } from '../checkers';
 import { SaDevContext } from '../dev';
 import cache from '../helper/cache';
-import { tplComplie } from '../helpers';
+import { t, tplComplie } from '../helpers';
 import { SaContext } from '../posts/table';
 
 interface actionConfirm {
@@ -28,6 +29,7 @@ export const ConfirmTriggerClick = (
   actionRef,
   searchFormRef?: any,
   type = 'modal',
+  intl?: any,
 ) => {
   const {
     msg,
@@ -107,7 +109,7 @@ export const ConfirmTriggerClick = (
     //   setSelectedRowKeys([]);
     // }
   };
-  const showTitle = title ? title : '温馨提示！';
+  const showTitle = title ? title : t('notification', intl);
   return type == 'modal'
     ? {
         title: showTitle,
@@ -123,14 +125,15 @@ export const ConfirmTriggerClick = (
 
 const Confirm: FC<actionConfirm> = (props) => {
   const {
-    btn = { title: '操作', type: 'primary', danger: false },
+    btn = { title: t('action'), type: 'primary', danger: false },
     trigger,
     type = 'modal',
   } = props;
   const { modalApi } = useContext(SaDevContext);
   const { actionRef, searchFormRef } = useContext(SaContext);
+  const intl = useIntl();
   const onClick = (e?: any) => {
-    modalApi?.confirm(ConfirmTriggerClick(props, actionRef, searchFormRef));
+    modalApi?.confirm(ConfirmTriggerClick(props, actionRef, searchFormRef, 'modal', intl));
   };
   const triggerDom: JSX.Element | null = useMemo(() => {
     if (!trigger) {
@@ -164,7 +167,9 @@ const Confirm: FC<actionConfirm> = (props) => {
   return type == 'modal' ? (
     dom
   ) : (
-    <Popconfirm {...ConfirmTriggerClick(props, actionRef, searchFormRef, type)}>{dom}</Popconfirm>
+    <Popconfirm {...ConfirmTriggerClick(props, actionRef, searchFormRef, type, intl)}>
+      {dom}
+    </Popconfirm>
   );
 };
 // export const ConfirmConfig:FC = (props) => {

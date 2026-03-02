@@ -138,8 +138,11 @@ export const TableForm = (
         <ButtonDrawer
           open={createModalVisible}
           title={
-            (currentRow.id ? (currentRow.readonly ? '查看' : '编辑') : '新增') +
-            (name ? ' - ' + name : '')
+            (currentRow.id
+              ? currentRow.readonly
+                ? t('view', intl)
+                : t('edit', intl)
+              : t('add', intl)) + (name ? ' - ' + name : '')
           }
           width={formWidth ? formWidth : openWidth}
           afterOpenChange={(open) => {

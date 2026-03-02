@@ -1,4 +1,5 @@
 import component from './zh-CN/component';
+import deadmin from './zh-CN/deadmin';
 import globalHeader from './zh-CN/globalHeader';
 import menu from './zh-CN/menu';
 import pages from './zh-CN/pages';
@@ -24,6 +25,7 @@ export default {
   ...pwa,
   ...component,
   ...tabs,
+  ...deadmin,
   cancel: '取消',
   view: '查看',
   edit: '编辑',

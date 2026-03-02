@@ -5,7 +5,7 @@ import { dependencyOn } from '../../dev/vars/dependencyOn';
 import rules from '../../dev/vars/rules';
 import tagConfig from '../../dev/vars/tag';
 import type { saFormColumnsType } from '../../helpers';
-import { parseIcon } from '../../helpers';
+import { parseIcon, t } from '../../helpers';
 
 export const getCustomerColumn = (modelId: Key) => {
   const dependencyOnVars = dependencyOn(modelId);
@@ -43,14 +43,14 @@ export const getCustomerColumn = (modelId: Key) => {
       valueType: 'group',
       columns: [
         {
-          title: '列宽',
+          title: t('columnWidth'),
           dataIndex: ['props', 'width'],
           colProps: {
             span: 12,
           },
         },
         {
-          title: '栅格',
+          title: t('grid'),
           dataIndex: ['props', 'span'],
           tooltip: '分为24格，不设置自动 = 24 / 列数',
           colProps: {
@@ -58,13 +58,12 @@ export const getCustomerColumn = (modelId: Key) => {
           },
         },
         {
-          title: '提示语',
+          title: t('notification'),
           dataIndex: ['props', 'tip'],
           valueType: 'confirmForm',
           fieldProps: {
             btn: {
-              title: '点击配置',
-              size: 'middle',
+              title: t('config'),
             },
             formColumns: [
               { dataIndex: 'placeholder', title: 'placeholder' },
@@ -84,15 +83,13 @@ export const getCustomerColumn = (modelId: Key) => {
         },
 
         {
-          title: 'form校验',
+          title: t('validate'),
           dataIndex: ['props', 'rules'],
           valueType: 'confirmForm',
           fieldProps: {
             btn: {
-              title: '校验规则',
-              size: 'middle',
+              title: t('config'),
             },
-            msg: 'form项的校验规则',
             formColumns: rules,
             saFormProps: { devEnable: false },
           },
@@ -110,7 +107,7 @@ export const getCustomerColumn = (modelId: Key) => {
         },
         {
           dataIndex: ['props', 'page'],
-          title: '关联页面',
+          title: t('relatePage'),
           tooltip: '如果类型为formlist等，选择后自动读取所选菜单的columns配置',
           valueType: 'menuSelect',
           colProps: {
@@ -137,7 +134,7 @@ export const getCustomerColumn = (modelId: Key) => {
           },
         },
         {
-          title: '整体配置',
+          title: t('config'),
           valueType: 'modalJson',
           dataIndex: ['props', 'outside'],
           colProps: {
@@ -146,12 +143,11 @@ export const getCustomerColumn = (modelId: Key) => {
         },
         {
           dataIndex: ['props', 'if'],
-          title: '显示条件',
+          title: t('show'),
           valueType: 'modalJson',
           tooltip:
             '列表中record表示search部分，表单中表示数据data部分，列表中需要获取data的话请使用自定义组件',
           fieldProps: {
-            title: '编辑条件',
             type: 'textarea',
           },
           colProps: {
@@ -160,14 +156,14 @@ export const getCustomerColumn = (modelId: Key) => {
         },
         {
           dataIndex: ['props', 'dom_direction'],
-          title: 'dom排列方式',
+          title: [t('show'), t('type')],
           valueType: 'select',
           fieldProps: {
             //buttonStyle: 'solid',
             defaultValue: 'horizontal',
             options: [
-              { label: '水平', value: 'horizontal' },
-              { label: '垂直', value: 'vertical' },
+              { label: t('horizontal'), value: 'horizontal' },
+              { label: t('vertical'), value: 'vertical' },
               { label: 'Dropdown', value: 'dropdown' },
               { label: 'none', value: 'none' },
             ],
@@ -177,7 +173,7 @@ export const getCustomerColumn = (modelId: Key) => {
           },
         },
         {
-          title: '可复制',
+          title: t('copy'),
           valueType: 'switch',
           dataIndex: ['props', 'copyable'],
           colProps: {
@@ -231,7 +227,7 @@ export const getCustomerColumn = (modelId: Key) => {
     {
       dataIndex: ['props', 'items'],
       //dataIndex: 'items',
-      title: 'DOM列',
+      title: 'DOM',
       valueType: 'formList',
       fieldProps: {
         //creatorRecord: { ...defaultBtn },
@@ -250,20 +246,20 @@ export const getCustomerColumn = (modelId: Key) => {
           columns: [
             {
               dataIndex: 'domtype',
-              title: '元素类型',
+              title: t('type'),
               valueType: 'select',
               fieldProps: {
                 options: [
-                  { label: '按钮', value: 'button' },
-                  { label: '文字显示', value: 'text' },
-                  { label: '分割线', value: 'divider' },
-                  { label: '时间线', value: 'timeline' },
+                  { label: 'button', value: 'button' },
+                  { label: 'text', value: 'text' },
+                  { label: 'divider', value: 'divider' },
+                  { label: 'timeline', value: 'timeline' },
                   { label: 'actions', value: 'actions' },
                   { label: 'qrcode', value: 'qrcode' },
                   { label: 'tag', value: 'tag' },
                   { label: 'Badge', value: 'Badge' },
                   { label: 'table', value: 'table' },
-                  { label: '时间长度', value: 'dayjsfrom' },
+                  { label: 'dayjsfrom', value: 'dayjsfrom' },
                 ],
                 size: 'small',
               },
@@ -281,12 +277,8 @@ export const getCustomerColumn = (modelId: Key) => {
                   return [
                     {
                       dataIndex: 'props',
-                      title: '属性设置',
+                      title: 'Props',
                       valueType: 'modalJson',
-                      fieldProps: {
-                        title: '设置',
-                        btn: { size: 'small' },
-                      },
                       colProps: {
                         span: 3,
                       },
@@ -298,7 +290,7 @@ export const getCustomerColumn = (modelId: Key) => {
                     fieldPorpsColumn,
                     {
                       dataIndex: 'page',
-                      title: '关联菜单',
+                      title: t('relatePage'),
                       valueType: 'menuSelect',
                       colProps: {
                         span: 6,
@@ -307,14 +299,14 @@ export const getCustomerColumn = (modelId: Key) => {
                   ];
                 }
                 if (domtype == 'tag') {
-                  return tagConfig;
+                  return tagConfig();
                 }
                 if (domtype == 'button' || domtype == 'text' || domtype == 'qrcode') {
                   const domExtColumns = [];
                   if (domtype == 'qrcode') {
                     domExtColumns.push({
                       dataIndex: 'errorLevel',
-                      title: '二维码质量',
+                      title: 'Qrcode Level',
                       valueType: 'select',
                       fieldProps: {
                         options: [
@@ -333,7 +325,7 @@ export const getCustomerColumn = (modelId: Key) => {
                   const domFormColumns = [
                     {
                       dataIndex: 'text',
-                      title: '文字',
+                      title: t('text'),
                       valueType: 'textarea',
                       tooltip: '可写{{record,user}}表达式显示',
                     },
@@ -342,7 +334,7 @@ export const getCustomerColumn = (modelId: Key) => {
                       columns: [
                         {
                           dataIndex: 'type',
-                          title: '格式',
+                          title: 'Type',
                           valueType: 'select',
                           fieldProps: {
                             options: [
@@ -358,7 +350,7 @@ export const getCustomerColumn = (modelId: Key) => {
                         },
                         {
                           dataIndex: 'size',
-                          title: '大小',
+                          title: 'Size',
                           valueType: 'select',
                           fieldProps: {
                             options: [
@@ -371,20 +363,20 @@ export const getCustomerColumn = (modelId: Key) => {
                         },
                         {
                           dataIndex: 'icon',
-                          title: 'icon',
+                          title: 'Icon',
                           valueType: 'iconSelect',
                           fieldProps: {
                             width: 180,
                           },
                           width: 'xs',
                         },
-                        { dataIndex: 'tooltip', title: 'tooltip', width: 'xs' },
+                        { dataIndex: 'tooltip', title: 'Tooltip', width: 'xs' },
                         ...domExtColumns,
                       ],
                     },
 
-                    { dataIndex: 'danger', title: '危险按钮', valueType: 'switch' },
-                    { dataIndex: 'copyable', title: '文字可复制', valueType: 'switch' },
+                    { dataIndex: 'danger', title: 'Danger', valueType: 'switch' },
+                    { dataIndex: 'copyable', title: 'Copyable', valueType: 'switch' },
                   ];
                   return [
                     {
@@ -395,12 +387,10 @@ export const getCustomerColumn = (modelId: Key) => {
                       columns: [
                         {
                           dataIndex: 'if',
-                          title: '显示条件',
+                          title: t('show'),
                           valueType: 'modalJson',
                           fieldProps: {
-                            title: '编辑条件',
                             type: 'textarea',
-                            btn: { size: 'small' },
                           },
                           colProps: {
                             span: 3,
@@ -408,13 +398,9 @@ export const getCustomerColumn = (modelId: Key) => {
                         },
                         {
                           dataIndex: 'btn',
-                          title: 'DOM属性',
+                          title: 'DOM',
                           valueType: 'confirmForm',
                           fieldProps: {
-                            btn: {
-                              title: '编辑DOM',
-                              size: 'small',
-                            },
                             formColumns: domFormColumns,
                             saFormProps: { grid: false, devEnable: false },
                           },
@@ -454,7 +440,7 @@ export const getCustomerColumn = (modelId: Key) => {
                         },
                         {
                           dataIndex: 'action',
-                          title: 'Action类型',
+                          title: 'Action',
                           valueType: 'select',
                           colProps: {
                             span: 4,
@@ -466,18 +452,18 @@ export const getCustomerColumn = (modelId: Key) => {
                               { label: 'modalTable', value: 'modalTable' },
                               { label: 'drawerTable', value: 'drawerTable' },
                               { label: 'dropdown', value: 'dropdown' },
-                              { label: 'Popover气泡卡片', value: 'popover' },
-                              { label: '打印功能', value: 'print' },
-                              { label: '请求', value: 'request' },
-                              { label: '查看', value: 'view' },
-                              { label: '编辑', value: 'edit' },
-                              { label: '删除', value: 'delete' },
-                              { label: '导入', value: 'import' },
-                              { label: '导出', value: 'export' },
-                              { label: '站内链接', value: 'link' },
-                              { label: '外链接', value: 'alink' },
-                              { label: '打开iframe', value: 'iframe' },
-                              { label: 'console.log', value: 'console' },
+                              { label: 'Popover', value: 'popover' },
+                              { label: t('print'), value: 'print' },
+                              { label: t('request'), value: 'request' },
+                              { label: t('view'), value: 'view' },
+                              { label: t('edit'), value: 'edit' },
+                              { label: t('delete'), value: 'delete' },
+                              { label: t('import'), value: 'import' },
+                              { label: t('export'), value: 'export' },
+                              { label: t('link'), value: 'link' },
+                              { label: t('alink'), value: 'alink' },
+                              { label: 'Iframe', value: 'iframe' },
+                              { label: 'console', value: 'console' },
                             ],
                             size: 'small',
                           },
@@ -492,7 +478,7 @@ export const getCustomerColumn = (modelId: Key) => {
                               //这里如果是confirmForm需要设置表单项，应该比较少 做成json编辑器 自己编辑
                               _columns.push({
                                 dataIndex: 'modal',
-                                title: 'modal配置',
+                                title: 'Modal',
                                 colProps: {
                                   span: 3,
                                 },
@@ -500,18 +486,14 @@ export const getCustomerColumn = (modelId: Key) => {
                                 fieldProps: {
                                   saFormProps: { devEnable: false },
                                   width: 1200,
-                                  btn: {
-                                    title: 'modal配置',
-                                    size: 'small',
-                                  },
                                   formColumns: [
                                     {
                                       dataIndex: 'msg',
-                                      title: '头部标题',
+                                      title: t('title'),
                                     },
                                     {
                                       dataIndex: 'page',
-                                      title: '表单选择',
+                                      title: t('relatePage'),
                                       valueType: 'menuSelect',
                                     },
                                   ],
@@ -520,7 +502,7 @@ export const getCustomerColumn = (modelId: Key) => {
                             } else if (action == 'confirm' || action == 'print') {
                               _columns.push({
                                 dataIndex: 'modal',
-                                title: 'modal配置',
+                                title: 'Modal',
                                 colProps: {
                                   span: 3,
                                 },
@@ -528,22 +510,18 @@ export const getCustomerColumn = (modelId: Key) => {
                                 fieldProps: {
                                   saFormProps: { devEnable: false },
                                   width: 1200,
-                                  btn: {
-                                    title: 'modal配置',
-                                    size: 'small',
-                                  },
                                   formColumns: [
                                     {
                                       dataIndex: 'title',
-                                      title: '头部标题',
+                                      title: t('title'),
                                     },
                                     {
                                       dataIndex: 'msg',
-                                      title: '提示语',
+                                      title: t('notification'),
                                     },
                                     {
                                       dataIndex: 'type',
-                                      title: '显示类型',
+                                      title: t('type'),
                                       valueType: 'select',
                                       fieldProps: {
                                         options: [
@@ -559,7 +537,7 @@ export const getCustomerColumn = (modelId: Key) => {
                             } else if (action == 'modalTable' || action == 'drawerTable') {
                               _columns.push({
                                 dataIndex: 'modal',
-                                title: 'modal配置',
+                                title: 'Modal',
                                 colProps: {
                                   span: 3,
                                 },
@@ -567,18 +545,14 @@ export const getCustomerColumn = (modelId: Key) => {
                                 fieldProps: {
                                   saFormProps: { devEnable: false },
                                   width: 1200,
-                                  btn: {
-                                    title: 'modal配置',
-                                    size: 'small',
-                                  },
                                   formColumns: [
                                     {
                                       dataIndex: 'title',
-                                      title: '头部标题',
+                                      title: t('title'),
                                     },
                                     {
                                       dataIndex: 'model',
-                                      title: '关联模型',
+                                      title: t('model'),
                                       valueType: 'devColumnRelationSelect',
                                       fieldProps: {
                                         modelId,
@@ -589,7 +563,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                     },
                                     {
                                       dataIndex: 'page',
-                                      title: '表单选择',
+                                      title: t('relatePage'),
                                       valueType: 'menuSelect',
                                       formItemProps: {
                                         extra:
@@ -598,7 +572,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                     },
                                     {
                                       dataIndex: 'drawerProps',
-                                      title: 'drawer或modal配置',
+                                      title: 'Props',
                                       valueType: 'jsonEditor',
                                     },
                                   ],
@@ -629,27 +603,23 @@ export const getCustomerColumn = (modelId: Key) => {
                                 colProps: {
                                   span: 4,
                                 },
-                                title: 'request配置',
+                                title: t('request'),
                                 valueType: 'confirmForm',
                                 fieldProps: {
                                   saFormProps: { devEnable: false },
-                                  btn: {
-                                    title: 'request配置',
-                                    size: 'small',
-                                  },
                                   formColumns: [
                                     {
                                       valueType: 'group',
                                       columns: [
                                         {
                                           dataIndex: 'url',
-                                          title: 'URL地址',
+                                          title: 'URL',
                                           colProps: { span: 12 },
                                         },
                                         {
                                           dataIndex: 'method',
                                           valueType: 'select',
-                                          title: '请求方式',
+                                          title: t('method'),
                                           fieldProps: {
                                             options: [
                                               { label: 'GET', value: 'get' },
@@ -662,11 +632,11 @@ export const getCustomerColumn = (modelId: Key) => {
                                         {
                                           dataIndex: 'then',
                                           valueType: 'select',
-                                          title: '反馈方式',
+                                          title: 'Callback',
                                           fieldProps: {
                                             options: [
-                                              { label: '系统默认', value: 'system' },
-                                              { label: '静默', value: 'none' },
+                                              { label: 'system', value: 'system' },
+                                              { label: 'none', value: 'none' },
                                             ],
                                             defaultValue: 'system',
                                           },
@@ -679,7 +649,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                       columns: [
                                         {
                                           dataIndex: 'model',
-                                          title: '数据源',
+                                          title: t('model'),
                                           valueType: 'devColumnRelationSelect',
                                           fieldProps: {
                                             modelId,
@@ -692,7 +662,7 @@ export const getCustomerColumn = (modelId: Key) => {
 
                                         {
                                           dataIndex: 'modelName',
-                                          title: '数据源名称',
+                                          title: t('modelName'),
                                           tooltip:
                                             '如果不选择数据源那么直接从列表页面的columnData中获取',
                                           colProps: { span: 12 },
@@ -711,13 +681,13 @@ export const getCustomerColumn = (modelId: Key) => {
                                         {
                                           dataIndex: 'afterActionType',
                                           valueType: 'select',
-                                          title: '请求后动作',
+                                          title: 'After Action',
                                           fieldProps: {
                                             options: [
                                               { label: 'reload', value: 'reload' },
                                               { label: 'goback', value: 'goback' },
                                               { label: 'none', value: 'none' },
-                                              { label: '仅关闭弹窗', value: 'close' },
+                                              { label: 'just close modal', value: 'close' },
                                             ],
                                             defaultValue: 'reload',
                                           },
@@ -727,7 +697,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                     },
                                     {
                                       dataIndex: 'data',
-                                      title: 'post额外传输数据',
+                                      title: 'Post data',
                                       valueType: 'jsonEditor',
                                       fieldProps: {
                                         height: 250,
@@ -735,7 +705,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                     },
                                     {
                                       dataIndex: 'paramdata',
-                                      title: 'get额外传输数据',
+                                      title: 'Get data',
                                       valueType: 'jsonEditor',
                                       fieldProps: {
                                         height: 250,
@@ -751,26 +721,22 @@ export const getCustomerColumn = (modelId: Key) => {
                                 colProps: {
                                   span: 4,
                                 },
-                                title: 'popover配置',
+                                title: 'Popover',
                                 valueType: 'confirmForm',
                                 fieldProps: {
-                                  btn: {
-                                    title: 'popover配置',
-                                    size: 'small',
-                                  },
                                   formColumns: [
                                     {
                                       valueType: 'group',
                                       columns: [
                                         {
                                           dataIndex: 'type',
-                                          title: '弹出类型',
+                                          title: '{{t("type")}}',
                                           valueType: 'select',
                                           fieldProps: {
                                             options: [
-                                              { label: '文本', value: 'content' },
-                                              { label: '图片', value: 'img' },
-                                              { label: '二维码', value: 'qrcode' },
+                                              { label: 'Text', value: 'content' },
+                                              { label: 'Image', value: 'img' },
+                                              { label: 'Qrcode', value: 'qrcode' },
                                             ],
                                           },
                                           colProps: {
@@ -779,7 +745,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                         },
                                         {
                                           dataIndex: 'trigger',
-                                          title: '弹出行为',
+                                          title: 'Trigger',
                                           valueType: 'select',
                                           fieldProps: {
                                             defaultValue: 'click',
@@ -803,18 +769,18 @@ export const getCustomerColumn = (modelId: Key) => {
                                           return [
                                             {
                                               dataIndex: 'content',
-                                              title: '弹出内容',
+                                              title: 'Content',
                                             },
                                           ];
                                         } else if (type == 'qrcode' || type == 'img') {
                                           return [
                                             {
                                               dataIndex: 'content',
-                                              title: '二维码内容',
+                                              title: 'Content',
                                             },
                                             {
                                               dataIndex: 'errorLevel',
-                                              title: '二维码质量',
+                                              title: 'Level',
                                               valueType: 'select',
                                               fieldProps: {
                                                 options: [
@@ -827,7 +793,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                             },
                                             {
                                               dataIndex: 'size',
-                                              title: '大小',
+                                              title: 'Size',
                                               valueType: 'select',
                                               fieldProps: {
                                                 options: [
@@ -839,7 +805,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                             },
                                             {
                                               dataIndex: 'bordered',
-                                              title: '边框',
+                                              title: 'Border',
                                               valueType: 'switch',
                                             },
                                           ];

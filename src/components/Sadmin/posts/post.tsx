@@ -14,6 +14,7 @@ import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 
 import { PageContainer404 } from '@/components/Sadmin/404';
 import { isUndefined } from 'es-toolkit';
+import { t } from '../helpers';
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
 import type { saTableProps } from './table';
 import { SaContext } from './table';
@@ -207,7 +208,7 @@ export const SaForm: FC<saFormProps> = (props) => {
       const defaultTabs = formColumns
         ? [
             {
-              tab: { title: '基础信息' },
+              tab: { title: t('baseInfo') },
               formColumns: formColumns ? formColumns : [],
             },
           ]
@@ -281,7 +282,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                 <StepsForm.StepForm
                   key={index}
                   name={'step_' + index}
-                  title={cl.title || cl.tab?.title || '基础信息'}
+                  title={cl.title || cl.tab?.title || t('baseInfo')}
                   onFinish={async () => {
                     //每一步都将之前的表单信息提交到url
                     let data = { step_index: index };
@@ -388,7 +389,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                   onTabChange?.(activeKey);
                 }}
                 items={_formColumns.map((thistab, index) => {
-                  const label = thistab.title || thistab.tab?.title || '基础信息';
+                  const label = thistab.title || thistab.tab?.title || t('baseInfo');
                   const { uid } = thistab || {};
                   return {
                     label: devEnable ? <TabColumnTitle uid={uid} title={label} /> : label,

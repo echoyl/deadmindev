@@ -1,10 +1,11 @@
 import LoadingFullHeight from '@/components/LoadingFullHeight';
 import { loader } from '@monaco-editor/react';
-import { useModel } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import { Card, Typography } from 'antd';
 import { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react';
 import { isObj } from '../../checkers';
 import { SaDevContext } from '../../dev';
+import { t } from '../../helpers';
 
 const Editor = lazy(() => import('@monaco-editor/react'));
 
@@ -41,11 +42,12 @@ export const MonacoEditor = (props) => {
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
   };
+  const intl = useIntl();
 
   return (
     <Suspense fallback={<LoadingFullHeight />}>
       <Card
-        title={`${language}编辑器`}
+        title={`${language}${t('editor', intl)}`}
         size="small"
         styles={{ body: { paddingLeft: 0, paddingRight: 0 } }}
         extra={
