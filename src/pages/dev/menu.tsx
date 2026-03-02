@@ -23,7 +23,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
           {
             title: '菜单名称',
             dataIndex: 'title',
-            fieldProps: { placeholder: '为空时菜单会隐藏' },
+            fieldProps: { placeholder: '为空时菜单会隐藏', localesopen: 1 },
             formItemProps: {
               rules: [
                 {
@@ -511,7 +511,7 @@ export default () => {
         name="菜单"
         title={false}
         actionRef={actionRef}
-        table_menu_key="state"
+        pageMenu={{ data: { table_menu_key: 'state' } }}
         table_menu_all={false}
         tableColumns={tableColumns}
         toolBarButton={[

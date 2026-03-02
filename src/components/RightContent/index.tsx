@@ -5,7 +5,7 @@ import NoticeIconView from '../NoticeIcon';
 import { SaDevContext } from '../Sadmin/dev';
 import ThemeSwitch from '../Sadmin/themeSwitch';
 
-export const SelectLang = (props: { style: any }) => {
+export const SelectLang = (props: { style?: any }) => {
   const { initialState } = useModel('@@initialState');
   const { style } = props;
   return initialState?.settings?.adminSetting?.lang ? <UmiSelectLang style={style} /> : null;

@@ -3,16 +3,15 @@ import { TreeSelect } from 'antd';
 import type { FC } from 'react';
 import { useContext } from 'react';
 import { SaDevContext } from '../../dev';
-import { loopMenuLocale } from '../../helpers';
 
 type MenuSelectProps = GetProps<typeof TreeSelect>;
 
 const MenuSelect: FC<MenuSelectProps> = (props) => {
   const { devData } = useContext(SaDevContext);
-  const treeData = loopMenuLocale(devData?.allMenus);
+  //const treeData = loopMenuLocale(devData?.allMenus);
   return (
     <TreeSelect
-      treeData={treeData}
+      treeData={devData?.allMenus}
       treeLine={{ showLeafIcon: true }}
       treeDefaultExpandAll={true}
       allowClear={true}

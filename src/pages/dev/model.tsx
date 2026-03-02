@@ -333,7 +333,7 @@ export default () => {
         formRef={formRef}
         //actionRef={actionRef}
         tableTitle={false}
-        table_menu_key="admin_type"
+        pageMenu={{ data: { table_menu_key: 'admin_type' } }}
         table_menu_all={false}
         tableColumns={tableColumns}
         afterFormPost={({ data, code }) => {
