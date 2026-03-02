@@ -7,7 +7,7 @@ import type {
   ProTableProps,
 } from '@ant-design/pro-components';
 import { FooterToolbar } from '@ant-design/pro-components';
-import { history, useModel, useSearchParams } from '@umijs/max';
+import { history, useIntl, useModel, useSearchParams } from '@umijs/max';
 import { GetProps, Table } from 'antd';
 import { createStyles } from 'antd-style';
 import dayjs from 'dayjs';
@@ -266,7 +266,16 @@ const SaTable: React.FC<saTableProps> = (props) => {
     }
     return ret;
   };
-  const rq = async (params: Record<string, any> = {}, sort: any, filter: any) => {
+  const rq = async (params: Record<string, any> = {}, _sort: any, filter: any) => {
+    //将rsort中null元素排除
+    const rsort: Record<string, any> = {};
+    if (_sort) {
+      for (const key in _sort) {
+        if (_sort[key] != null) {
+          rsort[key] = _sort[key];
+        }
+      }
+    }
     const { pageSize, current } = params;
     setCurrentPageSize(pageSize);
     setCurrentPage(current);
@@ -276,8 +285,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
       return [];
     }
 
-    if (size(sort)) {
-      params.sort = sort;
+    if (size(rsort)) {
+      params.sort = rsort;
     }
     if (size(filter)) {
       params.filter = filter;
@@ -294,7 +303,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     if (!params.reloadUid) {
       delete params.reloadUid;
     }
-    setSort(sort);
+    setSort(rsort);
     //检测分页信息，如果已全部返回数据 分页或修改pagesize后不再请后接口数据
     if (pageIsChange && data && data.length > 0 && data.length == total) {
       return Promise.resolve({ data, success: true, total });
@@ -365,15 +374,16 @@ const SaTable: React.FC<saTableProps> = (props) => {
     //获取分类父级路径
     if (!initRequest) {
       setInitRequest(true);
-    }
-    if (ret.search?.table_menu && !initRequest && table_menu_key) {
-      //如果后端传了tab id 那么主动重新设置一次
-      if (ret.search?.table_menu_id) {
-        console.log('server set table_menu_id', ret.search?.table_menu_id);
-        //这里会再次请求体验不好，所以请在菜单其它配置中设置 table_menu_default
-        setTableMenuId(ret.search?.table_menu_id);
+      if (ret.search?.table_menu && table_menu_key) {
+        //如果后端传了tab id 那么主动重新设置一次
+        if (ret.search?.table_menu_id) {
+          console.log('server set table_menu_id', ret.search?.table_menu_id);
+          //这里会再次请求体验不好，所以请在菜单其它配置中设置 table_menu_default
+          setTableMenuId(ret.search?.table_menu_id);
+        }
       }
     }
+
     setData([...ret.data]);
     setTotal(ret.total);
     return Promise.resolve({ data: ret.data, success: ret.success, total: ret.total });
@@ -493,6 +503,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     setSelectedRowKeys([]);
     return false;
   };
+  const intl = useIntl();
 
   const getTableColumnsRender = (columns: Record<string, any>[]) => {
     return getTableColumns({
@@ -509,10 +520,15 @@ const SaTable: React.FC<saTableProps> = (props) => {
       viewable: setting?.viewable,
       checkDisable: !checkEnable || setting?.checkDisable,
       variant: setting?.form?.variant || 'filled',
+      intl,
       ...props,
     });
   };
 
+  useEffect(() => {
+    //初始化时先配置列表列，不然之后如果存在sorter列会多请求一次
+    setTbColumns(getTableColumnsRender(tableColumns));
+  }, []);
   useEffect(() => {
     setDevEnable(
       pdevEnable &&
@@ -540,16 +556,19 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const tableHeaderHeightArr = {
     small: 39,
     middle: 47,
+    medium: 47,
     large: 55,
   };
   const tableFooterHeightArr = {
     small: 38,
     middle: 46,
+    medium: 46,
     large: 54,
   };
   const tablePageHeightArr = {
     small: 40,
     middle: 40,
+    medium: 40,
     large: 48,
   };
   const tableSize = setting?.table?.size || tableProps.size || 'middle';
