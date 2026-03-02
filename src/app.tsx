@@ -1,13 +1,12 @@
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { ProConfigProvider, SettingDrawer, useBreakpoint } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
-import { addLocale, getLocale, history } from '@umijs/max';
+import { addLocale, getLocale, history, setLocale } from '@umijs/max';
 
 //import '@ant-design/v5-patch-for-react-19';
 import { App, ConfigProvider, Modal, message, notification, theme } from 'antd';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
-import zhTW from 'antd/locale/zh_TW';
 
 import { loginPath, currentUser as queryCurrentUser } from '@/components/Sadmin/lib/request';
 import { createFromIconfontCN } from '@ant-design/icons';
@@ -100,7 +99,6 @@ export function rootContainer(container: JSX.Element) {
     const supportLocale: Record<string, Locale> = {
       'en-US': enUS,
       'zh-CN': zhCN,
-      'zh-TW': zhTW,
     };
     const colSize = useBreakpoint();
 
@@ -132,6 +130,16 @@ export function rootContainer(container: JSX.Element) {
         v?.adminSetting?.locales?.forEach((lo: Record<string, any>) => {
           (addLocale as any)(lo.name, lo.configs);
         });
+        if (v?.adminSetting?.lang && v?.adminSetting?.locale) {
+          const lang =
+            navigator.cookieEnabled && typeof localStorage !== 'undefined'
+              ? window.localStorage.getItem('umi_locale')
+              : '';
+          if (!lang) {
+            //用户未主动选择语言的时候设置后台返回的默认语言
+            setLocale(v?.adminSetting?.locale, false);
+          }
+        }
         createFromIconfontCN({
           scriptUrl: v?.adminSetting?.iconfont?.urls?.map((v2: Record<string, any>) => v2.url),
         });

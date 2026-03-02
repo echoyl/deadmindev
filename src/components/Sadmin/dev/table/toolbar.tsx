@@ -22,7 +22,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { FormattedMessage, Link, useModel } from '@umijs/max';
+import { FormattedMessage, Link, useIntl, useModel } from '@umijs/max';
 import { Button, Dropdown, Popover, Space, Tree, Upload } from 'antd';
 import { cloneDeep, isString } from 'es-toolkit';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -129,13 +129,14 @@ export const ToolBarDom = (props) => {
 };
 
 export const ExportButton = ({
-  title = '导出',
+  title,
   request: requestParam,
   requestUrl = '', //新增手动设定导出
   btn = {},
   fieldProps = {},
   ...restProps
 }: RequestButtonProps) => {
+  const intl = useIntl();
   const { url = '', data = {} } = requestParam || {};
   const { searchFormRef, url: propsUrl } = useContext(SaContext);
   const { modalApi } = useContext(SaDevContext);
@@ -143,8 +144,8 @@ export const ExportButton = ({
   const { post = {} } = fieldProps; //导出按钮自定义请求传输数据
   const onClick = async () => {
     modalApi?.confirm({
-      title: '温馨提示！',
-      content: '确定要导出吗？',
+      title: t('notification', intl),
+      content: t('confirmToExport', intl),
       onOk: async () => {
         const search = searchFormRef?.current?.getFieldsFormatValue();
         await request.post(purl, { data: { ...data, ...search, ...post } });
@@ -153,7 +154,7 @@ export const ExportButton = ({
   };
   return (
     <RequestButton
-      btn={{ icon: <CloudDownloadOutlined />, onClick, text: title, ...btn }}
+      btn={{ icon: <CloudDownloadOutlined />, onClick, text: title || t('export', intl), ...btn }}
       {...restProps}
     />
   );
@@ -162,7 +163,7 @@ export const ExportButton = ({
 //导入按钮
 
 export const ImportButton = ({
-  title = '导入',
+  title,
   request: requestParam,
   uploadProps: ups = {},
   afterAction,
@@ -190,6 +191,7 @@ export const ImportButton = ({
     });
   }, []);
   const icon = btn?.icon ? parseIcon(btn?.icon) : <CloudUploadOutlined />;
+  const intl = useIntl();
   return (
     <Upload
       key="importButton"
@@ -229,7 +231,10 @@ export const ImportButton = ({
         }
       }}
     >
-      <RequestButton btn={{ icon, loading, text: title, ...btn }} {...restProps} />
+      <RequestButton
+        btn={{ icon, loading, text: title || t('import', intl), ...btn }}
+        {...restProps}
+      />
     </Upload>
   );
 };

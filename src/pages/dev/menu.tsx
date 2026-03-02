@@ -3,25 +3,25 @@ import { SaDevContext } from '@/components/Sadmin/dev';
 import tableSet from '@/components/Sadmin/dev/vars/menu/set';
 import FormFromBread from '@/components/Sadmin/formFromBread';
 import type { saFormTabColumnsType, saTableColumnsType } from '@/components/Sadmin/helpers';
-import { tplComplie } from '@/components/Sadmin/helpers';
+import { t, tplComplie } from '@/components/Sadmin/helpers';
 import Category from '@/components/Sadmin/posts/category';
 import TableFromBread from '@/components/Sadmin/tableFromBread';
 import { iconToElement } from '@/components/Sadmin/valueTypeMap/iconSelect';
 import { CopyOutlined, EyeOutlined, ImportOutlined, RollbackOutlined } from '@ant-design/icons';
 import type { ActionType } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import { Space } from 'antd';
 import { useContext, useRef } from 'react';
 
-export const MenuFormColumn: saFormTabColumnsType = [
+export const MenuFormColumn = ({ intl }: { intl: any }): saFormTabColumnsType => [
   {
-    tab: { title: '基础信息' },
+    tab: { title: t('baseInfo', intl) },
     formColumns: [
       {
         valueType: 'group',
         columns: [
           {
-            title: '菜单名称',
+            title: t('name', intl),
             dataIndex: 'title',
             fieldProps: { placeholder: '为空时菜单会隐藏', localesopen: 1 },
             formItemProps: {
@@ -34,7 +34,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
             colProps: { span: 12 },
           },
           {
-            title: 'path',
+            title: 'Path',
             dataIndex: 'path',
             fieldProps: { placeholder: '请输入路径' },
             colProps: { span: 12 },
@@ -45,13 +45,13 @@ export const MenuFormColumn: saFormTabColumnsType = [
         valueType: 'group',
         columns: [
           {
-            title: '上级菜单',
+            title: '{{t("topMenu")}}',
             dataIndex: 'parent_id',
             valueType: 'menuSelect',
             colProps: { span: 12 },
           },
           {
-            title: '菜单类型',
+            title: '{{t("type")}}',
             dataIndex: 'type',
             valueType: 'select',
             requestDataName: 'types',
@@ -65,7 +65,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
             colProps: { span: 6 },
           },
           {
-            title: '排序',
+            title: '{{t("displayorder")}}',
             dataIndex: 'displayorder',
             valueType: 'digit',
             tooltip: '值越大越靠前',
@@ -79,12 +79,12 @@ export const MenuFormColumn: saFormTabColumnsType = [
         columns: [
           {
             dataIndex: 'admin_model_id',
-            title: '关联模型',
+            title: '{{t("model")}}',
             valueType: 'modelSelect',
             colProps: { span: 12 },
           },
           {
-            title: '图标',
+            title: 'Icon',
             dataIndex: 'icon',
             valueType: 'iconSelect',
             fieldProps: {
@@ -98,7 +98,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
         valueType: 'group',
         columns: [
           {
-            title: '页面类型',
+            title: '{{t("pageType")}}',
             dataIndex: 'page_type',
             valueType: 'select',
             fieldProps: {
@@ -116,7 +116,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
             colProps: { span: 12 },
           },
           {
-            title: 'form打开方式',
+            title: '{{t("openType")}}',
             dataIndex: 'open_type',
             valueType: 'radioButton',
             fieldProps: {
@@ -135,49 +135,41 @@ export const MenuFormColumn: saFormTabColumnsType = [
         valueType: 'group',
         columns: [
           {
-            title: '新增按钮',
+            title: '{{t("create")}}',
             dataIndex: 'addable',
             valueType: 'switch',
             tooltip: '关闭后列表中无新建按钮',
             fieldProps: {
-              checkedChildren: '显示',
-              unCheckedChildren: '隐藏',
               defaultChecked: true,
             },
             colProps: { span: 6 },
           },
           {
-            title: 'form是否可编辑',
+            title: '{{t("editable")}}',
             dataIndex: 'editable',
             valueType: 'switch',
             tooltip: '关闭后默认option中无编辑项',
             fieldProps: {
-              checkedChildren: '可编辑',
-              unCheckedChildren: '只读',
               defaultChecked: true,
             },
             colProps: { span: 6 },
           },
           {
-            title: '是否可删除',
+            title: '{{t("deleteable")}}',
             dataIndex: 'deleteable',
             valueType: 'switch',
             tooltip: '关闭后默认option中无删除项，勾选操作无批量删除',
             fieldProps: {
-              checkedChildren: '可删除',
-              unCheckedChildren: '不可删',
               defaultChecked: true,
             },
             colProps: { span: 6 },
           },
           {
-            title: '显示',
+            title: '{{t("show")}}',
             dataIndex: 'status',
             valueType: 'switch',
             tooltip: '隐藏后菜单不显示，但还是可以访问',
             fieldProps: {
-              checkedChildren: '显示',
-              unCheckedChildren: '隐藏',
               defaultChecked: true,
             },
             colProps: { span: 6 },
@@ -188,26 +180,20 @@ export const MenuFormColumn: saFormTabColumnsType = [
         valueType: 'group',
         columns: [
           {
-            title: '启用',
+            title: '{{t("enable")}}',
             dataIndex: 'state',
             valueType: 'switch',
             fieldProps: {
-              checkedChildren: '启用',
-              unCheckedChildren: '禁用',
               defaultChecked: true,
             },
             colProps: { span: 6 },
           },
 
           {
-            title: '设置',
+            title: '{{t("setting")}}',
             dataIndex: 'setting',
             valueType: 'confirmForm',
             fieldProps: {
-              btn: {
-                title: '设置',
-                size: 'middle',
-              },
               saFormProps: {
                 devEnable: false,
               },
@@ -217,7 +203,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
           },
           {
             dataIndex: 'category_id',
-            title: '选择关联内容分类',
+            title: [t('relate', intl), t('content', intl), t('category', intl)].join(' '),
             tooltip: '读取已选择模型是否有分类模型，有的话列出该分类模型下的数据选择',
             valueType: 'debounceSelect',
             fieldProps: {
@@ -250,7 +236,7 @@ export const MenuFormColumn: saFormTabColumnsType = [
     ],
   },
   {
-    tab: { title: 'JSON配置' },
+    tab: { title: 'JSON' },
     formColumns: [
       {
         title: '',
@@ -261,13 +247,13 @@ export const MenuFormColumn: saFormTabColumnsType = [
     ],
   },
   {
-    tab: { title: '子权限' },
+    tab: { title: t('permission', intl) },
     formColumns: [
       { title: '', dataIndex: 'perms', valueType: 'jsonEditor', fieldProps: { height: 500 } },
     ],
   },
   {
-    tab: { title: '其它配置' },
+    tab: { title: t('other', intl) },
     formColumns: [
       {
         title: '',
@@ -286,18 +272,19 @@ export default () => {
   const reload = (ret: any) => {
     saReloadMenu({ setInitialState, ret, devData, setDevData });
   };
+  const intl = useIntl();
   /**复制或移动的表单项 */
   const toFormColumns = [
     {
       dataIndex: 'toid',
-      title: '复制到',
+      title: t('copyTo', intl),
       valueType: 'menuSelect',
     },
   ];
 
   const tableColumns: saTableColumnsType = [
     {
-      title: '菜单名称',
+      title: t('name', intl),
       dataIndex: 'title2',
       key: 'title2',
       render: (dom, record) => (
@@ -309,19 +296,19 @@ export default () => {
       search: false,
     },
     {
-      title: 'path',
+      title: 'Path',
       dataIndex: 'path',
       key: 'path',
       search: false,
     },
     {
-      title: '排序',
+      title: t('displayorder', intl),
       dataIndex: 'displayorder',
       valueType: 'displayorder',
       search: false,
     },
     {
-      title: '操作',
+      title: t('action', intl),
       dataIndex: 'type',
       valueType: 'customerColumn',
       search: false,
@@ -454,7 +441,7 @@ export default () => {
     //'state',
     {
       dataIndex: 'state',
-      title: '状态',
+      title: t('state', intl),
       valueType: 'customerColumn',
       search: false,
       readonly: true,
@@ -478,7 +465,7 @@ export default () => {
     },
     {
       dataIndex: 'status',
-      title: '显示',
+      title: t('show', intl),
       valueType: 'customerColumn',
       search: false,
       fieldProps: {
@@ -508,7 +495,7 @@ export default () => {
   return (
     <>
       <Category
-        name="菜单"
+        name={t('menu', intl)}
         title={false}
         actionRef={actionRef}
         pageMenu={{ data: { table_menu_key: 'state' } }}
@@ -532,7 +519,7 @@ export default () => {
                 {
                   domtype: 'button',
                   btn: {
-                    text: '生成配置',
+                    text: [t('recreate', intl), t('config', intl)].join(' '),
                   },
                   action: 'confirm',
                   request: {
@@ -546,7 +533,7 @@ export default () => {
             },
           },
         ]}
-        tabs={MenuFormColumn}
+        tabs={MenuFormColumn({ intl })}
         openType="modal"
         expandAll={false}
         level={setting?.adminSetting?.menu_max_level ? setting?.adminSetting?.menu_max_level : 4}

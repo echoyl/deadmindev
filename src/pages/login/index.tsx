@@ -567,7 +567,7 @@ const LoginPage: React.FC = () => {
               width: 380,
               marginTop: -72,
             }}
-            bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
+            styles={{ body: { paddingTop: 0, paddingBottom: 0 } }}
             variant="borderless"
           >
             <Login setting={setting} />
