@@ -13,8 +13,8 @@ import { useTableDesigner } from '../dev/table/designer';
 import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 
 import { PageContainer404 } from '@/components/Sadmin/404';
-import { isUndefined } from 'es-toolkit';
-import { t } from '../helpers';
+import { isFunction, isUndefined } from 'es-toolkit';
+import { t, tplComplie } from '../helpers';
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
 import type { saTableProps } from './table';
 import { SaContext } from './table';
@@ -96,7 +96,10 @@ export const SaForm: FC<saFormProps> = (props) => {
     const postTo = postUrl ? postUrl : url.replace('/show', '');
     if (!postTo) {
       //无url模式直接返回结构
-      msgcls?.({ code: 0, data: base });
+      if (isFunction(msgcls)) {
+        msgcls({ code: 0, data: base });
+      }
+
       return true;
     }
 
@@ -366,6 +369,7 @@ export const SaForm: FC<saFormProps> = (props) => {
             validateMessages={{
               required: '此项为必填项',
             }}
+            omitNil={false} //关闭删除值为undefined的键
             {...props.formProps}
             {...setting?.form}
           >
@@ -389,10 +393,14 @@ export const SaForm: FC<saFormProps> = (props) => {
                   onTabChange?.(activeKey);
                 }}
                 items={_formColumns.map((thistab, index) => {
-                  const label = thistab.title || thistab.tab?.title || t('baseInfo');
+                  const label = thistab.title || thistab.tab?.title || t('baseInfo', intl);
                   const { uid } = thistab || {};
                   return {
-                    label: devEnable ? <TabColumnTitle uid={uid} title={label} /> : label,
+                    label: devEnable ? (
+                      <TabColumnTitle uid={uid} title={label} />
+                    ) : (
+                      tplComplie(label, { intl })
+                    ),
                     key: uid || index + '', //key为字符串 如果是数字造成tab过多后点击切换失败的bug
                     children: <GetFormFields columns={thistab.columns} />,
                     forceRender: true, //如果关闭，其它tab的数据不会传输

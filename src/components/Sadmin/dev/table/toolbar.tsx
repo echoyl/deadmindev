@@ -244,11 +244,12 @@ export const ToolMenuForm = (props) => {
   const { devData, setDevData } = useContext(SaDevContext);
   const { json = {} } = useContext(DevJsonContext);
   const { pageMenu = { id: 0 }, trigger } = props;
+  const intl = useIntl();
   const MenuForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
     return (
       <SaForm
-        tabs={MenuFormColumn}
+        tabs={MenuFormColumn({ intl })}
         url="dev/menu/show"
         dataId={pageMenu?.id}
         paramExtra={{ id: pageMenu?.id }}
@@ -279,7 +280,7 @@ export const ToolMenuForm = (props) => {
     );
   };
   return (
-    <ButtonModal trigger={trigger} width={860} title="菜单配置">
+    <ButtonModal trigger={trigger} width={860} title={t('menu', intl)}>
       <MenuForm />
     </ButtonModal>
   );
@@ -287,6 +288,7 @@ export const ToolMenuForm = (props) => {
 
 export const ToolModelForm = (props) => {
   const { pageMenu = { model_id: 0 }, trigger } = props;
+  const intl = useIntl();
   const ModelForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
     const formRef = useRef<ProFormInstance<any>>({} as any);
@@ -328,7 +330,7 @@ export const ToolModelForm = (props) => {
     );
   };
   return (
-    <ButtonModal trigger={trigger} width={860} title="模型配置">
+    <ButtonModal trigger={trigger} width={860} title={t('model', intl)}>
       <ModelForm />
     </ButtonModal>
   );
@@ -336,6 +338,7 @@ export const ToolModelForm = (props) => {
 
 export const ToolModelFieldsForm = (props) => {
   const { pageMenu = { model_id: 0 }, trigger } = props;
+  const intl = useIntl();
   const ModelForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
     const formRef = useRef<ProFormInstance<any>>({} as any);
@@ -346,7 +349,7 @@ export const ToolModelFieldsForm = (props) => {
         formRef={formRef}
         tabs={[
           {
-            tab: { title: '基本信息' },
+            tab: { title: t('baseInfo', intl) },
             formColumns: [
               fieldColumn,
               {
@@ -355,8 +358,11 @@ export const ToolModelFieldsForm = (props) => {
                 valueType: 'checkbox',
                 tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
                 fieldProps: {
-                  options: [{ label: '生成表', value: 'createModelSchema' }],
-                  defaultValue: ['createModelSchema'],
+                  options: [
+                    { label: '生成表', value: 'createModelSchema' },
+                    { label: '删除多余字段', value: 'dropColumns' },
+                  ],
+                  defaultValue: ['createModelSchema', 'dropColumns'],
                 },
               },
             ],
@@ -396,7 +402,7 @@ export const ToolModelFieldsForm = (props) => {
     <ButtonDrawer
       trigger={trigger}
       width={1500}
-      title="模型字段"
+      title={t('columns', intl)}
       drawerProps={{ styles: { body: { paddingTop: 8 } } }}
     >
       <ModelForm />
@@ -412,6 +418,7 @@ export const ToolModelFieldsForm = (props) => {
 export const ToolBarMenu = (props) => {
   const { trigger, pageMenu = { id: 0, model_id: 0 } } = props;
   // console.log('pageMenu', pageMenu);
+  const intl = useIntl();
   return (
     <Dropdown
       trigger={['click']}
@@ -424,7 +431,7 @@ export const ToolBarMenu = (props) => {
                 pageMenu={pageMenu}
                 trigger={
                   <Button type="link" icon={<MenuOutlined />}>
-                    菜单
+                    {t('menu', intl)}
                   </Button>
                 }
               />
@@ -438,7 +445,7 @@ export const ToolBarMenu = (props) => {
                     pageMenu={pageMenu}
                     trigger={
                       <Button type="link" icon={<DatabaseOutlined />}>
-                        模型
+                        {t('model', intl)}
                       </Button>
                     }
                   />
@@ -453,7 +460,7 @@ export const ToolBarMenu = (props) => {
                     pageMenu={pageMenu}
                     trigger={
                       <Button type="link" icon={<ProfileOutlined />}>
-                        字段
+                        {t('columns', intl)}
                       </Button>
                     }
                   />
@@ -468,11 +475,11 @@ export const ToolBarMenu = (props) => {
                   <ButtonDrawer
                     trigger={
                       <Button type="link" icon={<PartitionOutlined />}>
-                        关联
+                        {t('relate', intl)}
                       </Button>
                     }
                     width={1000}
-                    title="关联"
+                    title={t('relate', intl)}
                     //drawerProps={{ styles: { body: { padding: 16 } } }}
                   >
                     <ModelRelation model={{ id: pageMenu.model_id }} />

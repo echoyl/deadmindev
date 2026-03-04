@@ -1,8 +1,10 @@
 import { DownOutlined } from '@ant-design/icons';
+import { useIntl } from '@umijs/max';
 import { Badge, Button, Dropdown, Space, Tag } from 'antd';
 import React, { useContext } from 'react';
 import { ConfirmTriggerClick } from '../../action/confirm';
 import { SaDevContext } from '../../dev';
+import { t } from '../../helpers';
 import { SaContext } from '../../posts/table';
 import { iconToElement } from '../iconSelect';
 
@@ -11,7 +13,7 @@ const DropdownAction: React.FC = (props: {
   modelName?: string;
   url?: string;
   value?: any;
-  data?: { [key: string]: any };
+  data?: Record<string, any>;
   id?: number;
   callback?: (value: any) => void;
   //trigger?: (value: any) => ReactNode;
@@ -73,6 +75,7 @@ const DropdownAction: React.FC = (props: {
   if (requestUrl == '{{url}}') {
     requestUrl = tableUrl;
   }
+  const intl = useIntl();
   return (
     <Dropdown
       key={key}
@@ -93,9 +96,8 @@ const DropdownAction: React.FC = (props: {
                 dataId: id,
                 msg: (
                   <Space>
-                    确定要执行
-                    {clickItem?.label}
-                    操作吗？
+                    {t('confirm', intl)}
+                    {clickItem?.label}?
                   </Space>
                 ),
                 callback,
@@ -103,6 +105,8 @@ const DropdownAction: React.FC = (props: {
               },
               actionRef,
               null,
+              'modal',
+              intl,
             ),
           );
         },

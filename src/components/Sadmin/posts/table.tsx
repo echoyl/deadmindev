@@ -145,6 +145,7 @@ export const SaContext = createContext<{
 }>({});
 
 const SaTable: React.FC<saTableProps> = (props) => {
+  const intl = useIntl();
   const {
     url = '',
     tableColumns,
@@ -160,7 +161,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     path,
     checkEnable = true,
     actionRef = useRef<ActionType>(),
-    tableTitle = '列表',
+    tableTitle,
     selectRowRender,
     selectRowBtns = [],
     formRef = useRef<ProFormInstance>(),
@@ -503,7 +504,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
     setSelectedRowKeys([]);
     return false;
   };
-  const intl = useIntl();
 
   const getTableColumnsRender = (columns: Record<string, any>[]) => {
     return getTableColumns({
@@ -827,7 +827,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                       },
                     },
                   }
-                : { title: tableTitle ? tableTitle : '列表' }
+                : { title: tableTitle || t('list', intl) }
             }
             tableAlertRender={false}
             summary={() => {

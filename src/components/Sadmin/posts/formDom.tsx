@@ -77,14 +77,13 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     variant = 'filled',
   } = props;
   if (!initRequest) return [];
-
   const customerColumns =
     typeof columns == 'function'
       ? columns(detail)
       : isArr(columns)
       ? devEnable
         ? cloneDeep(columns)
-        : columns
+        : columns //切换开发模式 dependence类型会出现开发按钮丢失问题
       : [];
   //const { initialState } = useModel('@@initialState');
   const hiddenColumns: any = [];
@@ -146,6 +145,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     } else {
       //fix：重复修改数据的title后无限追加的问题
       v.originTitle = v.originTitle || v.title;
+      const title = v.originTitle;
       //加入if条件控制
       if (v.fieldProps?.if && !devEnable) {
         const show = tplComplie(v.fieldProps?.if, {
@@ -271,8 +271,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
                   columns: (d) => {
                     //const relcol = columnsFun?.(d);
                     return columnsFun(d)?.map((nv) => {
-                      nv.title = <FormColumnTitle title={nv.title} uid={vuid} />;
-                      return nv;
+                      return { ...nv, title: <FormColumnTitle title={nv.title} uid={vuid} /> };
                     });
                   },
                 };
@@ -295,11 +294,12 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
                 //检测条件是否符合 condition 全部符合才返回数据
                 if (checkCondition(dependencyOnName, dependencyOn) || devEnable) {
                   return [new_column].map((nv) => {
-                    if (devEnable && deep <= 1) {
-                      if (!React.isValidElement(nv.title)) {
-                        nv.title = <FormColumnTitle {...nv} />;
-                      }
-                    }
+                    const nv_title =
+                      devEnable && deep <= 1 ? (
+                        <FormColumnTitle {...nv} title={title} />
+                      ) : (
+                        tplComplie(title, { intl })
+                      );
                     nv.dependencies = names;
                     if (!nv.dataIndex) {
                       //如果是只读的 选择了自定义字段的 dataindex没有后 field.item 会报错误 这里重新设置一个dataIndex
@@ -310,7 +310,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
                       nv.fieldProps.placeholder = tplComplie(nv.fieldProps.placeholder, { intl });
                     }
                     nv.fieldProps = { ...nv.fieldProps, ...dependencyOnName };
-                    return nv;
+                    return { ...nv, title: nv_title };
                   });
                 } else {
                   return [];
@@ -399,16 +399,16 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       }
       //const orign_title = v.title;
 
-      if (devEnable && deep <= 1 && !React.isValidElement(v.title)) {
-        v.title = <FormColumnTitle {...v} />;
+      if (devEnable && deep <= 1) {
+        v.title = <FormColumnTitle {...v} title={title} />;
       } else {
-        v.title = tplComplie(v.title);
+        v.title = tplComplie(title, { intl });
       }
       if (v.fieldProps?.localesopen) {
         v.title = (
           <Space>
-            {tplComplie(v.originTitle)}
-            <TranslationModal column={{ ...v, title: v.originTitle }} />
+            {tplComplie(title, { intl })}
+            <TranslationModal column={{ ...v, title }} />
           </Space>
         );
         if (devEnable && deep <= 1) {
@@ -456,7 +456,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
     return false;
   };
   const _columns = customerColumns
-    .map((c) => parseColumns(c))
+    .map((c) => parseColumns(c, 0))
     .filter((c) => {
       return c !== false;
     });

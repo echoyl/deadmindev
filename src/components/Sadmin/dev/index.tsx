@@ -8,7 +8,7 @@ import {
   ToolOutlined,
 } from '@ant-design/icons';
 import { isUrl } from '@ant-design/pro-components';
-import { Link, useLocation } from '@umijs/max';
+import { Link, useIntl, useLocation } from '@umijs/max';
 import { Dropdown, FloatButton, Image, Popover, Space } from 'antd';
 import type { MessageInstance } from 'antd/es/message/interface';
 import type { HookAPI } from 'antd/es/modal/useModal';
@@ -17,7 +17,7 @@ import { trim } from 'es-toolkit';
 import { createContext, useContext } from 'react';
 import ConfirmForm from '../action/confirmForm';
 import Refresh from '../components/refresh';
-import { getFromObject } from '../helpers';
+import { getFromObject, t } from '../helpers';
 import { iconToElement } from '../valueTypeMap/iconSelect';
 import DevSwitch from './switch';
 import { ToolMenuForm } from './table/toolbar';
@@ -43,6 +43,7 @@ export const SaDevDataContext = createContext<{
 export const DevLinks = (props: any) => {
   // const [open, setOpen] = useState(false);
   const { setting } = useContext(SaDevContext);
+  const intl = useIntl();
   const items = [
     {
       key: 'menu',
@@ -54,7 +55,7 @@ export const DevLinks = (props: any) => {
         >
           <Space>
             <MenuOutlined />
-            菜单
+            {t('menu', intl)}
           </Space>
         </Link>
       ),
@@ -69,7 +70,7 @@ export const DevLinks = (props: any) => {
         >
           <Space>
             <DatabaseOutlined />
-            模型
+            {t('model', intl)}
           </Space>
         </Link>
       ),
@@ -84,7 +85,7 @@ export const DevLinks = (props: any) => {
         >
           <Space>
             <SettingOutlined />
-            配置
+            {t('config', intl)}
           </Space>
         </Link>
       ),
@@ -127,7 +128,7 @@ export const DevLinks = (props: any) => {
         >
           <Space>
             <FileMarkdownOutlined />
-            文档
+            {t('doc', intl)}
           </Space>
         </a>
       ),
@@ -141,7 +142,7 @@ export const DevLinks = (props: any) => {
             trigger={
               <Space>
                 <PlusSquareOutlined />
-                菜单
+                {t('menu', intl)}
               </Space>
             }
           />
