@@ -549,10 +549,13 @@ const LoginPage: React.FC = () => {
   } else {
     containerStyle.background = token.colorBgBase;
   }
+  const intl = useIntl();
   return setting ? (
     <div className={styles.container} style={{ ...containerStyle }}>
       <Helmet>
-        <title>登录 - {setting?.title}</title>
+        <title>
+          {t('login', intl)} - {setting?.title}
+        </title>
       </Helmet>
       {setting?.adminSetting?.lang ? <Lang /> : null}
       <div style={{ flex: '1' }}>

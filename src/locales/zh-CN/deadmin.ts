@@ -95,4 +95,5 @@ export default {
   data: '数据',
   doc: '文档',
   list: '列表',
+  login: '登录',
 };

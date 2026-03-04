@@ -95,4 +95,5 @@ export default {
   data: 'Data',
   doc: 'Doc',
   list: 'List',
+  login: 'Login',
 };
