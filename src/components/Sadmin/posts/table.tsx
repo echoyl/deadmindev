@@ -269,6 +269,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   };
   const rq = async (params: Record<string, any> = {}, _sort: any, filter: any) => {
     //将rsort中null元素排除
+    //await delay(1000 * 30);
     const rsort: Record<string, any> = {};
     if (_sort) {
       for (const key in _sort) {
@@ -572,12 +573,12 @@ const SaTable: React.FC<saTableProps> = (props) => {
     large: 48,
   };
   const tableSize = setting?.table?.size || tableProps.size || 'middle';
-  const [minHeight, setMinHeight] = useState<number>(209);
+  const [minHeight, setMinHeight] = useState<number>(223);
   const tableHeaderHeight = tableHeaderHeightArr[tableSize];
   const tableFooterHeight = tableFooterHeightArr[tableSize];
   const tablePageHeight = tablePageHeightArr[tableSize];
   useEffect(() => {
-    let defaultHeight = 209;
+    let defaultHeight = 223;
     if (pageType == 'drawer') {
       defaultHeight -= 50;
     }
@@ -605,7 +606,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     }
 
     if (tableMenu && table_menu_key) {
-      defaultHeight += 14;
+      defaultHeight += 2;
     }
     setMinHeight(defaultHeight);
   }, [
@@ -684,6 +685,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             searchFormRender={(p: any, d: any) => {
               return <DndContext>{d}</DndContext>;
             }}
+            initRequest={initRequest}
             search={
               searchLength
                 ? {
