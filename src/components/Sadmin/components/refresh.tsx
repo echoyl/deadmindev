@@ -61,8 +61,10 @@ export const saGetSetting = async (force: boolean = false): Promise<Record<strin
   let localsetting = await getAdminSetting();
   if (force || !localsetting) {
     const { data } = await dataRequestManager.getData('setting');
-    localsetting = data;
-    setAdminSetting(data);
+    if (data) {
+      localsetting = data;
+      setAdminSetting(data);
+    }
   }
   if (!localsetting) {
     return {};

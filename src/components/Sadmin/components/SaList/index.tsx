@@ -1,8 +1,8 @@
 import { ProList } from '@ant-design/pro-components';
-import { useContext, useEffect, useState } from 'react';
-import CoverItem from './coverItem';
 import { List } from 'antd';
+import { useContext, useEffect, useState } from 'react';
 import { SaDevContext } from '../../dev';
+import CoverItem from './coverItem';
 
 const SaList: React.FC<any> = (props) => {
   const { tableColumns, devEnable, allProps, ...restProps } = props;
@@ -36,7 +36,7 @@ const SaList: React.FC<any> = (props) => {
       itemCardProps={{
         ghost: true,
       }}
-      renderItem={(item, index) => {
+      itemRender={(item, index) => {
         return (
           <List.Item>
             <CoverItem

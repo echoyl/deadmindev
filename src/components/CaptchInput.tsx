@@ -104,7 +104,7 @@ const CaptchaInput: React.FC<CaptchaInputProps> = ({
 
       <Button size="large" style={{ overflow: 'hidden', padding: 0, width: 112 }}>
         <Spin spinning={loading} size="small">
-          <img src={imageData} onClick={onClickImage} />
+          {imageData ? <img src={imageData} onClick={onClickImage} /> : null}
         </Spin>
       </Button>
     </Space>
