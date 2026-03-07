@@ -129,6 +129,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
               icon={<PlusOutlined />}
               onClick={() => {
                 setFormOpen(true);
+                setPostData({ parent_id: 0 });
                 setDataId(0);
               }}
             />
@@ -150,90 +151,92 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
           return true;
         }}
       />
-      <Tree
-        selectedKeys={selectedKeys}
-        {...otherProps}
-        showLine={showLine}
-        treeData={treeData}
-        fieldNames={{ title: ftitle, key: fkey, children }}
-        titleRender={(nodeData: Record<string, any>) => {
-          const nodeTitle = nodeData[ftitle];
-          const nodeKey = nodeData[fkey];
-          const _level = nodeData._level ?? 0;
-          return page ? (
-            <Dropdown
-              trigger={['contextMenu']}
-              menu={{
-                items: [
-                  {
-                    key: 'edit',
-                    label: (
-                      <Space>
-                        <EditOutlined />
-                        <span>{t('edit')}</span>
-                      </Space>
-                    ),
-                  },
-                  level - 1 > _level
-                    ? {
-                        key: 'add',
-                        label: (
-                          <Space>
-                            <PlusOutlined />
-                            <span>{t('addchild')}</span>
-                          </Space>
-                        ),
-                      }
-                    : null,
-                  {
-                    type: 'divider',
-                  },
-                  {
-                    key: 'delete',
-                    label: (
-                      <DeleteColumn
-                        id={nodeKey}
-                        title={nodeTitle}
-                        url={pageMenu?.data?.url + '/1'}
-                        callback={() => {
-                          onReload?.();
-                          return true;
-                        }}
-                      >
+      {treeData.length > 0 ? (
+        <Tree
+          selectedKeys={selectedKeys}
+          {...otherProps}
+          showLine={showLine}
+          treeData={treeData}
+          fieldNames={{ title: ftitle, key: fkey, children }}
+          titleRender={(nodeData: Record<string, any>) => {
+            const nodeTitle = nodeData[ftitle];
+            const nodeKey = nodeData[fkey];
+            const _level = nodeData._level ?? 0;
+            return page ? (
+              <Dropdown
+                trigger={['contextMenu']}
+                menu={{
+                  items: [
+                    {
+                      key: 'edit',
+                      label: (
                         <Space>
-                          <DeleteOutlined />
-                          <span>{t('delete')}</span>
+                          <EditOutlined />
+                          <span>{t('edit')}</span>
                         </Space>
-                      </DeleteColumn>
-                    ),
-                    danger: true,
-                  },
-                ],
-                onClick: ({ key, domEvent }) => {
-                  if (key === 'edit') {
-                    setDataId(nodeKey);
-                    setFormOpen(true);
-                  } else if (key == 'add') {
-                    setDataId(0);
-                    setPostData({ parent_id: nodeKey });
-                    setFormOpen(true);
-                  } else if (key === 'delete') {
-                  }
+                      ),
+                    },
+                    level - 1 > _level
+                      ? {
+                          key: 'add',
+                          label: (
+                            <Space>
+                              <PlusOutlined />
+                              <span>{t('addchild')}</span>
+                            </Space>
+                          ),
+                        }
+                      : null,
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: 'delete',
+                      label: (
+                        <DeleteColumn
+                          id={nodeKey}
+                          title={nodeTitle}
+                          url={pageMenu?.data?.url + '/1'}
+                          callback={() => {
+                            onReload?.();
+                            return true;
+                          }}
+                        >
+                          <Space>
+                            <DeleteOutlined />
+                            <span>{t('delete')}</span>
+                          </Space>
+                        </DeleteColumn>
+                      ),
+                      danger: true,
+                    },
+                  ],
+                  onClick: ({ key, domEvent }) => {
+                    if (key === 'edit') {
+                      setDataId(nodeKey);
+                      setFormOpen(true);
+                    } else if (key == 'add') {
+                      setDataId(0);
+                      setPostData({ parent_id: nodeKey });
+                      setFormOpen(true);
+                    } else if (key === 'delete') {
+                    }
 
-                  domEvent.stopPropagation();
-                },
-              }}
-            >
-              {nodeTitle}
-            </Dropdown>
-          ) : (
-            nodeTitle
-          );
-        }}
-        onSelect={(keys) => {
-          onSelect?.(keys);
-        }}
-      />
+                    domEvent.stopPropagation();
+                  },
+                }}
+              >
+                {nodeTitle}
+              </Dropdown>
+            ) : (
+              nodeTitle
+            );
+          }}
+          onSelect={(keys) => {
+            onSelect?.(keys);
+          }}
+        />
+      ) : null}
     </Card>
   );
 };
