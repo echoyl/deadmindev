@@ -1,4 +1,4 @@
-import { Link, useModel } from '@umijs/max';
+import { Link, useIntl, useModel } from '@umijs/max';
 import { Divider, Dropdown, Image, Modal, Popover, QRCode, Space, Table, Timeline } from 'antd';
 import dayjs from 'dayjs';
 import { isFunction } from 'es-toolkit';
@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr } from '../../checkers';
 import { RequestButtonRender } from '../../components/requestButton';
 import { ExportButton, ImportButton } from '../../dev/table/toolbar';
-import { getFromObject, getMenuDataById, parseIcon, tplComplie } from '../../helpers';
+import { getFromObject, getMenuDataById, parseIcon, t, tplComplie } from '../../helpers';
 import { SaContext } from '../../posts/table';
 import TableFromBread from '../../tableFromBread';
 import DropdownAction from '../../valueTypeMap/dropdownAction';
@@ -32,7 +32,7 @@ const CustomerColumnRender = (props) => {
   } = props;
   const { initialState } = useModel('@@initialState');
   const { actionRef, formRef, saTableContext, searchData = {} } = useContext(SaContext);
-
+  const intl = useIntl();
   //const formValue = formRef?.current?.getFieldsValue?.(true);
   const [record, setRecord] = useState(orecord);
   const [, modalHolder] = Modal.useModal();
@@ -83,6 +83,16 @@ const CustomerColumnRender = (props) => {
       return <Timeline style={{ paddingTop: 10 }} key={i} items={timeline_items} {...item.props} />;
     } else if (item.domtype == 'button' || item.domtype == 'text') {
       //tooltip也支持变量读取
+      if ((!item.btn || !item.btn.text) && ['edit', 'delete', 'view'].includes(item.action)) {
+        //如果action是编辑删除查看且未设定自定义信息，则使用默认btn
+        item.btn = {
+          type: 'link',
+          size: 'small',
+          danger: item.action == 'delete',
+          ...item.btn,
+          text: t(item.action, intl),
+        };
+      }
       if (item.btn) {
         //return <span onClick={() => console.log('777')}>test</span>;
         const styleProps = percentNum >= 0 && i >= percentNum ? { style: { width: '100%' } } : {};

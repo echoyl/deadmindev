@@ -484,6 +484,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                 },
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  btn: { title: 'modal' },
                                   saFormProps: { devEnable: false },
                                   width: 1200,
                                   formColumns: [
@@ -508,6 +509,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                 },
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  btn: { title: 'modal' },
                                   saFormProps: { devEnable: false },
                                   width: 1200,
                                   formColumns: [
@@ -543,6 +545,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                 },
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  btn: { title: 'modal' },
                                   saFormProps: { devEnable: false },
                                   width: 1200,
                                   formColumns: [
@@ -606,6 +609,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                 title: t('request'),
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  btn: { title: 'request' },
                                   saFormProps: { devEnable: false },
                                   formColumns: [
                                     {
@@ -724,6 +728,7 @@ export const getCustomerColumn = (modelId: Key) => {
                                 title: 'Popover',
                                 valueType: 'confirmForm',
                                 fieldProps: {
+                                  btn: { title: 'popover' },
                                   formColumns: [
                                     {
                                       valueType: 'group',

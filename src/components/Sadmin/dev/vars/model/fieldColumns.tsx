@@ -352,13 +352,13 @@ export const fieldColumn: saValueTypeMapType = {
                   {
                     title: 'label',
                     dataIndex: 'label',
-                    tooltip: '默认为id',
+                    tooltip: '默认为title',
                     colProps: { span: 8 },
                   },
                   {
                     title: 'value',
                     dataIndex: 'value',
-                    tooltip: '默认为title',
+                    tooltip: '默认为id',
                     colProps: { span: 8 },
                   },
                   { title: 'children', dataIndex: 'children', colProps: { span: 8 } },
