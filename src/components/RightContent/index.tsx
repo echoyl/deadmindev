@@ -1,3 +1,4 @@
+import { ProConfigProvider } from '@ant-design/pro-components';
 import { SelectLang as UmiSelectLang, useModel } from '@umijs/max';
 import { ConfigProvider, theme } from 'antd';
 import { useContext } from 'react';
@@ -28,7 +29,9 @@ export const AutoThemeCon = (props: { children: any }) => {
         algorithm: setting?.navTheme == 'light' ? theme.defaultAlgorithm : theme.darkAlgorithm,
       }}
     >
-      {props.children}
+      <ProConfigProvider dark={setting?.navTheme == 'light' ? false : true}>
+        {props.children}
+      </ProConfigProvider>
     </ConfigProvider>
   );
 };

@@ -132,7 +132,7 @@ const ButtonModal: FC<actionConfirm> = (props) => {
                 }
               }
         }
-        mask={{closable:false}}
+        mask={{ closable: false, blur: true }}
         styles={{
           body: {
             maxHeight: height,

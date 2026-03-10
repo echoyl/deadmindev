@@ -1,5 +1,5 @@
+import type { FC } from 'react';
 import ConfirmForm from '../Sadmin/action/confirmForm';
-import { FC } from 'react';
 import cache from '../Sadmin/helper/cache';
 
 const LockScreen: FC<{ open: boolean; onOpen?: (open: boolean) => void }> = (props) => {
@@ -9,12 +9,11 @@ const LockScreen: FC<{ open: boolean; onOpen?: (open: boolean) => void }> = (pro
       trigger={<></>}
       closable={false}
       open={open}
-      onOpen={(open) => {
-        onOpen?.(open);
+      onOpen={(o) => {
+        onOpen?.(o);
       }}
       modalProps={{
         closable: false,
-        styles: { mask: { backgroundColor: 'rgba(0,0,0,0.8)' } },
         height: 400,
       }}
       callback={(ret) => {

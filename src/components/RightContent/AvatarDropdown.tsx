@@ -1,15 +1,15 @@
 import { loginOut, messageLoadingKey } from '@/components/Sadmin/lib/request';
-import { LockOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { history, useIntl, useModel, useLocation } from '@umijs/max';
+import { LockOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
+import { history, useIntl, useLocation, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useCallback, useContext, useState, useEffect } from 'react';
-import HeaderDropdown from '../HeaderDropdown';
-import { t, uid } from '../Sadmin/helpers';
-import { SaDevContext } from '../Sadmin/dev';
-import LockScreen from './lockscreen';
-import cache from '../Sadmin/helper/cache';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AutoThemeCon } from '.';
+import HeaderDropdown from '../HeaderDropdown';
+import { SaDevContext } from '../Sadmin/dev';
+import cache from '../Sadmin/helper/cache';
+import { t, uid } from '../Sadmin/helpers';
+import LockScreen from './lockscreen';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -154,8 +154,8 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
       <LockScreen
         open={open}
         key={lockkey}
-        onOpen={(open) => {
-          setOpen(open);
+        onOpen={(o) => {
+          setOpen(o);
         }}
       />
     </AutoThemeCon>
