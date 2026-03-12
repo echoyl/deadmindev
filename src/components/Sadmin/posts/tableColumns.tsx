@@ -331,7 +331,9 @@ export const getTableColumns = (props: Record<string, any>) => {
       : false;
     if (requestName) {
       options = enums?.[requestName];
+      v.requestDataName = requestName; //将requestDataName设置到v中，方便后续使用，放在fieldProps中会解构到dom后会报错提示
       delete v.fieldProps?.requestDataName;
+
       v.fieldProps = {
         ...v.fieldProps,
         options: options ? options : [],
