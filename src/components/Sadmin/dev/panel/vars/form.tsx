@@ -11,6 +11,9 @@ const formColumns = (data, dataIndex = ['defaultConfig', 'form', 'columns']): sa
         colProps: { span: 24 },
         rowProps: { gutter: 0 },
         valueType: 'formList',
+        fieldProps: {
+          arrowSort: true,
+        },
         columns: [
           {
             valueType: 'group',

@@ -1,14 +1,14 @@
-import { Card, Flex, Image, Typography } from 'antd';
-import useStyles from './style.style';
-import { inArray, isObj, isStr } from '../../checkers';
-import { TableColumnTitle } from '../../dev/table/title';
-import { useEffect, useState } from 'react';
-import { DndContext } from '../../dev/dnd-context';
-import { SaTableAction } from '../../posts/tableColumns';
-import CustomerColumnRender from '../../action/customerColumn';
-import { uid } from '../../helpers';
 import { CheckCard } from '@ant-design/pro-components';
+import { Card, Flex, Image, Typography } from 'antd';
+import { useEffect, useState } from 'react';
+import CustomerColumnRender from '../../action/customerColumn';
+import { inArray, isObj, isStr } from '../../checkers';
+import { DndContext } from '../../dev/dnd-context';
+import { TableColumnTitle } from '../../dev/table/title';
 import { urlAddQuery } from '../../helper/functions';
+import { uid } from '../../helpers';
+import { SaTableAction } from '../../posts/tableColumns';
+import useStyles from './style.style';
 
 const CardRender = (props) => {
   const { checkDisable = false, ...restProps } = props;
@@ -18,7 +18,7 @@ const CardRender = (props) => {
   ) : (
     <>
       {/* <Card style={{ display: 'none' }} /> */}
-      <CheckCard bodyStyle={{ padding: 24 }} {...restProps}>
+      <CheckCard styles={{ body: { padding: 24 } }} {...restProps}>
         {props.children}
       </CheckCard>
     </>

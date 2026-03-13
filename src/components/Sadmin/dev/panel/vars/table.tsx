@@ -27,6 +27,9 @@ const tableColumns = (data): saFormColumnsType => [
         colProps: { span: 24 },
         rowProps: { gutter: 0 },
         valueType: 'formList',
+        fieldProps: {
+          arrowSort: true,
+        },
         columns: [
           {
             valueType: 'group',

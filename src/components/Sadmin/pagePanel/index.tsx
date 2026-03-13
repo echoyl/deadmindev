@@ -1,22 +1,20 @@
 import request from '@/components/Sadmin/lib/request';
-import { BetaSchemaForm, PageContainer, ProCard, StatisticCard } from '@ant-design/pro-components';
+import { BetaSchemaForm, ProCard, StatisticCard } from '@ant-design/pro-components';
 import { Link, useModel } from '@umijs/max';
 //import { PageContainer } from '@ant-design/pro-layout';
-import { saConfig } from '@/components/Sadmin/config';
-import { SaBreadcrumbRender } from '@/components/Sadmin/helpers';
 import { SyncOutlined } from '@ant-design/icons';
 import { Bar, Column, Line, Pie } from '@ant-design/plots';
 import { App, Avatar, Button, Col, Flex, Row, Skeleton, Table, Tabs } from 'antd';
 import dayjs from 'dayjs';
+import { sum } from 'es-toolkit';
+import numeral from 'numeral';
 import React, { FC, useEffect, useState } from 'react';
+import { PageContainer404 } from '../404';
+import AreaMap from '../dev/panel/items/areaMap';
+import { MapShow } from '../map';
 import { getFormFieldColumns } from '../posts/formDom';
 import { getTableColumns } from '../posts/tableColumns';
 import styles from './style.less';
-import AreaMap from '../dev/panel/items/areaMap';
-import numeral from 'numeral';
-import { PageContainer404 } from '../404';
-import { MapShow } from '../map';
-import { sum } from 'es-toolkit';
 export const PagePanelHeader: FC = (props) => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState;
@@ -296,7 +294,7 @@ const PagePanel: React.FC<{ url?: string }> = (props) => {
                 <Col span={24} key={rowkey + 'form'}>
                   <ProCard
                     //style={{ padding: 0 }}
-                    bodyStyle={{ padding: 0 }}
+                    styles={{ body: { padding: 0 } }}
                     // style={{
                     //   marginBottom: -16,
                     //   borderBottomRightRadius: 0,

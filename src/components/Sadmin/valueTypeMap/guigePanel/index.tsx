@@ -576,7 +576,7 @@ const GuigePanel: FC<{
               />
             }
             extra={action}
-            bodyStyle={{ paddingBlockEnd: 0 }}
+            styles={{ body: { paddingBlockEnd: 0 } }}
           >
             {listDom}
           </ProCard>

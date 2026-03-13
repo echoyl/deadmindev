@@ -78,7 +78,7 @@ const ItemForm = (props) => {
   ) : (
     <ProCard
       //style={{ padding: 0 }}
-      bodyStyle={{ padding: 0 }}
+      styles={{ body: { padding: 0 } }}
       title={devEnable ? ctitle() : false}
       // style={{
       //   marginBottom: -16,
@@ -205,7 +205,7 @@ const ItemCol = (props) => {
         <ItemForm {...props} idata={idata} />
       ) : type == 'user' ? (
         <ProCard
-          styles={{header:devEnable ? { width: '100%', display: 'block' } : {}}}
+          styles={{ header: devEnable ? { width: '100%', display: 'block' } : {} }}
           title={devEnable ? ctitle() : false}
         >
           <PagePanelHeader flash={getData} />
@@ -228,7 +228,7 @@ const ItemRow = (props) => {
     <>
       {noTitle ? null : (
         <DevPanelColumnTitle
-          style={{ width: '25%', margin: index == 0 ? '0 0 -14px 0':'-14px 0' }}
+          style={{ width: '25%', margin: index == 0 ? '0 0 -14px 0' : '-14px 0' }}
           otitle={null}
           title={row?.title ? row?.title : '分组 - ' + row?.uid}
           uid={row?.uid}
