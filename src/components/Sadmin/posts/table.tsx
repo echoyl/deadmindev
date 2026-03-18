@@ -572,13 +572,22 @@ const SaTable: React.FC<saTableProps> = (props) => {
     medium: 40,
     large: 48,
   };
+  const tableSummaryHeightArr = {
+    small: 49,
+    middle: 57,
+    medium: 57,
+    large: 65,
+  };
   const tableSize = setting?.table?.size || tableProps.size || 'middle';
-  const [minHeight, setMinHeight] = useState<number>(223);
+  //检测是否有footer
+  const footerHeight = initialState?.settings?.adminSetting?.tech ? 38 : 0;
+  const [minHeight, setMinHeight] = useState<number>(185 + footerHeight);
   const tableHeaderHeight = tableHeaderHeightArr[tableSize];
   const tableFooterHeight = tableFooterHeightArr[tableSize];
   const tablePageHeight = tablePageHeightArr[tableSize];
+  const tableSummaryHeight = tableSummaryHeightArr[tableSize];
   useEffect(() => {
-    let defaultHeight = 223;
+    let defaultHeight = 185 + footerHeight;
     if (pageType == 'drawer') {
       defaultHeight -= 50;
     }
@@ -620,7 +629,16 @@ const SaTable: React.FC<saTableProps> = (props) => {
     initRequest,
   ]);
   const useStyles = createStyles(
-    ({ css }, { height, th, dataLength }: { height: number; th: number; dataLength: number }) => {
+    (
+      { css },
+      {
+        height,
+        th,
+        dataLength,
+        summary,
+        sh,
+      }: { height: number; th: number; dataLength: number; summary: any; sh: number },
+    ) => {
       //table组件中关闭scroll类名为ant-table-content开启scroll 是 ant-table-body 不包含头部所以需要计算头部高度
       if (height) {
         return {
@@ -633,7 +651,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
             }
             ${dataLength == 0
               ? `.ant-table-tbody {
-            height: calc(100vh - ${height + th}px);
+            height: calc(100vh - ${height + th + (summary ? sh : 0)}px);
           }`
               : ''}
           `,
@@ -647,6 +665,8 @@ const SaTable: React.FC<saTableProps> = (props) => {
     height: setting?.minHeightFullscreen !== false && pageType != 'modal' ? minHeight : 0,
     th: tableHeaderHeight,
     dataLength: data.length,
+    summary,
+    sh: tableSummaryHeight,
   });
   return (
     <SaContext.Provider
