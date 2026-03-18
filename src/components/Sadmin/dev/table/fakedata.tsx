@@ -1,8 +1,14 @@
-import { saFormColumnsType } from '@/components/Sadmin/helpers';
+import type { saFormColumnsType } from '@/components/Sadmin/helpers';
+import { t } from '@/components/Sadmin/helpers';
 import { SaForm } from '@/components/Sadmin/posts/post';
-import { Card } from 'antd';
+import { useIntl } from '@umijs/max';
+import { Button } from 'antd';
+import { useContext } from 'react';
+import ButtonDrawer from '../../action/buttonDrawer';
+import { SaContext } from '../../posts/table';
 
-export default () => {
+export default (props: any) => {
+  const { pageMenu = { model_id: 0 }, trigger } = props;
   const columns: saFormColumnsType = [
     {
       title: '生成数量',
@@ -95,41 +101,57 @@ export default () => {
       ],
     },
   ];
-  return (
-    <Card style={{ width: 1200 }}>
+  const intl = useIntl();
+  const model_id = pageMenu.model_id;
+  const DrawerForm = (mprops: any) => {
+    const { contentRender, setOpen } = mprops;
+    const { actionRef } = useContext(SaContext);
+    return (
       <SaForm
         msgcls={({ data }) => {
-          console.log(data);
+          setOpen(false);
+          actionRef?.current?.reload();
+          return;
         }}
-        width={1200}
-        pageType="page"
+        pageType="drawer"
         grid={true}
         devEnable={false}
         url="dev/model/fakeData"
-        dataId={10038}
-        paramExtra={{ id: 10038 }}
-        postExtra={{ id: 10038 }}
+        dataId={model_id}
+        paramExtra={{ id: model_id }}
+        postExtra={{ id: model_id }}
         tabs={[
           {
-            title: 'Fake data 生成',
+            title: 'Fake data',
             formColumns: columns,
-            // formColumns: [
-            //   {
-            //     title: (
-            //       <Space>
-            //         <span>标题</span> <TranslationModal />
-            //       </Space>
-            //     ),
-            //     dataIndex: 'title',
-            //   },
-            //   {
-            //     dataIndex: 'title_en-US',
-            //     formItemProps: { hidden: true },
-            //   },
-            // ],
           },
         ]}
+        formProps={{
+          contentRender,
+          submitter: {
+            //移除默认的重置按钮，点击重置按钮后会重新请求一次request
+            render: (props, doms) => {
+              return [
+                <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
+                  {t('cancel')}
+                </Button>,
+                doms[1],
+              ];
+            },
+          },
+        }}
       />
-    </Card>
+    );
+  };
+
+  return (
+    <ButtonDrawer
+      trigger={trigger}
+      width={1200}
+      title={t('data', intl)}
+      drawerProps={{ styles: { body: { paddingTop: 8 } } }}
+    >
+      <DrawerForm />
+    </ButtonDrawer>
   );
 };

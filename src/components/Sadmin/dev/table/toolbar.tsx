@@ -41,6 +41,7 @@ import { SaContext } from '../../posts/table';
 import { DndContext } from '../dnd-context';
 import { fieldColumn } from '../vars/model/fieldColumns';
 import { getModelColumns } from './baseFormColumns';
+import Fakedata from './fakedata';
 import { ToolbarColumnTitle } from './title';
 
 export const ToolBarDom = (props) => {
@@ -493,6 +494,22 @@ export const ToolBarMenu = (props) => {
               <ExportButton
                 request={{ data: { ids: [pageMenu?.id] }, url: 'dev/menu/export' }}
                 btn={{ type: 'link' }}
+              />
+            ),
+          },
+          {
+            type: 'divider',
+          },
+          {
+            key: 'fakedata',
+            label: (
+              <Fakedata
+                pageMenu={pageMenu}
+                trigger={
+                  <Button type="link" icon={<DatabaseOutlined />}>
+                    {t('data', intl)}
+                  </Button>
+                }
               />
             ),
           },
