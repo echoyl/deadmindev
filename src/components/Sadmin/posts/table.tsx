@@ -580,7 +580,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   };
   const tableSize = setting?.table?.size || tableProps.size || 'middle';
   //检测是否有footer
-  const footerHeight = initialState?.settings?.adminSetting?.tech ? 38 : 0;
+  const footerHeight = !initialState?.settings?.adminSetting?.tech && pageType == 'page' ? 0 : 38;
   const [minHeight, setMinHeight] = useState<number>(185 + footerHeight);
   const tableHeaderHeight = tableHeaderHeightArr[tableSize];
   const tableFooterHeight = tableFooterHeightArr[tableSize];

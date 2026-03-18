@@ -263,6 +263,20 @@ export const fieldColumn: saValueTypeMapType = {
           colProps: { span: 2 },
         },
         {
+          dataIndex: 'fake_type',
+          formItemProps: {
+            hidden: true,
+          },
+          colProps: { span: 0 },
+        },
+        {
+          dataIndex: 'fake_options',
+          formItemProps: {
+            hidden: true,
+          },
+          colProps: { span: 0 },
+        },
+        {
           title: '名称',
           dataIndex: 'title',
           colProps: { span: 3 },
