@@ -109,6 +109,7 @@ export interface saTableProps {
   afterDelete?: (ret: any) => void | boolean | Promise<boolean | void>; //删除数据后的回调
   afterFormPost?: (ret: any) => void | boolean | Promise<boolean | void>; //表单提交数据后的回调
   initPageUid?: string; //控制页面刷新 非request
+  cloneDeeped?: boolean; //是否深拷贝列
 }
 
 const components = {

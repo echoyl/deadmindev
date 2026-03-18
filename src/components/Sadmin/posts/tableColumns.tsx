@@ -216,8 +216,8 @@ export const getTableColumns = (props: Record<string, any>) => {
     checkDisable = false,
     variant = 'filled',
     intl,
+    cloneDeeped, //是否强制cloneDeep列，当modal中有table的时候 formsearch 的select设置options无效时，可能需要
   } = props;
-
   //if (!initRequest) return [];
   const allLabels = { ...defaultColumnsLabel, ...labels };
   const defaulColumns = {
@@ -260,7 +260,7 @@ export const getTableColumns = (props: Record<string, any>) => {
   const customerColumns =
     typeof columns == 'function'
       ? columns(enums, actionRef)
-      : devEnable
+      : devEnable || cloneDeeped
       ? cloneDeep(columns)
       : columns;
   //const allColumns = [...defaulColumns, ...customerColumns];
@@ -323,21 +323,22 @@ export const getTableColumns = (props: Record<string, any>) => {
         return data;
       };
     }
-    let options = [];
     const requestName = v.requestDataName
       ? v.requestDataName
       : v.fieldProps?.requestDataName
       ? v.fieldProps.requestDataName
       : false;
     if (requestName) {
-      options = enums?.[requestName];
+      const options = enums?.[requestName];
       v.requestDataName = requestName; //将requestDataName设置到v中，方便后续使用，放在fieldProps中会解构到dom后会报错提示
       delete v.fieldProps?.requestDataName;
-
-      v.fieldProps = {
-        ...v.fieldProps,
-        options: options ? options : [],
-      };
+      if (options) {
+        v.fieldProps = {
+          ...v.fieldProps,
+          options: options ? options : [],
+        };
+        delete v.requestDataName;
+      }
     }
 
     if (v.valueEnumDataName) {

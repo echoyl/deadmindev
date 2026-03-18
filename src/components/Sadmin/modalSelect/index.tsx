@@ -301,6 +301,7 @@ const ModalSelect = (props) => {
             table: { scroll: { x: 'max-content' }, size: 'small' },
           }}
           devEnable={false}
+          cloneDeeped={true}
         />
       </Modal>
     </>
