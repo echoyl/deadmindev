@@ -5,17 +5,17 @@ import { theme } from 'antd';
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const { initialState } = useModel('@@initialState');
-  const tech = `${currentYear} ${initialState?.settings?.adminSetting?.tech}`;
-  const copyright = <span dangerouslySetInnerHTML={{ __html: tech }}></span>;
+  const techContent = initialState?.settings?.adminSetting?.tech;
+  const tech = techContent ? `${currentYear} ${techContent}` : '';
   const { token } = theme.useToken();
-  return (
+  return !tech ? null : (
     <>
       <DefaultFooter
         style={{
           background: 'none',
           color: token.colorTextBase,
         }}
-        copyright={copyright}
+        copyright={<span dangerouslySetInnerHTML={{ __html: tech }}></span>}
         //copyright={<a href="#">test</a>}
         // links={[
         //   {

@@ -259,7 +259,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       gap: [250, 300],
       offset: [200, 200],
     },
-    footerRender: () => <Footer />,
+    footerRender: initialState?.settings?.adminSetting?.tech ? () => <Footer /> : false,
     onPageChange: () => {
       // 如果没有登录，重定向到 login
       const pathname = history.location.pathname.replace(adminSetting?.baseurl, '/');
