@@ -14,6 +14,7 @@ import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 
 import { PageContainer404 } from '@/components/Sadmin/404';
 import { isFunction, isUndefined } from 'es-toolkit';
+import { isObj } from '../checkers';
 import { t, tplComplie } from '../helpers';
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
 import type { saTableProps } from './table';
@@ -123,8 +124,8 @@ export const SaForm: FC<saFormProps> = (props) => {
       })
       .then((ret) => {
         props.afterPost?.(ret);
-
         if (setting?.steps_form) {
+          return ret;
         } else {
           //console.log('re set data', ret.data, formRef?.current);
           //setDetail({ ...ret.data });
@@ -246,6 +247,35 @@ export const SaForm: FC<saFormProps> = (props) => {
     devEnable,
   });
 
+  const stepPost = async (index: number) => {
+    //每一步都将之前的表单信息提交到url
+    const step_data = { step_index: index, data: [] };
+    formMapRef?.current?.forEach((formInstanceRef) => {
+      step_data.data.push(formInstanceRef?.current?.getFieldsFormatValue());
+    });
+    const { code, data } = await post(step_data);
+    if (code) {
+      return false;
+    }
+    //将传回的数据又重新赋值一遍
+    if (index + 1 == _formColumns.length) {
+      //最后一步 重置表单
+      setStepFormCurrent(0);
+      formMapRef?.current?.forEach((formInstanceRef) => {
+        formInstanceRef?.current?.resetFields();
+      });
+    } else {
+      formMapRef?.current?.forEach((formInstanceRef, i) => {
+        const v = data.data?.[i];
+        if (v && isObj(v) && Object.keys(v).length > 0) {
+          formInstanceRef?.current?.setFieldsValue(v);
+        }
+      });
+    }
+
+    return true;
+  };
+
   return (
     <SaContext.Provider
       value={{
@@ -261,70 +291,70 @@ export const SaForm: FC<saFormProps> = (props) => {
           <FormAddTab pageMenu={pageMenu} style={pageType != 'page' ? { marginTop: 16 } : {}} />
         ) : null}
         {setting?.steps_form ? (
-          <StepsForm
-            current={stepFormCurrent}
-            onCurrentChange={(current) => {
-              setStepFormCurrent(current);
-            }}
-            formMapRef={formMapRef}
-            onFinish={async (values) => {
-              //console.log(values);
-              //message.success('提交成功');
-              //提交操作 让分步表单中最后一步 接管
-              //return Promise.resolve(true);
-            }}
-            formProps={{
-              validateMessages: {
-                required: '此项为必填项',
-              },
-            }}
-          >
-            {_formColumns?.map((cl, index) => {
-              //console.log('cl', cl);
-              return (
-                <StepsForm.StepForm
-                  key={index}
-                  name={'step_' + index}
-                  title={cl.title || cl.tab?.title || t('baseInfo')}
-                  onFinish={async () => {
-                    //每一步都将之前的表单信息提交到url
-                    let data = { step_index: index };
-                    formMapRef?.current?.forEach((formInstanceRef) => {
-                      data = { ...data, ...formInstanceRef?.current?.getFieldsFormatValue() };
-                    });
-                    return post(
-                      data,
-                      index + 1 == _formColumns.length ? undefined : () => null,
-                      index + 1 == _formColumns.length ? undefined : () => {},
-                    ).then(({ code, data, msg }) => {
-                      //将传回的数据又重新赋值一遍
-                      if (code) {
-                        messageApi?.error(msg);
-                        return false;
-                      }
-                      if (index + 1 == _formColumns.length) {
-                        //最后一步 重置表单
-                        setStepFormCurrent(0);
-                        formMapRef?.current?.forEach((formInstanceRef) => {
-                          formInstanceRef?.current?.resetFields();
-                        });
-                      }
-                      formMapRef?.current?.forEach((formInstanceRef) => {
-                        formInstanceRef?.current?.setFieldsValue(data);
-                      });
-
-                      return true;
-                    });
-                  }}
-                  style={pageType == 'page' ? { margin: 'auto', maxWidth: width } : {}}
-                >
-                  {_formColumns[index] ? (
-                    <GetFormFields columns={_formColumns[index]?.columns} />
-                  ) : null}
-                </StepsForm.StepForm>
-              );
-            })}
-          </StepsForm>
+          <>
+            {initialState?.settings?.adminSetting?.dev && pdevEnable ? (
+              <FormAddTab pageMenu={pageMenu} type="formTab" />
+            ) : null}
+            <StepsForm
+              current={stepFormCurrent}
+              onCurrentChange={(current) => {
+                setStepFormCurrent(current);
+              }}
+              formMapRef={formMapRef}
+              onFinish={async (values) => {
+                //console.log(values);
+                //message.success('提交成功');
+                //提交操作 让分步表单中最后一步 接管
+                return stepPost(_formColumns.length - 1);
+              }}
+              formProps={{
+                validateMessages: {
+                  required: t('validateMessages.requeired', intl),
+                },
+              }}
+              stepsProps={setting?.stepsProps}
+            >
+              {_formColumns?.map((thistab, index) => {
+                //console.log('cl', cl);
+                const label = thistab.title || thistab.tab?.title || t('baseInfo', intl);
+                const { uid } = thistab || {};
+                return (
+                  <StepsForm.StepForm
+                    key={index}
+                    name={'step_' + index}
+                    title={
+                      devEnable ? (
+                        <TabColumnTitle uid={uid} title={label} />
+                      ) : (
+                        tplComplie(label, { intl })
+                      )
+                    }
+                    stepProps={thistab.tab?.props}
+                    onFinish={
+                      index == _formColumns.length - 1
+                        ? undefined
+                        : async () => {
+                            return stepPost(index);
+                          }
+                    }
+                    grid={grid}
+                    rowProps={{
+                      gutter: [0, 0],
+                    }}
+                    style={
+                      pageType == 'page'
+                        ? { margin: 'auto', maxWidth: width || 800, minWidth: width || 800 }
+                        : {}
+                    }
+                    {...props.formProps}
+                    {...setting?.form}
+                  >
+                    {thistab ? <GetFormFields columns={thistab.columns} /> : null}
+                  </StepsForm.StepForm>
+                );
+              })}
+            </StepsForm>
+          </>
         ) : (
           <ProForm
             key="ProForm"
@@ -367,7 +397,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                   }
             }
             validateMessages={{
-              required: '此项为必填项',
+              required: t('validateMessages.requeired', intl),
             }}
             omitNil={false} //关闭删除值为undefined的键
             {...props.formProps}

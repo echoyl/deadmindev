@@ -73,6 +73,7 @@ const formMoreType = [
   { label: 'treeSelect', value: 'treeSelect' },
   { label: 'cascader', value: 'cascader' },
   { label: 'radio', value: 'radio' },
+  { label: 'checkbox', value: 'checkbox' },
   { label: 'switch', value: 'switch' },
   { label: 'AutoComplete', value: 'saAutoComplete' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },

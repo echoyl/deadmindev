@@ -237,6 +237,7 @@ const BaseForm = (props: Record<string, any>) => {
         if (rdata?.data) {
           setJson?.(rdata.data);
         }
+        return true;
       }}
       saFormProps={{ devEnable: false }}
       width={1000}

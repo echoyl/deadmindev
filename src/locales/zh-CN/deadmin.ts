@@ -96,4 +96,5 @@ export default {
   doc: '文档',
   list: '列表',
   login: '登录',
+  'validateMessages.requeired': '此项为必填项',
 };

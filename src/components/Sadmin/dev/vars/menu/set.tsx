@@ -209,6 +209,7 @@ const form: saFormColumnsType = [
         fieldProps: {
           buttonStyle: 'solid',
           defaultValue: 'vertical',
+          size: 'small',
           options: [
             { label: 'horizontal', value: 'horizontal' },
             { label: 'vertical', value: 'vertical' },
@@ -224,11 +225,31 @@ const form: saFormColumnsType = [
         fieldProps: {
           buttonStyle: 'solid',
           defaultValue: 'filled',
+          size: 'small',
           options: [
             { label: 'outlined', value: 'outlined' },
             { label: 'borderless', value: 'borderless' },
             { label: 'filled', value: 'filled' },
             { label: 'underlined', value: 'underlined' },
+          ],
+        },
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['stepsProps', 'orientation'],
+        title: '分布表单步骤方向',
+        valueType: 'radioButton',
+        fieldProps: {
+          size: 'small',
+          buttonStyle: 'solid',
+          options: [
+            { label: 'horizontal', value: 'horizontal' },
+            { label: 'vertical', value: 'vertical' },
           ],
         },
         colProps: { span: 12 },

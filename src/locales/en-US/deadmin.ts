@@ -96,4 +96,5 @@ export default {
   doc: 'Doc',
   list: 'List',
   login: 'Login',
+  'validateMessages.requeired': 'Required',
 };
