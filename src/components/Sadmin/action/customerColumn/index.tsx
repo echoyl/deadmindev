@@ -83,7 +83,10 @@ const CustomerColumnRender = (props) => {
       return <Timeline style={{ paddingTop: 10 }} key={i} items={timeline_items} {...item.props} />;
     } else if (item.domtype == 'button' || item.domtype == 'text') {
       //tooltip也支持变量读取
-      if ((!item.btn || !item.btn.text) && ['edit', 'delete', 'view'].includes(item.action)) {
+      if (
+        (!item.btn || (!item.btn.text && !item.btn.icon)) &&
+        ['edit', 'delete', 'view'].includes(item.action)
+      ) {
         //如果action是编辑删除查看且未设定自定义信息，则使用默认btn
         item.btn = {
           type: 'link',
