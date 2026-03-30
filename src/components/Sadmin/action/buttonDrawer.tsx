@@ -114,7 +114,7 @@ const ButtonDrawer: FC<actionConfirm> = (props) => {
   //     footer: drawerProps.footerStyle,
   //   };
   // }
-  const { styles, ...restProps } = drawerProps;
+  const { styles, ...restProps } = drawerProps || {};
   return (
     <>
       {triggerDom}
