@@ -180,7 +180,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         } else {
           options = enums?.[requestName] ? enums[requestName] : detail?.[requestName];
         }
-
+        v.requestDataName = requestName; //将requestDataName设置到v中，方便后续使用，放在fieldProps中会解构到dom后会报错提示
         //console.log('has requestName is', requestName, enums, detail, options);
         // if (options && !isArr(options)) {
         //   console.log('not arr', requestName, v, options);
