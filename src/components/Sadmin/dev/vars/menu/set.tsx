@@ -105,7 +105,7 @@ const table: saFormColumnsType = [
     valueType: 'group',
     columns: [
       {
-        dataIndex: ['pagination', 'pageSize'],
+        dataIndex: ['pagination', 'defaultPageSize'],
         title: '分页数量',
         valueType: 'digit',
         fieldProps: {
