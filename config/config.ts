@@ -88,7 +88,11 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/layout-menu
    */
   title: 'Loading...',
-  metas: [{ 'http-equiv': 'Cache-Control', content: 'no-store' }],
+  metas: [
+    { 'http-equiv': 'Cache-Control', content: 'no-store' },
+    { 'http-equiv': 'Pragma', content: 'no-cache' },
+    { 'http-equiv': 'Expires', content: '0' },
+  ],
   layout: {
     locale: true,
     ...defaultSettings,
