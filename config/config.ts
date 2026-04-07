@@ -2,7 +2,6 @@
 
 import { defineConfig } from '@umijs/max';
 import { join } from 'node:path';
-import path from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
@@ -173,26 +172,26 @@ export default defineConfig({
   mock: {
     include: ['mock/**/*', 'src/pages/**/_mock.ts'],
   },
-  //utoopack: {},
+  utoopack: {},
   /**
    * @name 是否开启 mako
    * @description 使用 mako 极速研发
    * @doc https://umijs.org/docs/api/config#mako
    */
   //mako: {},
-  esbuildMinifyIIFE: true,
+  //esbuildMinifyIIFE: true,
   requestRecord: {},
-  //exportStatic: {},
+  exportStatic: {},
   define: {
     'process.env.CI': process.env.CI,
   },
-  mfsu: {
-    strategy: 'normal',
-  },
-  codeSplitting: {
-    jsStrategy: 'granularChunks',
-  },
-  alias: {
-    'antd/lib': path.resolve(__dirname, '../node_modules/antd/es'),
-  },
+  // mfsu: {
+  //   strategy: 'normal',
+  // },
+  // codeSplitting: {
+  //   jsStrategy: 'granularChunks',
+  // },
+  // alias: {
+  //   'antd/lib': path.resolve(__dirname, '../node_modules/antd/es'),
+  // },
 });
