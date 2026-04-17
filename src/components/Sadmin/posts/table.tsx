@@ -187,7 +187,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const [total, setTotal] = useState<number>(0);
   //分页设置
   const [currentPageSize, setCurrentPageSize] = useState<number>(
-    setting?.pagination?.defaultPageSize ? setting?.pagination?.defaultPageSize : 20,
+    setting?.pagination?.defaultPageSize || 20,
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
 
