@@ -127,8 +127,10 @@ export function rootContainer(container: JSX.Element) {
         const { devData: ddata, ...rest } = v;
         setSetting(rest);
         setDevData(ddata);
+        const supportLocales = ['en-US', 'zh-CN'];
         v?.adminSetting?.locales?.forEach((lo: Record<string, any>) => {
           (addLocale as any)(lo.name, lo.configs);
+          supportLocales.push(lo.name);
         });
         if (v?.adminSetting?.lang && v?.adminSetting?.locale) {
           const lang =
@@ -137,7 +139,11 @@ export function rootContainer(container: JSX.Element) {
               : '';
           if (!lang) {
             //用户未主动选择语言的时候设置后台返回的默认语言
-            setLocale(v?.adminSetting?.locale, false);
+            //如果 supportLocales 不存在 设置一个默认语言
+            const locale = supportLocales.includes(v?.adminSetting?.locale)
+              ? v?.adminSetting?.locale
+              : 'zh-CN';
+            setLocale(locale, false);
           }
         }
         createFromIconfontCN({
