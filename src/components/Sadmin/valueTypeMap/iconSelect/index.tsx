@@ -136,11 +136,22 @@ const IconSelectPanel = (props: any) => {
     }
   };
   useEffect(() => {
-    if (icons.length < 1) {
-      setAllIcons(getIcons(setting?.adminSetting?.iconfont));
-    }
     setShowIcons(getIconsByCate(type));
   }, [keyword, icons]);
+  useEffect(() => {
+    const allIconsTabData = getIcons(setting?.adminSetting?.iconfont);
+    setAllIcons(allIconsTabData);
+    if (value) {
+      //如果有值，检测Segmented选中的位置
+      const selectTab = allIconsTabData.find(
+        (v: Record<string, any>) =>
+          v.icons?.findIndex((iconName: string) => iconName == value) > -1,
+      );
+      if (selectTab) {
+        setType(selectTab.value);
+      }
+    }
+  }, []);
   return (
     <Card
       style={{ minWidth: 400 }}
@@ -169,7 +180,8 @@ const IconSelectPanel = (props: any) => {
                 className={[iconSelectItem, selectName == name ? 'hover' : ''].join(' ')}
                 title={name}
                 key={name}
-                onClick={(e) => {
+                onMouseDown={(e) => {
+                  //onclick事件改成onMouseDown事件触发，onclick点击自定义icon时，需要点击2次才能触发
                   inputRef?.current?.focus();
                   onChange?.(name);
                   setSelectName(name);
@@ -212,11 +224,18 @@ const IconSelectInput = (props: any) => {
       setValue(null);
     }
   }, [uvalue]);
+  //自定义icon不是svg字体格式，所以搜索的时候隐藏掉，不然会占据input输入框，之前是设置了透明
+  const iconSelectClassname = css`
+    & .ant-select-content-has-search-value span {
+      display: none;
+    }
+  `;
   return (
     <Select
       size={size}
       open={open}
       allowClear
+      className={iconSelectClassname}
       placeholder="请选择图标"
       showSearch={{
         onSearch: (v) => {
