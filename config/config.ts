@@ -194,9 +194,9 @@ export default defineConfig({
    * @doc https://umijs.org/docs/api/config#mako
    */
   //mako: {},
-  //esbuildMinifyIIFE: true,
+  esbuildMinifyIIFE: true,
   requestRecord: {},
-  exportStatic: {},
+  //exportStatic: {},
   define: {
     'process.env.CI': process.env.CI,
   },
