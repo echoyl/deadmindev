@@ -146,13 +146,16 @@ export const SaForm: FC<saFormProps> = (props) => {
   if (query) {
     query.split('&').map((v) => {
       const [key, value] = v.split('=');
-      params[key] = value;
+      if (key == 'id' && params.id) {
+        //如果参数中已经有了id名称的数据，则不再读取url中的id,以传参优先级更高
+      } else {
+        params[key] = value;
+      }
     });
   }
   if (params['*']) {
     delete params['*'];
   }
-
   //获取数据
   //console.log('post params', params, url);
   const get = async () => {
