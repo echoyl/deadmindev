@@ -7,6 +7,7 @@ import type { FC, Key, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import Confirm from '../action/confirm';
 import ConfirmForm from '../action/confirmForm';
+import { fullPageHeight } from '../helper/functions';
 import { findParents, getMenuDataById, t } from '../helpers';
 
 type TreeMenuProps = {
@@ -16,9 +17,12 @@ type TreeMenuProps = {
   fieldNames?: GetProp<TreeProps, 'fieldNames'>;
   selectedKeys?: GetProp<TreeProps, 'selectedKeys'>;
   onSelect?: (keys: Key[]) => void;
-  onReload?: () => void;
+  onReload?: (data: any, type?: string) => void;
   defaultExpandAll?: boolean;
   showLine?: boolean;
+  showType?: 'modal' | 'drawer';
+  onlyChildCanBeSelected?: boolean; //是否只有子元素可以被选中
+  showClearSelected?: boolean; //是否显示清除选中
 };
 
 const DeleteColumn: FC<{
@@ -26,7 +30,7 @@ const DeleteColumn: FC<{
   url?: string;
   id?: Key;
   title?: ReactNode;
-  callback?: () => void;
+  callback?: (data?: any) => void;
 }> = (props) => {
   const { url, id, children, title = '', callback } = props;
   return (
@@ -60,6 +64,9 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
     onReload,
     defaultExpandAll = true,
     showLine = true,
+    showType,
+    onlyChildCanBeSelected = false,
+    showClearSelected = true,
   } = props;
   const [formOpen, setFormOpen] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
@@ -93,6 +100,9 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
     sdata.forEach((item) => {
       item._level = t_level;
       if (item[children]) {
+        if (onlyChildCanBeSelected) {
+          item.selectable = false;
+        }
         render(item[children], t_level + 1);
       }
     });
@@ -100,14 +110,15 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   useEffect(() => {
     render(treeData);
   }, [treeData, fieldNames]);
+  const baseHeight = fullPageHeight(initialState?.settings);
   return (
     <Card
       title={title}
       variant="borderless"
-      styles={{ root: { height: '100%' } }}
+      styles={{ body: { height: `calc(100vh - ${baseHeight + 56}px)`, overflowY: 'auto' } }}
       extra={
         <Space>
-          {selectedKeys && selectedKeys[0] ? (
+          {selectedKeys && selectedKeys[0] && showClearSelected ? (
             <Tooltip title="重置">
               <Button
                 color="default"
@@ -145,11 +156,14 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
         onOpen={(open) => setFormOpen(open)}
         dataId={dataId}
         data={postData}
-        callback={() => {
+        callback={({ code, data }) => {
           //修改或添加成功后需要刷新页面中的数据
-          onReload?.();
+          if (!code) {
+            onReload?.(data, 'edit');
+          }
           return true;
         }}
+        showType={showType}
       />
       {treeData.length > 0 ? (
         <Tree
@@ -197,8 +211,10 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
                           id={nodeKey}
                           title={nodeTitle}
                           url={pageMenu?.data?.url + '/1'}
-                          callback={() => {
-                            onReload?.();
+                          callback={({ code }) => {
+                            if (!code) {
+                              onReload?.({ id: nodeKey }, 'delete');
+                            }
                             return true;
                           }}
                         >

@@ -417,7 +417,8 @@ export const ToolModelFieldsForm = (props) => {
  * @returns
  */
 export const ToolBarMenu = (props) => {
-  const { trigger, pageMenu = { id: 0, model_id: 0 } } = props;
+  const { trigger = <Button icon={<SettingOutlined />} />, pageMenu = { id: 0, model_id: 0 } } =
+    props;
   // console.log('pageMenu', pageMenu);
   const intl = useIntl();
   return (

@@ -8,6 +8,7 @@ import { MonacoEditor } from './jsonEditor';
 const AliyunVideo = lazy(() => import('@/components/Sadmin/uploader/video'));
 const Uploader = lazy(() => import('@/components/Sadmin/uploader'));
 const TableFromBread = lazy(() => import('@/components/Sadmin/tableFromBread'));
+const Markdown = lazy(() => import('@/components/Sadmin/valueTypeMap/markdown'));
 //const ConfirmForm = lazy(() => import('@/components/Sadmin/action/confirmForm'));
 export const AliyunVideoRender = (props) => {
   return (
@@ -58,4 +59,12 @@ export const MDEditorRender = (_, props) => {
 export const AlertRender = (_, props) => {
   const { message = '', title = '', ...restProps } = props.fieldProps;
   return <Alert title={_} type="info" showIcon title={title ? title : message} {...restProps} />;
+};
+
+export const MarkdownRender = (props) => {
+  return (
+    <Suspense>
+      <Markdown>{props.children}</Markdown>
+    </Suspense>
+  );
 };

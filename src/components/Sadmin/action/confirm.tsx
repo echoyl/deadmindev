@@ -15,7 +15,7 @@ interface actionConfirm {
   url?: string;
   data?: {};
   dataId?: Key;
-  callback?: (value: any) => void;
+  callback?: (value?: any) => void;
   //trigger?: (value: any) => ReactNode;
   trigger?: JSX.Element | boolean;
   title?: string;

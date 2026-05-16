@@ -6,6 +6,7 @@ import { Button, Result, theme } from 'antd';
 import React, { lazy, Suspense, useContext, useEffect } from 'react';
 import Loading from '../Loading';
 import { useAdminStore } from './dev/context';
+import Markdown from './posts/markdown';
 
 const PagePanel = lazy(() => import('@/components/Sadmin/pagePanel'));
 const PostsList = lazy(() => import('@/components/Sadmin/posts'));
@@ -88,6 +89,15 @@ const ListPage: React.FC<Record<string, any>> = (props) => {
           {...data}
           tableTitle={false}
         />
+      ) : pagetype == 'xmarkdown' ? (
+        <Markdown
+          key={pathname}
+          path={pathname}
+          name={name}
+          pageMenu={menu}
+          {...data}
+          tableTitle={false}
+        />
       ) : (
         <PostsList
           key={pathname}
@@ -142,6 +152,7 @@ const PageTypes: React.FC<Record<string, any>> = ({ menu, match, pathname }) => 
       case 'category':
       case 'table':
       case 'justTable':
+      case 'xmarkdown':
         return (
           <ListPage pathname={pathname} menu={menu} name={name} pagetype={page_type} data={data} />
         );
