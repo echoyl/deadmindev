@@ -1,24 +1,22 @@
-import { Mermaid } from '@ant-design/x';
-import XMarkdown, { type ComponentProps } from '@ant-design/x-markdown';
+import XMarkdown from '@ant-design/x-markdown';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import React, { useContext } from 'react';
 import { SaDevContext } from '../../dev';
-import ReactInfographic from './ReactInfographic';
 import './Welcome-dark.css';
 import './Welcome.css';
-const Code: React.FC<ComponentProps> = (props) => {
-  const { className, children } = props;
-  const lang = className?.match(/language-(\w+)/)?.[1] || '';
-  if (typeof children !== 'string') return children;
-  if (lang === 'mermaid') {
-    return <Mermaid>{children}</Mermaid>;
-  }
-  if (lang === 'infographic') {
-    return <ReactInfographic>{children}</ReactInfographic>;
-  }
-  return children;
-};
+// const Code: React.FC<ComponentProps> = (props) => {
+//   const { className, children } = props;
+//   const lang = className?.match(/language-(\w+)/)?.[1] || '';
+//   if (typeof children !== 'string') return children;
+//   if (lang === 'mermaid') {
+//     return <Mermaid>{children}</Mermaid>;
+//   }
+//   if (lang === 'infographic') {
+//     return <ReactInfographic>{children}</ReactInfographic>;
+//   }
+//   return children;
+// };
 const mdConfig = {
   renderer: {
     code({ text, lang }: { text: string; lang?: string }) {
@@ -78,12 +76,45 @@ const Heading: React.FC<HeadingProps> = ({
     </Tag>
   );
 };
+const getPropsClassname = (props: any) => {
+  const {
+    streamStatus,
+    domNode,
+    children,
+    className,
+    classname,
+    class: htmlClass,
+    ...restProps
+  } = props;
+  const allClasses = [className, classname, htmlClass].filter(Boolean);
+  const classes = allClasses.length > 0 ? allClasses.join(' ') : '';
+  if (classes) {
+    restProps.className = classes;
+  }
+  return restProps;
+};
 const mdComponents = {
   h1: (props: HeadingProps) => <Heading tag="h1" {...props} />,
   h2: (props: HeadingProps) => <Heading tag="h2" {...props} />,
   h3: (props: HeadingProps) => <Heading tag="h3" {...props} />,
   h4: (props: HeadingProps) => <Heading tag="h4" {...props} />,
-  code: Code,
+  //code: Code,
+  a: (props: any) => {
+    //普通锚点需要添加一个id属性，然后antd的锚点组件可以根据这个id属性来定位
+    const { children } = props;
+    const restProps = getPropsClassname(props);
+    if (typeof children === 'string') return <a {...restProps}>{children}</a>;
+    return <div id={restProps.name} {...restProps}></div>;
+  },
+  div: (props: any) => {
+    const { children } = props;
+    const restProps = getPropsClassname(props);
+    if (children?.length > 10) {
+      return <p {...restProps}>{children}</p>;
+    } else {
+      return <div {...restProps}>{children}</div>;
+    }
+  },
 };
 
 const Markdown = (props: any) => {

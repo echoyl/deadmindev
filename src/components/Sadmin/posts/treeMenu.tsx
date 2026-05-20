@@ -23,6 +23,7 @@ type TreeMenuProps = {
   showType?: 'modal' | 'drawer';
   onlyChildCanBeSelected?: boolean; //是否只有子元素可以被选中
   showClearSelected?: boolean; //是否显示清除选中
+  maxLevel?: number; //最大层级
 };
 
 const DeleteColumn: FC<{
@@ -67,6 +68,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
     showType,
     onlyChildCanBeSelected = false,
     showClearSelected = true,
+    maxLevel = 0,
   } = props;
   const [formOpen, setFormOpen] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
@@ -74,7 +76,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   const [postData, setPostData] = useState<Record<string, any>>({});
   const { initialState } = useModel('@@initialState');
   const pageMenu = getMenuDataById(initialState?.currentUser?.menuData, page);
-  const level = pageMenu?.data?.level || 0;
+  const level = maxLevel || pageMenu?.data?.level || 0;
   const ftitle = fieldNames.title || 'label';
   const fkey = fieldNames.key || 'value';
   const children = fieldNames.children || 'children';

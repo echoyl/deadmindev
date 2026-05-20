@@ -80,7 +80,7 @@ const ListPage: React.FC<Record<string, any>> = (props) => {
   const level = menu?.data?.setting?.level || 0;
   return (
     <Suspense fallback={<Loading />}>
-      {pagetype == 'category' || level ? (
+      {pagetype == 'category' || (level && pagetype != 'xmarkdown') ? (
         <Category
           pageMenu={menu}
           key={pathname}

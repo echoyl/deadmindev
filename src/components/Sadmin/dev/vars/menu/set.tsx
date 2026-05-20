@@ -309,7 +309,7 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'close'],
         title: '是否关闭',
         valueType: 'switch',
-        colProps: { span: 6 },
+        colProps: { span: 4 },
         fieldProps: {
           defaultValue: true,
         },
@@ -318,7 +318,17 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'span'],
         title: '宽度n/24',
         valueType: 'digit',
-        colProps: { span: 6 },
+        colProps: { span: 4 },
+        fieldProps: {
+          defaultValue: 3,
+        },
+      },
+      {
+        dataIndex: ['leftMenu', 'mdAnchorLevel'],
+        title: '锚点层级',
+        tooltip: '如果页面是markdown类型，则可设置锚点目录层级，<=1表示关闭锚点目录',
+        valueType: 'digit',
+        colProps: { span: 4 },
         fieldProps: {
           defaultValue: 3,
         },
