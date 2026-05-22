@@ -237,6 +237,7 @@ export const DevLinks = (props: any) => {
   const { shape = 'circle' } = setting?.adminSetting?.floatButton || {};
   return (
     <FloatButton.Group shape={shape} style={{ insetBlockEnd: 75 }}>
+      <FloatButton.BackTop />
       {getFloatButton()}
       {setting?.adminSetting?.dev || inDevPage ? children : null}
     </FloatButton.Group>
