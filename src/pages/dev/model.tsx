@@ -303,6 +303,11 @@ export default () => {
                     type: 'folder',
                   },
                 },
+                {
+                  dataIndex: 'toname',
+                  title: '复制后name',
+                  tooltip: '不填则使用被复制模型的名称',
+                },
               ],
             },
             request: { url: 'dev/model/copyToFolder' },

@@ -38,6 +38,8 @@ export const MenuFormColumn = ({ intl }: { intl: any }): saFormTabColumnsType =>
             dataIndex: 'path',
             fieldProps: { placeholder: '请输入路径' },
             colProps: { span: 12 },
+            tooltip:
+              '如果是resource即页面类型是:列表，分类，API，markdown时不能以数字开头，且不能存在正则的字符串如.[]()等',
           },
         ],
       },
@@ -280,6 +282,11 @@ export default () => {
       dataIndex: 'toid',
       title: t('copyTo', intl),
       valueType: 'menuSelect',
+    },
+    {
+      dataIndex: 'topath',
+      title: '复制后path',
+      tooltip: '不填则使用被复制菜单的path',
     },
   ];
 
