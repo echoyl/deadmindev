@@ -6,6 +6,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { inArray, isArr } from '../../checkers';
 import { RequestButtonRender } from '../../components/requestButton';
 import { ExportButton, ImportButton } from '../../dev/table/toolbar';
+import { fixUrlWithPrefix } from '../../helper/functions';
 import { getFromObject, getMenuDataById, parseIcon, t, tplComplie } from '../../helpers';
 import { SaContext } from '../../posts/table';
 import TableFromBread from '../../tableFromBread';
@@ -31,7 +32,7 @@ const CustomerColumnRender = (props) => {
     dataindex,
   } = props;
   const { initialState } = useModel('@@initialState');
-  const { actionRef, formRef, saTableContext, searchData = {} } = useContext(SaContext);
+  const { actionRef, formRef, saTableContext, searchData = {}, url } = useContext(SaContext);
   const intl = useIntl();
   //const formValue = formRef?.current?.getFieldsValue?.(true);
   const [record, setRecord] = useState(orecord);
@@ -188,6 +189,7 @@ const CustomerColumnRender = (props) => {
         //解析request.data 支持读取record中的数据
         const newRequestData = getRequestData(item.request?.data || {});
         const newRequestGetData = getRequestData(item.request?.paramdata || {});
+        const requestUrl = fixUrlWithPrefix(url, item.request?.url);
         if (item.action == 'confirmForm') {
           const { idName = 'id' } = value;
           const dataId = getFromObject(record, idName);
@@ -198,7 +200,7 @@ const CustomerColumnRender = (props) => {
               msg={item.modal?.msg}
               formColumns={item.modal?.formColumns}
               page={item.modal?.page}
-              url={item.request?.url}
+              url={requestUrl}
               postUrl={item.request?.postUrl}
               data={{ ...paramExtra, ...newRequestData }}
               paramdata={{ ...paramExtra, ...newRequestGetData }}
@@ -230,7 +232,7 @@ const CustomerColumnRender = (props) => {
               record={record}
               trigger={dom}
               //trigger={false}
-              url={item.request?.url}
+              url={requestUrl}
               data={{ ...paramExtra, ...newRequestData }}
               method={item.request?.method ? item.request?.method : 'post'}
               msg={item.modal?.msg}
@@ -244,7 +246,7 @@ const CustomerColumnRender = (props) => {
             <RequestComponent
               key={key}
               trigger={dom}
-              requestParam={{ ...item.request, data: newRequestData }}
+              requestParam={{ ...item.request,url:requestUrl, data: newRequestData }}
             />
           );
         } else if (item.action == 'print') {
@@ -253,7 +255,7 @@ const CustomerColumnRender = (props) => {
               key={key}
               dataId={record?.id}
               trigger={(click) => <div onClick={click}>{dom}</div>}
-              url={item.request?.url}
+              url={requestUrl}
               data={{ ...paramExtra, ...newRequestData }}
               record={record}
               title={item.modal?.title}
@@ -329,6 +331,7 @@ const CustomerColumnRender = (props) => {
               key={key}
               fieldNames="id,title"
               {...item.request}
+              url={requestUrl}
               modelName={modelName}
               value={text}
               id={record.id}
@@ -396,6 +399,7 @@ const CustomerColumnRender = (props) => {
               {...item}
               request={{
                 ...item.request,
+                url: requestUrl,
                 data: { ...item.request?.data, ids: record?.id ? [record?.id] : [], ...paramExtra },
               }}
               styleProps={styleProps}

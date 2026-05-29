@@ -32,6 +32,12 @@ export const hasSearch = (items: any[]) => {
   return items?.some((v) => columnHasSearch(v));
 };
 
+export const pageTopHeight = () => {
+  const headerHeight = 46; //头部高度
+  const breadHeight = 43; //面包屑高度
+  return headerHeight + breadHeight;
+};
+
 /**
  * 计算全屏高度需要剪掉的基础高度，不同类型的页面需要再计算自己的页面中组件的高度
  * @param settings 系统配置
@@ -39,10 +45,8 @@ export const hasSearch = (items: any[]) => {
  */
 export const fullPageHeight = (settings?: Record<string, any>, pageType: string = 'page') => {
   const footerHeight = !settings?.adminSetting?.tech && pageType == 'page' ? 0 : 38; //底部高度
-  const headerHeight = 46; //头部高度
-  const breadHeight = 43; //面包屑高度
   const pagePaddingBottom = 16; //页面底部padding
-  return footerHeight + headerHeight + breadHeight + pagePaddingBottom;
+  return footerHeight + pageTopHeight() + pagePaddingBottom;
 };
 
 //读取data中第一个没有children的元素信息
@@ -62,5 +66,26 @@ export const getFirstChild: (
     }
   } else {
     return null;
+  }
+};
+
+/**
+ * 判断url是否是 ./ 相对路径开头，如果是的话拼接prefix
+ * @param prefix
+ * @param url
+ */
+export const fixUrlWithPrefix = (prefix: string | undefined, url: string) => {
+  if (!prefix || !url) {
+    return url;
+  }
+  if (url.startsWith('./')) {
+    let normalizedPrefix = prefix;
+    //检测prefix是否以/结尾，如果是去掉后 将prefix和url使用/拼接
+    if (prefix.endsWith('/')) {
+      normalizedPrefix = prefix.substring(0, prefix.length - 1);
+    }
+    return [normalizedPrefix, url.substring(2)].join('/');
+  } else {
+    return url;
   }
 };
