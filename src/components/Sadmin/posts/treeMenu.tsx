@@ -2,7 +2,7 @@
 import { CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import type { GetProp, TreeProps } from 'antd';
-import { Button, Card, Dropdown, Space, Tooltip, Tree } from 'antd';
+import { Button, Card, Dropdown, Empty, Space, Tooltip, Tree } from 'antd';
 import type { FC, Key, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import Confirm from '../action/confirm';
@@ -16,7 +16,7 @@ type TreeMenuProps = {
   treeData?: GetProp<TreeProps, 'treeData'>;
   fieldNames?: GetProp<TreeProps, 'fieldNames'>;
   selectedKeys?: GetProp<TreeProps, 'selectedKeys'>;
-  onSelect?: (keys: Key[]) => void;
+  onSelect?: (keys: Key[], info?: any) => void;
   onReload?: (data: any, type?: string) => void;
   defaultExpandAll?: boolean;
   showLine?: boolean;
@@ -24,6 +24,9 @@ type TreeMenuProps = {
   onlyChildCanBeSelected?: boolean; //是否只有子元素可以被选中
   showClearSelected?: boolean; //是否显示清除选中
   maxLevel?: number; //最大层级
+  editable?: boolean; //是否可编辑
+  addable?: boolean; //是否可以新增
+  deleteable?: boolean; //是否可以删除
 };
 
 const DeleteColumn: FC<{
@@ -69,6 +72,9 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
     onlyChildCanBeSelected = false,
     showClearSelected = true,
     maxLevel = 0,
+    editable = true, //是否可编辑
+    addable = true, //是否可以新增
+    deleteable = true, //是否可以删除
   } = props;
   const [formOpen, setFormOpen] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
@@ -134,7 +140,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
               />
             </Tooltip>
           ) : null}
-          {page ? (
+          {page && addable ? (
             <Button
               color="default"
               variant="link"
@@ -183,16 +189,18 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
                 trigger={['contextMenu']}
                 menu={{
                   items: [
-                    {
-                      key: 'edit',
-                      label: (
-                        <Space>
-                          <EditOutlined />
-                          <span>{t('edit')}</span>
-                        </Space>
-                      ),
-                    },
-                    level - 1 > _level
+                    editable
+                      ? {
+                          key: 'edit',
+                          label: (
+                            <Space>
+                              <EditOutlined />
+                              <span>{t('edit')}</span>
+                            </Space>
+                          ),
+                        }
+                      : null,
+                    level - 1 > _level && addable
                       ? {
                           key: 'add',
                           label: (
@@ -203,31 +211,35 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
                           ),
                         }
                       : null,
-                    {
-                      type: 'divider',
-                    },
-                    {
-                      key: 'delete',
-                      label: (
-                        <DeleteColumn
-                          id={nodeKey}
-                          title={nodeTitle}
-                          url={pageMenu?.data?.url + '/1'}
-                          callback={({ code }) => {
-                            if (!code) {
-                              onReload?.({ id: nodeKey }, 'delete');
-                            }
-                            return true;
-                          }}
-                        >
-                          <Space>
-                            <DeleteOutlined />
-                            <span>{t('delete')}</span>
-                          </Space>
-                        </DeleteColumn>
-                      ),
-                      danger: true,
-                    },
+                    (editable || (level - 1 > _level && addable)) && deleteable
+                      ? {
+                          type: 'divider',
+                        }
+                      : null,
+                    deleteable
+                      ? {
+                          key: 'delete',
+                          label: (
+                            <DeleteColumn
+                              id={nodeKey}
+                              title={nodeTitle}
+                              url={pageMenu?.data?.url + '/1'}
+                              callback={({ code }) => {
+                                if (!code) {
+                                  onReload?.({ id: nodeKey }, 'delete');
+                                }
+                                return true;
+                              }}
+                            >
+                              <Space>
+                                <DeleteOutlined />
+                                <span>{t('delete')}</span>
+                              </Space>
+                            </DeleteColumn>
+                          ),
+                          danger: true,
+                        }
+                      : null,
                   ],
                   onClick: ({ key, domEvent }) => {
                     if (key === 'edit') {
@@ -250,11 +262,13 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
               nodeTitle
             );
           }}
-          onSelect={(keys) => {
-            onSelect?.(keys);
+          onSelect={(keys, info) => {
+            onSelect?.(keys, info);
           }}
         />
-      ) : null}
+      ) : (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      )}
     </Card>
   );
 };

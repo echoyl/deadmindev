@@ -198,6 +198,7 @@ const schemaType = [
   { label: 'bigint-长整数', value: 'bigint' },
   { label: 'longtext-长Text', value: 'longtext' },
   { label: 'enum - 枚举', value: 'enum' },
+  { label: 'varbinary-字符', value: 'varbinary' },
 ];
 const formType = [
   { label: '搜索cascader', value: 'search_select' },

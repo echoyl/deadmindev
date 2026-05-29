@@ -1,31 +1,36 @@
 import { PageContainer404 } from '@/components/Sadmin/404';
 import { search2Obj } from '@/components/Sadmin/helpers';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { useModel, useSearchParams } from '@umijs/max';
-import type { GetProp } from 'antd';
-import { Anchor, Button, Card, Col, Row, Space } from 'antd';
+import type { Anchor, GetProp } from 'antd';
+import { Affix, Button, Card, Empty, Flex, Layout, Space } from 'antd';
 import type { Key } from 'react';
 import React, { useEffect, useState } from 'react';
 import ConfirmForm from '../action/confirmForm';
-import DevSwitch from '../dev/switch';
-import { ToolBarMenu } from '../dev/table/toolbar';
-import { fullPageHeight, getFirstChild } from '../helper/functions';
+import { useTableDesigner } from '../dev/table/designer';
+import { toolBarRender } from '../dev/table/toolbar';
+import { fullPageHeight, getFirstChild, pageTopHeight } from '../helper/functions';
 import request from '../lib/request';
 import { MarkdownRender } from '../valueTypeMap';
+import DocAnchor from '../valueTypeMap/markdown/DocAnchor';
 import './style.less';
-import type { saTableProps } from './table';
+import { SaContext, type saTableProps } from './table';
 import TreeMenu from './treeMenu';
-
+const { Content, Sider } = Layout;
 /**
  * 获取 markdown 内容中的锚点信息
  * @param content markdown 内容
  * @param maxLevel 获取的最大层级
  * @returns
  */
-const getAnchors = (content: string, maxLevel = 3) => {
-  if (!content) return [];
+const getAnchors = (markdownContent: string, maxLevel = 3) => {
+  if (!markdownContent) return [];
 
-  const headingRe = /^(\#{1,6})\s*(.+)$/gm;
+  //需要先将content中的代码块标签去除后再开始匹配
+  const codeBlockRegex = /^```[^\n]*\n[\s\S]*?\n^```/gm;
+  const content = markdownContent.replace(codeBlockRegex, '');
+
+  const headingRe = /^(\#{1,6})\s{1}(.+)$/gm;
   const headings: { level: number; title: string; slug: string; href: string }[] = [];
   const slugCounts: Record<string, number> = {};
   let m: RegExpExecArray | null;
@@ -75,14 +80,15 @@ const getAnchors = (content: string, maxLevel = 3) => {
       base = String(anchorName)
         .toLowerCase()
         .replace(/^\s*#/, '')
-        .replace(/[^\w\s-]/g, '')
+        //.replace(/[^\w\s-]/g, '')
         .trim()
         .replace(/\s+/g, '-');
     } else {
       base = title
         .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
+        //.replace(/[^\w\s-]/g, '')
         .trim()
+        .replace(/\s&\s/g, '-')
         .replace(/\s+/g, '-');
     }
 
@@ -132,16 +138,29 @@ const getAnchors = (content: string, maxLevel = 3) => {
 };
 
 const Markdown: React.FC<saTableProps> = (props) => {
-  const { tableTitle = false, path, leftMenu, setting, url = '', pageMenu, openType } = props;
+  const {
+    tableTitle = false,
+    path,
+    leftMenu,
+    setting,
+    url = '',
+    pageMenu: oPageMenu,
+    openType,
+    editable = true, //是否可编辑
+    addable = true, //是否可以新增
+    deleteable = true, //是否可以删除
+    devEnable = true,
+  } = props;
   const {
     title: treeTitle = '目录',
     url_name: category_id_name = 'id',
     field = { key: 'id', title: 'title', children: 'children' },
     close: leftMenuClose = false,
-    span = 4,
+    span = 200,
     mdAnchorLevel = 3,
     ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
+  const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
   const page = pageMenu?.id;
   const [categorys, setCategorys] = useState<any[]>([]);
   const { initialState } = useModel('@@initialState');
@@ -150,23 +169,24 @@ const Markdown: React.FC<saTableProps> = (props) => {
 
   //console.log(searchParams, 333);
   const searchCategoryId = searchParams.get(category_id_name);
-  const [category_id, setKey] = useState<Key>(
-    searchCategoryId
-      ? Number.isNaN(searchCategoryId)
-        ? searchCategoryId
-        : parseInt(searchCategoryId)
-      : 0,
-  );
+  const numberFormat = (num: string | null) => {
+    if (!num) {
+      return 0;
+    }
+    return Number.isNaN(num) ? num : parseInt(num);
+  };
+  const [category_id, setKey] = useState<Key>(numberFormat(searchCategoryId));
 
   const [mdContent, setMdContent] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [mdContentAnchors, setMdContentAnchors] = useState<GetProp<typeof Anchor, 'items'>>([]); //markdown内容中的锚点信息
 
   //获取单个元素的内容信息
-  const getMdContent = (menu: Record<string, any>) => {
+  const getMdContent = (item: Record<string, any>) => {
     setLoading(true);
+    setMdContentAnchors([]);
     const params = {
-      id: menu.id,
+      id: item.id,
     };
     request.get(url + '/show', { params }).then(({ code, data }) => {
       if (!code) {
@@ -175,16 +195,23 @@ const Markdown: React.FC<saTableProps> = (props) => {
       }
     });
   };
+
   useEffect(() => {
     //解析data.content中的markdown锚点信息
     if (mdAnchorLevel > 1) {
       const anchors = getAnchors(mdContent.content, mdAnchorLevel > 6 ? 6 : mdAnchorLevel);
-      setMdContentAnchors(anchors[0]?.children || []); //一般一个页面只有一个h1，所以直接使用第一个元素的子元素作为锚点信息
+      //console.log('anchors', anchors);
+      setMdContentAnchors(anchors.length > 1 ? anchors : anchors[0]?.children || []); //一般一个页面只有一个h1，所以直接使用第一个元素的子元素作为锚点信息
     }
   }, [mdContent, mdAnchorLevel]);
 
-  const onSelect = (keys: Key[]) => {
+  const onSelect = (keys: Key[], info: Record<string, any>) => {
     if (!keys || !keys.length) {
+      return;
+    }
+    if (info.node?.link) {
+      //是外链 则跳转链接
+      window.open(info.node.link, '_blank');
       return;
     }
     const key = keys.length > 0 ? keys[keys.length - 1] : 0;
@@ -194,6 +221,8 @@ const Markdown: React.FC<saTableProps> = (props) => {
       url_search_obj[category_id_name] = key + '';
     }
     setUrlSearch({ ...url_search_obj });
+    //将body的srolltop设置为0
+    window.scrollTo({ top: 0 });
     getMdContent({ id: key });
   };
   const getData = () => {
@@ -207,8 +236,28 @@ const Markdown: React.FC<saTableProps> = (props) => {
     if (firstChild) {
       getMdContent(firstChild);
       setKey(firstChild.id);
+    } else {
+      setLoading(false);
     }
   };
+  //const location = useLocation();
+  useEffect(() => {
+    const id = searchParams.get(category_id_name);
+    if (!id && !category_id) {
+      return;
+    }
+    window.scrollTo({ top: 0 });
+    if (!id) {
+      init(categorys);
+      return;
+    }
+    if (id != category_id) {
+      //切换了id，重新加载数据
+      const key = numberFormat(id);
+      setKey(key);
+      getMdContent({ id: key });
+    }
+  }, [searchParams]);
   useEffect(() => {
     //获取后台数据
     getData().then((res) => {
@@ -234,74 +283,119 @@ const Markdown: React.FC<saTableProps> = (props) => {
     });
   };
   const baseHeight = fullPageHeight(initialState?.settings);
+  const topHeight = pageTopHeight();
+  const siderStyle: React.CSSProperties = {
+    //overflow: 'auto',
+    height: `calc(100vh - ${baseHeight}px)`,
+    //width: `calc(${(span * 100) / 24}%)`,
+    //height: '100vh',
+    //position: 'fixed',
+    // insetInlineStart: 0,
+    //top: 0,
+  };
+  //console.log('pageMenu', pageMenu);
+  const toolBar = toolBarRender({
+    addable: false,
+    devEnable,
+    initRequest: true,
+    initialState,
+    pageMenu,
+    enums: { id: category_id },
+  })?.();
+  const tableDesigner = useTableDesigner({
+    pageMenu,
+    setPageMenu,
+    devEnable,
+  });
+  //定义 actionRef 其中有 reload方法
+
   return (
     <PageContainer404 title={tableTitle} path={path}>
-      <Row gutter={[30, 0]} style={!leftMenuClose ? { marginLeft: 0 } : {}}>
-        {!leftMenuClose && (
-          <Col span={span} style={{ paddingInline: 0 }}>
-            <TreeMenu
-              treeData={categorys}
-              onSelect={onSelect}
-              fieldNames={field}
-              selectedKeys={category_id ? [category_id] : []}
-              title={treeTitle}
-              page={page}
-              onReload={onReload}
-              showType={openType}
-              onlyChildCanBeSelected={true}
-              showClearSelected={false}
-              maxLevel={pageMenu?.data?.setting?.level}
-              {...treeMenuRest}
-            />
-          </Col>
-        )}
-        <Col span={!leftMenuClose ? 24 - span : 24}>
-          <Card
-            loading={loading}
-            variant="borderless"
-            title={mdContent?.title}
-            extra={
-              <Space>
-                <ConfirmForm
+      <SaContext.Provider
+        value={{
+          url,
+          tableDesigner,
+          actionRef: {
+            current: {
+              reload: () => {
+                getMdContent({ id: category_id });
+              },
+            },
+          },
+        }}
+      >
+        {/* <Row gutter={[30, 0]} style={!leftMenuClose ? { marginLeft: 0 } : {}}> */}
+        <Layout hasSider>
+          {!leftMenuClose && (
+            <Affix offsetTop={topHeight}>
+              <Sider style={siderStyle} width={span}>
+                <TreeMenu
+                  treeData={categorys}
+                  onSelect={onSelect}
+                  fieldNames={field}
+                  selectedKeys={category_id ? [category_id] : []}
+                  title={treeTitle}
                   page={page}
-                  trigger={<Button icon={<EditOutlined />} />}
-                  dataId={category_id}
-                  callback={({ code, data }) => {
-                    //修改或添加成功后需要刷新页面中的数据
-                    if (!code) {
-                      onReload?.(data, 'edit');
-                    }
-                    return true;
-                  }}
-                  showType="drawer"
-                  key="editmarkdown"
+                  onReload={onReload}
+                  showType={openType}
+                  onlyChildCanBeSelected={true}
+                  showClearSelected={false}
+                  maxLevel={pageMenu?.data?.setting?.level}
+                  addable={addable}
+                  deleteable={deleteable}
+                  editable={editable}
+                  {...treeMenuRest}
                 />
-                <ToolBarMenu key="devsetting" pageMenu={pageMenu} />
-                <DevSwitch key="DevSwitch" type="button" />
-              </Space>
-            }
-          >
-            <div
-              id="markdown-body"
-              style={{ height: `calc(100vh - ${baseHeight + 56 + 48}px)`, overflowY: 'scroll' }}
-            >
-              <Row gutter={[16, 0]} style={mdAnchorLevel > 1 ? { margin: 0 } : {}}>
-                <Col span={mdAnchorLevel > 1 ? 20 : 24}>
-                  <MarkdownRender>{mdContent?.content}</MarkdownRender>
-                </Col>
-                {mdAnchorLevel > 1 && (
-                  <Col span={4}>
-                    <Anchor
-                      items={mdContentAnchors}
-                      getContainer={() => document.getElementById('markdown-body') as HTMLElement}
+              </Sider>
+            </Affix>
+          )}
+          <Content style={!leftMenuClose ? { marginLeft: 1 } : undefined}>
+            <Card
+              loading={loading}
+              variant="borderless"
+              title={mdContent?.title}
+              extra={
+                <Space>
+                  {editable && (
+                    <ConfirmForm
+                      page={page}
+                      trigger={<Button icon={<EditOutlined />} />}
+                      dataId={category_id}
+                      callback={({ code, data }) => {
+                        //修改或添加成功后需要刷新页面中的数据
+                        if (!code) {
+                          onReload?.(data, 'edit');
+                        }
+                        return true;
+                      }}
+                      showType="drawer"
+                      key="editmarkdown"
                     />
-                  </Col>
-                )}
-              </Row>
-            </div>
-          </Card>
-        </Col>
-      </Row>
+                  )}
+                  <Button
+                    onClick={() => getMdContent({ id: category_id })}
+                    icon={<SyncOutlined />}
+                  />
+                  <Flex gap="small">{toolBar}</Flex>
+                </Space>
+              }
+              styles={{
+                root: {
+                  minHeight: `calc(100vh - ${baseHeight}px)`,
+                  ...(mdAnchorLevel > 1 ? { marginInlineEnd: 142 } : undefined),
+                },
+              }}
+            >
+              {mdContent?.content ? (
+                <MarkdownRender>{mdContent.content}</MarkdownRender>
+              ) : (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              )}
+            </Card>
+            {mdAnchorLevel > 1 && <DocAnchor anchors={mdContentAnchors} />}
+          </Content>
+        </Layout>
+      </SaContext.Provider>
     </PageContainer404>
   );
 };

@@ -322,6 +322,7 @@ const leftmenu: saFormColumnsType = [
         fieldProps: {
           defaultValue: 3,
         },
+        tooltip: '在markdown类型中只支持数字表示px值',
       },
       {
         dataIndex: ['leftMenu', 'mdAnchorLevel'],

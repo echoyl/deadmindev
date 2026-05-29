@@ -1,4 +1,5 @@
 import XMarkdown from '@ant-design/x-markdown';
+import { Link } from '@umijs/max';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import React, { useContext } from 'react';
@@ -103,18 +104,31 @@ const mdComponents = {
     //普通锚点需要添加一个id属性，然后antd的锚点组件可以根据这个id属性来定位
     const { children } = props;
     const restProps = getPropsClassname(props);
-    if (typeof children === 'string') return <a {...restProps}>{children}</a>;
-    return <div id={restProps.name} {...restProps}></div>;
-  },
-  div: (props: any) => {
-    const { children } = props;
-    const restProps = getPropsClassname(props);
-    if (children?.length > 10) {
-      return <p {...restProps}>{children}</p>;
+    if (typeof children === 'string') {
+      //如果href存在 antadmin 则使用link组件本地跳转
+      if (restProps.href?.indexOf('/antadmin/') > -1) {
+        //将href的 /antadmin/ 替换为空
+        const linkto = restProps.href?.replace('/antadmin/', '');
+        return <Link to={linkto}>{children}</Link>;
+      } else {
+        return <a {...restProps}>{children}</a>;
+      }
+    }
+    if (restProps.name) {
+      return <span id={restProps.name} {...restProps} />;
     } else {
-      return <div {...restProps}>{children}</div>;
+      return <a {...restProps}>{children}</a>;
     }
   },
+  // div: (props: any) => {
+  //   const { children } = props;
+  //   const restProps = getPropsClassname(props);
+  //   if (children?.length > 10) {
+  //     return <p {...restProps}>{children}</p>;
+  //   } else {
+  //     return <div {...restProps}>{children}</div>;
+  //   }
+  // },
 };
 
 const Markdown = (props: any) => {
