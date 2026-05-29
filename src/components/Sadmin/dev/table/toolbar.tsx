@@ -664,11 +664,14 @@ export const toolBarRender = (props) => {
   //const _btns = cloneDeep(toolBarButton);
   const _btns: any[] = [];
   if (devEnable) {
-    _btns.push({
-      valueType: 'devcolumns',
-      icon: <UnorderedListOutlined />,
-      key: 'devcolumns',
-    });
+    if (pageMenu.page_type != 'xmarkdown') {
+      _btns.push({
+        valueType: 'devcolumns',
+        icon: <UnorderedListOutlined />,
+        key: 'devcolumns',
+      });
+    }
+
     _btns.push({
       valueType: 'devsetting',
       icon: <SettingOutlined />,
@@ -690,19 +693,7 @@ export const toolBarRender = (props) => {
       if (devEnable && (isString(btn.title) || !btn.title)) {
         const btnTitle = btn.title ? btn.title : defaultTitle[btn.valueType];
         //按钮如果是导入因为有upload的高度 不需要额外添加padding
-        btn.title = (
-          <ToolbarColumnTitle
-            {...btn}
-            key={btn.key}
-            title={
-              btn.valueType == 'import' ? (
-                btnTitle
-              ) : (
-                <div style={{ padding: '4px 0' }}>{btnTitle}</div>
-              )
-            }
-          />
-        );
+        btn.title = <ToolbarColumnTitle {...btn} key={btn.key} title={btnTitle} />;
       }
 
       if (btn.valueType == 'export') {
@@ -757,9 +748,10 @@ export const toolBarRender = (props) => {
         );
       }
     });
-
-    typeof props.toolBar == 'function' &&
+    if (typeof props.toolBar == 'function') {
       btns.push(React.cloneElement(props.toolBar({ enums }), { key: 'ctoolbar' }));
+    }
+
     if (addable) {
       if (openType == 'drawer' || openType == 'modal') {
         btns.push(

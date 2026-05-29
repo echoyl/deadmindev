@@ -568,7 +568,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
       minWidth: 80,
     },
     table: {},
-    toolbar: { display: 'inline-block' },
+    toolbar: { display: 'inline-block', height: 22, lineHeight: '22px' },
   };
   const { styles: dstyles } = useDesignerCss();
   const { token } = theme.useToken();
@@ -600,14 +600,13 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
           </Space>
         </div>
       </div>
-      <div role="button">
-        {title ? tplComplie(title) : 'dev'}
-        {dataIndexSpan && false ? (
-          <span style={{ color: token.colorTextTertiary, fontWeight: 'normal', paddingLeft: 6 }}>
-            {dataIndexSpan}
-          </span>
-        ) : null}
-      </div>
+
+      {title ? tplComplie(title) : 'dev'}
+      {dataIndexSpan && false ? (
+        <span style={{ color: token.colorTextTertiary, fontWeight: 'normal', paddingLeft: 6 }}>
+          {dataIndexSpan}
+        </span>
+      ) : null}
     </SortableItem>
   );
 };
