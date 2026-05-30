@@ -95,7 +95,7 @@ export const ConfirmTriggerClick = (
       } else {
         //不跳转链接就刷新页面
         if (actionRef?.current && afterActionType == 'reload') {
-          actionRef.current?.reload();
+          actionRef.current?.reload(ret);
         } else {
           if (afterActionType == 'goback') {
             history.back();

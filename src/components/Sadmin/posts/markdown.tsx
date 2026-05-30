@@ -185,10 +185,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
   const getMdContent = (item: Record<string, any>) => {
     setLoading(true);
     setMdContentAnchors([]);
-    const params = {
-      id: item.id,
-    };
-    request.get(url + '/show', { params }).then(({ code, data }) => {
+    request.get(url + '/show', { params: item }).then(({ code, data }) => {
       if (!code) {
         setMdContent(data);
         setLoading(false);
@@ -234,7 +231,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
   const init = (data: any[]) => {
     const firstChild = getFirstChild(data, field.children);
     if (firstChild) {
-      getMdContent(firstChild);
+      getMdContent({ id: firstChild.id });
       setKey(firstChild.id);
     } else {
       setLoading(false);
@@ -275,7 +272,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
     getData().then((res) => {
       if (type == 'edit') {
         if (category_id == data.id) {
-          getMdContent(data);
+          getMdContent({ id: data.id });
         }
       } else if (type == 'delete') {
         init(res.data);
@@ -317,8 +314,8 @@ const Markdown: React.FC<saTableProps> = (props) => {
           tableDesigner,
           actionRef: {
             current: {
-              reload: () => {
-                getMdContent({ id: category_id });
+              reload: (ret: any) => {
+                getMdContent({ id: category_id, ...ret?.data });
               },
             },
           },
