@@ -16,6 +16,7 @@ const MenuSelect: FC<MenuSelectProps> = (props) => {
       treeDefaultExpandAll={true}
       allowClear={true}
       placeholder={'请选择菜单'}
+      showSearch={{ treeNodeFilterProp: 'title' }}
       {...props}
     />
   );

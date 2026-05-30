@@ -16,6 +16,7 @@ const ModelSelect: FC<MenuSelectProps & { type?: 'model' | 'folder' }> = (props)
       treeDefaultExpandAll={true}
       allowClear={true}
       placeholder={'请选择模型'}
+      showSearch={{ treeNodeFilterProp: 'title' }}
       {...props}
     />
   );
