@@ -84,7 +84,11 @@ export const fixUrlWithPrefix = (prefix: string | undefined, url: string) => {
     if (prefix.endsWith('/')) {
       normalizedPrefix = prefix.substring(0, prefix.length - 1);
     }
-    return [normalizedPrefix, url.substring(2)].join('/');
+    const sub_url = url.substring(2);
+    if (!sub_url) {
+      return normalizedPrefix;
+    }
+    return [normalizedPrefix, sub_url].join('/');
   } else {
     return url;
   }
