@@ -136,7 +136,11 @@ const Markdown = (props: any) => {
   return (
     <div data-theme={setting?.navTheme != 'light' ? 'dark' : 'light'}>
       <div className="welcome-markdown">
-        <XMarkdown components={mdComponents} config={mdConfig} paragraphTag="div">
+        <XMarkdown
+          components={mdComponents}
+          config={mdConfig}
+          paragraphTag={props?.paragraphTag || 'p'}
+        >
           {props.children}
         </XMarkdown>
       </div>

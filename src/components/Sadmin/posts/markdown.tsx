@@ -158,6 +158,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
     close: leftMenuClose = false,
     span = 200,
     mdAnchorLevel = 3,
+    paragraphTag = 'p',
     ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
   const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
@@ -384,7 +385,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
               }}
             >
               {mdContent?.content ? (
-                <MarkdownRender>{mdContent.content}</MarkdownRender>
+                <MarkdownRender paragraphTag={paragraphTag}>{mdContent.content}</MarkdownRender>
               ) : (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
               )}

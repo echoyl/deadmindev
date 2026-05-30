@@ -309,7 +309,7 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'close'],
         title: '是否关闭',
         valueType: 'switch',
-        colProps: { span: 4 },
+        colProps: { span: 6 },
         fieldProps: {
           defaultValue: true,
         },
@@ -318,21 +318,11 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'span'],
         title: '宽度n/24',
         valueType: 'digit',
-        colProps: { span: 4 },
+        colProps: { span: 6 },
         fieldProps: {
           defaultValue: 3,
         },
         tooltip: '在markdown类型中只支持数字表示px值',
-      },
-      {
-        dataIndex: ['leftMenu', 'mdAnchorLevel'],
-        title: '锚点层级',
-        tooltip: '如果页面是markdown类型，则可设置锚点目录层级，<=1表示关闭锚点目录',
-        valueType: 'digit',
-        colProps: { span: 4 },
-        fieldProps: {
-          defaultValue: 3,
-        },
       },
       {
         dataIndex: ['leftMenu', 'title'],
@@ -395,6 +385,29 @@ const leftmenu: saFormColumnsType = [
         valueType: 'menuSelect',
         colProps: {
           span: 12,
+        },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['leftMenu', 'paragraphTag'],
+        title: 'markdown段落标签',
+        colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: 'p',
+        },
+      },
+      {
+        dataIndex: ['leftMenu', 'mdAnchorLevel'],
+        title: 'markdown目录锚点层级',
+        tooltip: '如果页面是markdown类型，则可设置锚点目录层级，<=1表示关闭锚点目录',
+        valueType: 'digit',
+        colProps: { span: 12 },
+        fieldProps: {
+          defaultValue: 3,
         },
       },
     ],

@@ -62,9 +62,10 @@ export const AlertRender = (_, props) => {
 };
 
 export const MarkdownRender = (props) => {
+  const { children, ...rest } = props;
   return (
     <Suspense>
-      <Markdown>{props.children}</Markdown>
+      <Markdown {...rest}>{children}</Markdown>
     </Suspense>
   );
 };

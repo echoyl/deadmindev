@@ -1,8 +1,8 @@
 .welcome-gradient-title {
   background: linear-gradient(135deg, #1677ff 0%, #722ed1 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .welcome-markdown .x-markdown {
@@ -21,7 +21,7 @@
   --md-tr-hover-bg: rgba(0, 0, 0, 0.02);
 }
 
-[data-theme="dark"] .welcome-markdown .x-markdown {
+[data-theme='dark'] .welcome-markdown .x-markdown {
   --md-code-bg: rgba(255, 255, 255, 0.08);
   --md-code-border: rgba(255, 255, 255, 0.1);
   --md-pre-bg: #161b22;
@@ -34,39 +34,39 @@
 }
 
 .welcome-markdown .x-markdown h1 {
-  font-size: 30px;
-  font-weight: var(--md-heading-weight);
   margin: 0 0 16px;
+  font-weight: var(--md-heading-weight);
+  font-size: 30px;
   line-height: 1.3;
 }
 
 .welcome-markdown .x-markdown h2 {
-  font-size: 24px;
-  font-weight: var(--md-heading-weight);
   margin: 32px 0 8px;
-  line-height: 1.35;
   padding-bottom: 4px;
+  font-weight: var(--md-heading-weight);
+  font-size: 24px;
+  line-height: 1.35;
   border-bottom: 1px solid var(--md-table-border);
 }
 
 .welcome-markdown .x-markdown h3 {
-  font-size: 20px;
-  font-weight: var(--md-heading-weight);
   margin: 24px 0 4px;
+  font-weight: var(--md-heading-weight);
+  font-size: 20px;
   line-height: 1.4;
 }
 
 .welcome-markdown .x-markdown h4 {
-  font-size: 16px;
-  font-weight: var(--md-heading-weight);
   margin: 16px 0 4px;
+  font-weight: var(--md-heading-weight);
+  font-size: 16px;
 }
 
 .welcome-markdown .x-markdown h5,
 .welcome-markdown .x-markdown h6 {
-  font-size: 14px;
-  font-weight: var(--md-heading-weight);
   margin: 16px 0 4px;
+  font-weight: var(--md-heading-weight);
+  font-size: 14px;
 }
 
 .welcome-markdown .x-markdown a {
@@ -85,30 +85,30 @@
 }
 
 .welcome-markdown .x-markdown pre {
+  padding: 16px;
+  overflow-x: auto;
   background: var(--md-pre-bg);
   border: 1px solid var(--md-pre-border);
   border-radius: 8px;
-  padding: 16px;
-  overflow-x: auto;
 }
 
 .welcome-markdown .x-markdown pre code {
-  background: none;
-  border: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
   font-size: 13px;
   line-height: 1.6;
+  background: none;
+  border: none;
   border-radius: 0;
 }
 
 .welcome-markdown .x-markdown blockquote {
   margin: 16px 0;
   padding: 8px 16px;
-  border-left: 4px solid var(--md-blockquote-border);
-  background: var(--md-blockquote-bg);
-  border-radius: 0 4px 4px 0;
   color: var(--md-blockquote-color);
+  background: var(--md-blockquote-bg);
+  border-left: 4px solid var(--md-blockquote-border);
+  border-radius: 0 4px 4px 0;
 }
 
 .welcome-markdown .x-markdown blockquote > p:first-child {
@@ -120,20 +120,30 @@
 }
 
 .welcome-markdown .x-markdown table:not(pre) {
+  overflow: hidden;
   border: 1px solid var(--md-table-border);
   border-radius: 8px;
-  overflow: hidden;
 }
 
 .welcome-markdown .x-markdown th {
-  background: var(--md-th-bg);
-  border-bottom: 2px solid var(--md-table-border);
+  /* border-bottom: 2px solid var(--md-table-border); */
   font-weight: var(--md-heading-weight);
+  background: var(--md-th-bg);
 }
 
-.welcome-markdown .x-markdown th,
-.welcome-markdown .x-markdown td {
-  border: 1px solid var(--md-table-border);
+.welcome-markdown .x-markdown tr th:not(:first-child),
+.welcome-markdown .x-markdown tr td:not(:first-child) {
+  border-bottom: 1px solid var(--md-table-border);
+  border-left: 1px solid var(--md-table-border);
+}
+
+.welcome-markdown .x-markdown tr th:first-child,
+.welcome-markdown .x-markdown tr td:first-child {
+  border-bottom: 1px solid var(--md-table-border);
+}
+.welcome-markdown .x-markdown tbody tr:last-child th,
+.welcome-markdown .x-markdown tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .welcome-markdown .x-markdown tr:hover td {
@@ -163,12 +173,12 @@
   position: absolute;
   left: -1.2em;
   width: 1.2em;
-  text-align: center;
   color: var(--md-link-color);
   font-weight: normal;
+  text-align: center;
+  text-decoration: none;
   opacity: 0;
   transition: opacity 0.2s;
-  text-decoration: none;
 }
 
 .welcome-markdown .x-markdown .heading-anchor:hover .anchor-link {
