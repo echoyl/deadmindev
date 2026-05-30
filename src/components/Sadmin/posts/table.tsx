@@ -669,6 +669,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     summary,
     sh: tableSummaryHeight,
   });
+  const windowInnerHeight = window.innerHeight;
   return (
     <SaContext.Provider
       value={{
@@ -898,7 +899,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
                 ? {
                     ...setting?.table?.scroll,
                     y:
-                      pageType == 'modal'
+                      pageType == 'modal' || windowInnerHeight <= 600
                         ? false
                         : `calc(100vh - ${minHeight + tableHeaderHeight}px)`,
                   }

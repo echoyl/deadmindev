@@ -48,6 +48,11 @@ export const PageContainer404: React.FC<Record<string, any>> = (props) => {
     transition: 'background-color 0.3s',
     boxShadow: token.boxShadowTertiary,
   };
+  useEffect(() => {
+    //初始化滚动条位置，如果当前页面滚动到了底部，则跳转页面后应该重置
+    //console.log('reset scrollto');
+    window.scrollTo({ top: 0 });
+  }, []);
   return (
     <PageContainer
       title={title}

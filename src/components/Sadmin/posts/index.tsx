@@ -3,7 +3,8 @@ import { search2Obj, uid } from '@/components/Sadmin/helpers';
 import { useSearchParams } from '@umijs/max';
 import { Col, Row } from 'antd';
 import type { Key } from 'react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { SaDevContext } from '../dev';
 import './style.less';
 import type { saTableProps } from './table';
 import SaTable from './table';
@@ -47,10 +48,11 @@ const PostsList: React.FC<saTableProps> = (props) => {
   };
   const [reloadUid, setReloadUid] = useState<string>('');
   const [resetCategorys, setResetCategorys] = useState<boolean>(false);
+  const { isMobile } = useContext(SaDevContext);
   return (
     <PageContainer404 title={tableTitle} path={path}>
-      <Row gutter={[30, 0]} style={!leftMenuClose ? { marginLeft: 0 } : {}}>
-        {!leftMenuClose && (
+      <Row gutter={[30, 0]} style={!leftMenuClose && !isMobile ? { marginLeft: 0 } : {}}>
+        {!leftMenuClose && !isMobile && (
           <Col span={span} style={{ paddingInline: 0 }}>
             <TreeMenu
               treeData={categorys}
@@ -67,7 +69,7 @@ const PostsList: React.FC<saTableProps> = (props) => {
             />
           </Col>
         )}
-        <Col span={!leftMenuClose ? 24 - span : 24}>
+        <Col span={!leftMenuClose && !isMobile ? 24 - span : 24}>
           <SaTable
             {...props}
             initPageUid={reloadUid}

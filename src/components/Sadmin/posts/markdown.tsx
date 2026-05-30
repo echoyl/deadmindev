@@ -5,8 +5,9 @@ import { useModel, useSearchParams } from '@umijs/max';
 import type { Anchor, GetProp } from 'antd';
 import { Affix, Button, Card, Empty, Flex, Layout, Space } from 'antd';
 import type { Key } from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ConfirmForm from '../action/confirmForm';
+import { SaDevContext } from '../dev';
 import { useTableDesigner } from '../dev/table/designer';
 import { toolBarRender } from '../dev/table/toolbar';
 import { fullPageHeight, getFirstChild, pageTopHeight } from '../helper/functions';
@@ -161,6 +162,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
     paragraphTag = 'p',
     ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
+  const { isMobile } = useContext(SaDevContext);
   const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
   const page = pageMenu?.id;
   const [categorys, setCategorys] = useState<any[]>([]);
@@ -324,7 +326,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
       >
         {/* <Row gutter={[30, 0]} style={!leftMenuClose ? { marginLeft: 0 } : {}}> */}
         <Layout hasSider>
-          {!leftMenuClose && (
+          {!leftMenuClose && !isMobile && (
             <Affix offsetTop={topHeight}>
               <Sider style={siderStyle} width={span}>
                 <TreeMenu
@@ -347,7 +349,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
               </Sider>
             </Affix>
           )}
-          <Content style={!leftMenuClose ? { marginLeft: 1 } : undefined}>
+          <Content style={!leftMenuClose && !isMobile ? { marginLeft: 1 } : undefined}>
             <Card
               loading={loading}
               variant="borderless"
@@ -380,7 +382,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
               styles={{
                 root: {
                   minHeight: `calc(100vh - ${baseHeight}px)`,
-                  ...(mdAnchorLevel > 1 ? { marginInlineEnd: 142 } : undefined),
+                  ...(mdAnchorLevel > 1 && !isMobile ? { marginInlineEnd: 142 } : undefined),
                 },
               }}
             >
@@ -390,7 +392,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
               )}
             </Card>
-            {mdAnchorLevel > 1 && <DocAnchor anchors={mdContentAnchors} />}
+            {mdAnchorLevel > 1 && !isMobile && <DocAnchor anchors={mdContentAnchors} />}
           </Content>
         </Layout>
       </SaContext.Provider>
