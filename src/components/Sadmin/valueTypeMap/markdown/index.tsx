@@ -3,6 +3,7 @@ import { Link } from '@umijs/max';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import React, { useContext } from 'react';
+import { isHttpLink } from '../../checkers';
 import { SaDevContext } from '../../dev';
 import './Welcome-dark.css';
 import './Welcome.css';
@@ -106,7 +107,7 @@ const mdComponents = {
     const restProps = getPropsClassname(props);
     if (typeof children === 'string') {
       //如果href存在 antadmin 则使用link组件本地跳转
-      if (restProps.href?.indexOf('/antadmin/') > -1) {
+      if (!isHttpLink(restProps.href) && restProps.href?.indexOf('/antadmin/') > -1) {
         //将href的 /antadmin/ 替换为空
         const linkto = restProps.href?.replace('/antadmin/', '');
         return <Link to={linkto}>{children}</Link>;

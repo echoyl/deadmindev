@@ -11,7 +11,7 @@ import { DevJsonContext } from '../../jsonForm';
 export type tableDesignerInstance = {
   type?: 'table' | 'form' | 'panel';
   pageMenu?: Record<string, any>;
-  sort?: (id: number, cls: any[], type: string) => void;
+  sort?: (id: number, cls: any[], type: 'table' | 'form' | 'toolbar' | 'tab') => void;
   sortFormColumns?: (id: number, cls: any[]) => void;
   setColumns?: any;
   getColumnsRender?: any;
@@ -30,7 +30,7 @@ export type tableDesignerInstance = {
   [key: string]: any;
 };
 
-export function useTableDesigner(props: tableDesignerInstance) {
+export function useTableDesigner(props: tableDesignerInstance): tableDesignerInstance {
   const { setColumns, getColumnsRender, setPageMenu, type = 'table', setActions = {} } = props;
   const { initialState, setInitialState } = useModel('@@initialState');
   const { json = {}, setJson } = useContext(DevJsonContext); //读取本地化的配置信息
@@ -131,7 +131,7 @@ export function useTableDesigner(props: tableDesignerInstance) {
     deleteUrl,
     addUrl,
     reflush,
-    sort: (id: number, columns: any, itype: 'table' | 'form' | 'toolbar' | 'tab') => {
+    sort: (id: number, columns: any[], itype: 'table' | 'form' | 'toolbar' | 'tab') => {
       //后台请求
       //setColumns(getColumnsRender(columns));
       const url = config[itype].sortUrl;

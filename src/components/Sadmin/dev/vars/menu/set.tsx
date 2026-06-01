@@ -338,11 +338,15 @@ const leftmenu: saFormColumnsType = [
         dataIndex: ['leftMenu', 'name'],
         title: '数据源name',
         colProps: { span: 12 },
+        tooltip:
+          '列表中search字段中返回的数据，用以填充左侧树形菜单，在markdown中无效，默认为categorys',
       },
       {
         dataIndex: ['leftMenu', 'url_name'],
         title: 'URL name',
         colProps: { span: 12 },
+        tooltip:
+          '读取url中字段的名称，用于初始化左侧树形菜单的选中默认是category_id，在markdown中默认为id',
       },
     ],
   },

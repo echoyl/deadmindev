@@ -32,10 +32,15 @@ export const hasSearch = (items: any[]) => {
   return items?.some((v) => columnHasSearch(v));
 };
 
-export const pageTopHeight = () => {
+/**
+ * 获取头部高度
+ * @param fixedHeader 面包屑是否固定在顶部，如果固定则需要加上面包屑的高度
+ * @returns
+ */
+export const pageTopHeight = (fixedHeader = true) => {
   const headerHeight = 46; //头部高度
   const breadHeight = 43; //面包屑高度
-  return headerHeight + breadHeight;
+  return headerHeight + (fixedHeader ? breadHeight : 0);
 };
 
 /**
