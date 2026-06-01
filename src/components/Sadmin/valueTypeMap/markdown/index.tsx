@@ -141,6 +141,7 @@ const Markdown = (props: any) => {
           components={mdComponents}
           config={mdConfig}
           paragraphTag={props?.paragraphTag || 'p'}
+          openLinksInNewTab={true}
         >
           {props.children}
         </XMarkdown>
