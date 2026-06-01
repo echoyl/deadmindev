@@ -461,6 +461,8 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
       }
       initialValues={{
         autoLogin: true,
+        username: setting?.adminSetting?.login.defaultAccount || '',
+        password: setting?.adminSetting?.login.defaultPassword || '',
       }}
       onFinish={async (values) => {
         await handleSubmit(values as API.LoginParams);

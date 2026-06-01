@@ -123,10 +123,11 @@ export default () => {
                 columns: [
                   {
                     title: 'monaco编辑器',
-                    tooltip: '不填写则使用默认的 https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
+                    tooltip:
+                      '不填写则使用默认的 https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
                     dataIndex: 'monaco_vs',
                   },
-                ]
+                ],
               },
             ],
           },
@@ -415,6 +416,23 @@ export default () => {
                   }
                   return _columns;
                 },
+              },
+              {
+                valueType: 'group',
+                columns: [
+                  {
+                    title: '预设登录账号',
+                    dataIndex: ['login', 'defaultAccount'],
+                    tooltip: '设置后登录账号会自动填充预设账号，默认为空',
+                    colProps: { span: 12 },
+                  },
+                  {
+                    title: '预设登录密码',
+                    dataIndex: ['login', 'defaultPassword'],
+                    tooltip: '设置后登录密码会自动填充预设密码，默认为空',
+                    colProps: { span: 12 },
+                  },
+                ],
               },
             ],
           },
