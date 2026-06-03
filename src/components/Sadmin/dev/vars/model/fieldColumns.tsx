@@ -199,6 +199,7 @@ const schemaType = [
   { label: 'longtext-长Text', value: 'longtext' },
   { label: 'enum - 枚举', value: 'enum' },
   { label: 'varbinary-字符', value: 'varbinary' },
+  { label: 'other - 其它忽略', value: 'other' },
 ];
 const formType = [
   { label: '搜索cascader', value: 'search_select' },
@@ -299,7 +300,7 @@ export const fieldColumn: saValueTypeMapType = {
           valueType: 'select',
           tooltip: '如果选择枚举类型，需要在字段配置中配置json可选数据，第一个为默认值',
           colProps: { span: 3 },
-          fieldProps: { options: schemaType },
+          fieldProps: { options: schemaType, showSearch: true },
         },
         {
           title: '默认值',
