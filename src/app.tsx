@@ -167,31 +167,24 @@ export function rootContainer(container: JSX.Element) {
       });
     }, []);
     //自定义外层无法使用 @@initialState
+    const themeVar = {
+      ...setting?.adminSetting?.antdtheme,
+      token: {
+        colorPrimary: setting?.colorPrimary,
+        ...setting?.adminSetting?.antdtheme?.token,
+      },
+      components: {
+        Menu: {
+          subMenuItemBg: 'transparent',
+        },
+        ...setting?.adminSetting?.antdtheme?.components,
+      },
+    };
+    if (setting?.navTheme != 'light') {
+      themeVar.algorithm = theme.darkAlgorithm;
+    }
     return (
-      <ConfigProvider
-        locale={supportLocale[currentLocale]}
-        theme={
-          setting?.navTheme == 'light'
-            ? {
-                ...setting?.adminSetting?.antdtheme,
-                token: {
-                  colorPrimary: setting?.colorPrimary,
-                },
-                components: {
-                  Menu: {
-                    subMenuItemBg: 'transparent',
-                  },
-                  ...setting?.adminSetting?.antdtheme?.components,
-                },
-              }
-            : {
-                token: {
-                  colorPrimary: setting?.colorPrimary,
-                },
-                algorithm: theme.darkAlgorithm,
-              }
-        }
-      >
+      <ConfigProvider locale={supportLocale[currentLocale]} theme={themeVar}>
         <App>
           <SaDevContext value={contextValue}>
             {/* <WebSocketProvider>
