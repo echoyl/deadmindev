@@ -1,5 +1,6 @@
-import XMarkdown from '@ant-design/x-markdown';
+import XMarkdown, { ComponentProps } from '@ant-design/x-markdown';
 import { Link } from '@umijs/max';
+import { Typography } from 'antd';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import React, { useContext } from 'react';
@@ -7,18 +8,57 @@ import { isHttpLink } from '../../checkers';
 import { SaDevContext } from '../../dev';
 import './Welcome-dark.css';
 import './Welcome.css';
-// const Code: React.FC<ComponentProps> = (props) => {
-//   const { className, children } = props;
-//   const lang = className?.match(/language-(\w+)/)?.[1] || '';
-//   if (typeof children !== 'string') return children;
-//   if (lang === 'mermaid') {
-//     return <Mermaid>{children}</Mermaid>;
-//   }
-//   if (lang === 'infographic') {
-//     return <ReactInfographic>{children}</ReactInfographic>;
-//   }
-//   return children;
-// };
+const Code: React.FC<ComponentProps> = (props) => {
+  const { className, children } = props;
+  const langString = className?.match(/language-(\w+)/)?.[1] || '';
+  // console.log('props', langString, props);
+  if (typeof children !== 'string') return children;
+  // if (lang === 'mermaid') {
+  //   return <Mermaid>{children}</Mermaid>;
+  // }
+  // if (lang === 'infographic') {
+  //   return <ReactInfographic>{children}</ReactInfographic>;
+  // }
+  if (!langString) {
+  }
+  const classnames = ['hljs'];
+  if (langString) {
+    classnames.push(`language-${langString}`);
+  }
+  const text = children;
+  let isblock = false;
+  let highlighted: string;
+  if (langString && hljs.getLanguage(langString)) {
+    highlighted = hljs.highlight(text.replace(/\n$/, ''), {
+      language: langString,
+    }).value;
+    isblock = true;
+  } else {
+    highlighted = hljs.highlightAuto(text.replace(/\n$/, '')).value;
+  }
+  const code = (
+    <code
+      text="ok"
+      className={classnames.join(' ')}
+      dangerouslySetInnerHTML={{ __html: highlighted }}
+    />
+  );
+  if (!isblock) {
+    return code;
+  }
+  const copy = (
+    <Typography.Paragraph
+      copyable={{ text }}
+      style={{ position: 'absolute', right: 0, top: 0, zIndex: 1 }}
+    />
+  );
+  return (
+    <div style={{ position: 'relative' }}>
+      {copy}
+      {code}
+    </div>
+  );
+};
 const mdConfig = {
   renderer: {
     code({ text, lang }: { text: string; lang?: string }) {
@@ -35,7 +75,8 @@ const mdConfig = {
         highlighted = hljs.highlightAuto(text.replace(/\n$/, '')).value;
       }
       const classAttr = langString ? ` class="hljs language-${langString}"` : ' class="hljs"';
-      return `<pre><code${classAttr}>${highlighted}\n</code></pre>\n`;
+      //const copy = <Typography.Paragraph copyable={{ text }} />;
+      return `<pre><code${classAttr} text="ok">${highlighted}\n</code></pre>\n`;
     },
   },
 };
@@ -100,7 +141,7 @@ const mdComponents = {
   h2: (props: HeadingProps) => <Heading tag="h2" {...props} />,
   h3: (props: HeadingProps) => <Heading tag="h3" {...props} />,
   h4: (props: HeadingProps) => <Heading tag="h4" {...props} />,
-  //code: Code,
+  code: Code,
   a: (props: any) => {
     //普通锚点需要添加一个id属性，然后antd的锚点组件可以根据这个id属性来定位
     const { children } = props;
@@ -139,7 +180,7 @@ const Markdown = (props: any) => {
       <div className="welcome-markdown">
         <XMarkdown
           components={mdComponents}
-          config={mdConfig}
+          //config={mdConfig}
           paragraphTag={props?.paragraphTag || 'p'}
           openLinksInNewTab={true}
         >
