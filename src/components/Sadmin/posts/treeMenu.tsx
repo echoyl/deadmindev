@@ -27,6 +27,7 @@ type TreeMenuProps = {
   editable?: boolean; //是否可编辑
   addable?: boolean; //是否可以新增
   deleteable?: boolean; //是否可以删除
+  bodyHeight?: number | string; //可滚动的body高度
 };
 
 const DeleteColumn: FC<{
@@ -75,6 +76,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
     editable = true, //是否可编辑
     addable = true, //是否可以新增
     deleteable = true, //是否可以删除
+    bodyHeight, //可滚动的body高度
   } = props;
   const [formOpen, setFormOpen] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
@@ -118,12 +120,18 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   useEffect(() => {
     render(treeData);
   }, [treeData, fieldNames]);
-  const baseHeight = fullPageHeight(initialState?.settings);
+  const fullHeight = fullPageHeight(initialState?.settings) + 56;
+  const height = bodyHeight || `calc(100vh - ${fullHeight}px)`;
   return (
     <Card
       title={title}
       variant="borderless"
-      styles={{ body: { height: `calc(100vh - ${baseHeight + 56}px)`, overflowY: 'auto' } }}
+      styles={{
+        body: {
+          height,
+          overflowY: 'auto',
+        },
+      }}
       extra={
         <Space>
           {selectedKeys && selectedKeys[0] && showClearSelected ? (

@@ -179,9 +179,10 @@ const Markdown: React.FC<saTableProps> = (props) => {
   const baseHeight = fullPageHeight(initialState?.settings);
   const fixedHeader = initialState?.settings?.fixedHeader;
   const topHeight = pageTopHeight(fixedHeader);
+  const [siderHeight, setSiderHeight] = useState(baseHeight);
   const siderStyle: React.CSSProperties = {
     //overflow: 'auto',
-    height: `calc(100vh - ${baseHeight}px)`,
+    height: `calc(100vh - ${siderHeight}px)`,
     //width: `calc(${(span * 100) / 24}%)`,
     //height: '100vh',
     //position: 'fixed',
@@ -222,7 +223,19 @@ const Markdown: React.FC<saTableProps> = (props) => {
         {/* <Row gutter={[30, 0]} style={!leftMenuClose ? { marginLeft: 0 } : {}}> */}
         <Layout hasSider>
           {!leftMenuClose && !isMobile && (
-            <Affix offsetTop={topHeight}>
+            <Affix
+              offsetTop={topHeight}
+              onChange={(affixed) => {
+                if (!fixedHeader) {
+                  if (affixed) {
+                    //如果bread未固定顶部，当前sider固定到顶部时高度要加上当前bread的高度
+                    setSiderHeight(baseHeight - 43);
+                  } else {
+                    setSiderHeight(baseHeight);
+                  }
+                }
+              }}
+            >
               <Sider style={siderStyle} width={span}>
                 <TreeMenu
                   treeData={categorys}
@@ -239,6 +252,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
                   addable={addable}
                   deleteable={deleteable}
                   editable={editable}
+                  bodyHeight={`calc(100vh - ${siderHeight + 56}px)`}
                   {...treeMenuRest}
                 />
               </Sider>
