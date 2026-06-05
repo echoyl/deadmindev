@@ -184,3 +184,44 @@
 .welcome-markdown .x-markdown .heading-anchor:hover .anchor-link {
   opacity: 1;
 }
+
+.md-code-tabs {
+  margin: 8px 0;
+  padding: 0 12px;
+  overflow: hidden;
+  background: var(--md-pre-bg);
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+}
+.md-tab-headers {
+  display: flex;
+  padding: 0 12px;
+  border-bottom: 1px solid #e8e8e8;
+}
+.md-tab-header {
+  height: 48px;
+  padding: 0;
+  line-height: 48px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.md-tab-header:not(:first-child) {
+  margin-left: 32px;
+}
+.md-tab-header.active {
+  color: var(--md-link-color);
+  border-bottom: 2px solid var(--md-link-color);
+}
+
+.md-tab-panel {
+  display: none;
+}
+.md-tab-panel.active {
+  display: block;
+}
+
+.md-tab-panel pre {
+  margin: 0;
+  border: none !important;
+}
