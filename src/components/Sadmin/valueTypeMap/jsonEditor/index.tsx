@@ -1,13 +1,13 @@
-import LoadingFullHeight from '@/components/LoadingFullHeight';
-import { loader } from '@monaco-editor/react';
+import { Editor, loader } from '@monaco-editor/react';
 import { useIntl, useModel } from '@umijs/max';
 import { Card, Typography } from 'antd';
-import { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { isObj } from '../../checkers';
 import { SaDevContext } from '../../dev';
 import { t } from '../../helpers';
 
-const Editor = lazy(() => import('@monaco-editor/react'));
+//const Editor = lazy(() => import('@monaco-editor/react'));
+//const { loader } = Editor;
 
 export const MonacoDefaultOptions = {
   selectOnLineNumbers: false,
@@ -45,34 +45,32 @@ export const MonacoEditor = (props) => {
   const intl = useIntl();
 
   return (
-    <Suspense fallback={<LoadingFullHeight />}>
-      <Card
-        title={`${language}${t('editor', intl)}`}
-        size="small"
-        styles={{ body: { paddingLeft: 0, paddingRight: 0 } }}
-        extra={
-          <Typography.Text
-            copyable={{
-              text: () => {
-                return editorRef?.current?.getValue();
-              },
-            }}
-          />
-        }
-      >
-        <Editor
-          options={realOptions}
-          height={height}
-          theme={setting?.navTheme != 'light' ? 'vs-dark' : 'vs'}
-          //theme="vs-dark"
-          language={language}
-          style={{ boder: 'none' }}
-          className="monaco-editor-container"
-          onMount={handleEditorDidMount}
-          {...restProps}
+    <Card
+      title={`${language}${t('editor', intl)}`}
+      size="small"
+      styles={{ body: { paddingLeft: 0, paddingRight: 0 } }}
+      extra={
+        <Typography.Text
+          copyable={{
+            text: () => {
+              return editorRef?.current?.getValue();
+            },
+          }}
         />
-      </Card>
-    </Suspense>
+      }
+    >
+      <Editor
+        options={realOptions}
+        height={height}
+        theme={setting?.navTheme != 'light' ? 'vs-dark' : 'vs'}
+        //theme="vs-dark"
+        language={language}
+        style={{ boder: 'none' }}
+        className="monaco-editor-container"
+        onMount={handleEditorDidMount}
+        {...restProps}
+      />
+    </Card>
   );
 };
 
