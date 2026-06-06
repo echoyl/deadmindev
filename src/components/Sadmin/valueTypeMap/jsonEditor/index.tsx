@@ -24,16 +24,15 @@ export const MonacoDefaultOptions = {
 
 export const MonacoEditor = (props) => {
   const { initialState } = useModel('@@initialState');
-  useEffect(() => {
-    loader.config({
-      paths: {
-        //vs: 'https://cdn.jsdmirror.com/npm/monaco-editor@0.54.0/min/vs',
-        vs:
-          initialState?.settings?.adminSetting?.monaco_vs ||
-          'https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
-      },
-    });
-  }, []);
+  //loader放在外面，如果放在useEffect中，loader.js不会使用vs的地址，而是默认的jsdelivr的cdn地址
+  loader.config({
+    paths: {
+      //vs: 'https://cdn.jsdmirror.com/npm/monaco-editor@0.54.0/min/vs',
+      vs:
+        initialState?.settings?.adminSetting?.monaco_vs ||
+        'https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
+    },
+  });
 
   const { options, height = 400, language = 'json', ...restProps } = props;
   const realOptions = { ...MonacoDefaultOptions, ...options };
