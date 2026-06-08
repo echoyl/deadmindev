@@ -225,3 +225,7 @@
   margin: 0;
   border: none !important;
 }
+
+.welcome-markdown :target {
+  scroll-margin-top: 80px;
+}

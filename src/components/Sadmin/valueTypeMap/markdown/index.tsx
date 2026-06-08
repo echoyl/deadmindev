@@ -97,7 +97,7 @@ const Heading: React.FC<HeadingProps> = ({
 };
 const getPropsClassname = (props: any) => {
   const { className, classname, class: htmlClass } = props;
-  const restProps = omit(props, ['streamStatus', 'domNode', 'children']);
+  const restProps = omit(props, ['streamStatus', 'domNode', 'children', 'className']);
   const allClasses = [className, classname, htmlClass].filter(Boolean);
   const classes = allClasses.length > 0 ? allClasses.join(' ') : '';
   if (classes) {
@@ -122,6 +122,15 @@ const mdComponents = {
         const linkto = restProps.href?.replace('/antadmin/', '');
         return <Link to={linkto}>{children}</Link>;
       } else {
+        //如果href第一个字符是 #跳转锚点 去掉target=blank
+        if (restProps.href?.startsWith('#')) {
+          return (
+            <a href={restProps.href} title={children}>
+              {children}
+            </a>
+          );
+        }
+
         return <a {...restProps}>{children}</a>;
       }
     }
