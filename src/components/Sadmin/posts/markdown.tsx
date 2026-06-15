@@ -7,6 +7,7 @@ import { Affix, Button, Card, Empty, Flex, Layout, Space } from 'antd';
 import type { Key } from 'react';
 import React, { useContext, useEffect, useState } from 'react';
 import ConfirmForm from '../action/confirmForm';
+import { isNumberLike } from '../checkers';
 import { SaDevContext } from '../dev';
 import { useTableDesigner } from '../dev/table/designer';
 import { toolBarRender } from '../dev/table/toolbar';
@@ -37,10 +38,11 @@ const Markdown: React.FC<saTableProps> = (props) => {
     title: treeTitle = '目录',
     url_name: category_id_name = 'id',
     field = { key: 'id', title: 'title', children: 'children' },
-    close: leftMenuClose = false,
+    close: leftMenuClose = true,
     span = 200,
     mdAnchorLevel = 3,
     paragraphTag = 'p',
+    contentMaxWidth, //内容最大宽度
     ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
   const { isMobile } = useContext(SaDevContext);
@@ -298,7 +300,21 @@ const Markdown: React.FC<saTableProps> = (props) => {
               }}
             >
               {mdContent?.content ? (
-                <MarkdownRender paragraphTag={paragraphTag}>{mdContent.content}</MarkdownRender>
+                <MarkdownRender
+                  paragraphTag={paragraphTag}
+                  style={
+                    contentMaxWidth
+                      ? {
+                          maxWidth: isNumberLike(contentMaxWidth)
+                            ? `${contentMaxWidth}px`
+                            : contentMaxWidth,
+                          margin: '0 auto',
+                        }
+                      : undefined
+                  }
+                >
+                  {mdContent.content}
+                </MarkdownRender>
               ) : (
                 <Flex justify="center" align="center">
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />

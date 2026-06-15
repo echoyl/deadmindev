@@ -420,6 +420,16 @@ const leftmenu: saFormColumnsType = [
     valueType: 'group',
     columns: [
       {
+        dataIndex: ['leftMenu', 'contentMaxWidth'],
+        title: 'markdown内容最大宽度',
+        colProps: { span: 12 },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
         dataIndex: ['leftMenu', 'defaultExpandAll'],
         title: '是否全部展开',
         valueType: 'switch',

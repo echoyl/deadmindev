@@ -11,9 +11,8 @@ import { SaDevContext } from '../../dev';
 import './Welcome-dark.css';
 import './Welcome.css';
 const Code: React.FC<ComponentProps> = (props) => {
-  const { className, children } = props;
+  const { className, children, block } = props;
   const langString = className?.match(/language-(\w+)/)?.[1] || '';
-  // console.log('props', langString, props);
   if (typeof children !== 'string') return children;
   // if (lang === 'mermaid') {
   //   return <Mermaid>{children}</Mermaid>;
@@ -26,20 +25,18 @@ const Code: React.FC<ComponentProps> = (props) => {
     classnames.push(`language-${langString}`);
   }
   const text = children;
-  let isblock = false;
   let highlighted: string;
   if (langString && hljs.getLanguage(langString)) {
     highlighted = hljs.highlight(text.replace(/\n$/, ''), {
       language: langString,
     }).value;
-    isblock = true;
   } else {
-    highlighted = hljs.highlightAuto(text.replace(/\n$/, '')).value;
+    highlighted = block ? hljs.highlightAuto(text.replace(/\n$/, '')).value : text;
   }
   const code = (
     <code className={classnames.join(' ')} dangerouslySetInnerHTML={{ __html: highlighted }} />
   );
-  if (!isblock) {
+  if (!block) {
     return code;
   }
   const copy = (
@@ -291,7 +288,7 @@ const Markdown = (props: any) => {
     typeof props.children === 'string' ? parseTabGroups(props.children) : props.children;
 
   return (
-    <div data-theme={setting?.navTheme != 'light' ? 'dark' : 'light'}>
+    <div data-theme={setting?.navTheme != 'light' ? 'dark' : 'light'} style={props?.style}>
       <div className="welcome-markdown">
         <XMarkdown
           components={mdComponents}
