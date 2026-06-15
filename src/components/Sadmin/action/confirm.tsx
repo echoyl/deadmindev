@@ -2,7 +2,7 @@ import request from '@/components/Sadmin/lib/request';
 import { useIntl } from '@umijs/max';
 import { Button, ButtonProps, Popconfirm } from 'antd';
 import React, { FC, Key, ReactElement, useContext, useMemo } from 'react';
-import { isArr } from '../checkers';
+import { isArr, isUndefined } from '../checkers';
 import { SaDevContext } from '../dev';
 import cache from '../helper/cache';
 import { t, tplComplie } from '../helpers';
@@ -45,8 +45,10 @@ export const ConfirmTriggerClick = (
   const values = searchFormRef?.current?.getFieldsFormatValue();
   const newData: Record<string, any> = {};
   Object.keys(data).map((k) => {
-    const tplc = tplComplie(data[k], { record });
-    newData[k] = tplc ? tplc : '';
+    if (!isUndefined(data[k])) {
+      const tplc = tplComplie(data[k], { record });
+      newData[k] = tplc ? tplc : '';
+    }
   });
   const ok = async () => {
     if (!url) {
