@@ -75,7 +75,7 @@ export const getAnchors = (markdownContent: string, maxLevel = 3) => {
         .toLowerCase()
         //.replace(/[^\w\s-]/g, '')
         .trim()
-        .replace(/\s&\s/g, '-')
+        //.replace(/\s&\s/g, '-')
         .replace(/\s+/g, '-');
     }
 

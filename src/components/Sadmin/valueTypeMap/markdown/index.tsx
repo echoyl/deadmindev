@@ -77,7 +77,7 @@ const Heading: React.FC<HeadingProps> = ({
     .map((child) => (typeof child === 'string' ? child : ''))
     .join('');
   const id = textContent
-    .replace(/[^\w\s一-鿿-]/g, '')
+    //.replace(/[^\w\s一-鿿-]/g, '')
     .trim()
     .replace(/\s+/g, '-')
     .toLowerCase();
