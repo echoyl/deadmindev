@@ -246,7 +246,7 @@ const CustomerColumnRender = (props) => {
             <RequestComponent
               key={key}
               trigger={dom}
-              requestParam={{ ...item.request,url:requestUrl, data: newRequestData }}
+              requestParam={{ ...item.request, url: requestUrl, data: newRequestData }}
             />
           );
         } else if (item.action == 'print') {

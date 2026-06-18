@@ -20,6 +20,7 @@ const DropdownAction: React.FC = (props: {
   afterActionType?: 'reload' | 'goback' | 'none';
   showType?: 'badge' | 'tag' | 'string';
   disabled?: boolean;
+  options?: Record<string, any>[];
 }) => {
   const { actionRef, columnData, url: tableUrl } = useContext(SaContext);
   const { modalApi } = useContext(SaDevContext);
@@ -34,6 +35,7 @@ const DropdownAction: React.FC = (props: {
     afterActionType,
     showType = 'badge',
     disabled = false,
+    options = [],
   } = props;
 
   const [key = 'value', label = 'label'] = fieldNames.split(',');
@@ -61,8 +63,10 @@ const DropdownAction: React.FC = (props: {
       );
     }
   };
+  //优先读取context中列表中的数据，如果未传递则使用props.options
+  const optionsData = columnData?.[dataName] ? columnData?.[dataName] : options;
 
-  const dropdown_items = columnData?.[dataName]?.map((v: any) => {
+  const dropdown_items = optionsData?.map((v: any) => {
     return { key: v[key], label: getLabel(v), v, disabled: v[key] == value };
   });
   //console.log(dropdown_items, columnData, item.request);
@@ -123,11 +127,11 @@ const DropdownAction: React.FC = (props: {
   );
 };
 
-export const DropdownActionRel = (props) => {
+export const DropdownActionRel = (props: any) => {
   return <DropdownAction {...props} />;
 };
 
-export const DropdownActionMap = (_, props) => {
+export const DropdownActionMap = (_: any, props: any) => {
   const { fieldProps, record } = props;
   const { dataindex } = fieldProps;
   return <DropdownActionRel {...fieldProps} modelName={dataindex} value={_} id={record?.id} />;

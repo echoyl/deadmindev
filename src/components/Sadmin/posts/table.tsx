@@ -136,7 +136,7 @@ interface saTableContextProps {
 export const SaContext = createContext<{
   actionRef?: any;
   formRef?: any;
-  columnData?: Record<string, any> | boolean;
+  columnData?: Record<string, any>;
   searchData?: Record<string, any>;
   url?: string;
   tableDesigner?: tableDesignerInstance;
