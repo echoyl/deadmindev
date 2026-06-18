@@ -3,23 +3,24 @@ import type { GetProps, TreeSelect } from 'antd';
 import { uniqBy } from 'es-toolkit';
 import type { Key } from 'react';
 import { t, type saFormColumnsType } from '../../helpers';
-//列表可选类型
+
+//组件可选类型 包含所有form组件部分不支持显示在table
 export const columnType = [
   { label: '日期 - date', value: 'date' },
   { label: '日期区间 - dateRange', value: 'dateRange' },
   { label: '日期时间 - dateTime', value: 'dateTime' },
   { label: '时间区间 - dateTimeRange', value: 'dateTimeRange' },
-  { label: '上传-uploader', value: 'uploader' },
-  { label: '自定义组件 - customerColumn', value: 'customerColumn' },
+  { label: '上传 - uploader', value: 'uploader' },
+  { label: '自定义显示 - customerColumn', value: 'customerColumn' },
   { label: '密码 - password', value: 'password' },
-  { label: '头像 - avatar', value: 'avatar' },
+  { label: '头像显示 - avatar', value: 'avatar' },
   { label: '导出 - export', value: 'export' },
   { label: '导入 - import', value: 'import' },
   { label: '头部操作栏 - toolbar', value: 'toolbar' },
   { label: '底部选择操作栏 - selectbar', value: 'selectbar' },
   { label: '省市区 - pca', value: 'pca' },
   { label: '用户权限 - userPerm', value: 'userPerm' },
-  { label: 'html', value: 'html' },
+  { label: 'html显示', value: 'html' },
   { label: 'Select选择器', value: 'select' },
   { label: '拾色器 - colorPicker', value: 'colorPicker' },
   { label: '下拉操作 - dropdownAction', value: 'dropdownAction' },
@@ -38,20 +39,12 @@ export const columnType = [
   { label: '年区间 - dateYearRange', value: 'dateYearRange' },
   { label: '季度区间 - dateQuarterRange', value: 'dateQuarterRange' },
   { label: '时间 - time', value: 'time' },
-];
-//表单可选类型
-const formMoreType = [
   { label: '编辑表格 - saFormTable', value: 'saFormTable' },
-  { label: '自定义显示 - customerColumn', value: 'customerColumn' },
   { label: '属性配置 - jsonForm', value: 'jsonForm' },
   { label: '多行编辑 - formList', value: 'formList' },
   { label: '多行编辑 - saFormList', value: 'saFormList' },
-  { label: 'Select选择器', value: 'select' },
-  { label: '异步下拉选择器 - debounceSelect', value: 'debounceSelect' },
-  { label: '搜索select', value: 'searchSelect' },
   { label: 'json编辑器 - jsonEditor', value: 'jsonEditor' },
   { label: 'jsonCode', value: 'jsonCode' },
-  { label: '头像显示 - avatar', value: 'avatar' },
   { label: '弹层选择器 - modalSelect', value: 'modalSelect' },
   { label: '富文本 - tinyMCE', value: 'tinyEditor' },
   { label: '规格编辑 - guigePanel', value: 'guigePanel' },
@@ -59,13 +52,9 @@ const formMoreType = [
   { label: '自定义 - cdependency', value: 'cdependency' },
   { label: '微信自定义菜单 - wxMenu', value: 'wxMenu' },
   { label: '穿梭框 - saTransfer', value: 'saTransfer' },
-  { label: 'html显示', value: 'html' },
   { label: '地图选点 - mapInput', value: 'mapInput' },
   { label: '地图显示 - mapShow', value: 'mapShow' },
-  { label: '拾色器 - colorPicker', value: 'colorPicker' },
-  { label: '密码 - password', value: 'password' },
   { label: '文本域 - textarea', value: 'textarea' },
-  { label: '上传 - uploader', value: 'uploader' },
   { label: 'markdown编辑器 - mdEditor', value: 'mdEditor' },
   { label: '分割线 - divider', value: 'divider' },
   { label: '数字 - digit', value: 'digit' },
@@ -77,21 +66,7 @@ const formMoreType = [
   { label: 'switch', value: 'switch' },
   { label: 'AutoComplete', value: 'saAutoComplete' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
-  { label: '省市区 - pca', value: 'pca' },
-  { label: '日期 - date', value: 'date' },
-  { label: '日期年 - dateYear', value: 'dateYear' },
-  { label: '日期季度 - dateQuarter', value: 'dateQuarter' },
-  { label: '日期月 - dateMonth', value: 'dateMonth' },
-  { label: '日期周 - dateWeek', value: 'dateWeek' },
   { label: '日期时间 - datetime', value: 'datetime' },
-  { label: '时间区间 - dateTimeRange', value: 'dateTimeRange' },
-  { label: '月份区间 - dateMonthRange', value: 'dateMonthRange' },
-  { label: '周区间 - dateWeekRange', value: 'dateWeekRange' },
-  { label: '年区间 - dateYearRange', value: 'dateYearRange' },
-  { label: '季度区间 - dateQuarterRange', value: 'dateQuarterRange' },
-  { label: '时间 - time', value: 'time' },
-  { label: '评分 - rate', value: 'rate' },
-  { label: '滑动条 - slider', value: 'saSlider' },
   { label: '日历表单 - formCalendar', value: 'formCalendar' },
   { label: 'alert提醒 - alert', value: 'alert' },
 ];
@@ -183,51 +158,55 @@ export const getModelColumns = (
   );
 };
 
+const baseBaseColumns = (modelId: Key): saFormColumnsType => [
+  {
+    valueType: 'group',
+    columns: [
+      {
+        title: '字段选择',
+        valueType: 'devColumnRelationSelect',
+        dataIndex: 'key',
+        colProps: { span: 12 },
+        fieldProps: {
+          modelId,
+        },
+      },
+      {
+        dataIndex: 'type',
+        title: '表单类型',
+        colProps: { span: 12 },
+        valueType: 'select',
+        fieldProps: {
+          options: columnType,
+          showSearch: true,
+          placeholder: '请选择表单额外类型',
+        },
+      },
+    ],
+  },
+  {
+    valueType: 'group',
+    columns: [
+      {
+        dataIndex: ['props', 'title'],
+        title: '自定义Title',
+        colProps: { span: 12 },
+      },
+      {
+        title: '自定义字段',
+        tooltip: '如果选择器中无想要的字段名称，请填写在这里',
+        dataIndex: ['props', 'dataIndex'],
+        colProps: {
+          span: 12,
+        },
+      },
+    ],
+  },
+];
+
 export const devBaseFormFormColumns = (modelId: Key) => {
   const columns: saFormColumnsType = [
-    {
-      valueType: 'group',
-      columns: [
-        {
-          title: '字段选择',
-          valueType: 'devColumnRelationSelect',
-          dataIndex: 'key',
-          colProps: { span: 12 },
-          fieldProps: {
-            modelId,
-          },
-        },
-        {
-          dataIndex: 'type',
-          title: '表单类型',
-          colProps: { span: 12 },
-          valueType: 'select',
-          fieldProps: {
-            options: formMoreType,
-            showSearch: true,
-            placeholder: '请选择表单额外类型',
-          },
-        },
-      ],
-    },
-    {
-      valueType: 'group',
-      columns: [
-        {
-          dataIndex: ['props', 'title'],
-          title: '自定义Title',
-          colProps: { span: 12 },
-        },
-        {
-          title: '自定义字段',
-          tooltip: '如果选择器中无想要的字段名称，请填写在这里',
-          dataIndex: ['props', 'dataIndex'],
-          colProps: {
-            span: 12,
-          },
-        },
-      ],
-    },
+    ...baseBaseColumns(modelId),
     {
       valueType: 'group',
       columns: [
@@ -289,49 +268,7 @@ export const devBaseFormFormColumns = (modelId: Key) => {
 
 export const devBaseTableFormColumns = (modelId: Key): saFormColumnsType => {
   const columns: saFormColumnsType = [
-    {
-      valueType: 'group',
-      columns: [
-        {
-          dataIndex: 'key',
-          title: t('column'),
-          colProps: { span: 12 },
-          valueType: 'devColumnRelationSelect',
-          fieldProps: {
-            modelId,
-          },
-        },
-        {
-          dataIndex: 'type',
-          colProps: { span: 12 },
-          valueType: 'select',
-          title: t('type'),
-          fieldProps: {
-            options: columnType,
-            showSearch: true,
-            placeholder: '请选择表字段类型',
-          },
-        },
-      ],
-    },
-    {
-      valueType: 'group',
-      columns: [
-        {
-          dataIndex: ['props', 'title'],
-          title: t('customerTitle'),
-          colProps: { span: 12 },
-        },
-        {
-          title: t('customerColumn'),
-          tooltip: '如果选择器中无想要的字段名称，请填写在这里',
-          dataIndex: ['props', 'dataIndex'],
-          colProps: {
-            span: 12,
-          },
-        },
-      ],
-    },
+    ...baseBaseColumns(modelId),
     {
       valueType: 'group',
       columns: [

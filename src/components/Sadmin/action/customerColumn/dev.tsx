@@ -10,7 +10,7 @@ import { parseIcon, t } from '../../helpers';
 
 export const getCustomerColumn = (modelId: Key) => {
   const dependencyOnVars = dependencyOn(modelId);
-  const fieldPorpsColumn = {
+  const fieldPropsColumn = {
     dataIndex: 'fieldProps',
     title: 'fieldProps',
     valueType: 'confirmForm',
@@ -288,7 +288,7 @@ export const getCustomerColumn = (modelId: Key) => {
                 }
                 if (domtype == 'table') {
                   return [
-                    fieldPorpsColumn,
+                    fieldPropsColumn,
                     {
                       dataIndex: 'page',
                       title: t('relatePage'),
@@ -469,7 +469,7 @@ export const getCustomerColumn = (modelId: Key) => {
                             size: 'small',
                           },
                         },
-                        fieldPorpsColumn,
+                        fieldPropsColumn,
                         {
                           valueType: 'dependency',
                           name: ['action'],
