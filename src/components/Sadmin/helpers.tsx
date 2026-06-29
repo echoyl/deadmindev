@@ -644,7 +644,7 @@ export const SaBreadcrumbRender = (props) => {
 };
 
 export const getBread = (path: string, currentUser?: Record<string, any>) => {
-  if (!path) {
+  if (!path || !currentUser?.menuData) {
     return null;
   }
   const { breadcrumb } = getMenuData(currentUser?.menuData);
