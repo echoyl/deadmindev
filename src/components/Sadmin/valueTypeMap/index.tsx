@@ -37,6 +37,7 @@ export const tableFromBreadRender = (text, props) => {
         fieldProps={{ ...fieldProps, props: { tableProps: { search: false } } }}
         readonly={fieldProps.readonly}
         type="modal"
+        scrollHeight={fieldProps.scrollHeight}
       />
     </Suspense>
   );
