@@ -4,6 +4,7 @@ import { useModel } from '@umijs/max';
 import { Button, ButtonProps, Drawer, GetProps, Modal } from 'antd';
 import { FC, Key, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { history } from 'umi';
+import { SaPageContext, usePageMenu } from '../404';
 import { isArr, isStr } from '../checkers';
 import { getBread, getMenuDataById, saFormColumnsType, saFormTabColumnsType, t } from '../helpers';
 import { SaForm, saFormProps } from '../posts/post';
@@ -71,24 +72,30 @@ const InnerForm = (props) => {
   const [url, setUrl] = useState<string>(ourl);
   const [tabs, setTabs] = useState<any[]>([]);
   const [setting, setSetting] = useState<Record<string, any>>({});
-  const [pageMenu, setPageMenu] = useState<Record<string, any>>({});
+  const { pageMenu: topPageMenu } = useContext(SaPageContext);
   const [editable, setEditable] = useState<boolean>(true);
   const { initialState } = useModel('@@initialState');
   const [formOpen, setFormOpen] = useState<boolean>(false);
+  // 计算 bread 放在渲染阶段，usePageMenu 自动同步 pageMenu
+  let bread = null;
+  if (page) {
+    bread = isStr(page)
+      ? getBread(page, initialState?.currentUser)
+      : getMenuDataById(initialState?.currentUser?.menuData, page);
+  }
+  const effectiveMenu = bread || topPageMenu;
+  const [pageMenu, setPageMenu] = usePageMenu(effectiveMenu);
   useEffect(() => {
-    if (page) {
-      const bread = isStr(page)
-        ? getBread(page, initialState?.currentUser)
-        : getMenuDataById(initialState?.currentUser?.menuData, page);
-      if (bread) {
-        setTabs(bread?.data.tabs);
-        setUrl(bread?.data.postUrl ? bread?.data.postUrl : bread?.data.url + '/show');
-        setSetting(bread?.data.setting);
-        setPageMenu(bread);
-        setEditable(bread?.data.editable ? bread?.data.editable : false);
-      }
-    } else {
-      //console.log('formColumns', formColumns);
+    if (bread) {
+      setTabs(bread?.data.tabs);
+      setUrl(bread?.data.postUrl ? bread?.data.postUrl : bread?.data.url + '/show');
+      setSetting(bread?.data.setting);
+      setEditable(bread?.data.editable ? bread?.data.editable : false);
+      setFormOpen(true);
+      return;
+    }
+    // page 未提供时设置 tabs，或 bread 为空时 fallback
+    if (!page) {
       setTabs(
         utabs
           ? utabs
@@ -131,78 +138,80 @@ const InnerForm = (props) => {
   const { ids } = data;
   //console.log('conform data', paramdata);
   return formOpen ? (
-    <SaForm
-      {...saFormProps}
-      pageMenu={pageMenu}
-      tabs={tabs}
-      setting={setting}
-      beforeGet={(data) => {
-        if (!data) {
-          //没有data自动关闭弹出层
-          setOpen?.(false);
+    <SaPageContext value={{ pageMenu, setPageMenu }}>
+      <SaForm
+        {...saFormProps}
+        //pageMenu={pageMenu}
+        tabs={tabs}
+        setting={setting}
+        beforeGet={(data) => {
+          if (!data) {
+            //没有data自动关闭弹出层
+            setOpen?.(false);
+          }
+        }}
+        formRef={formRef}
+        actionRef={actionRef}
+        postExtra={{ id: dataid, ...data }}
+        paramExtra={
+          ids
+            ? { id: dataid, ids: isArr(ids) ? ids.join('.') : ids, ...paramdata }
+            : { id: dataid, ...paramdata }
         }
-      }}
-      formRef={formRef}
-      actionRef={actionRef}
-      postExtra={{ id: dataid, ...data }}
-      paramExtra={
-        ids
-          ? { id: dataid, ids: isArr(ids) ? ids.join('.') : ids, ...paramdata }
-          : { id: dataid, ...paramdata }
-      }
-      // showTabs={tabs?.length <= 1 ? false : true}
-      formProps={{
-        contentRender,
-        initialValues: value,
-        submitter: editable
-          ? {
-              // searchConfig: {
-              //   resetText: '关闭',
-              //   submitText: url ? '提交' : '确定',
-              // },
-              render: (props, doms) => {
-                return readonly
-                  ? null
-                  : [
-                      closable ? (
-                        <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                          {t('cancel')}
-                        </Button>
-                      ) : null,
-                      doms[1],
-                    ];
-              },
+        // showTabs={tabs?.length <= 1 ? false : true}
+        formProps={{
+          contentRender,
+          initialValues: value,
+          submitter: editable
+            ? {
+                // searchConfig: {
+                //   resetText: '关闭',
+                //   submitText: url ? '提交' : '确定',
+                // },
+                render: (props, doms) => {
+                  return readonly
+                    ? null
+                    : [
+                        closable ? (
+                          <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
+                            {t('cancel')}
+                          </Button>
+                        ) : null,
+                        doms[1],
+                      ];
+                },
+              }
+            : false,
+        }}
+        url={url}
+        postUrl={postUrl}
+        align="left"
+        pageType="drawer"
+        msgcls={(ret) => {
+          //setOpen(false);
+          //console.log('finish', ret);
+          const { code, data } = ret;
+          const retData = returnData ? returnData(data) : data;
+          if (url || postUrl) {
+            //有url提交
+            if (!code) {
+              afterAction(ret);
+            } else {
+              return;
             }
-          : false,
-      }}
-      url={url}
-      postUrl={postUrl}
-      align="left"
-      pageType="drawer"
-      msgcls={(ret) => {
-        //setOpen(false);
-        //console.log('finish', ret);
-        const { code, data } = ret;
-        const retData = returnData ? returnData(data) : data;
-        if (url || postUrl) {
-          //有url提交
-          if (!code) {
-            afterAction(ret);
           } else {
-            return;
-          }
-        } else {
-          //无 绑定onchange事件
-          //console.log('close it', data);
-          if (afterActionType != 'none') {
-            //不关闭 modal
-            setOpen(false);
-          }
+            //无 绑定onchange事件
+            //console.log('close it', data);
+            if (afterActionType != 'none') {
+              //不关闭 modal
+              setOpen(false);
+            }
 
-          onChange?.(retData);
-        }
-      }}
-    />
+            onChange?.(retData);
+          }
+        }}
+      />
+    </SaPageContext>
   ) : (
     <Loading />
   );

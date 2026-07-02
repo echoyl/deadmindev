@@ -17,6 +17,7 @@ import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import type { FC, Key } from 'react';
 import { useContext, useEffect, useState } from 'react';
+import { SaPageContext } from '../../404';
 import Confirm from '../../action/confirm';
 import ConfirmForm from '../../action/confirmForm';
 import { getCustomerColumn } from '../../action/customerColumn/dev';
@@ -126,8 +127,8 @@ const getValue = (uid: Key, pageMenu: any, type: string, dataName = 'schema') =>
 
 const BaseForm = (props: Record<string, any>) => {
   const { title, uid, ctype, data, extpost, actionType = 'edit' } = props;
-  const { tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' } = {} } =
-    useContext(SaContext);
+  const { tableDesigner: { reflush, editUrl = '', type = 'table' } = {} } = useContext(SaContext);
+  const { pageMenu } = useContext(SaPageContext);
 
   const [value, setValue] = useState(data);
   const [columns, setColumns] = useState<any[]>([]);
@@ -249,7 +250,7 @@ const ItemJson = (props: Record<string, any>) => {
   const { title, uid, type } = props;
   const [value, setValue] = useState<Record<string, any>>();
   const { json = {} } = useContext(DevJsonContext);
-  const { tableDesigner: { pageMenu } = {} } = useContext(SaContext);
+  const { pageMenu } = useContext(SaPageContext);
   useEffect(() => {
     const pageMenuData =
       pageMenu && Object.keys(pageMenu)?.length > 0
@@ -273,7 +274,8 @@ const ItemJson = (props: Record<string, any>) => {
 export const DeleteColumn = (props: Record<string, any>) => {
   const { title, uid, extpost } = props;
   const { json = {}, setJson } = useContext(DevJsonContext);
-  const { tableDesigner: { pageMenu, reflush, deleteUrl = '' } = {} } = useContext(SaContext);
+  const { tableDesigner: { reflush, deleteUrl = '' } = {} } = useContext(SaContext);
+  const { pageMenu } = useContext(SaPageContext);
   const intl = useIntl();
   return (
     <Confirm
@@ -298,7 +300,8 @@ export const DeleteColumn = (props: Record<string, any>) => {
 const MenuItemSwtich = (props: Record<string, any>) => {
   const { title, uid, name } = props;
   const { json = {}, setJson } = useContext(DevJsonContext);
-  const { tableDesigner: { pageMenu, reflush, editUrl = '' } = {} } = useContext(SaContext);
+  const { tableDesigner: { reflush, editUrl = '' } = {} } = useContext(SaContext);
+  const { pageMenu } = useContext(SaPageContext);
   const [value, setValue] = useState<Record<string, any>>({});
   useEffect(() => {
     const pageMenuData =
@@ -344,8 +347,8 @@ const MenuItemSwtich = (props: Record<string, any>) => {
 export const AddEmptyGroup = (props: Record<string, any>) => {
   const { title, uid, extpost } = props;
   const { json = {}, setJson } = useContext(DevJsonContext);
-  const { tableDesigner: { pageMenu, reflush, editUrl = '' } = {} } = useContext(SaContext);
-
+  const { tableDesigner: { reflush, editUrl = '' } = {} } = useContext(SaContext);
+  const { pageMenu } = useContext(SaPageContext);
   const add = async () => {
     const { data } = await request.post(editUrl, {
       data: { base: { id: pageMenu?.id, uid, ...extpost, ...json } },

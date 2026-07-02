@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import { delay } from 'es-toolkit';
 import { size } from 'es-toolkit/compat';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { SaPageContext } from '../404';
 import { getJson, inArray, isArr, isFn, isObj, isPlainObj, isStr, isUndefined } from '../checkers';
 import { SaDevContext } from '../dev';
 import { DndContext } from '../dev/dnd-context';
@@ -169,13 +170,12 @@ const SaTable: React.FC<saTableProps> = (props) => {
     tableProps = {
       size: 'middle',
     },
-    pageMenu: oPageMenu,
     devEnable: pdevEnable = true,
     setting = {},
     afterDelete,
     initPageUid,
   } = props;
-  const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
+  const { pageMenu } = useContext(SaPageContext);
   const table_menu_key = pageMenu?.data?.table_menu_key; //直接读取pagemenu中的信息，不再使用props中的参数，开发模式下会更新pagemenu
   const [tbColumns, setTbColumns] = useState<(ProColumns | saValueTypeMapType)[]>([]);
   const [enums, setEnums] = useState<Record<string, any>>();
@@ -546,8 +546,6 @@ const SaTable: React.FC<saTableProps> = (props) => {
   }, [tableColumns, initRequest, devEnable, enums]);
 
   const tableDesigner = useTableDesigner({
-    pageMenu,
-    setPageMenu,
     setColumns: setTbColumns,
     setActions: { setSearchLength },
     getColumnsRender: getTableColumnsRender,

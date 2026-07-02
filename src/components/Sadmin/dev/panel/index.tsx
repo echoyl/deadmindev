@@ -1,4 +1,4 @@
-import { PageContainer404 } from '@/components/Sadmin/404';
+import { PageContainer404, SaPageContext } from '@/components/Sadmin/404';
 import request, { messageLoadingKey } from '@/components/Sadmin/lib/request';
 import { SettingOutlined } from '@ant-design/icons';
 import { BetaSchemaForm, ProCard } from '@ant-design/pro-components';
@@ -246,7 +246,8 @@ const ItemRow = (props) => {
 };
 
 const SaPanel = (props) => {
-  const { url = '', pageMenu, path, ...restProps } = props;
+  const { url = '', path, ...restProps } = props;
+  const { pageMenu } = useContext(SaPageContext);
   const [data, setData] = useState();
   //const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<{ [key: string]: any }>();
@@ -278,7 +279,6 @@ const SaPanel = (props) => {
   }, []);
 
   const tableDesigner = useTableDesigner({
-    pageMenu,
     setColumns,
     getColumnsRender: (rows) => rows,
     type: 'panel',

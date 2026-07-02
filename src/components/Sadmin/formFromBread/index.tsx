@@ -1,6 +1,7 @@
 import { useModel } from '@umijs/max';
 import type { FC } from 'react';
 import { useContext } from 'react';
+import { SaPageContext, usePageMenu } from '../404';
 import { isBool, isUndefined } from '../checkers';
 import { getBread, getMenuDataById, tplComplie } from '../helpers';
 import { SaForm } from '../posts/post';
@@ -31,13 +32,15 @@ const FormFromBread: FC<{
     ? { addable: false, editable: false, deleteable: false, checkEnable: false }
     : { addable: true, editable: true, deleteable: true, checkEnable: true };
   const { initialState } = useModel('@@initialState');
+  const { pageMenu: topPageMenu } = useContext(SaPageContext);
+
+  let bread = null;
   if (fieldProps.path || menu_page_id) {
-    const bread = fieldProps.path
+    bread = fieldProps.path
       ? getBread(fieldProps.path, initialState?.currentUser)
       : getMenuDataById(initialState?.currentUser?.menuData, menu_page_id);
     if (bread) {
       const { data: v_data } = bread;
-      //如果有path的bread的话 读取菜单的设置
       const _readonlyProps = !isUndefined(readonly)
         ? readonlyProps
         : {
@@ -46,7 +49,6 @@ const FormFromBread: FC<{
             deleteable: v_data.deleteable,
             checkEnable: v_data.deleteable,
           };
-      //处理url
       const url =
         (v_data.postUrl ? v_data.postUrl : v_data.url + '/show') +
         (currentRow?.id ? '?id=' + currentRow?.id : '');
@@ -56,14 +58,18 @@ const FormFromBread: FC<{
         ..._readonlyProps,
         url,
         formProps: { ...fieldProps.props?.formProps, contentRender },
-        pageMenu: bread,
-        //paramExtra: { [fieldProps.foreign_key]: record[fieldProps.local_key] },
       };
-      //log('saformtabolex', v);
-      //console.log('SaForm props', fieldProps);
     }
   }
-  return <SaForm {...fieldProps.props} showTabs={false} align="left" pageType="drawer" />;
+
+  const effectiveMenu = bread || topPageMenu;
+  const [pageMenu, setPageMenu] = usePageMenu(effectiveMenu);
+
+  return (
+    <SaPageContext value={{ pageMenu, setPageMenu }}>
+      <SaForm {...fieldProps.props} showTabs={false} align="left" pageType="drawer" />
+    </SaPageContext>
+  );
 };
 export const FormFromBreadRender = (text, props) => {
   //console.log('saFormTable here', props);

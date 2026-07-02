@@ -1,9 +1,17 @@
 import { SaDevContext } from '@/components/Sadmin/dev';
 import { getBread, SaBreadcrumbRender } from '@/components/Sadmin/helpers';
-import { PageContainer } from '@ant-design/pro-components';
+import { MenuDataItem, PageContainer } from '@ant-design/pro-components';
 import { history, useLocation, useModel, useNavigate } from '@umijs/max';
 import { Button, Result, theme } from 'antd';
-import React, { lazy, Suspense, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  lazy,
+  Suspense,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Loading from '../Loading';
 import { useAdminStore } from './dev/context';
 import Markdown from './posts/markdown';
@@ -80,45 +88,45 @@ export const PageContainer404: React.FC<Record<string, any>> = (props) => {
   );
 };
 
+export const SaPageContext = createContext<{
+  pageMenu?: (MenuDataItem & Record<string, any>) | null;
+  setPageMenu?: (data: Record<string, any>) => void;
+}>({});
+
+// 用 path+data 的序列化 key 检测内容是否真正变化，避免新引用导致死循环，
+// 同时确保 path 不变但 data 更新时（如 designer 保存配置）也能传递到内部
+export function usePageMenu(menu: any): [any, (data: any) => void] {
+  const [pageMenu, setPageMenu] = useState<any>(menu);
+  const preMenuKeyRef = useRef('');
+  let menuKey = '';
+  try { menuKey = menu ? menu.path + '|' + JSON.stringify(menu.data) : ''; } catch {}
+  if (menuKey && menuKey !== preMenuKeyRef.current) {
+    if (preMenuKeyRef.current) setPageMenu(menu);
+    preMenuKeyRef.current = menuKey;
+  }
+  return [pageMenu, setPageMenu];
+}
+
 const ListPage: React.FC<Record<string, any>> = (props) => {
-  const { menu, pathname, name, data, pagetype } = props;
-  const level = menu?.data?.setting?.level || 0;
+  const { pathname, name, data, pagetype } = props;
+  const level = data?.setting?.level || 0;
+
   return (
     <Suspense fallback={<Loading />}>
       {pagetype == 'category' || (level && pagetype != 'xmarkdown') ? (
-        <Category
-          pageMenu={menu}
-          key={pathname}
-          path={pathname}
-          name={name}
-          {...data}
-          tableTitle={false}
-        />
+        <Category key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
       ) : pagetype == 'xmarkdown' ? (
-        <Markdown
-          key={pathname}
-          path={pathname}
-          name={name}
-          pageMenu={menu}
-          {...data}
-          tableTitle={false}
-        />
+        <Markdown key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
       ) : (
-        <PostsList
-          key={pathname}
-          path={pathname}
-          name={name}
-          pageMenu={menu}
-          {...data}
-          tableTitle={false}
-        />
+        <PostsList key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
       )}
     </Suspense>
   );
 };
 
-const PageTypes: React.FC<Record<string, any>> = ({ menu, match, pathname }) => {
-  const { data, page_type, name } = menu;
+const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
+  const { pageMenu } = useContext(SaPageContext);
+  const { data, page_type, name } = pageMenu || {};
 
   //console.log('menu is', menu);
   if (match || page_type == 'form') {
@@ -134,7 +142,6 @@ const PageTypes: React.FC<Record<string, any>> = ({ menu, match, pathname }) => 
           formTitle={false}
           key={pathname}
           match={match ? true : false}
-          pageMenu={menu}
           {...data}
           width={data?.setting?.formWidth}
           msgcls={({ code }) => {
@@ -158,19 +165,17 @@ const PageTypes: React.FC<Record<string, any>> = ({ menu, match, pathname }) => 
       case 'table':
       case 'justTable':
       case 'xmarkdown':
-        return (
-          <ListPage pathname={pathname} menu={menu} name={name} pagetype={page_type} data={data} />
-        );
+        return <ListPage pathname={pathname} name={name} pagetype={page_type} data={data} />;
       case 'panel':
         return (
           <Suspense fallback={<Loading />}>
-            <PagePanel key={pathname} pageMenu={menu} {...data} path={pathname} />
+            <PagePanel key={pathname} {...data} path={pathname} />
           </Suspense>
         );
       case 'panel2':
         return (
           <Suspense fallback={<Loading />}>
-            <SaPanel key={pathname} pageMenu={menu} {...data} path={pathname} />
+            <SaPanel key={pathname} {...data} path={pathname} />
           </Suspense>
         );
       default:
@@ -208,20 +213,24 @@ const Page: React.FC = () => {
     }
   }, [localtion]);
 
+  const [pageMenu, setPageMenu] = usePageMenu(menu);
   if (!menu) {
     return <NoFoundPage />;
   }
 
-  return (
-    <>
-      {!menu.data?.redirect ? (
-        <PageTypes key={pageKey} menu={menu} match={match} pathname={pathname} />
-      ) : (
-        <PageContainer404>
-          <Loading />
-        </PageContainer404>
-      )}
-    </>
+  // console.log('top menu is', menu);
+  return menu ? (
+    !menu.data?.redirect ? (
+      <SaPageContext value={{ pageMenu, setPageMenu }}>
+        <PageTypes key={pageKey} match={match} pathname={pathname} />
+      </SaPageContext>
+    ) : (
+      <PageContainer404>
+        <Loading />
+      </PageContainer404>
+    )
+  ) : (
+    <NoFoundPage />
   );
 };
 

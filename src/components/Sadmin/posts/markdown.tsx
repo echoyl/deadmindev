@@ -1,9 +1,9 @@
-import { PageContainer404 } from '@/components/Sadmin/404';
+import { PageContainer404, SaPageContext } from '@/components/Sadmin/404';
 import { getFromObject, search2Obj } from '@/components/Sadmin/helpers';
 import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { useModel, useSearchParams } from '@umijs/max';
 import type { Anchor, GetProp } from 'antd';
-import { Affix, Button, Card, Empty, Flex, Layout, Space } from 'antd';
+import { Affix, Button, Card, Empty, Flex, Layout, Skeleton, Space } from 'antd';
 import type { Key } from 'react';
 import React, { useContext, useEffect, useState } from 'react';
 import ConfirmForm from '../action/confirmForm';
@@ -27,7 +27,6 @@ const Markdown: React.FC<saTableProps> = (props) => {
     leftMenu,
     setting,
     url = '',
-    pageMenu: oPageMenu,
     openType,
     editable = true, //是否可编辑
     addable = true, //是否可以新增
@@ -46,7 +45,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
     ...treeMenuRest
   } = setting?.leftMenu || leftMenu || { close: true };
   const { isMobile } = useContext(SaDevContext);
-  const [pageMenu, setPageMenu] = useState<Record<string, any> | undefined>(oPageMenu);
+  const { pageMenu } = useContext(SaPageContext);
   const page = pageMenu?.id;
   const [categorys, setCategorys] = useState<any[]>([]);
   const { initialState } = useModel('@@initialState');
@@ -63,7 +62,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
   };
   const [category_id, setKey] = useState<Key>(numberFormat(searchCategoryId));
   //指定的id，使用单页，即无左侧菜单使用
-  const oid = getFromObject(oPageMenu, ['data', category_id_name]);
+  const oid = getFromObject(pageMenu, ['data', category_id_name]);
 
   const [mdContent, setMdContent] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -72,6 +71,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
   //获取单个元素的内容信息
   const getMdContent = (item: Record<string, any>) => {
     setLoading(true);
+    setMdContent({}); //清空数据
     setMdContentAnchors([]);
     request.get(url + '/show', { params: item }).then(({ code, data }) => {
       if (!code) {
@@ -201,8 +201,6 @@ const Markdown: React.FC<saTableProps> = (props) => {
     enums: { id: category_id },
   })?.();
   const tableDesigner = useTableDesigner({
-    pageMenu,
-    setPageMenu,
     devEnable,
   });
   //定义 actionRef 其中有 reload方法
@@ -264,7 +262,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
             <Card
               loading={loading}
               variant="borderless"
-              title={mdContent?.title}
+              title={loading ? <Skeleton.Input active={true} size="small" /> : mdContent?.title}
               extra={
                 <Space>
                   {editable && (

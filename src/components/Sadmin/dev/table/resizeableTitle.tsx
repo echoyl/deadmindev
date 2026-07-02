@@ -4,6 +4,7 @@ import { default as cls } from 'classnames';
 import React, { useContext } from 'react';
 import type { ResizeCallbackData } from 'react-resizable';
 import { Resizable } from 'react-resizable';
+import { SaPageContext } from '../../404';
 import { SaContext } from '../../posts/table';
 import './index.css';
 
@@ -23,9 +24,9 @@ interface TitlePropsType {
 
 const ResizableTitle: React.FC<Readonly<React.HTMLAttributes<any> & TitlePropsType>> = (props) => {
   const { width, uid, ...restProps } = props;
-  const {
-    tableDesigner: { setColumns, tbColumns = [], setColumnWidth, pageMenu, devEnable } = {},
-  } = useContext(SaContext);
+  const { tableDesigner: { setColumns, tbColumns = [], setColumnWidth, devEnable } = {} } =
+    useContext(SaContext);
+  const { pageMenu } = useContext(SaPageContext);
   const index = tbColumns?.findIndex((col) => col.uid === uid);
   //找到有fixed right的列
 

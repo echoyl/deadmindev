@@ -9,6 +9,7 @@ import type { DropdownProps, GetProp } from 'antd';
 import { Space } from 'antd';
 import classNames from 'classnames';
 import { useContext, useEffect, useState } from 'react';
+import { SaPageContext } from '../../404';
 import ConfirmForm from '../../action/confirmForm';
 import { SaContext } from '../../posts/table';
 import { DragHandler, SortableItem } from '../dnd-context/SortableItem';
@@ -18,9 +19,9 @@ import baseFormColumns, { baseRowColumns } from './vars/base';
 type ItemType = GetProp<DropdownProps, 'menu'>['items'];
 const BaseForm = (props: Record<string, any>) => {
   const { title, uid, data, type = 'col', extpost } = props;
-  const { tableDesigner: { pageMenu, reflush, editUrl, sourceData } = {} } = useContext(SaContext);
+  const { tableDesigner: { reflush, editUrl, sourceData } = {} } = useContext(SaContext);
   const { setVisible } = useContext(SchemaSettingsContext);
-
+  const { pageMenu } = useContext(SaPageContext);
   const [value, setValue] = useState({});
   useEffect(() => {
     setValue(data);

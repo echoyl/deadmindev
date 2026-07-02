@@ -3,6 +3,7 @@ import { isUndefined } from 'es-toolkit';
 import type { FC } from 'react';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { SaPageContext, usePageMenu } from '../404';
 import { isBool } from '../checkers';
 import { getBread, getFromObject, getMenuDataById, tplComplie } from '../helpers';
 import SaTable, { SaContext } from '../posts/table';
@@ -45,24 +46,23 @@ const TableFromBread: FC<{
   const post_key = getFromObject(record, fieldProps.local_key);
   //console.log('getBread', fieldProps.path);
   const { initialState } = useModel('@@initialState');
+  const { pageMenu: topPageMenu } = useContext(SaPageContext);
+  let bread = null;
   if (fieldProps.path || menu_page_id) {
-    const bread = fieldProps.path
+    bread = fieldProps.path
       ? getBread(fieldProps.path, initialState?.currentUser)
       : getMenuDataById(initialState?.currentUser?.menuData, menu_page_id);
-    //console.log('fieldProps.props is', JSON.stringify(fieldProps.props), bread);
     if (bread) {
       const { data: v_data } = bread;
       fieldProps.props = {
         ...fieldProps.props,
         ...v_data,
         ...readonlyProps,
-        //paramExtra: { [fieldProps.foreign_key]: post_key },
-        //postExtra: { [fieldProps.foreign_key]: post_key ? post_key : 0 },//这里去掉了table种的form提交数据后提交的参数，应该在请求form后重新将参数返回后放入到一个hidden元素中
-        pageMenu: bread,
       };
-      //log('saformtabolex', v);
     }
   }
+  const effectiveMenu = bread || topPageMenu;
+  const [pageMenu, setPageMenu] = usePageMenu(effectiveMenu);
 
   if (fieldProps.foreign_key) {
     fieldProps.props.paramExtra = {
@@ -99,7 +99,7 @@ const TableFromBread: FC<{
   }, []);
   //console.log('alwaysenable', props, alwaysenable, post_key);
   return (
-    <>
+    <SaPageContext value={{ pageMenu, setPageMenu }}>
       <SaTable
         pageType={type == 'modal' ? 'modal' : 'drawer'}
         openType="drawer"
@@ -129,7 +129,7 @@ const TableFromBread: FC<{
           }}
         />
       ) : null}
-    </>
+    </SaPageContext>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useIntl, useModel } from '@umijs/max';
 import { Button } from 'antd';
 import { useContext } from 'react';
+import { SaPageContext, usePageMenu } from '../../404';
 import ButtonDrawer from '../../action/buttonDrawer';
 import ButtonModal from '../../action/buttonModal';
 import { getMenuDataById, t, tplComplie } from '../../helpers';
@@ -19,61 +20,63 @@ const InnerForm = (props: Record<string, any>) => {
     addable,
     editable,
     afterFormPost,
-    pageMenu,
   } = props;
   const { actionRef, formRef } = useContext(SaContext);
   const { initialState } = useModel('@@initialState');
-  const bread = getMenuDataById(initialState?.currentUser?.menuData, pageMenu?.id);
+  const { pageMenu: topPageMenu } = useContext(SaPageContext);
+  const bread = getMenuDataById(initialState?.currentUser?.menuData, topPageMenu?.id);
+  const [pageMenu, setPageMenu] = usePageMenu(bread);
   return (
-    <SaForm
-      {...props}
-      {...bread?.data}
-      pageMenu={bread}
-      msgcls={(ret) => {
-        const { code } = ret;
-        if (!code) {
-          setOpen(false);
-          //actionRef.current?.reload();
-          afterFormPost?.(ret);
-          //设置弹出层关闭，本来会触发table重新加载数据后会关闭弹层，但是如果数据重载过慢的话，这个会感觉很卡所以在这里直接设置弹层关闭
-          return;
-        }
-      }}
-      beforeGet={(data) => {
-        if (!data) {
-          //没有data自动关闭弹出层
-          setOpen?.(false);
-        }
-      }}
-      formRef={formRef}
-      actionRef={actionRef}
-      paramExtra={{ ...currentRow, ...paramExtra }}
-      postExtra={{ ...currentRow, ...postExtra }}
-      url={url}
-      //showTabs={tabs?.length > 1 ? true : false}
-      formProps={{
-        contentRender,
-        submitter:
-          (!editable && currentRow.id) ||
-          (currentRow.readonly && currentRow.id) ||
-          (!currentRow.id && !addable)
-            ? false
-            : {
-                //移除默认的重置按钮，点击重置按钮后会重新请求一次request
-                render: (props, doms) => {
-                  return [
-                    <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                      {t('cancel')}
-                    </Button>,
-                    doms[1],
-                  ];
+    <SaPageContext value={{ pageMenu, setPageMenu }}>
+      <SaForm
+        {...props}
+        {...bread?.data}
+        msgcls={(ret) => {
+          const { code } = ret;
+          if (!code) {
+            setOpen(false);
+            //actionRef.current?.reload();
+            afterFormPost?.(ret);
+            //设置弹出层关闭，本来会触发table重新加载数据后会关闭弹层，但是如果数据重载过慢的话，这个会感觉很卡所以在这里直接设置弹层关闭
+            return;
+          }
+        }}
+        beforeGet={(data) => {
+          if (!data) {
+            //没有data自动关闭弹出层
+            setOpen?.(false);
+          }
+        }}
+        formRef={formRef}
+        actionRef={actionRef}
+        paramExtra={{ ...currentRow, ...paramExtra }}
+        postExtra={{ ...currentRow, ...postExtra }}
+        url={url}
+        //showTabs={tabs?.length > 1 ? true : false}
+        formProps={{
+          contentRender,
+          submitter:
+            (!editable && currentRow.id) ||
+            (currentRow.readonly && currentRow.id) ||
+            (!currentRow.id && !addable)
+              ? false
+              : {
+                  //移除默认的重置按钮，点击重置按钮后会重新请求一次request
+                  render: (props, doms) => {
+                    return [
+                      <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
+                        {t('cancel')}
+                      </Button>,
+                      doms[1],
+                    ];
+                  },
                 },
-              },
-      }}
-      align="left"
-      dataId={currentRow.id}
-      pageType="drawer"
-    />
+        }}
+        align="left"
+        dataId={currentRow.id}
+        pageType="drawer"
+      />
+    </SaPageContext>
   );
 };
 

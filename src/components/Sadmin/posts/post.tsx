@@ -12,7 +12,7 @@ import { DndContext } from '../dev/dnd-context';
 import { useTableDesigner } from '../dev/table/designer';
 import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 
-import { PageContainer404 } from '@/components/Sadmin/404';
+import { PageContainer404, SaPageContext } from '@/components/Sadmin/404';
 import { isFunction, isUndefined } from 'es-toolkit';
 import { isObj } from '../checkers';
 import { t, tplComplie } from '../helpers';
@@ -71,7 +71,6 @@ export const SaForm: FC<saFormProps> = (props) => {
     onTabChange,
     setting,
     resetForm = false,
-    pageMenu: oPageMenu,
     grid = true,
     devEnable: pdevEnable = true,
     requestOptions,
@@ -79,7 +78,7 @@ export const SaForm: FC<saFormProps> = (props) => {
   //console.log('init props', props);
   //const url = 'posts/posts';
   //读取后台数据
-  const [pageMenu, setPageMenu] = useState(oPageMenu);
+  const { pageMenu } = useContext(SaPageContext);
   const [detail, setDetail] = useState<Record<string, any> | boolean>(
     props.formProps?.initialValues ? props.formProps?.initialValues : false,
   );
@@ -242,8 +241,6 @@ export const SaForm: FC<saFormProps> = (props) => {
   const [stepFormCurrent, setStepFormCurrent] = useState<number>(0);
 
   const tableDesigner = useTableDesigner({
-    pageMenu,
-    setPageMenu,
     setColumns: setFormColumns,
     getColumnsRender: getFormColumnsRender,
     type: 'form',

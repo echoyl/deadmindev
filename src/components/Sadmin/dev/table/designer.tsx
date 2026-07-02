@@ -4,18 +4,17 @@ import type { DropdownProps, GetProp } from 'antd';
 import { Dropdown } from 'antd';
 import type { Key, ReactNode } from 'react';
 import React, { createContext, useContext, useState, useTransition } from 'react';
+import { SaPageContext } from '../../404';
 import { hasSearch } from '../../helper/functions';
 import { getMenuDataById } from '../../helpers';
 import { DevJsonContext } from '../../jsonForm';
 
 export type tableDesignerInstance = {
   type?: 'table' | 'form' | 'panel';
-  pageMenu?: Record<string, any>;
   sort?: (id: number, cls: any[], type: 'table' | 'form' | 'toolbar' | 'tab') => void;
   sortFormColumns?: (id: number, cls: any[]) => void;
   setColumns?: any;
   getColumnsRender?: any;
-  setPageMenu?: (data: Record<string, any>) => void;
   setActions?: Record<string, any>;
   add?: (data: Record<string, any>) => void;
   addUrl?: string;
@@ -31,9 +30,10 @@ export type tableDesignerInstance = {
 };
 
 export function useTableDesigner(props: tableDesignerInstance): tableDesignerInstance {
-  const { setColumns, getColumnsRender, setPageMenu, type = 'table', setActions = {} } = props;
+  const { setColumns, getColumnsRender, type = 'table', setActions = {} } = props;
   const { initialState, setInitialState } = useModel('@@initialState');
   const { json = {}, setJson } = useContext(DevJsonContext); //读取本地化的配置信息
+  const { setPageMenu } = useContext(SaPageContext);
   const config: Record<string, Record<string, string>> = {
     form: {
       deleteUrl: 'dev/menu/deleteFormColumn',

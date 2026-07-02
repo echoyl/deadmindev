@@ -2,10 +2,11 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext as DndKitContext, DragOverlay, rectIntersection } from '@dnd-kit/core';
 import type { Props } from '@dnd-kit/core/dist/components/DndContext/DndContext';
 
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
+import { SaPageContext } from '../../404';
 import { SaContext } from '../../posts/table';
 
-const useDragEnd = (props?: any) => {
+const useDragEnd = (props?: any, pageMenu?: any) => {
   const { tableDesigner } = useContext(SaContext);
   return (event: DragEndEvent) => {
     const { active, over } = event;
@@ -16,11 +17,10 @@ const useDragEnd = (props?: any) => {
     if (active?.id == over?.id) {
       return;
     }
-    const page_menu = tableDesigner?.pageMenu;
-    if (page_menu) {
+    if (pageMenu) {
       if (active.data.current?.devData.type == 'panel') {
         tableDesigner?.sort?.(
-          page_menu.id,
+          pageMenu.id,
           [
             { uid: active?.id, devData: active.data.current?.devData },
             { uid: over?.id, devData: over.data.current?.devData },
@@ -29,7 +29,7 @@ const useDragEnd = (props?: any) => {
         );
       } else {
         tableDesigner?.sort?.(
-          page_menu.id,
+          pageMenu.id,
           [active?.id, over?.id],
           active.data.current?.devData.type,
         );
@@ -39,21 +39,22 @@ const useDragEnd = (props?: any) => {
 };
 
 export const DndContext = (props: Props) => {
-  const [visible, setVisible] = useState(true);
+  //const [visible, setVisible] = useState(true);
+  const { pageMenu } = useContext(SaPageContext);
   return (
     <DndKitContext
       collisionDetection={rectIntersection}
       accessibility={{ container: document.body }}
       {...props}
       onDragStart={(event) => {
-        const { active } = event;
-        const activeSchema = active?.data?.current?.schema;
-        setVisible(!!activeSchema);
+        //const { active } = event;
+        //const activeSchema = active?.data?.current?.schema;
+        //setVisible(!!activeSchema);
         if (props?.onDragStart) {
           props?.onDragStart?.(event);
         }
       }}
-      onDragEnd={useDragEnd(props)}
+      onDragEnd={useDragEnd(props, pageMenu)}
     >
       <DragOverlay
         dropAnimation={{
