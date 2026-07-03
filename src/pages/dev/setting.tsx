@@ -118,17 +118,17 @@ export default () => {
                   },
                 ],
               },
-              {
-                valueType: 'group',
-                columns: [
-                  {
-                    title: 'monaco编辑器',
-                    tooltip:
-                      '不填写则使用默认的 https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs,私有部署请访问 https://www.jsdelivr.com/package/npm/monaco-editor 下载文件',
-                    dataIndex: 'monaco_vs',
-                  },
-                ],
-              },
+              // {
+              //   valueType: 'group',
+              //   columns: [
+              //     {
+              //       title: 'monaco编辑器',
+              //       tooltip:
+              //         '不填写则使用默认的 https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs,私有部署请访问 https://www.jsdelivr.com/package/npm/monaco-editor 下载文件',
+              //       dataIndex: 'monaco_vs',
+              //     },
+              //   ],
+              // },
             ],
           },
           {

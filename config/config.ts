@@ -2,6 +2,7 @@
 
 import { defineConfig } from '@umijs/max';
 import { join } from 'node:path';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
@@ -195,6 +196,27 @@ export default defineConfig({
    */
   //mako: {},
   esbuildMinifyIIFE: true,
+  chainWebpack(memo) {
+    memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
+      {
+        languages: ['json', 'javascript', 'typescript', 'html', 'css', 'markdown', 'yaml'],
+      },
+    ]);
+    memo.optimization.splitChunks({
+      ...memo.optimization.get('splitChunks'),
+      cacheGroups: {
+        ...memo.optimization.get('splitChunks')?.cacheGroups,
+        monaco: {
+          test: /[\\/]node_modules[\\/]monaco-editor[\\/]/,
+          name: 'monaco',
+          chunks: 'all',
+          priority: 30,
+          enforce: true,
+        },
+      },
+    });
+    return memo;
+  },
   requestRecord: {},
   //exportStatic: {},
   define: {

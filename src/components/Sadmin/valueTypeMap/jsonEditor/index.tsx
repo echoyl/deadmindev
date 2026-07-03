@@ -1,106 +1,34 @@
-import { Editor, loader } from '@monaco-editor/react';
-import { useIntl, useModel } from '@umijs/max';
-import { Card, Typography } from 'antd';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { isObj } from '../../checkers';
-import { SaDevContext } from '../../dev';
-import { t } from '../../helpers';
+import { lazy, Suspense } from 'react';
+import { Spin } from 'antd';
 
-//const Editor = lazy(() => import('@monaco-editor/react'));
-//const { loader } = Editor;
+const LazyMonacoEditor = lazy(() =>
+  import('./inner').then((m) => ({ default: m.MonacoEditor })),
+);
 
-export const MonacoDefaultOptions = {
-  selectOnLineNumbers: false,
-  automaticLayout: true,
-  minimap: {
-    enabled: false,
-  },
-  autoIndent: true,
-  scrollbar: {
-    verticalScrollbarSize: 6,
-    horizontalScrollbarSize: 6,
-  },
-};
+const LazyJsonEditor = lazy(() => import('./inner'));
 
-export const MonacoEditor = (props) => {
-  const { initialState } = useModel('@@initialState');
-  //loader放在外面，如果放在useEffect中，loader.js不会使用vs的地址，而是默认的jsdelivr的cdn地址
-  loader.config({
-    paths: {
-      //vs: 'https://cdn.jsdmirror.com/npm/monaco-editor@0.54.0/min/vs',
-      vs:
-        initialState?.settings?.adminSetting?.monaco_vs ||
-        'https://cdn.jsdelivr.net/npm/monaco-editor@0.54.0/min/vs',
-    },
-  });
-
-  const { options, height = 400, language = 'json', ...restProps } = props;
-  const realOptions = { ...MonacoDefaultOptions, ...options };
-  const { setting } = useContext(SaDevContext);
-  const editorRef = useRef(null);
-  const handleEditorDidMount = (editor, monaco) => {
-    editorRef.current = editor;
+function suspend(Component) {
+  return function SuspenseWrapper(props) {
+    return (
+      <Suspense
+        fallback={
+          <div
+            style={{
+              height: props.height || 400,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Spin />
+          </div>
+        }
+      >
+        <Component {...props} />
+      </Suspense>
+    );
   };
-  const intl = useIntl();
+}
 
-  return (
-    <Card
-      title={`${language}${t('editor', intl)}`}
-      size="small"
-      styles={{ body: { paddingLeft: 0, paddingRight: 0 } }}
-      extra={
-        <Typography.Text
-          copyable={{
-            text: () => {
-              return editorRef?.current?.getValue();
-            },
-          }}
-        />
-      }
-    >
-      <Editor
-        options={realOptions}
-        height={height}
-        theme={setting?.navTheme != 'light' ? 'vs-dark' : 'vs'}
-        //theme="vs-dark"
-        language={language}
-        style={{ boder: 'none' }}
-        className="monaco-editor-container"
-        onMount={handleEditorDidMount}
-        {...restProps}
-      />
-    </Card>
-  );
-};
-
-const JsonEditor = (props) => {
-  const { value = '', onChange, height = 400, readOnly } = props;
-  const options = { readOnly };
-
-  const [content, setContent] = useState(
-    value && isObj(value) ? JSON.stringify(value, null, 2) : value,
-  );
-
-  useEffect(() => {
-    if (readOnly && isObj(value)) {
-      //当只读模式下根据外面的值来更新数据
-      setContent(JSON.stringify(value, null, 2));
-    }
-  }, [value]);
-
-  const onChangeR = (e) => {
-    setContent(e);
-    try {
-      const inputValue = e ? JSON.parse(e) : '';
-      onChange?.(inputValue);
-    } catch (e) {
-      //console.log(e);
-    }
-
-    //console.log('inputValue',inputValue);
-  };
-
-  return <MonacoEditor options={options} height={height} value={content} onChange={onChangeR} />;
-};
-
-export default JsonEditor;
+export const MonacoEditor = suspend(LazyMonacoEditor);
+export default suspend(LazyJsonEditor);
