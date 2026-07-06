@@ -4,11 +4,13 @@ import { SaForm } from '@/components/Sadmin/posts/post';
 import { useIntl } from '@umijs/max';
 import { Button } from 'antd';
 import { useContext } from 'react';
+import { SaPageContext } from '../../404';
 import ButtonDrawer from '../../action/buttonDrawer';
 import { SaContext } from '../../posts/table';
 
 export default (props: any) => {
-  const { pageMenu = { model_id: 0 }, trigger } = props;
+  const { trigger } = props;
+  const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
   const columns: saFormColumnsType = [
     {
       title: '生成数量',
@@ -102,13 +104,13 @@ export default (props: any) => {
     },
   ];
   const intl = useIntl();
-  const model_id = pageMenu.model_id;
+  const model_id = pageMenu?.model_id;
   const DrawerForm = (mprops: any) => {
     const { contentRender, setOpen } = mprops;
     const { actionRef } = useContext(SaContext);
     return (
       <SaForm
-        msgcls={({ data }) => {
+        msgcls={() => {
           setOpen(false);
           actionRef?.current?.reload();
           return;

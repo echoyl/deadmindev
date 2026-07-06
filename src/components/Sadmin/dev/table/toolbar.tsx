@@ -27,6 +27,7 @@ import { Button, Dropdown, Popover, Space, Tree, Upload } from 'antd';
 import { cloneDeep, isString } from 'es-toolkit';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '..';
+import { SaPageContext } from '../../404';
 import ButtonDrawer from '../../action/buttonDrawer';
 import ButtonModal from '../../action/buttonModal';
 import CustomerColumnRender from '../../action/customerColumn';
@@ -244,7 +245,8 @@ export const ToolMenuForm = (props) => {
   const { setInitialState } = useModel('@@initialState');
   const { devData, setDevData } = useContext(SaDevContext);
   const { json = {} } = useContext(DevJsonContext);
-  const { pageMenu = { id: 0 }, trigger } = props;
+  const { trigger } = props;
+  const { pageMenu = { id: 0 } } = useContext(SaPageContext);
   const intl = useIntl();
   const MenuForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
@@ -275,7 +277,7 @@ export const ToolMenuForm = (props) => {
               ];
             },
           },
-          initialValues: Object.keys(pageMenu).length > 0 ? false : json?.config,
+          initialValues: pageMenu && Object.keys(pageMenu).length > 0 ? false : json?.config,
         }}
       />
     );
@@ -288,7 +290,8 @@ export const ToolMenuForm = (props) => {
 };
 
 export const ToolModelForm = (props) => {
-  const { pageMenu = { model_id: 0 }, trigger } = props;
+  const { trigger } = props;
+  const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
   const intl = useIntl();
   const ModelForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
@@ -338,13 +341,14 @@ export const ToolModelForm = (props) => {
 };
 
 export const ToolModelFieldsForm = (props) => {
-  const { pageMenu = { model_id: 0 }, trigger } = props;
+  const { trigger } = props;
+  const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
   const intl = useIntl();
   const ModelForm = (mprops) => {
     const { contentRender, setOpen } = mprops;
     const formRef = useRef<ProFormInstance<any>>({} as any);
 
-    const { devData, setDevData } = useContext(SaDevContext);
+    const { setDevData } = useContext(SaDevContext);
     return (
       <SaForm
         formRef={formRef}
@@ -417,9 +421,8 @@ export const ToolModelFieldsForm = (props) => {
  * @returns
  */
 export const ToolBarMenu = (props) => {
-  const { trigger = <Button icon={<SettingOutlined />} />, pageMenu = { id: 0, model_id: 0 } } =
-    props;
-  // console.log('pageMenu', pageMenu);
+  const { trigger = <Button icon={<SettingOutlined />} /> } = props;
+  const { pageMenu = { id: 0, model_id: 0 } } = useContext(SaPageContext);
   const intl = useIntl();
   return (
     <Dropdown
@@ -430,7 +433,6 @@ export const ToolBarMenu = (props) => {
             key: 'editMenu',
             label: (
               <ToolMenuForm
-                pageMenu={pageMenu}
                 trigger={
                   <Button type="link" icon={<MenuOutlined />}>
                     {t('menu', intl)}
@@ -439,12 +441,11 @@ export const ToolBarMenu = (props) => {
               />
             ),
           },
-          pageMenu.model_id
+          pageMenu?.model_id
             ? {
                 key: 'editModel',
                 label: (
                   <ToolModelForm
-                    pageMenu={pageMenu}
                     trigger={
                       <Button type="link" icon={<DatabaseOutlined />}>
                         {t('model', intl)}
@@ -454,12 +455,11 @@ export const ToolBarMenu = (props) => {
                 ),
               }
             : null,
-          pageMenu.model_id
+          pageMenu?.model_id
             ? {
                 key: 'editModelFields',
                 label: (
                   <ToolModelFieldsForm
-                    pageMenu={pageMenu}
                     trigger={
                       <Button type="link" icon={<ProfileOutlined />}>
                         {t('columns', intl)}
@@ -470,7 +470,7 @@ export const ToolBarMenu = (props) => {
               }
             : null,
 
-          pageMenu.model_id
+          pageMenu?.model_id
             ? {
                 key: 'editModelRelation',
                 label: (
@@ -505,7 +505,6 @@ export const ToolBarMenu = (props) => {
             key: 'fakedata',
             label: (
               <Fakedata
-                pageMenu={pageMenu}
                 trigger={
                   <Button type="link" icon={<DatabaseOutlined />}>
                     {t('data', intl)}
@@ -534,8 +533,8 @@ export const ColumnsSelector = (props) => {
   const { devData } = useContext(SaDevContext);
   const [treeData, setTreeData] = useState<any[]>();
   const [treeChecked, setTreeChecked] = useState<any[]>();
-  const { tableDesigner: { pageMenu, reflush, editUrl = '', type = 'table' } = {} } =
-    useContext(SaContext);
+  const { tableDesigner: { reflush, editUrl = '', type = 'table' } = {} } = useContext(SaContext);
+  const { pageMenu } = useContext(SaPageContext);
 
   const getDataByType = (_type: string) => {
     if (_type == 'table') {
@@ -711,9 +710,7 @@ export const toolBarRender = (props) => {
       }
 
       if (btn.valueType == 'devsetting') {
-        btns.push(
-          <ToolBarMenu key={index} trigger={<Button icon={btn.icon} />} pageMenu={pageMenu} />,
-        );
+        btns.push(<ToolBarMenu key={index} trigger={<Button icon={btn.icon} />} />);
       }
       if (btn.valueType == 'devcolumns') {
         btns.push(
