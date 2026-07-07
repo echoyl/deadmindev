@@ -5,14 +5,6 @@ import { Card } from 'antd';
 export default () => {
   const columns: saFormColumnsType = [
     {
-      title: '生成数量',
-      dataIndex: 'count',
-      valueType: 'digit',
-      fieldProps: {
-        defaultValue: 200,
-      },
-    },
-    {
       title: '模型字段列表',
       dataIndex: 'columns',
       valueType: 'formList',
@@ -20,75 +12,67 @@ export default () => {
         gutter: 0,
       },
       fieldProps: {
-        //arrowSort: true,
-        //96 = 88 + 8px为 action的宽度
-        // containerStyle: {
-        //   width: 'calc(100% - 96px)',
+        // transform: (data) => {
+        //   return formListFormatDateValue(
+        //     data,
+        //     columns.find((c) => c.dataIndex === 'columns')?.columns,
+        //   );
         // },
-        actionRender: () => <></>,
-        creatorButtonProps: false,
       },
       columns: [
         {
           valueType: 'group',
           columns: [
             {
-              title: 'title',
-              dataIndex: 'title',
+              title: 'time1',
+              dataIndex: 'time1',
               colProps: { span: 3 },
-              readonly: true,
+              valueType: 'time',
             },
             {
-              title: 'name',
-              dataIndex: 'name',
+              title: 'time',
+              dataIndex: 'time',
               colProps: { span: 3 },
-              readonly: true,
-            },
-            {
-              title: 'form_type',
-              dataIndex: 'form_type',
-              colProps: { span: 3 },
-              readonly: true,
-            },
-            // {
-            //   title: 'Icon',
-            //   dataIndex: 'icon',
-            //   valueType: 'iconSelect',
-            //   colProps: { span: 6 },
-            // },
-            // {
-            //   title: 'Color',
-            //   dataIndex: 'color',
-            //   valueType: 'colorPicker',
-            //   colProps: { span: 4 },
-            // },
-            {
-              title: '数据类型',
-              dataIndex: 'fake_type',
-              valueType: 'select',
-              colProps: { span: 6 },
+              valueType: 'time',
               fieldProps: {
-                options: [
-                  { label: 'text - 文本', value: 'text' },
-                  { label: 'content - 内容', value: 'content' },
-                  { label: 'address - 地址', value: 'address' },
-                  { label: 'name - 姓名', value: 'username' },
-                  { label: 'company - 公司', value: 'company' },
-                  { label: 'phoneNumber - 电话', value: 'phoneNumber' },
-                  { label: 'randomNumber - 随机数', value: 'randomNumber' },
-                  { label: 'randomStr - 随机字符串', value: 'randomStr' },
-                  { label: 'password - 密码', value: 'password' },
-                ],
-                showSearch: true,
+                format: 'HH:mm',
               },
             },
             {
-              title: '选项',
-              dataIndex: 'fake_options',
-              colProps: { span: 9 },
-              fieldProps: {
-                placeholder: '多个选项或区间使用英文逗号分隔',
-              },
+              title: 'date',
+              dataIndex: 'date',
+              colProps: { span: 3 },
+              valueType: 'date',
+            },
+            {
+              title: 'datetime',
+              dataIndex: 'datetime',
+              colProps: { span: 3 },
+              valueType: 'dateTime',
+            },
+            {
+              title: 'dateYear',
+              dataIndex: 'dateYear',
+              colProps: { span: 3 },
+              valueType: 'dateYear',
+            },
+            {
+              title: 'dateQuarter',
+              dataIndex: 'dateQuarter',
+              colProps: { span: 3 },
+              valueType: 'dateQuarter',
+            },
+            {
+              title: 'dateMonth',
+              dataIndex: 'dateMonth',
+              colProps: { span: 3 },
+              valueType: 'dateMonth',
+            },
+            {
+              title: 'dateWeek',
+              dataIndex: 'dateWeek',
+              colProps: { span: 3 },
+              valueType: 'dateWeek',
             },
           ],
         },
@@ -105,7 +89,7 @@ export default () => {
         pageType="page"
         grid={true}
         devEnable={false}
-        url="dev/model/fakeData"
+        //url="dev/model/fakeData"
         dataId={10038}
         paramExtra={{ id: 10038 }}
         postExtra={{ id: 10038 }}

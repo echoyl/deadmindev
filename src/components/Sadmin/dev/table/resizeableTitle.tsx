@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import type { TableColumnsType } from 'antd';
-import { default as cls } from 'classnames';
+import { clsx } from 'clsx';
 import React, { useContext } from 'react';
 import type { ResizeCallbackData } from 'react-resizable';
 import { Resizable } from 'react-resizable';
@@ -68,7 +68,7 @@ const ResizableTitle: React.FC<Readonly<React.HTMLAttributes<any> & TitlePropsTy
     >
       <th
         {...restProps}
-        className={cls(
+        className={clsx(
           props.className,
           css`
             max-width: 300px;

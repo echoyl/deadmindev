@@ -8,16 +8,18 @@ import { App, Avatar, Button, Col, Flex, Row, Skeleton, Table, Tabs } from 'antd
 import dayjs from 'dayjs';
 import { sum } from 'es-toolkit';
 import numeral from 'numeral';
-import React, { FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageContainer404 } from '../404';
 import AreaMap from '../dev/panel/items/areaMap';
 import { MapShow } from '../map';
 import { getFormFieldColumns } from '../posts/formDom';
 import { getTableColumns } from '../posts/tableColumns';
 import styles from './style.less';
-export const PagePanelHeader: FC = (props) => {
+export const PagePanelHeader: FC<Record<string, any>> = (props) => {
+  const { flash } = props;
   const { initialState } = useModel('@@initialState');
-  const { currentUser } = initialState;
+  const { currentUser } = initialState || {};
   const loading = currentUser && Object.keys(currentUser).length;
   if (!loading) {
     return <Skeleton avatar paragraph={{ rows: 1 }} active />;
@@ -47,7 +49,7 @@ export const PagePanelHeader: FC = (props) => {
                     shape="circle"
                     type="text"
                     onClick={() => {
-                      props.flash?.();
+                      flash?.();
                     }}
                     icon={<SyncOutlined />}
                   />

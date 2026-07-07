@@ -14,7 +14,7 @@ import { useIntl, useModel } from '@umijs/max';
 import type { GetProp, MenuProps } from 'antd';
 import { Button, Space, Switch, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import type { FC, Key } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { SaPageContext } from '../../404';
@@ -584,7 +584,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
       devData={devData}
       style={{ ...styles[devData?.type], ...style }}
     >
-      <div className={classNames('general-schema-designer', dstyles.overrideAntdCSS)}>
+      <div className={clsx('general-schema-designer', dstyles.overrideAntdCSS)}>
         <div className={'general-schema-designer-icons'}>
           <Space size={3} align={'center'}>
             <SchemaSettingsDropdown

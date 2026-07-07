@@ -1,10 +1,10 @@
 import { css } from '@emotion/css';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 const TableIndex = (props) => {
   const { checked, record, originNode } = props;
   return (
     <div
-      className={classNames(
+      className={clsx(
         checked ? 'checked' : null,
         css`
           position: relative;
@@ -32,7 +32,7 @@ const TableIndex = (props) => {
       )}
     >
       <div
-        className={classNames(
+        className={clsx(
           checked ? 'checked' : null,
           css`
             position: relative;
@@ -42,12 +42,12 @@ const TableIndex = (props) => {
           `,
         )}
       >
-        <div className={classNames('de-table-index')} style={{ padding: '0 8px 0 16px' }}>
+        <div className={clsx('de-table-index')} style={{ padding: '0 8px 0 16px' }}>
           {record.id}
         </div>
       </div>
       <div
-        className={classNames(
+        className={clsx(
           'de-origin-node',
           checked ? 'checked' : null,
           css`

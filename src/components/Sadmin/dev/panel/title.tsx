@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import type { DropdownProps, GetProp } from 'antd';
 import { Space } from 'antd';
-import classNames from 'classnames';
+import { clsx } from 'clsx';
 import { useContext, useEffect, useState } from 'react';
 import { SaPageContext } from '../../404';
 import ConfirmForm from '../../action/confirmForm';
@@ -190,7 +190,7 @@ export const DevPanelColumnTitle = (props: Record<string, any>) => {
       devData={{ type: 'panel', ...devData }}
       style={style}
     >
-      <div className={classNames('general-schema-designer', styles.overrideAntdCSS)}>
+      <div className={clsx('general-schema-designer', styles.overrideAntdCSS)}>
         <div className={'general-schema-designer-icons'}>
           <Space size={3} align={'center'}>
             <SchemaSettingsDropdown

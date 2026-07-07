@@ -1,8 +1,8 @@
 // https://umijs.org/config/
 
 import { defineConfig } from '@umijs/max';
-import { join } from 'node:path';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+import { join } from 'node:path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
@@ -199,7 +199,7 @@ export default defineConfig({
   chainWebpack(memo) {
     memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
       {
-        languages: ['json', 'javascript', 'typescript', 'html', 'css', 'markdown', 'yaml'],
+        languages: ['json', 'markdown'],
       },
     ]);
     memo.optimization.splitChunks({

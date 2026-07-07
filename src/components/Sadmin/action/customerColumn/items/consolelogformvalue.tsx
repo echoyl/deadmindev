@@ -7,7 +7,7 @@ const ConsoleLogShowFormValue = (props: any) => {
   const { formRef } = useContext(SaContext);
   const [value, setValue] = useState();
   const onClick = () => {
-    const v = formRef.current?.getFieldsValue();
+    const v = formRef.current?.getFieldsFormatValue();
     console.log(v);
     setValue(v);
   };
