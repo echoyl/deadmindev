@@ -205,7 +205,10 @@ const ItemCol = (props) => {
         <ItemForm {...props} idata={idata} />
       ) : type == 'user' ? (
         <ProCard
-          styles={{ header: devEnable ? { width: '100%', display: 'block' } : {} }}
+          styles={{
+            header: devEnable ? { width: '100%', display: 'block' } : {},
+            root: { minHeight: 140 },
+          }}
           title={devEnable ? ctitle() : false}
         >
           <PagePanelHeader flash={getData} />
