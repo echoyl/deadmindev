@@ -98,3 +98,43 @@ export const fixUrlWithPrefix = (prefix: string | undefined, url: string) => {
     return url;
   }
 };
+
+const valueTypeFormats: Record<string, string> = {
+  time: 'HH:mm:ss',
+  date: 'YYYY-MM-DD',
+  dateYear: 'YYYY',
+  dateQuarter: 'YYYY-[Q]Q',
+  dateMonth: 'YYYY-MM',
+  dateWeek: 'YYYY-[W]ww',
+  dateTime: 'YYYY-MM-DD HH:mm:ss',
+};
+
+function getFieldFormatMap(nestedColumns: any[]): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const col of nestedColumns || []) {
+    if (col.valueType === 'group' && col.columns) {
+      Object.assign(map, getFieldFormatMap(col.columns));
+    } else if (col.dataIndex) {
+      const fmt = col.fieldProps?.format || valueTypeFormats[col.valueType as string];
+      if (fmt) map[col.dataIndex] = fmt;
+    }
+  }
+  return map;
+}
+
+/**
+ * formlist格式化日期格式
+ * @param data 值
+ * @param columns 列的配置
+ * @returns
+ */
+export const formListFormatDateValue = (data: any[], columns: any[]) => {
+  const fmtMap = getFieldFormatMap(columns);
+  return (data || []).map((item: Record<string, unknown>) => {
+    const result: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(item)) {
+      result[key] = dayjs.isDayjs(val) ? val.format(fmtMap[key]) : val;
+    }
+    return result;
+  });
+};

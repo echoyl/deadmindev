@@ -7,6 +7,7 @@ import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
 import TranslationModal from '../dev/form/translation';
 import { FormColumnTitle } from '../dev/table/title';
+import { formListFormatDateValue } from '../helper/functions';
 import { getFromObject, getMenuDataById, saFormColumnsType, tplComplie } from '../helpers';
 export const defaultColumnsLabel = {
   id: '序号',
@@ -374,8 +375,14 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         v.fieldProps.page = { ...v.fieldProps.page, id: v.page };
       }
       //如果是formlist 没有page 且没有columns 默认给一个 防止无属性不渲染dom
-      if (v.valueType == 'formList' && !v.columns) {
-        v.columns = [];
+      if (v.valueType == 'formList') {
+        if (!v.columns) {
+          v.columns = [];
+        }
+        //增加格式化方法
+        v.fieldProps.transform = (data: any) => {
+          return formListFormatDateValue(data, v.columns);
+        };
       }
 
       if (v.columns && Array.isArray(v.columns)) {
