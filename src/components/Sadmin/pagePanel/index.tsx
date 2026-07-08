@@ -15,56 +15,6 @@ import AreaMap from '../dev/panel/items/areaMap';
 import { MapShow } from '../map';
 import { getFormFieldColumns } from '../posts/formDom';
 import { getTableColumns } from '../posts/tableColumns';
-import styles from './style.less';
-export const PagePanelHeader: FC<Record<string, any>> = (props) => {
-  const { flash } = props;
-  const { initialState } = useModel('@@initialState');
-  const { currentUser } = initialState || {};
-  const loading = currentUser && Object.keys(currentUser).length;
-  if (!loading) {
-    return <Skeleton avatar paragraph={{ rows: 1 }} active />;
-  }
-  return (
-    <div className={styles.pageHeaderContent}>
-      <div className={styles.avatar}>
-        <Avatar
-          size="large"
-          src={currentUser.avatar ? currentUser.avatar : initialState?.settings?.adminSetting?.logo}
-        />
-      </div>
-      <div className={styles.content}>
-        <div className={styles.contentTitle}>
-          <Row>
-            <Col span={12}>
-              <Row>
-                <Col>
-                  你好，
-                  {currentUser.realname ? currentUser.realname : currentUser.name}
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  {currentUser.rolename}{' '}
-                  <Button
-                    shape="circle"
-                    type="text"
-                    onClick={() => {
-                      flash?.();
-                    }}
-                    icon={<SyncOutlined />}
-                  />
-                </Col>
-              </Row>
-            </Col>
-            <Col span={12} style={{ textAlign: 'right' }}>
-              <ClockPanel />
-            </Col>
-          </Row>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const ClockPanel = () => {
   const [nowDate, setNowDate] = useState(dayjs().format('YYYY年MM月DD日 HH:mm:ss dddd'));
@@ -74,6 +24,40 @@ const ClockPanel = () => {
   };
   setTimeout(() => clock(), 1000);
   return <>{nowDate}</>;
+};
+export const PagePanelHeader: FC<Record<string, any>> = (props) => {
+  const { flash } = props;
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState || {};
+  const loading = currentUser && Object.keys(currentUser).length;
+  if (!loading) {
+    return <Skeleton avatar paragraph={{ rows: 1 }} active />;
+  }
+  return (
+    <Flex gap="large">
+      <Flex align="center">
+        <Avatar
+          size={70}
+          src={currentUser.avatar ? currentUser.avatar : initialState?.settings?.adminSetting?.logo}
+        />
+      </Flex>
+      <Flex vertical justify="space-between" style={{ padding: 16 }}>
+        <span>你好，{currentUser.realname ? currentUser.realname : currentUser.name}</span>
+        <span>
+          {currentUser.rolename}{' '}
+          <Button
+            shape="circle"
+            type="text"
+            onClick={() => {
+              flash?.();
+            }}
+            icon={<SyncOutlined />}
+          />
+        </span>
+        <ClockPanel />
+      </Flex>
+    </Flex>
+  );
 };
 
 const PagePanel: React.FC<{ url?: string }> = (props) => {
