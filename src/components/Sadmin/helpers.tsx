@@ -19,7 +19,6 @@ import DebounceSelect from './DebounceSelect';
 import { ConfirmRender } from './action/confirm';
 import CustomerColumnRender from './action/customerColumn';
 import ModalJson from './action/modalJson';
-import CarBrand from './carBrand';
 import { getJson, isObj, isStr } from './checkers';
 import { FormCalendarRender } from './formCalendar';
 import JsonForm from './jsonForm';
@@ -139,7 +138,6 @@ export declare type saValueTypeMapType<T = any, ValueType = 'text'> = ProFormCol
   | 'debounceSelect'
   | 'searchSelect'
   | 'jsonForm'
-  | 'carBrand'
   | 'link'
   | 'saFormList'
   | 'saFormTable'
@@ -316,11 +314,6 @@ export const saValueTypeMap: Record<string, ProRenderFieldPropsType> = {
     },
     render: (text, props) => {
       return <JsonForm {...props.fieldProps} />;
-    },
-  },
-  carBrand: {
-    formItemRender: (text, props) => {
-      return <CarBrand {...props.fieldProps} />;
     },
   },
   link: {

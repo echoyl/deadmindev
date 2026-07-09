@@ -282,6 +282,14 @@ export default (model_id: number, devData: Record<string, any>): saFormTabColumn
               valueType: 'switch',
               colProps: { span: 12 },
             },
+            {
+              dataIndex: 'with_platform_id',
+              title: '开启Platform字段',
+              tooltip:
+                '开启后创建模型自动增加platform_id字段,字段名在service中设置，默认为platform_id',
+              valueType: 'switch',
+              colProps: { span: 12 },
+            },
           ],
         },
       ],

@@ -17,8 +17,8 @@ const InnerForm = (props: Record<string, any>) => {
     currentRow,
     paramExtra,
     postExtra,
-    addable,
-    editable,
+    addable = true,
+    editable = true,
     afterFormPost,
   } = props;
   const { actionRef, formRef } = useContext(SaContext);
@@ -95,27 +95,11 @@ export const TableForm = (
     name,
     openWidth = 860,
     url,
-    paramExtra,
-    tabs,
-    postExtra,
-    editable = true,
-    addable = true,
     setting = {},
   } = props;
   const { formWidth } = setting;
   const intl = useIntl();
-  const inner = (
-    <InnerForm
-      {...props}
-      url={url + '/show'}
-      currentRow={currentRow}
-      paramExtra={paramExtra}
-      tabs={tabs}
-      postExtra={postExtra}
-      editable={editable}
-      addable={addable}
-    />
-  );
+  const inner = <InnerForm {...props} url={url + '/show'} />;
   return (
     <>
       {openType == 'modal' && (
