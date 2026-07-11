@@ -6,11 +6,14 @@ import { isEqual } from 'es-toolkit';
 import React, { useEffect, useState } from 'react';
 import { isArr, isObj, isStr, isUndefined } from '../../checkers';
 import { tplComplie, uid } from '../../helpers';
-export interface DebounceSelectProps<ValueType = any>
-  extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
-  fetchOptions: (search: { [key: string]: any }) => Promise<ValueType[]> | string;
-  params?: object;
+export interface DebounceSelectProps {
+  fetchOptions: (search: Record<string, any>) => Promise<any[]> | string;
+  params?: Record<string, any>;
   readonly?: boolean;
+  dataindex?: string;
+  extColumns?: string[];
+  selectProps?: SelectProps;
+  [key: string]: any;
 }
 
 export default function SearchSelect<
@@ -24,8 +27,11 @@ export default function SearchSelect<
 >({ fetchOptions, params = {}, readonly = false, ...props }: DebounceSelectProps) {
   //console.log('record', record);
   const [options, setOptions] = useState<ValueType[]>([]);
-  const { fieldNames = { label: 'label', value: 'id', children: 'children' }, extColumns = [] } =
-    props;
+  const {
+    fieldNames = { label: 'label', value: 'id', children: 'children' },
+    extColumns = [],
+    selectProps = {},
+  } = props;
   const { label = 'label', value: valueField = 'id' } = fieldNames;
   const { pathname } = useLocation();
   const [reloadKey, setReloadKey] = useState<string>('init');
@@ -38,7 +44,7 @@ export default function SearchSelect<
     if (!item[label]) {
       item[label] = tplComplie(label, { record: item });
     }
-    const ret = {
+    const ret: Record<string, any> = {
       [valueField]: item[valueField],
       [label]: item[label],
       label: item[label],
@@ -86,10 +92,11 @@ export default function SearchSelect<
   const fieldProps = {
     fieldNames,
     showSearch: true,
+    ...selectProps,
   };
-  const getData = async (requestParam: { [key: string]: any }) => {
+  const getData = async (requestParam: Record<string, any>) => {
     //console.log('requestParam', requestParam, params);
-    const { keyWords: keyword, reloadKey, ...restRequestParam } = requestParam;
+    const { keyWords: keyword, key, ...restRequestParam } = requestParam;
     setChange(false);
     if (change) {
       return options;
@@ -136,7 +143,7 @@ export default function SearchSelect<
     setOptions(optionsx);
     return optionsx;
   };
-  const onChange = (v) => {
+  const onChange = (v: any) => {
     props?.onChange?.(v);
     setChange(!isUndefined(v)); //选中选项设置true后 请求不会发出
     reload();
@@ -148,10 +155,10 @@ export default function SearchSelect<
       noStyle
       {...props}
       //value={thisValue}
-      debounceTime={400}
+      debounceTime={500}
       request={getData}
       onChange={onChange}
-      params={{ reloadKey }}
+      params={{ key: reloadKey }}
       name={props.dataindex}
       dependencies={Object.keys(params)}
       fieldProps={{
