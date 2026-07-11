@@ -35,6 +35,7 @@ export default function SearchSelect<
   const { label = 'label', value: valueField = 'id' } = fieldNames;
   const { pathname } = useLocation();
   const [reloadKey, setReloadKey] = useState<string>('init');
+  const [nowKeyword, setNowKeyword] = useState<string>('');
   const [recordParams, setRecordParams] = useState<Record<string, any>>({});
   const [change, setChange] = useState(false);
   const [init, setInit] = useState<any>(false);
@@ -101,7 +102,8 @@ export default function SearchSelect<
     if (change) {
       return options;
     }
-    if (keyword === '' && options.length > 0) {
+    setNowKeyword(keyword);
+    if (!keyword && options.length > 0 && !nowKeyword) {
       return options;
     }
 
@@ -145,7 +147,7 @@ export default function SearchSelect<
   };
   const onChange = (v: any) => {
     props?.onChange?.(v);
-    setChange(!isUndefined(v)); //选中选项设置true后 请求不会发出
+    setChange(!isUndefined(v) && (!isArr(v) || v.length > 0)); //选中选项设置true后 请求不会发出
     reload();
   };
   return readonly ? (
