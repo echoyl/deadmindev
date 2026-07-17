@@ -19,6 +19,8 @@ export const rememberName = 'Sa-Remember';
 
 export const settingName = 'adminSetting';
 
+export const platformName = 'sadmin-platform';
+
 export const messageLoadingKey = 'message_loading_key';
 
 export const adminPrefix = '/antadmin/';
@@ -74,12 +76,17 @@ export async function requestHeaders() {
   const token = await getAdminToken();
   const remember = await cache.get(rememberName);
   const currentLocale = getLocale();
-  return {
+  const platform = await cache.get(platformName);
+  const head: Record<string, any> = {
     Authorization: `Bearer ${token}`,
     'Sa-Remember': remember,
     'X-Requested-With': 'XMLHttpRequest',
     Locale: currentLocale,
   };
+  if (platform !== null) {
+    head['Sa-Platform'] = platform;
+  }
+  return head;
 }
 
 export function getFullUrl(url: string) {
