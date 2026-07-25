@@ -440,6 +440,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         inArray(v.valueType, [
           'date',
           'dateTime',
+          'time',
           'digit',
           'dateMonth',
           'dateYear',

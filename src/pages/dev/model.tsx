@@ -1,3 +1,4 @@
+import { SaPageContext } from '@/components/Sadmin/404';
 import { saReloadModel } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
@@ -333,12 +334,12 @@ export default () => {
   const formRef = useRef<ProFormInstance<any>>({} as any);
 
   return (
-    <>
+    <SaPageContext value={{ pageMenu: { data: { table_menu_key: 'admin_type' } } }}>
       <Category
         formRef={formRef}
         //actionRef={actionRef}
         tableTitle={false}
-        pageMenu={{ data: { table_menu_key: 'admin_type' } }}
+        //pageMenu={{ data: { table_menu_key: 'admin_type' } }}
         table_menu_all={false}
         tableColumns={tableColumns}
         afterFormPost={({ data, code }) => {
@@ -371,6 +372,6 @@ export default () => {
         }}
         openType="modal"
       />
-    </>
+    </SaPageContext>
   );
 };

@@ -1,3 +1,4 @@
+import { SaPageContext } from '@/components/Sadmin/404';
 import { saReloadMenu } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import tableSet from '@/components/Sadmin/dev/vars/menu/set';
@@ -499,14 +500,13 @@ export default () => {
     },
     'option',
   ];
-
   return (
-    <>
+    <SaPageContext value={{ pageMenu: { data: { table_menu_key: 'state' } } }}>
       <Category
         name={t('menu', intl)}
         title={false}
         actionRef={actionRef}
-        pageMenu={{ data: { table_menu_key: 'state' } }}
+        //pageMenu={{ data: { table_menu_key: 'state' } }}
         table_menu_all={false}
         tableColumns={tableColumns}
         toolBarButton={[
@@ -556,6 +556,6 @@ export default () => {
         grid={true}
         devEnable={false}
       />
-    </>
+    </SaPageContext>
   );
 };
