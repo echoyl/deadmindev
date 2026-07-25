@@ -1,8 +1,7 @@
 import request from '@/components/Sadmin/lib/request';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { TableDropdown } from '@ant-design/pro-components';
+import { DeleteOutlined, EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import { history, Link, useModel } from '@umijs/max';
-import { Space, Typography } from 'antd';
+import { Button, Dropdown, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'es-toolkit';
 import { useContext } from 'react';
@@ -20,6 +19,21 @@ const DeleteActionRender = (props) => {
   const { saTableContext } = useContext(SaContext);
   const { initialState } = useModel('@@initialState');
   const { Link: Tlink, Text } = Typography;
+  const onSelect = (key: string) => {
+    if (key == 'add') {
+      if (openType == 'drawer' || openType == 'modal') {
+        saTableContext?.edit(record, { parent_id: record.id, id: 0 });
+      } else {
+        history.push(
+          window.location.pathname.replace(initialState?.settings?.adminSetting?.baseurl, '/') +
+            '/0?parent_id=' +
+            record.id,
+        );
+      }
+    } else if (key == 'delete') {
+      saTableContext?.delete(record);
+    }
+  };
   //console.log('level and record', level, record);
   return isUndefined(record?._level) || record?._level + 1 >= level ? (
     deleteable ? (
@@ -33,61 +47,49 @@ const DeleteActionRender = (props) => {
       </Tlink>
     ) : null
   ) : (
-    <TableDropdown
+    <Dropdown
       key="actionGroup"
-      onSelect={(key) => {
-        //action?.reload()
-
-        if (key == 'add') {
-          if (openType == 'drawer' || openType == 'modal') {
-            saTableContext?.edit(record, { parent_id: record.id, id: 0 });
-          } else {
-            history.push(
-              window.location.pathname.replace(initialState?.settings?.adminSetting?.baseurl, '/') +
-                '/0?parent_id=' +
-                record.id,
-            );
-          }
-        } else if (key == 'delete') {
-          saTableContext?.delete(record);
-        }
-      }}
-      menus={
-        deleteable
+      menu={{
+        items: deleteable
           ? [
               {
                 key: 'add',
-                name: (
+                label: (
                   <Space>
                     <PlusOutlined />
                     {t('addchild')}
                   </Space>
                 ),
+                onClick: () => onSelect('add'),
               },
               {
                 key: 'delete',
-                name: (
+                label: (
                   <Space>
                     <DeleteOutlined />
                     {t('delete')}
                   </Space>
                 ),
                 danger: true,
+                onClick: () => onSelect('delete'),
               },
             ]
           : [
               {
                 key: 'add',
-                name: (
+                label: (
                   <Space>
                     <PlusOutlined />
                     {t('addchild')}
                   </Space>
                 ),
+                onClick: () => onSelect('add'),
               },
-            ]
-      }
-    />
+            ],
+      }}
+    >
+      <Button type="link" size="small" icon={<EllipsisOutlined />} />
+    </Dropdown>
   );
 };
 
