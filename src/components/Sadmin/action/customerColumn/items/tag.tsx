@@ -7,23 +7,27 @@ import type { FC, Key } from 'react';
 const ItemTag: FC<{
   color?: string;
   title?: string;
+  label?: string;
+  name?: string;
   bordered?: boolean;
   icon?: string;
   ellipsis?: boolean;
 }> = (props) => {
-  const { color, title, bordered = true, icon, ellipsis = true } = props;
-  return title ? (
+  const { color, title, label, name, bordered = true, icon, ellipsis = true } = props;
+  //优先读取title，没有读取name，没有读取label
+  const text = title || name || label || '';
+  return text ? (
     <Tag
       color={color}
       variant={bordered ? 'outlined' : 'filled'}
       icon={icon ? iconToElement(icon) : false}
     >
       {ellipsis ? (
-        <Typography.Text style={{ maxWidth: 80, color: 'inherit' }} ellipsis={{ tooltip: title }}>
-          {title}
+        <Typography.Text style={{ maxWidth: 80, color: 'inherit' }} ellipsis={{ tooltip: text }}>
+          {text}
         </Typography.Text>
       ) : (
-        title
+        text
       )}
     </Tag>
   ) : null;
