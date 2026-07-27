@@ -89,9 +89,9 @@ const Tianmap: MapType = {
 
       //添加起始点
       function createStartMarker(result, map) {
-        var startIcon = '//lbs.tianditu.gov.cn/images/bus/start.png'; //起点图标
-        var endIcon = '//lbs.tianditu.gov.cn/images/bus/end.png'; //终点图标
-        var startMarker = new maplib.Marker(result.start, {
+        const startIcon = '//lbs.tianditu.gov.cn/images/bus/start.png'; //起点图标
+        const endIcon = '//lbs.tianditu.gov.cn/images/bus/end.png'; //终点图标
+        const startMarker = new maplib.Marker(result.start, {
           icon: new maplib.Icon({
             iconUrl: startIcon,
             iconSize: new maplib.Point(44, 34),
@@ -99,7 +99,7 @@ const Tianmap: MapType = {
           }),
         });
         map.addOverLay(startMarker);
-        var endMarker = new maplib.Marker(result.end, {
+        const endMarker = new maplib.Marker(result.end, {
           icon: new maplib.Icon({
             iconUrl: endIcon,
             iconSize: new maplib.Point(44, 34),
@@ -110,7 +110,7 @@ const Tianmap: MapType = {
       }
 
       createStartMarker({ start: paths[0], end: paths[paths.length - 1] }, map);
-      var line = new maplib.Polyline(paths);
+      const line = new maplib.Polyline(paths);
       map.addOverLay(line);
     }
   },
