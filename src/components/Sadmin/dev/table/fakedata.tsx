@@ -8,9 +8,9 @@ import { SaPageContext } from '../../404';
 import ButtonDrawer from '../../action/buttonDrawer';
 import { SaContext } from '../../posts/table';
 
-export default (props: any) => {
-  const { trigger } = props;
-  const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
+export const FakeDataForm = (props: any) => {
+  const { modelId, contentRender, setOpen } = props;
+  const { actionRef } = useContext(SaContext);
   const columns: saFormColumnsType = [
     {
       title: '生成数量',
@@ -103,48 +103,51 @@ export default (props: any) => {
       ],
     },
   ];
+
+  return (
+    <SaForm
+      msgcls={() => {
+        setOpen(false);
+        actionRef?.current?.reload();
+        return;
+      }}
+      pageType="drawer"
+      grid={true}
+      devEnable={false}
+      url="dev/model/fakeData"
+      dataId={modelId}
+      paramExtra={{ id: modelId }}
+      postExtra={{ id: modelId }}
+      tabs={[
+        {
+          title: 'Fake data',
+          formColumns: columns,
+        },
+      ]}
+      formProps={{
+        contentRender,
+        submitter: {
+          //移除默认的重置按钮，点击重置按钮后会重新请求一次request
+          render: (props, doms) => {
+            return [
+              <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
+                {t('cancel')}
+              </Button>,
+              doms[1],
+            ];
+          },
+        },
+      }}
+    />
+  );
+};
+
+export default (props: any) => {
+  const { trigger, modelId = 0 } = props;
+  const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
   const intl = useIntl();
-  const model_id = pageMenu?.model_id;
-  const DrawerForm = (mprops: any) => {
-    const { contentRender, setOpen } = mprops;
-    const { actionRef } = useContext(SaContext);
-    return (
-      <SaForm
-        msgcls={() => {
-          setOpen(false);
-          actionRef?.current?.reload();
-          return;
-        }}
-        pageType="drawer"
-        grid={true}
-        devEnable={false}
-        url="dev/model/fakeData"
-        dataId={model_id}
-        paramExtra={{ id: model_id }}
-        postExtra={{ id: model_id }}
-        tabs={[
-          {
-            title: 'Fake data',
-            formColumns: columns,
-          },
-        ]}
-        formProps={{
-          contentRender,
-          submitter: {
-            //移除默认的重置按钮，点击重置按钮后会重新请求一次request
-            render: (props, doms) => {
-              return [
-                <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                  {t('cancel')}
-                </Button>,
-                doms[1],
-              ];
-            },
-          },
-        }}
-      />
-    );
-  };
+  //现在modelid可以通过参数传入，这样在没有菜单的地方可以在模型列表中添加fakedata
+  const model_id = modelId || pageMenu?.model_id;
 
   return (
     <ButtonDrawer
@@ -153,7 +156,7 @@ export default (props: any) => {
       title={t('data', intl)}
       drawerProps={{ styles: { body: { paddingTop: 8 } } }}
     >
-      <DrawerForm />
+      <FakeDataForm modelId={model_id} />
     </ButtonDrawer>
   );
 };

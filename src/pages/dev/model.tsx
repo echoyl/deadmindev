@@ -1,6 +1,7 @@
 import { SaPageContext } from '@/components/Sadmin/404';
 import { saReloadModel } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
+import { FakeDataForm } from '@/components/Sadmin/dev/table/fakedata';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
@@ -8,6 +9,7 @@ import type { saFormColumnsType, saTableColumnsType } from '@/components/Sadmin/
 import Category from '@/components/Sadmin/posts/category';
 import {
   CopyOutlined,
+  DatabaseOutlined,
   FileOutlined,
   FolderOutlined,
   InsertRowLeftOutlined,
@@ -290,6 +292,17 @@ export default () => {
             action: 'drawer',
             btn: { text: '', icon: <InsertRowLeftOutlined />, tooltip: '模型关联', size: 'small' },
           },
+          {
+            if: '{{record.type == 1}}',
+            domtype: 'button',
+            modal: {
+              title: '{{record.title + " - FakeData"}}',
+              childrenRender: (record: Record<string, any>) => <FakeDataForm modelId={record.id} />,
+            },
+            action: 'drawer',
+            btn: { text: '', icon: <DatabaseOutlined />, tooltip: 'FakeData', size: 'small' },
+          },
+
           {
             domtype: 'button',
             if: '{{record.type == 1}}',
