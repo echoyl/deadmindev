@@ -2,7 +2,7 @@ import { PushpinOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { Button, Flex, Input, Modal, Space, Spin } from 'antd';
 import { FC, useEffect, useState } from 'react';
-import { getJson } from '../checkers';
+import { getJson, isArr } from '../checkers';
 import { uid } from '../helpers';
 import SaPca, { getPcaValue } from '../pca';
 import Amap from './amap';
@@ -61,11 +61,11 @@ const getMap = (setting?: Record<string, any>): Promise<MapType> => {
 export const MapShow: FC<{
   lat?: string;
   lng?: string;
-  dots?: Array<{ lat?: number; lng?: number; title?: string }>;
+  dots?: { lat?: number; lng?: number; title?: string }[];
   zoom?: number;
   height?: number;
   markerCenter?: boolean;
-  path?: Array<any>; //支持路径绘制 path=[[lat,lng],[lat,lng]]
+  path?: any[]; //支持路径绘制 path=[[lat,lng],[lat,lng]]
 }> = (props) => {
   const [id, setId] = useState<string>('tmap_' + uid());
 
@@ -292,16 +292,23 @@ export const MapinputRender = {
   },
 };
 
+const mapShow = (text: any, props: Record<string, any>) => {
+  //现在可以从fieldProps中读取配置 height,zoom,markerCenter，其它数据还是从text中读取
+  const { fieldProps } = props;
+  let _text;
+  //如果text是数组
+  if (isArr(text)) {
+    const [lat, lng] = text;
+    _text = { lat, lng };
+  } else {
+    _text = getJson(text, {});
+  }
+  return <MapShow {...fieldProps} {..._text} />;
+};
+
 export const MapShowRender = {
-  render: (text) => {
-    //console.log(text);
-    const _text = getJson(text, {});
-    return <MapShow {..._text} />;
-  },
-  formItemRender: (text) => {
-    const _text = getJson(text, {});
-    return <MapShow {..._text} />;
-  },
+  render: mapShow,
+  formItemRender: mapShow,
 };
 
 export default Map;
