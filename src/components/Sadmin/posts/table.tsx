@@ -111,6 +111,7 @@ export interface saTableProps {
   afterFormPost?: (ret: any) => void | boolean | Promise<boolean | void>; //表单提交数据后的回调
   initPageUid?: string; //控制页面刷新 非request
   cloneDeeped?: boolean; //是否深拷贝列
+  heightOffset?: number; //表格高度偏移 会在开启全屏滚动后高度上减去该值，适用于drawer中打开的form中的table
 }
 
 const components = {
@@ -174,6 +175,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     setting = {},
     afterDelete,
     initPageUid,
+    heightOffset = 0,
   } = props;
   const { pageMenu } = useContext(SaPageContext);
   const table_menu_key = pageMenu?.data?.table_menu_key; //直接读取pagemenu中的信息，不再使用props中的参数，开发模式下会更新pagemenu
@@ -580,13 +582,13 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const tableSize = setting?.table?.size || tableProps.size || 'middle';
   //检测是否有footer
   const footerHeight = !initialState?.settings?.adminSetting?.tech && pageType == 'page' ? 0 : 38;
-  const [minHeight, setMinHeight] = useState<number>(185 + footerHeight);
+  const [minHeight, setMinHeight] = useState<number>(185 + footerHeight + heightOffset);
   const tableHeaderHeight = tableHeaderHeightArr[tableSize];
   const tableFooterHeight = tableFooterHeightArr[tableSize];
   const tablePageHeight = tablePageHeightArr[tableSize];
   const tableSummaryHeight = tableSummaryHeightArr[tableSize];
   useEffect(() => {
-    let defaultHeight = 185 + footerHeight;
+    let defaultHeight = 185 + footerHeight + heightOffset;
     if (pageType == 'drawer') {
       defaultHeight -= 50;
     }

@@ -132,8 +132,10 @@ export const formListFormatDateValue = (data: any[], columns: any[]) => {
   const fmtMap = getFieldFormatMap(columns);
   return (data || []).map((item: Record<string, unknown>) => {
     const result: Record<string, unknown> = {};
-    for (const [key, val] of Object.entries(item)) {
-      result[key] = dayjs.isDayjs(val) ? val.format(fmtMap[key]) : val;
+    if (item) {
+      for (const [key, val] of Object.entries(item)) {
+        result[key] = dayjs.isDayjs(val) ? val.format(fmtMap[key]) : val;
+      }
     }
     return result;
   });

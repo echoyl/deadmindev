@@ -30,14 +30,14 @@ export const UploaderRender = (props: Record<string, any>) => {
 export const tableFromBreadRender = (_: any, props: ProFieldFCRenderProps) => {
   //console.log('saFormTable here', props);
   const { fieldProps } = props;
-
+  const { type = 'modal', props: innerProps = {} } = fieldProps || {};
   return (
     <Suspense>
       <TableFromBread
+        type={type}
         alwaysenable={fieldProps.alwaysenable}
-        fieldProps={{ ...fieldProps, props: { tableProps: { search: false } } }}
+        fieldProps={{ ...fieldProps, props: { ...innerProps, tableProps: { search: false } } }}
         readonly={fieldProps.readonly}
-        type="modal"
         scrollHeight={fieldProps.scrollHeight}
       />
     </Suspense>
