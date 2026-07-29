@@ -125,7 +125,7 @@ export const responseCodeAction = (code: number, method: string, drawer: boolean
   //登录失效
   //const baseurl = process.env.NODE_ENV === 'production' ? './' : '/';
   const setShowLogin = useAdminStore.getState().setShowLogin;
-  if (code == 1001) {
+  if (code == 1001 || code == 401) {
     // if (window.location.pathname.replace(baseurl, '/') == loginPath) {
     //   return true;
     // }
