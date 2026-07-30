@@ -394,6 +394,21 @@ export const fieldColumn: saValueTypeMapType = {
                 valueType: 'group',
                 columns: [
                   {
+                    title: 'lat name',
+                    dataIndex: 'lat',
+                    colProps: { span: 6 },
+                  },
+                  {
+                    title: 'lng name',
+                    dataIndex: 'lng',
+                    colProps: { span: 6 },
+                  },
+                ],
+              },
+              {
+                valueType: 'group',
+                columns: [
+                  {
                     title: '索引',
                     dataIndex: 'index',
                     colProps: { span: 6 },
