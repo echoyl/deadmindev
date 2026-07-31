@@ -30,7 +30,7 @@ export type MapType = {
   url: string;
   name: string;
   init: (props: Record<string, any>) => any;
-  drawPath: (path: any[], map: any) => any;
+  drawPath: (path: any[], map: any, url: any) => any;
   getLib: () => Record<string, any>;
   [key: string]: any;
 };
@@ -87,7 +87,7 @@ export const MapShow: FC<{
         //const maplib = window[instance?.name];
         //设置显示地图的中心点和级别
         const map = instance.init({ id, lat, lng, zoom, markerCenter, dots });
-        instance.drawPath(path, map);
+        instance.drawPath(path, map, initialState?.settings?.adminSetting?.baseurl);
         setInit(true);
       }, 500);
     });

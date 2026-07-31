@@ -546,7 +546,7 @@ const LoginPage: React.FC = () => {
     if (setting?.adminSetting?.loginBgImage) {
       containerStyle.backgroundImage = `url("${setting?.adminSetting?.loginBgImage}")`;
     } else {
-      containerStyle.backgroundImage = `url("${setting?.adminSetting?.baseurl}/login_bg.png")`;
+      containerStyle.backgroundImage = `url("${setting?.adminSetting?.baseurl}images/login_bg.png")`;
     }
   } else {
     containerStyle.background = token.colorBgBase;

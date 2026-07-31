@@ -80,7 +80,7 @@ const Tianmap: MapType = {
       }
     });
   },
-  drawPath: function (path, map) {
+  drawPath: function (path, map, url) {
     if (path.length > 0) {
       const maplib = this.getLib();
       const paths = path.map((p) => {
@@ -89,8 +89,10 @@ const Tianmap: MapType = {
 
       //添加起始点
       function createStartMarker(result, map) {
-        const startIcon = '//lbs.tianditu.gov.cn/images/bus/start.png'; //起点图标
-        const endIcon = '//lbs.tianditu.gov.cn/images/bus/end.png'; //终点图标
+        // const startIcon = 'http://lbs.tianditu.gov.cn/images/bus/start.png'; //起点图标 不支持https
+        // const endIcon = 'http://lbs.tianditu.gov.cn/images/bus/end.png'; //终点图标
+        const startIcon = url + 'images/start.png'; //起点图标 不支持https
+        const endIcon = url + 'images/end.png'; //终点图标
         const startMarker = new maplib.Marker(result.start, {
           icon: new maplib.Icon({
             iconUrl: startIcon,

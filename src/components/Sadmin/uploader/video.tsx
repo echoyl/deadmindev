@@ -80,7 +80,8 @@ const AliyunVideo: FC<Props> = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const loadin_key = 'aliyun_video_uploader_progress';
   const { initialState } = useModel('@@initialState');
-  const baseUrl = initialState?.settings?.adminSetting?.baseurl;
+  const baseUrl = initialState?.settings?.adminSetting?.baseurl || './';
+  const defaultVideoImg = baseUrl + 'images/video.png';
   const createUploader = (e) => {
     const uploader = new AliyunUpload.Vod({
       timeout: 600000,
@@ -147,7 +148,7 @@ const AliyunVideo: FC<Props> = (props) => {
         const file = {
           uid: uploadInfo.file.uid,
           name: uploadInfo.file.name,
-          url: baseUrl + 'video.png',
+          url: defaultVideoImg,
           value: uploadInfo.videoId,
           status: 'done',
         };
@@ -218,7 +219,7 @@ const AliyunVideo: FC<Props> = (props) => {
   const [fileList, setFileList] = useState<UploadFile[]>(
     value && typeof value !== 'string'
       ? value.map((v) => {
-          v.url = v.url ? v.url : baseUrl + 'video.png';
+          v.url = v.url ? v.url : defaultVideoImg;
           return v;
         })
       : [],
