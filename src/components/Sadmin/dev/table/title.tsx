@@ -576,6 +576,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
   const { styles: dstyles } = useDesignerCss();
   const { token } = theme.useToken();
   const dataIndexSpan = isArr(props?.dataIndex) ? props?.dataIndex.join('.') : props?.dataIndex;
+  const intl = useIntl();
   return (
     <SortableItem
       className={dstyles.saSortItem}
@@ -604,7 +605,7 @@ export const DevTableColumnTitle = (props: Record<string, any>) => {
         </div>
       </div>
 
-      {title ? tplComplie(title) : 'dev'}
+      {title ? tplComplie(title, { intl }) : 'dev'}
       {dataIndexSpan && false ? (
         <span style={{ color: token.colorTextTertiary, fontWeight: 'normal', paddingLeft: 6 }}>
           {dataIndexSpan}
@@ -652,7 +653,8 @@ const DevContain = (props: Record<string, any>) => {
   const { children, title } = props;
   const { initialState } = useModel('@@initialState');
   const dev = initialState?.settings?.adminSetting?.dev ? true : false;
-  return dev ? <>{children}</> : title;
+  const intl = useIntl();
+  return dev ? <>{children}</> : tplComplie(title, { intl });
 };
 
 export const TableColumnTitle: FC = (props) => {
