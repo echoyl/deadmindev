@@ -1,12 +1,12 @@
-import { saFormColumnsType } from '@/components/Sadmin/helpers';
+import type { saFormColumnsType } from '@/components/Sadmin/helpers';
 
-const pieColumns = (data): saFormColumnsType => [
+const pieColumns = (data: Record<string, any>): saFormColumnsType => [
   {
     valueType: 'group',
     columns: [
       {
-        title: '角度映射字段',
-        dataIndex: ['defaultConfig', 'chart','angleField'],
+        title: '值字段名',
+        dataIndex: ['defaultConfig', 'chart', 'angleField'],
         colProps: { span: 6 },
         valueType: 'select',
         fieldProps: {
@@ -14,7 +14,7 @@ const pieColumns = (data): saFormColumnsType => [
         },
       },
       {
-        title: '颜色映射字段',
+        title: '分类字段名',
         dataIndex: ['defaultConfig', 'chart', 'colorField'],
         colProps: { span: 6 },
         valueType: 'select',
