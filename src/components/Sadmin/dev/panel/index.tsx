@@ -93,7 +93,7 @@ const ItemForm = (props) => {
 };
 
 const ItemTab = (props) => {
-  const { uid, rows, data, getData, config, sourceDataName, height } = props;
+  const { uid, rows, data, getData, config, sourceDataName, title, height } = props;
   const {
     tableDesigner: { devEnable },
   } = useContext(SaContext);
@@ -103,23 +103,20 @@ const ItemTab = (props) => {
   ) : null;
   return (
     <ProCard
-      style={{
-        borderTopRightRadius: 0,
-        borderTopLeftRadius: 0,
-      }}
       title={
         devEnable ? (
           <DevPanelColumnTitle
             uid={uid}
             col={props}
             devData={{ itemType: 'col' }}
-            title={'Tab - ' + uid}
+            title={title || 'Tab - ' + uid}
             otitle={null}
           />
         ) : (
-          false
+          title || false
         )
       }
+      styles={{ root: { height } }}
     >
       <Tabs
         style={{ background: 'none' }}
