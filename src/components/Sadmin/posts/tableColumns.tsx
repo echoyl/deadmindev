@@ -2,14 +2,13 @@ import request from '@/components/Sadmin/lib/request';
 import { DeleteOutlined, EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import { history, Link, useModel } from '@umijs/max';
 import { Button, Dropdown, Space, Typography } from 'antd';
-import dayjs from 'dayjs';
 import { cloneDeep } from 'es-toolkit';
 import { useContext } from 'react';
-import { isArr, isUndefined } from '../checkers';
+import { isUndefined } from '../checkers';
 import { DragHandle } from '../dev/dnd-context/dragSort';
 import { onHeaderCell } from '../dev/table/resizeableTitle';
 import { TableColumnTitle } from '../dev/table/title';
-import { tplToDate } from '../helper/functions';
+import { checkDateValueType, fieldPropsFormatDate, tplToDate } from '../helper/functions';
 import { getFromObject, t, tplComplie } from '../helpers';
 import { defaultColumnsLabel } from './formDom';
 import { SaContext } from './table';
@@ -370,21 +369,9 @@ export const getTableColumns = (props: Record<string, any>) => {
       delete v.rowSpan;
     }
 
-    if (v.fieldProps?.showTime?.defaultValue) {
-      //console.log('presets is', v);
-      if (isArr(v.fieldProps.showTime.defaultValue)) {
-        v.fieldProps.showTime.defaultValue = v.fieldProps.showTime.defaultValue.map((val) => {
-          if (isArr(val)) {
-            return dayjs(val[0], val[1]);
-          } else {
-            return dayjs(val, 'HH:mm:ss');
-          }
-        });
-        //console.log('showTime is', v);
-      } else {
-        const vall = v.fieldProps.showTime.defaultValue;
-        return dayjs(vall.value, vall.format ? vall.format : 'HH:mm:ss');
-      }
+    if (checkDateValueType(v.valueType)) {
+      //如果是日期类型，则设置日期格式化
+      v.fieldProps = fieldPropsFormatDate(v.fieldProps);
     }
     //添加初始值的日期格式化操作
     if (v.initialValue) {

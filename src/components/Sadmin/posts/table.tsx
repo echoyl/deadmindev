@@ -323,10 +323,10 @@ const SaTable: React.FC<saTableProps> = (props) => {
       beforeTableGet(ret);
     }
     //data = ret.data;
-    if (ret.search.summary) {
+    if (ret.search?.summary) {
       setSummary(ret.search.summary);
     }
-    if (ret.search.footer) {
+    if (ret.search?.footer) {
       setFooter(ret.search.footer);
     }
     if (!initPage) {

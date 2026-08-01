@@ -70,12 +70,12 @@ export function useTableDesigner(props: tableDesignerInstance): tableDesignerIns
   const reflush = async (data: any) => {
     //重新设置列表列
     const { setThisPage = true } = data;
-    const columns = getColumnsRender?.(data?.columns || []);
-    const { setSearchLength } = setActions;
-    if (setSearchLength) {
-      setSearchLength(hasSearch(columns));
-    }
     if (setThisPage) {
+      const columns = getColumnsRender?.(data?.columns || []);
+      const { setSearchLength } = setActions;
+      if (setSearchLength) {
+        setSearchLength(hasSearch(columns));
+      }
       setColumns?.(columns); //设置这个可以快速响应 排序tab可能会卡一点
     }
     //更新schema

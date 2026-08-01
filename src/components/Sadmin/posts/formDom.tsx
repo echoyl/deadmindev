@@ -1,13 +1,16 @@
 import request from '@/components/Sadmin/lib/request';
 import { BetaSchemaForm, ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
-import dayjs from 'dayjs';
 import { cloneDeep, isString } from 'es-toolkit';
 import React, { ReactNode } from 'react';
 import { getJson, inArray, isArr, isStr } from '../checkers';
 import TranslationModal from '../dev/form/translation';
 import { FormColumnTitle } from '../dev/table/title';
-import { formListFormatDateValue } from '../helper/functions';
+import {
+  checkDateValueType,
+  fieldPropsFormatDate,
+  formListFormatDateValue,
+} from '../helper/functions';
 import { getFromObject, getMenuDataById, saFormColumnsType, tplComplie } from '../helpers';
 export const defaultColumnsLabel = {
   id: '序号',
@@ -322,41 +325,9 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
         }
       }
       //支持日期中的presets的value的字符串格式日期
-      if (v.fieldProps?.presets) {
-        //console.log('presets is', v);
-        v.fieldProps.presets = v.fieldProps.presets.map((val) => {
-          val.value = val.value.map((_v) => {
-            if (isStr(_v)) {
-              _v = dayjs(_v);
-            }
-            return _v;
-          });
-          return val;
-        });
-      }
-      if (v.fieldProps?.showTime?.defaultValue) {
-        //console.log('presets is', v);
-        if (isArr(v.fieldProps.showTime.defaultValue)) {
-          v.fieldProps.showTime.defaultValue = v.fieldProps.showTime.defaultValue.map((val) => {
-            if (isArr(val)) {
-              return dayjs(val[0], val[1]);
-            } else {
-              return dayjs(val, 'HH:mm:ss');
-            }
-          });
-          console.log('showTime is', v);
-        }
-      }
-      if (v.valueType == 'dateRange' || v.valueType == 'date') {
-        if (v.fieldProps?.defaultValue) {
-          v.fieldProps.defaultValue = v.fieldProps?.defaultValue?.map((val) => {
-            if (isArr(val)) {
-              return dayjs(val[0], val[1]);
-            } else {
-              return dayjs(val);
-            }
-          });
-        }
+      if (checkDateValueType(v.valueType)) {
+        //如果是日期类型，则设置日期格式化
+        v.fieldProps = fieldPropsFormatDate(v.fieldProps);
       }
 
       //关联page检测
@@ -436,22 +407,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       }
 
       //增加如果是date datetime digit类型没有设置width的话自动加上100%
-      if (
-        inArray(v.valueType, [
-          'date',
-          'dateTime',
-          'time',
-          'digit',
-          'dateMonth',
-          'dateYear',
-          'dateWeek',
-          'dateTimeRange',
-          'dateMonthRange',
-          'dateWeekRange',
-          'dateYearRange',
-          'dateQuarterRange',
-        ]) > -1
-      ) {
+      if (checkDateValueType(v.valueType) || inArray(v.valueType, ['digit']) > -1) {
         v.width = v.width || '100%';
       }
       if (v.valueType == 'cascader') {

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { isArr, isObj, isUndefined } from '../checkers';
+import { inArray, isArr, isObj, isUndefined } from '../checkers';
 import { tplComplie } from '../helpers';
 
 export const urlAddQuery = (url: string, query?: Record<string, string>) => {
@@ -139,4 +139,66 @@ export const formListFormatDateValue = (data: any[], columns: any[]) => {
     }
     return result;
   });
+};
+
+export const checkDateValueType = (valueType?: string) => {
+  return (
+    inArray(valueType, [
+      'date',
+      'dateTime',
+      'time',
+      'dateMonth',
+      'dateYear',
+      'dateWeek',
+      'dateRange',
+      'dateTimeRange',
+      'dateMonthRange',
+      'dateWeekRange',
+      'dateYearRange',
+      'dateQuarterRange',
+    ]) > -1
+  );
+};
+
+export const fieldPropsFormatDate = (fieldProps: Record<string, any>) => {
+  //支持日期中的presets的value的字符串格式日期
+  if (fieldProps?.presets) {
+    //console.log('presets is', v);
+    fieldProps.presets = fieldProps.presets.map((val: Record<string, any>) => {
+      const newValue = tplToDate(val.value);
+      val.value = isArr(newValue)
+        ? newValue.map((v) => {
+            return dayjs(v);
+          })
+        : dayjs(newValue);
+      return val;
+    });
+  }
+  if (fieldProps?.showTime?.defaultValue) {
+    //console.log('presets is', v);
+    if (isArr(fieldProps.showTime.defaultValue)) {
+      fieldProps.showTime.defaultValue = fieldProps.showTime.defaultValue.map((val) => {
+        if (isArr(val)) {
+          return dayjs(val[0], val[1]);
+        } else {
+          return dayjs(val, 'HH:mm:ss');
+        }
+      });
+      //console.log('showTime is', v);
+    } else {
+      const vall = fieldProps.showTime.defaultValue;
+      return dayjs(vall.value, vall.format ? vall.format : 'HH:mm:ss');
+    }
+  }
+
+  if (fieldProps?.defaultValue) {
+    fieldProps.defaultValue = fieldProps?.defaultValue?.map((val) => {
+      if (isArr(val)) {
+        return dayjs(val[0], val[1]);
+      } else {
+        return dayjs(val);
+      }
+    });
+  }
+  return fieldProps;
 };
