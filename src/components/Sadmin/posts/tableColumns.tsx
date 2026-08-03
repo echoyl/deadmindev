@@ -338,7 +338,7 @@ export const getTableColumns = (props: Record<string, any>) => {
           ...v.fieldProps,
           options: options ? options : [],
         };
-        delete v.requestDataName;
+        //delete v.requestDataName; //不能删除这个数据，当不在开发模式下，页面切换且数据已更新后如果删掉这个属性则不会更新最新的
       }
     }
 
@@ -395,7 +395,7 @@ export const getTableColumns = (props: Record<string, any>) => {
 
     //增加拖拽设置宽度
     v.onHeaderCell = onHeaderCell;
-
+    v.width = v.width || 150; //设置默认宽度
     return v;
   };
 
