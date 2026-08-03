@@ -1,6 +1,6 @@
 import { App, Transfer } from 'antd';
-import { TransferDirection } from 'antd/es/transfer';
-import { FC, useContext, useEffect, useState } from 'react';
+import type { FC, Key } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { isStr } from '../checkers';
 import { SaContext } from '../posts/table';
 
@@ -18,21 +18,21 @@ const SaTransfer: FC<{
 
   //const oriTargetKeys = mockData.filter((item) => Number(item.key) % 3 > 1).map((item) => item.key);
 
-  const [targetKeys, setTargetKeys] = useState<string[]>(value.map((v) => v.toString()));
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [targetKeys, setTargetKeys] = useState<Key[]>(value.map((v) => v.toString()));
+  const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
   const [disabled, setDisabled] = useState(false);
   const { message } = App.useApp();
 
   const changeCheck = (
-    targetKeys: string[] = [],
-    selectedKeys: string[] = [],
+    tKeys: Key[] = [],
+    sKeys: Key[] = [],
     type: 'change' | 'select' = 'change',
   ) => {
     //console.log('all data is ', dataSource, targetKeys, selectedKeys);
-    const targets = targetKeys.map((v) => {
+    const targets = tKeys.map((v) => {
       return dataSource?.find((val) => val.key == v);
     });
-    const selected = selectedKeys.map((v) => {
+    const selected = sKeys.map((v) => {
       return dataSource?.find((val) => val.key == v);
     });
     const all = [...targets, ...selected];
@@ -48,11 +48,7 @@ const SaTransfer: FC<{
     return true;
   };
 
-  const handleChange = (
-    newTargetKeys: string[],
-    direction: TransferDirection,
-    moveKeys: string[],
-  ) => {
+  const handleChange = (newTargetKeys: Key[]) => {
     setTargetKeys(newTargetKeys);
     onChange?.(newTargetKeys);
     //const enable = changeCheck(newTargetKeys,[],);
@@ -63,7 +59,7 @@ const SaTransfer: FC<{
     // console.log('moveKeys: ', moveKeys);
   };
 
-  const handleSelectChange = (sourceSelectedKeys: string[], targetSelectedKeys: string[]) => {
+  const handleSelectChange = (sourceSelectedKeys: Key[], targetSelectedKeys: Key[]) => {
     const enable = changeCheck(sourceSelectedKeys, targetKeys, 'select');
     if (enable !== true) {
       message.info(enable);
@@ -93,16 +89,18 @@ const SaTransfer: FC<{
         disabled={disabled}
         oneWay
         style={{ marginBottom: 16 }}
-        listStyle={{
-          width: 250,
-          height: 300,
+        styles={{
+          section: {
+            width: 'calc(50% - 20px)',
+            height: 300,
+          },
         }}
       />
     </>
   );
 };
 
-const SaTransferMiddle = (props) => {
+const SaTransferMiddle = (props: Record<string, any>) => {
   const { dataName } = props;
   const [dataSource, setDataSource] = useState<any[]>([]);
   const { formRef } = useContext(SaContext);
@@ -116,7 +114,7 @@ const SaTransferMiddle = (props) => {
   return dataSource?.length > 0 ? <SaTransfer {...props} dataSource={dataSource} /> : null;
 };
 
-export const SaTransferRender = (text, props) => {
+export const SaTransferRender = (text: any, props: Record<string, any>) => {
   //console.log('saFormTable here', props);
   const { fieldProps } = props;
 

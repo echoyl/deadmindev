@@ -194,7 +194,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
           //options: [],
           options: options && isArr(options) ? options : [],
         };
-        delete v.fieldProps.requestDataName;
+        delete v.fieldProps.requestDataName; //这里如果是dependencyOn的子元素，因为会生成信息的组件类型，导致里面的columns无法更新，所以如果是dependencyOn的话不要使用同一个requestDataName
       }
 
       if (v.fieldProps?.requestNames) {

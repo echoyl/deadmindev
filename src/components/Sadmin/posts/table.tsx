@@ -792,6 +792,14 @@ const SaTable: React.FC<saTableProps> = (props) => {
                           delete values[key];
                         }
                       }
+                      //pro-components重置时只会传入非空的表单值，导致已清空的搜索参数不会从url中删除，
+                      //这里把不在本次参数中的搜索字段补为undefined，重置后url中的搜索参数才会被清空
+                      search_config?.forEach((v) => {
+                        const key = v.dataIndex;
+                        if (isStr(key) && !(key in values)) {
+                          values[key] = undefined;
+                        }
+                      });
                       return values;
                     },
                   }
