@@ -69,6 +69,7 @@ export const columnType = [
   { label: '日期时间 - datetime', value: 'datetime' },
   { label: '日历表单 - formCalendar', value: 'formCalendar' },
   { label: 'alert提醒 - alert', value: 'alert' },
+  { label: 'table动态列 - tableDynamicColumns', value: 'tableDynamicColumns' },
 ];
 
 type TreeData = GetProps<typeof TreeSelect>['treeData'];

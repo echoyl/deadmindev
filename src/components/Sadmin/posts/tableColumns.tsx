@@ -258,7 +258,7 @@ export const getTableColumns = (props: Record<string, any>) => {
   };
   //table中的columns 尽量不要太复杂，这里cloneDeep会很低
   //为开启devEnable时，不进行cloneDeep
-  const customerColumns =
+  let customerColumns =
     typeof columns == 'function'
       ? columns(enums, actionRef)
       : devEnable || cloneDeeped
@@ -398,6 +398,14 @@ export const getTableColumns = (props: Record<string, any>) => {
     v.width = v.width || 150; //设置默认宽度
     return v;
   };
+  //循环检测customerColumns,如果有valueType=tableDynamicColumns 则解构该数据到customerColumns中
+  customerColumns = customerColumns?.flatMap((c) =>
+    c?.valueType == 'tableDynamicColumns' && enums?.[c.dataIndex]
+      ? enums[c.dataIndex].map((v) => {
+          return { ...v, uid: c.uid, search: false };
+        })
+      : [c],
+  );
 
   const _columns = customerColumns
     ?.map((c) => {

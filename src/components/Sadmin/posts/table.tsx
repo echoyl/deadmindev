@@ -329,7 +329,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
     if (ret.search?.footer) {
       setFooter(ret.search.footer);
     }
-    if (!initPage) {
+    if (!initPage || (current == 1 && props.cloneDeeped)) {
       //将页面开发参数变化的设置单独放这和initRequest区分开
       setEnums({ ...ret.search });
       setColumnData({ ...ret.search }); //做成context 换一个名字
