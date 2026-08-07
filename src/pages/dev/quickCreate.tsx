@@ -81,10 +81,7 @@ const QuickCreate: FC = () => {
                       dataIndex: 'goods_id',
                       valueType: 'modelSelect',
                       fieldProps: {
-                        placeholder: '必选',
-                      },
-                      formItemProps: {
-                        rules: [{ required: true, message: '商品模型为必填' }],
+                        placeholder: '请选择商品模型，未选择则只会创建简单的订单模块',
                       },
                       colProps: { span: 12 },
                     },

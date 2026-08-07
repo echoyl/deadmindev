@@ -2,6 +2,7 @@ import { SaPageContext } from '@/components/Sadmin/404';
 import { saReloadModel } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import { FakeDataForm } from '@/components/Sadmin/dev/table/fakedata';
+import { ModelFieldForm } from '@/components/Sadmin/dev/table/modelField';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
@@ -13,6 +14,7 @@ import {
   FileOutlined,
   FolderOutlined,
   InsertRowLeftOutlined,
+  ProfileOutlined,
 } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { Space } from 'antd';
@@ -292,6 +294,20 @@ export default () => {
             action: 'drawer',
             btn: { text: '', icon: <InsertRowLeftOutlined />, tooltip: '模型关联', size: 'small' },
           },
+          {
+            if: '{{record.type == 1}}',
+            domtype: 'button',
+            modal: {
+              title: '{{record.title + " - 字段管理"}}',
+              childrenRender: (record: Record<string, any>) => (
+                <ModelFieldForm modelId={record.id} />
+              ),
+              width: 1500,
+            },
+            action: 'drawer',
+            btn: { text: '', icon: <ProfileOutlined />, tooltip: '字段管理', size: 'small' },
+          },
+
           {
             if: '{{record.type == 1}}',
             domtype: 'button',

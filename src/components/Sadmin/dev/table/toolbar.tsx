@@ -43,6 +43,7 @@ import { DndContext } from '../dnd-context';
 import { fieldColumn } from '../vars/model/fieldColumns';
 import { getModelColumns } from './baseFormColumns';
 import Fakedata from './fakedata';
+import ModelField from './modelField';
 import { ToolbarColumnTitle } from './title';
 
 export const ToolBarDom = (props) => {
@@ -341,11 +342,12 @@ export const ToolModelForm = (props) => {
 };
 
 export const ToolModelFieldsForm = (props) => {
-  const { trigger } = props;
+  const { trigger, modelId = 0 } = props;
   const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
+  const model_id = modelId || pageMenu?.model_id;
   const intl = useIntl();
   const ModelForm = (mprops) => {
-    const { contentRender, setOpen } = mprops;
+    const { contentRender, setOpen, modelId } = mprops;
     const formRef = useRef<ProFormInstance<any>>({} as any);
 
     const { setDevData } = useContext(SaDevContext);
@@ -374,9 +376,9 @@ export const ToolModelFieldsForm = (props) => {
           },
         ]}
         url="dev/model/show"
-        dataId={pageMenu?.model_id}
-        paramExtra={{ id: pageMenu?.model_id }}
-        postExtra={{ id: pageMenu?.model_id }}
+        dataId={model_id}
+        paramExtra={{ id: model_id }}
+        postExtra={{ id: model_id }}
         grid={true}
         devEnable={false}
         msgcls={({ code, data }) => {
@@ -459,7 +461,7 @@ export const ToolBarMenu = (props) => {
             ? {
                 key: 'editModelFields',
                 label: (
-                  <ToolModelFieldsForm
+                  <ModelField
                     trigger={
                       <Button type="link" icon={<ProfileOutlined />}>
                         {t('columns', intl)}
