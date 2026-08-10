@@ -145,6 +145,7 @@ export const SaContext = createContext<{
   saTableContext?: saTableContextProps;
   searchFormRef?: any;
   selectedRowKeys?: any[];
+  reload?: () => void;
 }>({});
 
 const SaTable: React.FC<saTableProps> = (props) => {

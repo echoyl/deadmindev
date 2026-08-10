@@ -1,7 +1,9 @@
 import request from '@/components/Sadmin/lib/request';
 import { useIntl } from '@umijs/max';
-import { Button, ButtonProps, Popconfirm } from 'antd';
-import React, { FC, Key, ReactElement, useContext, useMemo } from 'react';
+import type { ButtonProps } from 'antd';
+import { Button, Popconfirm } from 'antd';
+import type { FC, JSX, Key, ReactElement } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { isArr, isUndefined } from '../checkers';
 import { SaDevContext } from '../dev';
 import cache from '../helper/cache';
@@ -13,11 +15,11 @@ interface actionConfirm {
   btn?: ButtonProps;
   method?: 'post' | 'delete' | 'get';
   url?: string;
-  data?: {};
+  data?: Record<string, any>;
   dataId?: Key;
-  callback?: (value?: any) => void;
+  callback?: (value?: any) => void | boolean;
   //trigger?: (value: any) => ReactNode;
-  trigger?: JSX.Element | boolean;
+  trigger?: JSX.Element | boolean | ReactElement;
   title?: string;
   afterActionType?: 'reload' | 'goback' | 'none';
   record?: Record<string, any>;
@@ -26,10 +28,11 @@ interface actionConfirm {
 
 export const ConfirmTriggerClick = (
   props: actionConfirm,
-  actionRef,
+  actionRef: any,
   searchFormRef?: any,
   type = 'modal',
   intl?: any,
+  more?: Record<string, any>,
 ) => {
   const {
     msg,
@@ -44,6 +47,7 @@ export const ConfirmTriggerClick = (
   } = props;
   const values = searchFormRef?.current?.getFieldsFormatValue();
   const newData: Record<string, any> = {};
+  const { reload } = more || {};
   Object.keys(data).map((k) => {
     if (!isUndefined(data[k])) {
       const tplc = tplComplie(data[k], { record });
@@ -88,7 +92,7 @@ export const ConfirmTriggerClick = (
     if (!ret.code) {
       //后台传值后 支持 1.本地storage信息写入 2.页面是否跳转
       if (ret.data?.setStorage) {
-        for (let name in ret.data.setStorage) {
+        for (const name in ret.data.setStorage) {
           cache.set(name, ret.data.setStorage[name]);
         }
       }
@@ -96,8 +100,12 @@ export const ConfirmTriggerClick = (
         window.open(ret.data.redirect.url, ret.data.redirect.type);
       } else {
         //不跳转链接就刷新页面
-        if (actionRef?.current && afterActionType == 'reload') {
-          actionRef.current?.reload(ret);
+        if (afterActionType == 'reload') {
+          if (reload) {
+            reload();
+          } else if (actionRef?.current) {
+            actionRef.current.reload(ret);
+          }
         } else {
           if (afterActionType == 'goback') {
             history.back();
@@ -132,10 +140,12 @@ const Confirm: FC<actionConfirm> = (props) => {
     type = 'modal',
   } = props;
   const { modalApi } = useContext(SaDevContext);
-  const { actionRef, searchFormRef } = useContext(SaContext);
+  const { actionRef, searchFormRef, reload } = useContext(SaContext);
   const intl = useIntl();
-  const onClick = (e?: any) => {
-    modalApi?.confirm(ConfirmTriggerClick(props, actionRef, searchFormRef, 'modal', intl));
+  const onClick = () => {
+    modalApi?.confirm(
+      ConfirmTriggerClick(props, actionRef, searchFormRef, 'modal', intl, { reload }),
+    );
   };
   const triggerDom: JSX.Element | null = useMemo(() => {
     if (!trigger) {
@@ -143,13 +153,13 @@ const Confirm: FC<actionConfirm> = (props) => {
     }
 
     //onClick();
-    const newDom = React.cloneElement(trigger as ReactElement, {
+    const newDom = React.cloneElement(trigger as ReactElement<Record<string, any>>, {
       key: 'trigger',
       onClick: (e: any) => {
         if (type == 'modal') {
-          onClick(e);
+          onClick();
         }
-        trigger?.props?.onClick?.(e);
+        (trigger as ReactElement<Record<string, any>>)?.props?.onClick?.(e);
       },
     });
     return newDom;
@@ -178,7 +188,7 @@ const Confirm: FC<actionConfirm> = (props) => {
 //   return
 // }
 
-export const ConfirmRender = (text, props) => {
+export const ConfirmRender = (text: any, props: any) => {
   //console.log('confirm props', props.fieldProps, text);
   return <Confirm {...props.fieldProps} dataId={props.record.id} />;
 };

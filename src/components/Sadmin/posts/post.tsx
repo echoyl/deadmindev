@@ -284,6 +284,12 @@ export const SaForm: FC<saFormProps> = (props) => {
     return true;
   };
 
+  //重新加载当前SaForm 通过改变ProForm params让SWR缓存key变化 从而重新触发request请求
+  const [reloadTick, setReloadTick] = useState(0);
+  const reload = () => {
+    setReloadTick((t) => t + 1);
+  };
+
   return (
     <SaContext.Provider
       value={{
@@ -292,6 +298,7 @@ export const SaForm: FC<saFormProps> = (props) => {
         tableDesigner,
         detail,
         columnData: detail,
+        reload,
       }}
     >
       <DndContext>
@@ -382,7 +389,7 @@ export const SaForm: FC<saFormProps> = (props) => {
             }}
             onFinish={post}
             request={get}
-            params={{ ...params, _formId: formInstId.current }}
+            params={{ ...params, _formId: formInstId.current, _rev: reloadTick }}
             submitter={
               (!editable && dataId != 0) ||
               (dataId == 0 && !addable) ||
