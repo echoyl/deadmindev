@@ -26,7 +26,7 @@ import {
 } from '@ant-design/pro-components';
 import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
 import type { GetProp } from 'antd';
-import { Flex, Form, Input, QRCode, Space, Tabs, theme, Tooltip } from 'antd';
+import { BorderBeam, Flex, Form, Input, QRCode, Space, Tabs, theme, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import type { CSSProperties } from 'react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -454,7 +454,10 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
       subTitle={
         setting?.adminSetting?.subtitle ? (
           <span
-            style={{ display: 'block', marginBlockEnd: -28 }}
+            style={{
+              display: 'block',
+              marginBlockEnd: setting?.adminSetting?.loginType?.length > 1 ? -28 : -12,
+            }}
             dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}
           ></span>
         ) : null
@@ -562,21 +565,30 @@ const LoginPage: React.FC = () => {
       {setting?.adminSetting?.lang ? <Lang /> : null}
       <div style={{ flex: '1' }}>
         <Flex align="center" justify="center" style={{ height: '100%' }}>
-          <ProCard
-            style={{
-              //maxWidth: 440,
-              //margin: '0px auto',
-              // padding: '20px 0',
-              background:
-                setting?.navTheme == 'light' ? setting?.adminSetting?.loginBgCardColor : 'none',
-              width: 380,
-              marginTop: -72,
-            }}
-            styles={{ body: { paddingTop: 0, paddingBottom: 0 } }}
-            variant="borderless"
+          <BorderBeam
+            lineWidth={setting?.adminSetting?.loginBeamWidth || 0}
+            color={[
+              { color: '#7c3aed', percent: 0 },
+              { color: '#06b6d4', percent: 57 },
+              { color: '#67e8f9', percent: 100 },
+            ]}
           >
-            <Login setting={setting} />
-          </ProCard>
+            <ProCard
+              style={{
+                //maxWidth: 440,
+                //margin: '0px auto',
+                // padding: '20px 0',
+                background:
+                  setting?.navTheme == 'light' ? setting?.adminSetting?.loginBgCardColor : 'none',
+                width: 380,
+                marginTop: -72,
+              }}
+              styles={{ body: { paddingTop: 0, paddingBottom: 0 } }}
+              variant="borderless"
+            >
+              <Login setting={setting} />
+            </ProCard>
+          </BorderBeam>
         </Flex>
       </div>
       <Footer />
