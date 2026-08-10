@@ -90,6 +90,8 @@ export const SaForm: FC<saFormProps> = (props) => {
   );
   const { setting: devSetting, isMobile } = useContext(SaDevContext);
   const intl = useIntl();
+  //每个SaForm实例唯一标识 用于ProForm request的SWR缓存key 避免嵌套表单与上层表单key冲突导致互相重载
+  const formInstId = useRef(Math.random().toString(36).slice(2));
   //提交数据
   const post = async (base: any, callback?: (value: any) => void, then?: any) => {
     //log('post data is ', base);
@@ -140,22 +142,27 @@ export const SaForm: FC<saFormProps> = (props) => {
   };
 
   const params = { ...useParams(), ...paramExtra };
-
   const [search] = useSearchParams();
-  const query = search.toString();
-  if (query) {
-    query.split('&').map((v) => {
-      const [key, value] = v.split('=');
-      if (key == 'id' && params.id) {
-        //如果参数中已经有了id名称的数据，则不再读取url中的id,以传参优先级更高
-      } else {
-        params[key] = value;
-      }
-    });
+  if (pageType == 'page') {
+    //只有page类型才需要处理url参数
+    const query = search.toString();
+    if (query) {
+      query.split('&').map((v) => {
+        const [key, value] = v.split('=');
+        if (key == 'id' && params.id) {
+          //如果参数中已经有了id名称的数据，则不再读取url中的id,以传参优先级更高
+        } else {
+          params[key] = value;
+        }
+      });
+    }
   }
-  if (params['*']) {
-    delete params['*'];
-  }
+
+  //需要删掉的key
+  const deleteKeys = ['*', 'readonly', 'reloadUid', 'current', 'pageSize'];
+  deleteKeys.map((key) => {
+    delete params[key];
+  });
   //获取数据
   //console.log('post params', params, url);
   const get = async () => {
@@ -375,6 +382,7 @@ export const SaForm: FC<saFormProps> = (props) => {
             }}
             onFinish={post}
             request={get}
+            params={{ ...params, _formId: formInstId.current }}
             submitter={
               (!editable && dataId != 0) ||
               (dataId == 0 && !addable) ||
