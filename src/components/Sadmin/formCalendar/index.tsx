@@ -5,10 +5,10 @@ import { Badge, Calendar } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
+import { SaPageContext } from '../404';
 import ButtonModal from '../action/buttonModal';
 import { isArr } from '../checkers';
 import FormFromBread from '../formFromBread';
-import { SaPageContext } from '../404';
 import { getBread, getMenuDataById } from '../helpers';
 import { SaContext } from '../posts/table';
 
@@ -117,6 +117,7 @@ const FormCalendar: React.FC<{
     const cached = getCacheMonth();
     if (cached) {
       setSelectMonth(cached);
+      onValueChange(cached);
     }
   }, [monthCacheKey]);
 
