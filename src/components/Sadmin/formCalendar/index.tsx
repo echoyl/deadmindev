@@ -8,6 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
 import { isArr } from '../checkers';
 import FormFromBread from '../formFromBread';
+import { SaPageContext } from '../404';
 import { getBread, getMenuDataById } from '../helpers';
 import { SaContext } from '../posts/table';
 
@@ -23,6 +24,7 @@ const FormCalendar: React.FC<{
   colors?: string[];
   recordFields?: string[]; //传输当前表单数据字段信息
   idName?: string; //关联数据的id名称
+  onChange?: any;
 }> = (props) => {
   const [open, setOpen] = useState(false);
   const [selectMonth, setSelectMonth] = useState<string>();
@@ -52,6 +54,7 @@ const FormCalendar: React.FC<{
     ],
     recordFields = ['id'],
     idName = 'id',
+    onChange: onValueChange,
   } = props;
 
   const onSelect = (date: Dayjs, { source }: Record<string, any>) => {
@@ -77,6 +80,12 @@ const FormCalendar: React.FC<{
   const [allData, setAllData] = useState<Record<string, any>[]>();
   const { formRef } = useContext(SaContext);
   const [record, setRecord] = useState();
+  //以当前页面pagemenu.id作为month的缓存key 重载进入页面时读取缓存作为默认月份
+  const { pageMenu } = useContext(SaPageContext);
+  const pageMenuId = pageMenu?.id ?? page?.id;
+  const monthCacheKey = pageMenuId ? `formCalendar_month_${pageMenuId}` : '';
+  const getCacheMonth = () =>
+    monthCacheKey ? localStorage.getItem(monthCacheKey) || undefined : undefined;
 
   const getRecordByFields = (fields: string[], _record?: Record<string, any>) => {
     const ret: Record<string, any> = {};
@@ -94,9 +103,22 @@ const FormCalendar: React.FC<{
       return;
     }
     const recordParams = getRecordByFields(recordFields, record);
-    const ret = await request.get(url, { params: { ...recordParams, ...params } });
+    const _params = { ...recordParams, ...params };
+    //默认带上当前选择的月份（无显式month时读取缓存） 若params中已显式传month则覆盖
+    if (!_params.month) {
+      _params.month = selectMonth || getCacheMonth();
+    }
+    const ret = await request.get(url, { params: _params });
     setAllData(ret.data);
   };
+
+  useEffect(() => {
+    //重载进入页面时读取缓存的月份 作为Calendar默认值及selectMonth
+    const cached = getCacheMonth();
+    if (cached) {
+      setSelectMonth(cached);
+    }
+  }, [monthCacheKey]);
 
   useEffect(() => {
     if (formRef.current && Object.keys(formRef.current).length > 0) {
@@ -150,12 +172,22 @@ const FormCalendar: React.FC<{
   const onChange = (value: Dayjs) => {
     const month = value.format('YYYY-MM');
     setSelectMonth(month);
+    //以pagemenu.id为key缓存当前月份
+    if (monthCacheKey) {
+      localStorage.setItem(monthCacheKey, month);
+    }
     initData({ month });
+    onValueChange(month);
   };
 
   return (
     <>
-      <Calendar onSelect={onSelect} cellRender={cellRender} onPanelChange={onChange} />
+      <Calendar
+        defaultValue={getCacheMonth() ? dayjs(getCacheMonth()) : undefined}
+        onSelect={onSelect}
+        cellRender={cellRender}
+        onPanelChange={onChange}
+      />
       <ButtonModal
         open={open}
         width={width}
