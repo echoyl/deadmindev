@@ -1,19 +1,21 @@
 import request from '@/components/Sadmin/lib/request';
-import { Badge, Calendar, CalendarProps } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import { useModel } from '@umijs/max';
+import type { CalendarProps } from 'antd';
+import { Badge, Calendar } from 'antd';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import ButtonModal from '../action/buttonModal';
+import { isArr } from '../checkers';
 import FormFromBread from '../formFromBread';
 import { getBread, getMenuDataById } from '../helpers';
-import { useModel } from '@umijs/max';
-import { isArr } from '../checkers';
 import { SaContext } from '../posts/table';
 
 const FormCalendar: React.FC<{
   width?: number;
   title?: string;
   url?: string;
-  data?: { [key: string]: any };
+  data?: Record<string, any>;
   defaultContent?: string;
   onlyFuture?: boolean; //是否只有未来日期可选
   path?: string;
@@ -25,18 +27,6 @@ const FormCalendar: React.FC<{
   const [open, setOpen] = useState(false);
   const [selectMonth, setSelectMonth] = useState<string>();
   const [selectDate, setSelectDate] = useState<string>();
-  const onSelect = (date: Dayjs, { source }) => {
-    //弹出配置form
-    const value = date.format('YYYY-MM-DD');
-    const now = dayjs().format('YYYY-MM-DD');
-    if (source === 'date') {
-      if (onlyFuture && value < now) {
-        return;
-      }
-      setOpen(true);
-      setSelectDate(value);
-    }
-  };
 
   const {
     width = 800,
@@ -64,6 +54,19 @@ const FormCalendar: React.FC<{
     idName = 'id',
   } = props;
 
+  const onSelect = (date: Dayjs, { source }: Record<string, any>) => {
+    //弹出配置form
+    const value = date.format('YYYY-MM-DD');
+    const now = dayjs().format('YYYY-MM-DD');
+    if (source === 'date') {
+      if (onlyFuture && value < now) {
+        return;
+      }
+      setOpen(true);
+      setSelectDate(value);
+    }
+  };
+
   const { initialState } = useModel('@@initialState');
   //const bread = getBread(path, initialState?.currentUser);
   const bread = path
@@ -71,31 +74,22 @@ const FormCalendar: React.FC<{
     : getMenuDataById(initialState?.currentUser?.menuData, page?.id);
   const url = bread?.data?.url ? bread?.data.url : '';
   //这里可能需要再抽一层 ButtonModalForm 出来
-  const [allData, setAllData] = useState<Array<Record<string, any>>>();
+  const [allData, setAllData] = useState<Record<string, any>[]>();
   const { formRef } = useContext(SaContext);
   const [record, setRecord] = useState();
 
-  const getRecordByFields = (fields, record) => {
-    const ret = {};
-    if (!record) {
+  const getRecordByFields = (fields: string[], _record?: Record<string, any>) => {
+    const ret: Record<string, any> = {};
+    if (!_record) {
       return ret;
     } else {
       fields.forEach((v) => {
-        ret[v] = record[v];
+        ret[v] = _record[v];
       });
     }
-    return { record: ret, [idName]: record.id };
+    return { record: ret, [idName]: _record.id };
   };
-
-  useEffect(() => {
-    if (formRef.current && Object.keys(formRef.current).length > 0) {
-      //在获取form实例后再发起请求
-      const record = formRef.current.getFieldsValue?.(true);
-      setRecord(record);
-      initData(getRecordByFields(recordFields, record));
-    }
-  }, [formRef]);
-  const initData = async (params?: { [key: string]: any }) => {
+  const initData = async (params?: Record<string, any>) => {
     if (!url) {
       return;
     }
@@ -103,6 +97,15 @@ const FormCalendar: React.FC<{
     const ret = await request.get(url, { params: { ...recordParams, ...params } });
     setAllData(ret.data);
   };
+
+  useEffect(() => {
+    if (formRef.current && Object.keys(formRef.current).length > 0) {
+      //在获取form实例后再发起请求
+      const _record = formRef.current.getFieldsValue?.(true);
+      setRecord(_record);
+      initData(getRecordByFields(recordFields, _record));
+    }
+  }, [formRef]);
 
   const getListData = (value: Dayjs): Record<string, any> | undefined => {
     const date = value.format('YYYY-MM-DD');
@@ -157,8 +160,8 @@ const FormCalendar: React.FC<{
         open={open}
         width={width}
         title={title}
-        afterOpenChange={(open) => {
-          setOpen(open);
+        afterOpenChange={(iopen) => {
+          setOpen(iopen);
         }}
       >
         <FormFromBread
@@ -178,7 +181,7 @@ const FormCalendar: React.FC<{
                   },
                 },
               },
-              msgcls: ({ code }) => {
+              msgcls: ({ code }: Record<string, any>) => {
                 //setConfirmLoading(false);
                 if (!code) {
                   //actionRef.current?.reload();
@@ -196,7 +199,7 @@ const FormCalendar: React.FC<{
   );
 };
 
-export const FormCalendarRender = (text, props) => {
+export const FormCalendarRender = (text: any, props: any) => {
   return <FormCalendar {...props.fieldProps} />;
 };
 
