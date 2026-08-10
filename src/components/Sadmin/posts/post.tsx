@@ -12,7 +12,7 @@ import { DndContext } from '../dev/dnd-context';
 import { useTableDesigner } from '../dev/table/designer';
 import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 
-import { PageContainer404, SaPageContext } from '@/components/Sadmin/404';
+import { PageContainer404 } from '@/components/Sadmin/404';
 import { isFunction, isUndefined } from 'es-toolkit';
 import { isObj } from '../checkers';
 import { t, tplComplie } from '../helpers';
@@ -67,7 +67,7 @@ export const SaForm: FC<saFormProps> = (props) => {
     actionRef,
     pageType = 'page',
     width = 800,
-    formRef = useRef<ProFormInstance<any>>({} as any),
+    formRef: oldFormRef,
     onTabChange,
     setting,
     resetForm = false,
@@ -78,7 +78,8 @@ export const SaForm: FC<saFormProps> = (props) => {
   //console.log('init props', props);
   //const url = 'posts/posts';
   //读取后台数据
-  const { pageMenu } = useContext(SaPageContext);
+  const _formRef = useRef<ProFormInstance<any>>({} as any);
+  const formRef = oldFormRef ? oldFormRef : _formRef;
   const [detail, setDetail] = useState<Record<string, any> | boolean>(
     props.formProps?.initialValues ? props.formProps?.initialValues : false,
   );
@@ -87,7 +88,7 @@ export const SaForm: FC<saFormProps> = (props) => {
   const [devEnable, setDevEnable] = useState(
     pdevEnable && !initialState?.settings?.devDisable && initialState?.settings?.adminSetting?.dev,
   );
-  const { messageApi, setting: devSetting, isMobile } = useContext(SaDevContext);
+  const { setting: devSetting, isMobile } = useContext(SaDevContext);
   const intl = useIntl();
   //提交数据
   const post = async (base: any, callback?: (value: any) => void, then?: any) => {
@@ -288,12 +289,12 @@ export const SaForm: FC<saFormProps> = (props) => {
     >
       <DndContext>
         {initialState?.settings?.adminSetting?.dev && pdevEnable && !showTabs && !devEnable ? (
-          <FormAddTab pageMenu={pageMenu} style={pageType != 'page' ? { marginTop: 16 } : {}} />
+          <FormAddTab style={pageType != 'page' ? { marginTop: 16 } : {}} />
         ) : null}
         {setting?.steps_form ? (
           <>
             {initialState?.settings?.adminSetting?.dev && pdevEnable ? (
-              <FormAddTab pageMenu={pageMenu} type="formTab" />
+              <FormAddTab type="formTab" />
             ) : null}
             <StepsForm
               current={stepFormCurrent}
@@ -413,7 +414,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                     ? {
                         right: (
                           <>
-                            <FormAddTab pageMenu={pageMenu} type="formTab" />
+                            <FormAddTab type="formTab" />
                           </>
                         ),
                       }

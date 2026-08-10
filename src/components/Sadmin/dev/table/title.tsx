@@ -625,7 +625,7 @@ export const AddTabItem = () => {
 };
 
 export const FormAddTab = (props: Record<string, any>) => {
-  const { pageMenu, type = 'form', style = {} } = props;
+  const { type = 'form', style = {} } = props;
   const buttonType = type == 'formTab' ? 'text' : 'default';
   return (
     <Space style={style}>
@@ -636,11 +636,9 @@ export const FormAddTab = (props: Record<string, any>) => {
       <ToolBarMenu
         key="devsetting"
         trigger={<Button type={buttonType} icon={<SettingOutlined />} />}
-        pageMenu={pageMenu}
       />
       <FormCodePhp
         key="FormCodePhp"
-        pageMenu={pageMenu}
         trigger={<Button type={buttonType} icon={<CodeOutlined />} />}
       />
       {type == 'formTab' && <AddTabItem />}

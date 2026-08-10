@@ -1,16 +1,18 @@
-import { CodeOutlined, ReloadOutlined, ToolOutlined } from '@ant-design/icons';
+import { CodeOutlined, ReloadOutlined } from '@ant-design/icons';
 import { ProField } from '@ant-design/pro-components';
-import ButtonModal from '../action/buttonModal';
 import { Button, Card, Space, Typography } from 'antd';
-import React, { useState } from 'react';
+import { useContext, useState } from 'react';
+import { SaPageContext } from '../404';
+import ButtonModal from '../action/buttonModal';
 import request from '../lib/request';
 
 const FormCodePhp = (props: Record<string, any>) => {
-  const { pageMenu = { id: 0, model_id: 0 }, trigger } = props;
+  const { trigger } = props;
+  const { pageMenu = { id: 0, model_id: 0 } } = useContext(SaPageContext);
   const [text, setText] = useState();
   const load = () => {
     request
-      .get('dev/model/getFormCodeByColumns', { params: { id: pageMenu.model_id } })
+      .get('dev/model/getFormCodeByColumns', { params: { id: pageMenu?.model_id } })
       .then((res) => {
         const { data, code, msg } = res;
         if (!code) {
