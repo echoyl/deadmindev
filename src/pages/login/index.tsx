@@ -567,6 +567,7 @@ const LoginPage: React.FC = () => {
         <Flex align="center" justify="center" style={{ height: '100%' }}>
           <BorderBeam
             lineWidth={setting?.adminSetting?.loginBeamWidth || 0}
+            count={2}
             color={[
               { color: '#7c3aed', percent: 0 },
               { color: '#06b6d4', percent: 57 },
