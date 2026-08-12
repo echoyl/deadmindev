@@ -29,6 +29,9 @@ export default defineConfig({
 
   publicPath: PUBLIC_PATH,
 
+  //去掉PUBLIC_PATH首尾的/
+  outputPath: PUBLIC_PATH.replace(/^\/|\/$/g, ''),
+
   /**
    * @name 兼容性设置
    * @description 设置 ie11 不一定完美兼容，需要检查自己使用的所有依赖
@@ -158,15 +161,16 @@ export default defineConfig({
    */
   access: {},
   /**
-   * @name <head> 中额外的 script
-   * @description 配置 <head> 中额外的 script
+   * @name 页面底部额外的 script
+   * @description 配置 <body> 末尾的 script（在 #root 之后）
    */
-  headScripts: [
+  scripts: [
     // 解决首次加载时白屏的问题
-    { src: join(PUBLIC_PATH, 'scripts/loading.js'), async: true },
+    { src: `${PUBLIC_PATH}scripts/loading.js`, async: true },
   ],
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
+  plugins: [join(__dirname, 'htmlPlugin')],
   /**
    * @name openAPI 插件的配置
    * @description 基于 openapi 的规范生成serve 和mock，能减少很多样板代码
