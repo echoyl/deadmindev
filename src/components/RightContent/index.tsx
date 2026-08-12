@@ -1,9 +1,8 @@
 import cache from '@/components/Sadmin/helper/cache';
 import { platformName } from '@/components/Sadmin/lib/request';
-import { DownOutlined } from '@ant-design/icons';
 import { ProConfigProvider } from '@ant-design/pro-components';
 import { SelectLang as UmiSelectLang, useModel } from '@umijs/max';
-import { ConfigProvider, Dropdown, Space, theme } from 'antd';
+import { ConfigProvider, Select, theme } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import NoticeIconView from '../NoticeIcon';
 import { SaDevContext } from '../Sadmin/dev';
@@ -24,7 +23,7 @@ export const actionDefaultStyle = {
   fontSize: '16px',
   verticalAlign: 'middle',
 };
-export const AutoThemeCon = (props: { children: any }) => {
+export const AutoThemeCon = (props: { children: any; name?: string }) => {
   const { setting } = useContext(SaDevContext);
   return (
     <ConfigProvider
@@ -39,7 +38,7 @@ export const AutoThemeCon = (props: { children: any }) => {
   );
 };
 
-const PlatformSelect = ({ style }: { style?: React.CSSProperties }) => {
+export const PlatformSelect = () => {
   const { initialState } = useModel('@@initialState');
   const platforms = initialState?.currentUser?.platforms;
   const [value, setValue] = useState<string>('');
@@ -56,11 +55,12 @@ const PlatformSelect = ({ style }: { style?: React.CSSProperties }) => {
     }
   }, [platforms]);
 
+  const darkToken = theme.darkAlgorithm(theme.defaultSeed);
+  const { setting } = useContext(SaDevContext);
+
   if (!platforms || platforms.length < 1) return null;
 
-  const cur = platforms.find((p: any) => p.key == value);
-
-  const handleSelect = async (v: string) => {
+  const onChange = async (v: string) => {
     if (v == value) return;
     if (v) {
       await cache.set(platformName, v);
@@ -70,28 +70,29 @@ const PlatformSelect = ({ style }: { style?: React.CSSProperties }) => {
     window.location.reload();
   };
 
-  const items = platforms.map((p: any) => ({
-    ...p,
-    onClick: () => handleSelect(p.key + ''),
-  }));
-
-  if (platforms.length > 1) {
-    items.push({ type: 'divider' }, { key: '', label: '清除', onClick: () => handleSelect('') });
-  }
+  const darkStyle =
+    setting?.adminSetting.headerColor == 'dark'
+      ? { color: darkToken.colorTextSecondary }
+      : undefined;
 
   return (
-    <Dropdown
-      menu={{ items, selectable: true, selectedKeys: value ? [value] : undefined }}
-      placement="bottomRight"
-      trigger={['click']}
-    >
-      <span style={{ ...style, fontSize: '14px', color: '#fff' }}>
-        <Space>
-          {cur?.label || '选择平台'}
-          <DownOutlined />
-        </Space>
-      </span>
-    </Dropdown>
+    <Select
+      style={{ width: 150, paddingTop: 0, paddingBottom: 0, margin: '0 12px' }}
+      styles={{
+        root: darkStyle,
+        placeholder: darkStyle,
+        suffix: darkStyle,
+        clear: darkStyle,
+      }}
+      value={value || undefined}
+      options={platforms}
+      onChange={onChange}
+      placeholder="请选择平台"
+      fieldNames={{ label: 'label', value: 'key' }}
+      allowClear
+      size="small"
+      variant="borderless"
+    />
   );
 };
 
@@ -101,7 +102,7 @@ export const actionsRender = (settings: Record<string, any>) => {
   return [
     // <DevSwitch key="DevSwitch" />,
     <AutoThemeCon key="platform">
-      <PlatformSelect key="platform" style={style} />
+      <PlatformSelect key="platform" />
     </AutoThemeCon>,
     <AutoThemeCon key="theme">
       <ThemeSwitch style={style} key="ThemeSwitch" />
