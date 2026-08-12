@@ -26,7 +26,7 @@ import {
 } from '@ant-design/pro-components';
 import { Helmet, history, useIntl, useModel, useSearchParams } from '@umijs/max';
 import type { GetProp } from 'antd';
-import { BorderBeam, Flex, Form, Input, QRCode, Space, Tabs, theme, Tooltip } from 'antd';
+import { BorderBeam, Divider, Flex, Form, Input, QRCode, Space, Tabs, theme, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import type { CSSProperties } from 'react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -456,7 +456,7 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
           <span
             style={{
               display: 'block',
-              marginBlockEnd: setting?.adminSetting?.loginType?.length > 1 ? -28 : -12,
+              marginBlockEnd: setting?.adminSetting?.loginType?.length > 1 ? -28 : -42,
             }}
             dangerouslySetInnerHTML={{ __html: setting?.adminSetting?.subtitle }}
           ></span>
@@ -495,6 +495,7 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
           </Space>
         ) : null
       }
+      variant="filled"
     >
       {setting?.adminSetting?.loginType?.length > 1 ? (
         <Tabs
@@ -508,7 +509,13 @@ export const Login: React.FC<{ setting?: Record<string, any>; type?: 'page' | 'm
           })}
         />
       ) : (
-        loginTypeItems.find((item) => item.key == setting?.adminSetting?.loginType?.[0])?.children
+        <>
+          <Divider />
+          {
+            loginTypeItems.find((item) => item.key == setting?.adminSetting?.loginType?.[0])
+              ?.children
+          }
+        </>
       )}
 
       <div
@@ -567,7 +574,7 @@ const LoginPage: React.FC = () => {
         <Flex align="center" justify="center" style={{ height: '100%' }}>
           <BorderBeam
             lineWidth={setting?.adminSetting?.loginBeamWidth || 0}
-            count={2}
+            //count={2}
             color={[
               { color: '#7c3aed', percent: 0 },
               { color: '#06b6d4', percent: 57 },
