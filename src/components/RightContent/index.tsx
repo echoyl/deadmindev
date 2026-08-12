@@ -44,14 +44,12 @@ export const PlatformSelect = () => {
   const [value, setValue] = useState<string>('');
 
   useEffect(() => {
-    cache.get(platformName).then((v) => v && setValue(v));
-  }, []);
-
-  useEffect(() => {
     if (platforms?.length === 1) {
-      const v = platforms[0].key + '';
+      const v = platforms[0].key;
       setValue(v);
       cache.set(platformName, v);
+    } else {
+      cache.get(platformName).then((v) => v && setValue(v));
     }
   }, [platforms]);
 
@@ -92,6 +90,7 @@ export const PlatformSelect = () => {
       allowClear
       size="small"
       variant="borderless"
+      disabled={platforms.length <= 1}
     />
   );
 };
