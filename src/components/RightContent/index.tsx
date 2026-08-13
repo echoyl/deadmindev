@@ -75,7 +75,7 @@ export const PlatformSelect = () => {
 
   return (
     <Select
-      style={{ width: 150, paddingTop: 0, paddingBottom: 0, margin: '0 12px' }}
+      style={{ width: 150, margin: '0 12px', outline: 'unset', padding: 8 }}
       styles={{
         root: darkStyle,
         placeholder: darkStyle,
