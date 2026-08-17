@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
   const { initialState } = useModel('@@initialState');
   const techContent = initialState?.settings?.adminSetting?.tech;
 
-  return (
+  return !techContent ? null : (
     <div className={styles.footer}>
       <div className={styles.copyright}>
         <span dangerouslySetInnerHTML={{ __html: techContent }}></span> &copy; {year}
