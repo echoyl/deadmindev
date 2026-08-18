@@ -26,7 +26,7 @@ import { TableForm } from '../dev/table/form';
 import ResizableTitle from '../dev/table/resizeableTitle';
 import TableIndex from '../dev/table/tableIndex';
 import { ToolBarDom, toolBarRender } from '../dev/table/toolbar';
-import { columnHasSearch, hasSearch, tplToDate } from '../helper/functions';
+import { columnHasSearch, hasSearch, isSideLayout, tplToDate } from '../helper/functions';
 import type {
   saFormColumnsType,
   saFormTabColumnsType,
@@ -583,13 +583,16 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const tableSize = setting?.table?.size || tableProps.size || 'middle';
   //检测是否有footer
   const footerHeight = !initialState?.settings?.adminSetting?.tech && pageType == 'page' ? 0 : 38;
-  const [minHeight, setMinHeight] = useState<number>(185 + footerHeight + heightOffset);
+  const sideLayout = isSideLayout(initialState?.settings) && pageType == 'page';
+  const sideOffset = sideLayout ? -27 : 0;
+  const initMinHeight = 185 + footerHeight + heightOffset + sideOffset;
+  const [minHeight, setMinHeight] = useState<number>(initMinHeight);
   const tableHeaderHeight = tableHeaderHeightArr[tableSize];
   const tableFooterHeight = tableFooterHeightArr[tableSize];
   const tablePageHeight = tablePageHeightArr[tableSize];
   const tableSummaryHeight = tableSummaryHeightArr[tableSize];
   useEffect(() => {
-    let defaultHeight = 185 + footerHeight + heightOffset;
+    let defaultHeight = initMinHeight;
     if (pageType == 'drawer') {
       defaultHeight -= 50;
     }

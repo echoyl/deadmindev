@@ -1,4 +1,5 @@
-import { Anchor, GetProp } from 'antd';
+import type { GetProp } from 'antd';
+import { Anchor } from 'antd';
 import { createStyles, useTheme } from 'antd-style';
 import React from 'react';
 import { pageTopHeight } from '../../helper/functions';

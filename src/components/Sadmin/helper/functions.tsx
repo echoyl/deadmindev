@@ -43,15 +43,23 @@ export const pageTopHeight = (fixedHeader = true) => {
   return headerHeight + (fixedHeader ? breadHeight : 0);
 };
 
+export const footerHeight = (settings?: Record<string, any>, pageType: string = 'page') => {
+  return !settings?.adminSetting?.tech && pageType == 'page' ? 0 : 38; //底部高度
+};
+
+export const isSideLayout = (settings?: Record<string, any>) => {
+  //检测是否是侧边栏布局
+  return settings?.adminSetting?.antdpro?.layout === 'side';
+};
+
 /**
  * 计算全屏高度需要剪掉的基础高度，不同类型的页面需要再计算自己的页面中组件的高度
  * @param settings 系统配置
  * @param pageType 如果是page表示可能存在底部版权内容
  */
 export const fullPageHeight = (settings?: Record<string, any>, pageType: string = 'page') => {
-  const footerHeight = !settings?.adminSetting?.tech && pageType == 'page' ? 0 : 38; //底部高度
   const pagePaddingBottom = 16; //页面底部padding
-  return footerHeight + pageTopHeight() + pagePaddingBottom;
+  return footerHeight(settings, pageType) + pageTopHeight() + pagePaddingBottom;
 };
 
 //读取data中第一个没有children的元素信息
