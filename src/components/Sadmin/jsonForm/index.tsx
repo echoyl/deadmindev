@@ -85,15 +85,17 @@ const JsonForm: FC<{
         },
       }}
     >
-      <ConfirmForm
-        trigger={trigger}
-        msg="配置页面"
-        tabs={config?.desc?.tabs}
-        value={value}
-        afterActionType="close"
-        onChange={onChange}
-        showType="drawer"
-      />
+      <SaPageContext value={{ pageMenu: undefined }}>
+        <ConfirmForm
+          trigger={trigger}
+          msg="配置页面"
+          tabs={config?.desc?.tabs}
+          value={value}
+          afterActionType="close"
+          onChange={onChange}
+          showType="drawer"
+        />
+      </SaPageContext>
     </DevJsonContext.Provider>
   );
 };

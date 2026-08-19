@@ -138,10 +138,10 @@ const BaseForm = (props: Record<string, any>) => {
 
   useEffect(() => {
     if (inArray(actionType, ['add', 'addTab']) < 0) {
-      const pageMenuData =
-        pageMenu && Object.keys(pageMenu)?.length > 0
-          ? pageMenu
-          : { schema: { form_config: json?.config?.form_config } };
+      //优先读取自定义的json而不是菜单信息
+      const pageMenuData = json?.config
+        ? { schema: { form_config: json?.config?.form_config } }
+        : pageMenu;
 
       const newValue = getValue(uid, pageMenuData, ctype ? ctype : type);
       setValue(newValue);
