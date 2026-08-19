@@ -17,23 +17,19 @@ const useDragEnd = (props?: any, pageMenu?: any) => {
     if (active?.id == over?.id) {
       return;
     }
-    if (pageMenu) {
-      if (active.data.current?.devData.type == 'panel') {
-        tableDesigner?.sort?.(
-          pageMenu.id,
-          [
-            { uid: active?.id, devData: active.data.current?.devData },
-            { uid: over?.id, devData: over.data.current?.devData },
-          ],
-          active.data.current?.devData.type,
-        );
-      } else {
-        tableDesigner?.sort?.(
-          pageMenu.id,
-          [active?.id, over?.id],
-          active.data.current?.devData.type,
-        );
-      }
+    const { id } = pageMenu || {};
+
+    if (active.data.current?.devData.type == 'panel') {
+      tableDesigner?.sort?.(
+        id,
+        [
+          { uid: active?.id, devData: active.data.current?.devData },
+          { uid: over?.id, devData: over.data.current?.devData },
+        ],
+        active.data.current?.devData.type,
+      );
+    } else {
+      tableDesigner?.sort?.(id, [active?.id, over?.id], active.data.current?.devData.type);
     }
   };
 };
