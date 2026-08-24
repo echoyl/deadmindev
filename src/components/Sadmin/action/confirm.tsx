@@ -2,7 +2,7 @@ import request from '@/components/Sadmin/lib/request';
 import { useIntl } from '@umijs/max';
 import type { ButtonProps } from 'antd';
 import { Button, Popconfirm } from 'antd';
-import type { FC, JSX, Key, ReactElement } from 'react';
+import type { FC, JSX, Key, ReactElement, ReactNode } from 'react';
 import React, { useContext, useMemo } from 'react';
 import { isArr, isUndefined } from '../checkers';
 import { SaDevContext } from '../dev';
@@ -19,7 +19,7 @@ interface actionConfirm {
   dataId?: Key;
   callback?: (value?: any) => void | boolean;
   //trigger?: (value: any) => ReactNode;
-  trigger?: JSX.Element | boolean | ReactElement;
+  trigger?: JSX.Element | boolean | ReactElement | ReactNode;
   title?: string;
   afterActionType?: 'reload' | 'goback' | 'none';
   record?: Record<string, any>;

@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { ProCard } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import type { GetProp, TreeProps } from 'antd';
-import { Button, Card, Dropdown, Empty, Space, Tooltip, Tree } from 'antd';
+import { Button, Dropdown, Empty, Space, Tooltip, Tree } from 'antd';
 import type { FC, Key, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import Confirm from '../action/confirm';
@@ -120,11 +121,12 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   useEffect(() => {
     render(treeData);
   }, [treeData, fieldNames]);
-  const fullHeight = fullPageHeight(initialState?.settings) + 56;
+  const fullHeight = fullPageHeight(initialState?.settings) + 58;
   const height = bodyHeight || `calc(100vh - ${fullHeight}px)`;
   return (
-    <Card
+    <ProCard
       title={title}
+      headerBordered={true}
       variant="borderless"
       styles={{
         body: {
@@ -277,7 +279,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
       ) : (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
-    </Card>
+    </ProCard>
   );
 };
 export default TreeMenu;
