@@ -305,7 +305,7 @@ export const getTableColumns = (props: Record<string, any>) => {
           dataIndex: v.dataIndex,
           type: v.editable?.type,
         });
-      v.width = v.width || 120;
+      v.width = v.width || 160;
     }
     const df = v.valueType ? defaulColumnsRender(v.valueType, v) : false;
     if (df) {
