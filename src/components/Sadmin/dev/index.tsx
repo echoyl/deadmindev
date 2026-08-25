@@ -120,7 +120,7 @@ export const DevLinks = (props: any) => {
       key: 'docs',
       label: (
         <a
-          href={'https://echoyl.com'}
+          href={'https://deadmin.pages.dev'}
           style={{ display: 'inline-block', width: '100%', textAlign: 'center' }}
           key="setting"
           rel="noreferrer"
