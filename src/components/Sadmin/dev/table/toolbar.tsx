@@ -40,7 +40,6 @@ import { DevJsonContext } from '../../jsonForm';
 import { SaForm } from '../../posts/post';
 import { SaContext } from '../../posts/table';
 import { DndContext } from '../dnd-context';
-import { fieldColumn } from '../vars/model/fieldColumns';
 import { getModelColumns } from './baseFormColumns';
 import Fakedata from './fakedata';
 import ModelField from './modelField';
@@ -338,82 +337,6 @@ export const ToolModelForm = (props) => {
     <ButtonModal trigger={trigger} width={860} title={t('model', intl)}>
       <ModelForm />
     </ButtonModal>
-  );
-};
-
-export const ToolModelFieldsForm = (props) => {
-  const { trigger, modelId = 0 } = props;
-  const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
-  const model_id = modelId || pageMenu?.model_id;
-  const intl = useIntl();
-  const ModelForm = (mprops) => {
-    const { contentRender, setOpen, modelId } = mprops;
-    const formRef = useRef<ProFormInstance<any>>({} as any);
-
-    const { setDevData } = useContext(SaDevContext);
-    return (
-      <SaForm
-        formRef={formRef}
-        tabs={[
-          {
-            tab: { title: t('baseInfo', intl) },
-            formColumns: [
-              fieldColumn,
-              {
-                title: '提交后',
-                dataIndex: 'afterPostOptions',
-                valueType: 'checkbox',
-                tooltip: '勾选后自动创建或更新数据库表，在变更字段时使用',
-                fieldProps: {
-                  options: [
-                    { label: '生成表', value: 'createModelSchema' },
-                    { label: '删除多余字段', value: 'dropColumns' },
-                  ],
-                  defaultValue: ['createModelSchema', 'dropColumns'],
-                },
-              },
-            ],
-          },
-        ]}
-        url="dev/model/show"
-        dataId={model_id}
-        paramExtra={{ id: model_id }}
-        postExtra={{ id: model_id }}
-        grid={true}
-        devEnable={false}
-        msgcls={({ code, data }) => {
-          setOpen(false);
-          if (!code) {
-            saReloadModel({ setDevData }, data);
-          }
-        }}
-        formProps={{
-          contentRender,
-          submitter: {
-            //移除默认的重置按钮，点击重置按钮后会重新请求一次request
-            render: (props, doms) => {
-              return [
-                <Button key="rest" type="default" onClick={() => setOpen?.(false)}>
-                  {t('cancel')}
-                </Button>,
-                doms[1],
-              ];
-            },
-          },
-        }}
-        pageType="drawer"
-      />
-    );
-  };
-  return (
-    <ButtonDrawer
-      trigger={trigger}
-      width={1500}
-      title={t('columns', intl)}
-      drawerProps={{ styles: { body: { paddingTop: 8 } } }}
-    >
-      <ModelForm />
-    </ButtonDrawer>
   );
 };
 
