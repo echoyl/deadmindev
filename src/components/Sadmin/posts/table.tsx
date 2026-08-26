@@ -594,7 +594,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   useEffect(() => {
     let defaultHeight = initMinHeight;
     if (pageType == 'drawer') {
-      defaultHeight -= 50;
+      defaultHeight -= 67;
     }
     if (footer) {
       defaultHeight += tableFooterHeight;
