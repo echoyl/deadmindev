@@ -39,6 +39,28 @@ const Tianmap: MapType = {
       });
     }
 
+    const container = document.getElementById(id);
+    if (container) {
+      let lastWidth = container.offsetWidth;
+      let lastHeight = container.offsetHeight;
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const { width, height } = entry.contentRect;
+          if (width > 0 && height > 0 && (width !== lastWidth || height !== lastHeight)) {
+            lastWidth = width;
+            lastHeight = height;
+            map.checkResize();
+            resizeObserver.disconnect();
+            break;
+          }
+        }
+      });
+      resizeObserver.observe(container);
+      if (container.offsetWidth > 0 && container.offsetHeight > 0) {
+        resizeObserver.disconnect();
+      }
+    }
+
     return map;
   },
   addMarker: function (lat, lng, map, callback) {
