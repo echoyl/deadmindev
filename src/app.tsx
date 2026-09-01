@@ -5,8 +5,8 @@ import { addLocale, getLocale, history, setLocale } from '@umijs/max';
 
 //import '@ant-design/v5-patch-for-react-19';
 import { App, ConfigProvider, Modal, message, notification, theme } from 'antd';
-import enUS from 'antd/locale/en_US';
-import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/es/locale/en_US';
+import zhCN from 'antd/es/locale/zh_CN';
 
 import { loginPath, currentUser as queryCurrentUser } from '@/components/Sadmin/lib/request';
 import { createFromIconfontCN } from '@ant-design/icons';
