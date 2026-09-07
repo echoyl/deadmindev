@@ -27,14 +27,13 @@ const copyColumns = () => ({
           {
             dataIndex: 'type',
             title: '方式',
-            valueType: 'radioButton',
+            valueType: 'radioSegmented',
             fieldProps: {
               options: [
                 { label: '插入', value: 'create' },
                 { label: '覆盖', value: 'update' },
                 { label: '复制', value: 'copy' },
               ],
-              buttonStyle: 'solid',
               defaultValue: 'create',
             },
             colProps: { span: 12 },

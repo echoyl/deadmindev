@@ -156,7 +156,7 @@ const QuickCreate: FC = () => {
               dataIndex: 'category_type',
               title: '分类类型',
               colProps: { span: 12 },
-              valueType: 'radioButton',
+              valueType: 'radioSegmented',
               fieldProps: {
                 defaultValue: 'single',
                 options: [

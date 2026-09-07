@@ -206,6 +206,7 @@ const formType = [
   { label: '搜索select - 单选', value: 'searchSelect' },
   { label: '搜索selects - 多选', value: 'searchSelects' },
   { label: '下拉选择- select', value: 'select' },
+  { label: '单选按钮 - radioSegmented', value: 'radioSegmented' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
   { label: '下拉多选 -selects', value: 'selects' },
   { label: 'checkbox - checkbox', value: 'checkbox' },

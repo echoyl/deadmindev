@@ -185,9 +185,8 @@ const BaseForm = (props: Record<string, any>) => {
                 {
                   dataIndex: ['props', 'type'],
                   title: t('type'),
-                  valueType: 'radioButton',
+                  valueType: 'radioSegmented',
                   fieldProps: {
-                    buttonStyle: 'solid',
                     defaultValue: 'updateOrInsert',
                     options: [
                       { label: t('updateOrInsert'), value: 'updateOrInsert' },

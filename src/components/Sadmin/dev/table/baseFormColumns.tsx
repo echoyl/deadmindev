@@ -65,6 +65,7 @@ export const columnType = [
   { label: 'checkbox', value: 'checkbox' },
   { label: 'switch', value: 'switch' },
   { label: 'AutoComplete', value: 'saAutoComplete' },
+  { label: '单选按钮 - radioSegmented', value: 'radioSegmented' },
   { label: '单选按钮 - radioButton', value: 'radioButton' },
   { label: '日期时间 - datetime', value: 'datetime' },
   { label: '日历表单 - formCalendar', value: 'formCalendar' },

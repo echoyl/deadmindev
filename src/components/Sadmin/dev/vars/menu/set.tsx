@@ -7,9 +7,8 @@ const table: saFormColumnsType = [
       {
         dataIndex: ['showType'],
         title: '显示类型',
-        valueType: 'radioButton',
+        valueType: 'radioSegmented',
         fieldProps: {
-          buttonStyle: 'solid',
           defaultValue: 'table',
           options: [
             { label: 'table', value: 'table' },
@@ -21,9 +20,8 @@ const table: saFormColumnsType = [
       {
         dataIndex: ['table', 'size'],
         title: '尺寸',
-        valueType: 'radioButton',
+        valueType: 'radioSegmented',
         fieldProps: {
-          buttonStyle: 'solid',
           defaultValue: 'middle',
           options: [
             { label: 'large', value: 'large' },
@@ -205,9 +203,8 @@ const form: saFormColumnsType = [
       {
         dataIndex: ['form', 'layout'],
         title: '标签布局',
-        valueType: 'radioButton',
+        valueType: 'radioSegmented',
         fieldProps: {
-          buttonStyle: 'solid',
           defaultValue: 'vertical',
           size: 'small',
           options: [
@@ -221,9 +218,8 @@ const form: saFormColumnsType = [
       {
         dataIndex: ['form', 'variant'],
         title: 'variant',
-        valueType: 'radioButton',
+        valueType: 'radioSegmented',
         fieldProps: {
-          buttonStyle: 'solid',
           defaultValue: 'filled',
           size: 'small',
           options: [
@@ -243,10 +239,9 @@ const form: saFormColumnsType = [
       {
         dataIndex: ['stepsProps', 'orientation'],
         title: '分布表单步骤方向',
-        valueType: 'radioButton',
+        valueType: 'radioSegmented',
         fieldProps: {
           size: 'small',
-          buttonStyle: 'solid',
           options: [
             { label: 'horizontal', value: 'horizontal' },
             { label: 'vertical', value: 'vertical' },

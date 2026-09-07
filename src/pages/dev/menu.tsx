@@ -122,7 +122,7 @@ export const MenuFormColumn = ({ intl }: { intl: any }): saFormTabColumnsType =>
           {
             title: '{{t("openType")}}',
             dataIndex: 'open_type',
-            valueType: 'radioButton',
+            valueType: 'radioSegmented',
             fieldProps: {
               options: [
                 { label: 'page', value: 'page' },

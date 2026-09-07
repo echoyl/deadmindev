@@ -232,10 +232,9 @@ export default () => {
                   {
                     title: '侧边栏背景',
                     dataIndex: 'siderColor',
-                    valueType: 'radioButton',
+                    valueType: 'radioSegmented',
                     colProps: { span: 6 },
                     fieldProps: {
-                      buttonStyle: 'solid',
                       defaultValue: 'transparent',
                       options: [
                         { label: '透明', value: 'transparent' },
@@ -247,10 +246,9 @@ export default () => {
                   {
                     title: '头部背景',
                     dataIndex: 'headerColor',
-                    valueType: 'radioButton',
+                    valueType: 'radioSegmented',
                     colProps: { span: 6 },
                     fieldProps: {
-                      buttonStyle: 'solid',
                       defaultValue: 'transparent',
                       options: [
                         { label: '透明', value: 'transparent' },
@@ -324,7 +322,7 @@ export default () => {
                   },
                   {
                     title: '默认登录方式',
-                    valueType: 'radio',
+                    valueType: 'radioSegmented',
                     dataIndex: 'loginTypeDefault',
                     fieldProps: {
                       options: [
