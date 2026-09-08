@@ -4,7 +4,7 @@ import { FooterToolbar, ProCard, ProForm, StepsForm } from '@ant-design/pro-comp
 //import { PageContainer } from '@ant-design/pro-layout';
 import { history, useIntl, useModel, useParams, useSearchParams } from '@umijs/max';
 import type { GetProps } from 'antd';
-import { Col, Row, Space, Tabs } from 'antd';
+import { Col, Row, Skeleton, Space, Tabs } from 'antd';
 import type { FC } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '../dev';
@@ -15,6 +15,7 @@ import { FormAddTab, TabColumnTitle } from '../dev/table/title';
 import { PageContainer404 } from '@/components/Sadmin/404';
 import { isFunction, isUndefined } from 'es-toolkit';
 import { isObj } from '../checkers';
+import { fullPageHeight } from '../helper/functions';
 import { t, tplComplie } from '../helpers';
 import { beforeGet, beforePost, getFormFieldColumns, GetFormFields } from './formDom';
 import type { saTableProps } from './table';
@@ -83,6 +84,10 @@ export const SaForm: FC<saFormProps> = (props) => {
   const [detail, setDetail] = useState<Record<string, any> | boolean>(
     props.formProps?.initialValues ? props.formProps?.initialValues : false,
   );
+  //是否需要通过后台请求加载数据 用于控制自定义loading显示
+  const needRequest = !props.formProps?.initialValues && !!url && url.replace('/show', '') != '';
+  const [loading, setLoading] = useState(needRequest);
+  const loadSeq = useRef(0);
   const [_formColumns, setFormColumns] = useState<any[]>([]);
   const { initialState } = useModel('@@initialState');
   const [devEnable, setDevEnable] = useState(
@@ -90,8 +95,6 @@ export const SaForm: FC<saFormProps> = (props) => {
   );
   const { setting: devSetting, isMobile } = useContext(SaDevContext);
   const intl = useIntl();
-  //每个SaForm实例唯一标识 用于ProForm request的SWR缓存key 避免嵌套表单与上层表单key冲突导致互相重载
-  const formInstId = useRef(Math.random().toString(36).slice(2));
   //提交数据
   const post = async (base: any, callback?: (value: any) => void, then?: any) => {
     //log('post data is ', base);
@@ -245,6 +248,32 @@ export const SaForm: FC<saFormProps> = (props) => {
       });
     }
   }, []);
+  //替代ProForm默认的request loading 自行加载数据以自定义loading样式
+  const load = async () => {
+    if (setting?.steps_form) {
+      return; //分步表单在上方useEffect中手动请求
+    }
+    const seq = ++loadSeq.current;
+    if (needRequest) {
+      setLoading(true);
+    }
+    try {
+      await get();
+    } catch {
+      //请求失败时由request的msgcls处理提示
+    } finally {
+      if (seq == loadSeq.current) {
+        setLoading(false);
+      }
+    }
+  };
+  //在ProForm挂载后设置表单值 避免load请求完成后formRef尚未就绪导致数据未设置
+  useEffect(() => {
+    if (setting?.steps_form || !isObj(detail)) {
+      return; //分步表单在上方useEffect中手动设置
+    }
+    formRef?.current?.setFieldsValue({ ...(detail as Record<string, any>) });
+  }, [detail]);
   const formMapRef = useRef<React.MutableRefObject<ProFormInstance<any> | undefined>[]>([]);
   const [stepFormCurrent, setStepFormCurrent] = useState<number>(0);
 
@@ -284,11 +313,15 @@ export const SaForm: FC<saFormProps> = (props) => {
     return true;
   };
 
-  //重新加载当前SaForm 通过改变ProForm params让SWR缓存key变化 从而重新触发request请求
+  //重新加载当前SaForm 通过改变reloadTick重新触发load请求
   const [reloadTick, setReloadTick] = useState(0);
   const reload = () => {
     setReloadTick((t) => t + 1);
   };
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reloadTick, JSON.stringify(params)]);
 
   return (
     <SaContext.Provider
@@ -370,6 +403,32 @@ export const SaForm: FC<saFormProps> = (props) => {
               })}
             </StepsForm>
           </>
+        ) : loading ? (
+          <div
+            style={
+              pageType == 'page'
+                ? {
+                    margin: 'auto',
+                    maxWidth: width || 800,
+                    height: `calc(100vh - ${fullPageHeight(initialState?.settings) + 32}px)`,
+                    padding: '24px 16px',
+                  }
+                : { padding: '16px 8px' }
+            }
+          >
+            <Space
+              size={20}
+              style={{
+                display: 'flex',
+                marginBottom: 16,
+                paddingBottom: 8,
+                borderBottom: '1px solid rgba(5, 5, 5, 0.06)',
+              }}
+            >
+              <Skeleton.Input active size="small" style={{ width: 80, borderRadius: 4 }} />
+            </Space>
+            <Skeleton active paragraph={{ rows: pageType == 'page' ? 12 : 8 }} />
+          </div>
         ) : (
           <ProForm
             key="ProForm"
@@ -388,8 +447,6 @@ export const SaForm: FC<saFormProps> = (props) => {
               gutter: [0, 0],
             }}
             onFinish={post}
-            request={get}
-            params={{ ...params, _formId: formInstId.current, _rev: reloadTick }}
             submitter={
               (!editable && dataId != 0) ||
               (dataId == 0 && !addable) ||
