@@ -2,7 +2,7 @@ import { SaDevContext } from '@/components/Sadmin/dev';
 import { getBread, SaBreadcrumbRender } from '@/components/Sadmin/helpers';
 import { MenuDataItem, PageContainer } from '@ant-design/pro-components';
 import { history, useLocation, useModel, useNavigate } from '@umijs/max';
-import { Button, Result, theme } from 'antd';
+import { Button, Result, Skeleton, theme } from 'antd';
 import React, {
   createContext,
   lazy,
@@ -127,13 +127,41 @@ const ListPage: React.FC<Record<string, any>> = (props) => {
   );
 };
 
+const IframePage: React.FC<{ src?: string; height: string }> = ({ src, height }) => {
+  const { token } = theme.useToken();
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div style={{ position: 'relative', width: '100%', height }}>
+      {!loaded && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            padding: 24,
+            backgroundColor: token.colorBgContainer,
+          }}
+        >
+          <Skeleton active title={false} paragraph={{ rows: 12 }} />
+        </div>
+      )}
+      <iframe
+        src={src}
+        onLoad={() => setLoaded(true)}
+        style={{ width: '100%', height: '100%', border: 'none' }}
+      />
+    </div>
+  );
+};
+
 const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
   const { pageMenu } = useContext(SaPageContext);
   const { data, page_type, name } = pageMenu || {};
   const { setting } = data || {};
   const { initialState } = useModel('@@initialState');
   const iframeHeight = `calc(100vh - ${fullPageHeight(initialState?.settings)}px)`;
-  //console.log('menu is', menu);
   if (match || page_type == 'form') {
     //post 页面
     //console.log('post page param is', data, page_type);
@@ -186,13 +214,7 @@ const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
       case 'iframe':
         return (
           <PageContainer404>
-            <div style={{ width: '100%', height: iframeHeight }}>
-              <iframe
-                key={pathname}
-                src={setting?.iframeUrl}
-                style={{ width: '100%', height: '100%', border: 'none' }}
-              />
-            </div>
+            <IframePage src={setting?.iframeUrl} height={iframeHeight} />
           </PageContainer404>
         );
       default:
