@@ -114,6 +114,7 @@ export const MenuFormColumn = ({ intl }: { intl: any }): saFormTabColumnsType =>
                 { label: '仅列表 - 指向控制器方法', value: 'justTable' },
                 { label: 'API - 只使用子权限，无页面使用', value: 'api' },
                 { label: 'xmarkdown - md文档页面', value: 'xmarkdown' },
+                { label: 'iframe - 内嵌页面', value: 'iframe' },
               ],
               defaultValue: 'table',
             },

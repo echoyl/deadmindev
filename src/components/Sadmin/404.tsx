@@ -14,6 +14,7 @@ import React, {
 } from 'react';
 import Loading from '../Loading';
 import { useAdminStore } from './dev/context';
+import { fullPageHeight } from './helper/functions';
 import Markdown from './posts/markdown';
 
 const PagePanel = lazy(() => import('@/components/Sadmin/pagePanel'));
@@ -99,7 +100,9 @@ export function usePageMenu(menu: any): [any, (data: any) => void] {
   const [pageMenu, setPageMenu] = useState<any>(menu);
   const preMenuKeyRef = useRef('');
   let menuKey = '';
-  try { menuKey = menu ? menu.path + '|' + JSON.stringify(menu.data) : ''; } catch {}
+  try {
+    menuKey = menu ? menu.path + '|' + JSON.stringify(menu.data) : '';
+  } catch {}
   if (menuKey && menuKey !== preMenuKeyRef.current) {
     if (preMenuKeyRef.current) setPageMenu(menu);
     preMenuKeyRef.current = menuKey;
@@ -127,7 +130,9 @@ const ListPage: React.FC<Record<string, any>> = (props) => {
 const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
   const { pageMenu } = useContext(SaPageContext);
   const { data, page_type, name } = pageMenu || {};
-
+  const { setting } = data || {};
+  const { initialState } = useModel('@@initialState');
+  const iframeHeight = `calc(100vh - ${fullPageHeight(initialState?.settings)}px)`;
   //console.log('menu is', menu);
   if (match || page_type == 'form') {
     //post 页面
@@ -143,7 +148,7 @@ const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
           key={pathname}
           match={match ? true : false}
           {...data}
-          width={data?.setting?.formWidth}
+          width={setting?.formWidth}
           msgcls={({ code }) => {
             if (!data.noBack) {
               if (!code) {
@@ -177,6 +182,18 @@ const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
           <Suspense fallback={<Loading />}>
             <SaPanel key={pathname} {...data} path={pathname} />
           </Suspense>
+        );
+      case 'iframe':
+        return (
+          <PageContainer404>
+            <div style={{ width: '100%', height: iframeHeight }}>
+              <iframe
+                key={pathname}
+                src={setting?.iframeUrl}
+                style={{ width: '100%', height: '100%', border: 'none' }}
+              />
+            </div>
+          </PageContainer404>
         );
       default:
         return null;

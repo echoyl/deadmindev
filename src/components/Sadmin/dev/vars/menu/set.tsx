@@ -272,6 +272,18 @@ const other: saFormColumnsType = [
   },
   {
     valueType: 'group',
+    title: 'Iframe设置',
+    columns: [
+      {
+        dataIndex: 'iframeUrl',
+        title: 'Iframe地址',
+        colProps: { span: 24 },
+        tooltip: '页面类型为iframe时使用',
+      },
+    ],
+  },
+  {
+    valueType: 'group',
     title: '其它设置',
     columns: [
       {
