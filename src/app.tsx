@@ -121,6 +121,10 @@ export function rootContainer(container: JSX.Element) {
     );
 
     useEffect(() => {
+      //同步导航主题到html标签 用于全局样式(如滚动条)的dark适配
+      document.documentElement.classList.toggle('dark', setting?.navTheme != 'light');
+    }, [setting?.navTheme]);
+    useEffect(() => {
       //console.log('root get');
       //dayjs.locale(currentLocale.toLocaleLowerCase());
       saGetSetting().then((v) => {

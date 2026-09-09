@@ -227,6 +227,35 @@ section {
   scrollbar-width: thin;
   //scrollbar-color: unset;
   scrollbar-color: #eaeaea transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #eaeaea;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #d9d9d9;
+  }
+}
+
+//dark模式下滚动条轨道背景变黑 滚动条颜色与light保持一致
+html.dark,
+.dark,
+.dark *,
+.deadmin-dark,
+.deadmin-dark * {
+  scrollbar-color: #eaeaea #161616;
+}
+html.dark::-webkit-scrollbar-track,
+.dark *::-webkit-scrollbar-track,
+.deadmin-dark *::-webkit-scrollbar-track {
+  background: #161616;
 }
 
 .sa-modal-select-item .ant-pro-checkcard-content {
