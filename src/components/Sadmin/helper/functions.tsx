@@ -57,9 +57,13 @@ export const isSideLayout = (settings?: Record<string, any>) => {
  * @param settings 系统配置
  * @param pageType 如果是page表示可能存在底部版权内容
  */
-export const fullPageHeight = (settings?: Record<string, any>, pageType: string = 'page') => {
+export const fullPageHeight = (
+  settings?: Record<string, any>,
+  pageType: string = 'page',
+  hasBread: boolean = true,
+) => {
   const pagePaddingBottom = 16; //页面底部padding
-  return footerHeight(settings, pageType) + pageTopHeight() + pagePaddingBottom;
+  return footerHeight(settings, pageType) + pageTopHeight(hasBread) + pagePaddingBottom;
 };
 
 //读取data中第一个没有children的元素信息

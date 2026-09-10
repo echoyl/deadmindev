@@ -252,6 +252,7 @@ export const ToolMenuForm = (props) => {
     const { contentRender, setOpen } = mprops;
     return (
       <SaForm
+        pageType="modal"
         tabs={MenuFormColumn({ intl })}
         url="dev/menu/show"
         dataId={pageMenu?.id}
@@ -300,6 +301,7 @@ export const ToolModelForm = (props) => {
     const { devData, setDevData } = useContext(SaDevContext);
     return (
       <SaForm
+        pageType="modal"
         formRef={formRef}
         formColumns={(detail) => {
           return modelFormColumns(detail, devData);

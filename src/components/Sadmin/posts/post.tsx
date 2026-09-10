@@ -411,9 +411,9 @@ export const SaForm: FC<saFormProps> = (props) => {
                     margin: 'auto',
                     maxWidth: width || 800,
                     height: `calc(100vh - ${fullPageHeight(initialState?.settings) + 32}px)`,
-                    padding: '24px 16px',
+                    padding: '13px 0',
                   }
-                : { padding: '16px 8px' }
+                : { padding: '13px 8px' }
             }
           >
             <Space

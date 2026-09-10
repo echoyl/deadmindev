@@ -114,16 +114,12 @@ const ListPage: React.FC<Record<string, any>> = (props) => {
   const { pathname, name, data, pagetype } = props;
   const level = data?.setting?.level || 0;
 
-  return (
-    <Suspense fallback={<Loading />}>
-      {pagetype == 'category' || (level && pagetype != 'xmarkdown') ? (
-        <Category key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
-      ) : pagetype == 'xmarkdown' ? (
-        <Markdown key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
-      ) : (
-        <PostsList key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
-      )}
-    </Suspense>
+  return pagetype == 'category' || (level && pagetype != 'xmarkdown') ? (
+    <Category key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
+  ) : pagetype == 'xmarkdown' ? (
+    <Markdown key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
+  ) : (
+    <PostsList key={pathname} path={pathname} name={name} {...data} tableTitle={false} />
   );
 };
 
@@ -170,27 +166,25 @@ const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
         ? (data.postUrl ? data.postUrl : data.url + '/show') + (match ? '?id=' + match?.[1] : '')
         : '';
     return (
-      <Suspense fallback={<Loading />}>
-        <PostsForm
-          formTitle={false}
-          key={pathname}
-          match={match ? true : false}
-          {...data}
-          width={setting?.formWidth}
-          msgcls={({ code }) => {
-            if (!data.noBack) {
-              if (!code) {
-                if (page_type != 'form') {
-                  //如果页面类型是form的话不做后退操作
-                  history.back();
-                }
+      <PostsForm
+        formTitle={false}
+        key={pathname}
+        match={match ? true : false}
+        {...data}
+        width={setting?.formWidth}
+        msgcls={({ code }) => {
+          if (!data.noBack) {
+            if (!code) {
+              if (page_type != 'form') {
+                //如果页面类型是form的话不做后退操作
+                history.back();
               }
             }
-          }}
-          url={url}
-          dataId={match ? match?.[1] : 0}
-        />
-      </Suspense>
+          }
+        }}
+        url={url}
+        dataId={match ? match?.[1] : 0}
+      />
     );
   } else {
     switch (page_type) {
@@ -200,17 +194,9 @@ const PageTypes: React.FC<Record<string, any>> = ({ match, pathname }) => {
       case 'xmarkdown':
         return <ListPage pathname={pathname} name={name} pagetype={page_type} data={data} />;
       case 'panel':
-        return (
-          <Suspense fallback={<Loading />}>
-            <PagePanel key={pathname} {...data} path={pathname} />
-          </Suspense>
-        );
+        return <PagePanel key={pathname} {...data} path={pathname} />;
       case 'panel2':
-        return (
-          <Suspense fallback={<Loading />}>
-            <SaPanel key={pathname} {...data} path={pathname} />
-          </Suspense>
-        );
+        return <SaPanel key={pathname} {...data} path={pathname} />;
       case 'iframe':
         return (
           <PageContainer404>
@@ -261,7 +247,9 @@ const Page: React.FC = () => {
   return menu ? (
     !menu.data?.redirect ? (
       <SaPageContext value={{ pageMenu, setPageMenu }}>
-        <PageTypes key={pageKey} match={match} pathname={pathname} />
+        <Suspense fallback={<Loading />}>
+          <PageTypes key={pageKey} match={match} pathname={pathname} />
+        </Suspense>
       </SaPageContext>
     ) : (
       <PageContainer404>
