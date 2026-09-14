@@ -112,6 +112,16 @@ const mdComponents = {
     //普通锚点需要添加一个id属性，然后antd的锚点组件可以根据这个id属性来定位
     const { children } = props;
     const restProps = getPropsClassname(props);
+
+    //如果href第一个字符是 #跳转锚点 去掉target=blank
+    if (restProps?.href?.startsWith('#')) {
+      return (
+        <a href={restProps.href} title={children}>
+          {children}
+        </a>
+      );
+    }
+
     if (typeof children === 'string') {
       //如果href存在 antadmin 则使用link组件本地跳转
       if (!isHttpLink(restProps.href) && restProps.href?.indexOf('/antadmin/') > -1) {
@@ -119,15 +129,6 @@ const mdComponents = {
         const linkto = restProps.href?.replace('/antadmin/', '');
         return <Link to={linkto}>{children}</Link>;
       } else {
-        //如果href第一个字符是 #跳转锚点 去掉target=blank
-        if (restProps.href?.startsWith('#')) {
-          return (
-            <a href={restProps.href} title={children}>
-              {children}
-            </a>
-          );
-        }
-
         return <a {...restProps}>{children}</a>;
       }
     }
