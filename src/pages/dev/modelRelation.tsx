@@ -1,10 +1,13 @@
 import { SaPageContext } from '@/components/Sadmin/404';
+import ButtonDrawer from '@/components/Sadmin/action/buttonDrawer';
 import { saReloadModel } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
 import settingColumns from '@/components/Sadmin/dev/vars/relation/settingColumns';
+import { t } from '@/components/Sadmin/helpers';
 import SaTable from '@/components/Sadmin/posts/table';
 import { CopyOutlined } from '@ant-design/icons';
-import { use } from 'react';
+import { useIntl } from '@umijs/max';
+import { use, useContext } from 'react';
 const copyColumns = () => ({
   domtype: 'button',
   fieldProps: {
@@ -46,7 +49,8 @@ const copyColumns = () => ({
   action: 'confirmForm',
   btn: { text: '', size: 'small', icon: <CopyOutlined />, tooltip: '复制关联' },
 });
-export default (props: Record<string, any>) => {
+
+export const ModelRelationTable = (props: Record<string, any>) => {
   const { model, contentRender } = props;
   const { setDevData } = use(SaDevContext);
   // const actionRef = useRef<ActionType>();
@@ -347,5 +351,23 @@ export default (props: Record<string, any>) => {
         }}
       />
     </SaPageContext>
+  );
+};
+
+export default (props: any) => {
+  const { trigger, modelId = 0, title } = props;
+  const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
+  const model_id = modelId || pageMenu?.model_id;
+  const intl = useIntl();
+
+  return (
+    <ButtonDrawer
+      trigger={trigger}
+      width={1000}
+      title={title || t('relate', intl)}
+      //drawerProps={{ styles: { body: { padding: 16 } } }}
+    >
+      <ModelRelationTable model={{ id: model_id }} />
+    </ButtonDrawer>
   );
 };

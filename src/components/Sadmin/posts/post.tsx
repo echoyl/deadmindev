@@ -272,7 +272,7 @@ export const SaForm: FC<saFormProps> = (props) => {
     if (setting?.steps_form || !isObj(detail)) {
       return; //分步表单在上方useEffect中手动设置
     }
-    formRef?.current?.setFieldsValue({ ...(detail as Record<string, any>) });
+    formRef?.current?.setFieldsValue?.({ ...(detail as Record<string, any>) });
   }, [detail]);
   const formMapRef = useRef<React.MutableRefObject<ProFormInstance<any> | undefined>[]>([]);
   const [stepFormCurrent, setStepFormCurrent] = useState<number>(0);
@@ -413,7 +413,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                     height: `calc(100vh - ${fullPageHeight(initialState?.settings) + 32}px)`,
                     padding: '13px 0',
                   }
-                : { padding: '13px 8px' }
+                : { padding: '13px 0' }
             }
           >
             <Space

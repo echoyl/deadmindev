@@ -163,6 +163,8 @@ const CustomerColumnRender = (props) => {
       );
     } else if (item.domtype == 'dayjsfrom') {
       return dayjs(text).fromNow();
+    } else if (item.render && isFunction(item.render)) {
+      return item.render?.(record);
     }
     return '';
   };

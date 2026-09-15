@@ -28,7 +28,6 @@ import { cloneDeep, isString } from 'es-toolkit';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SaDevContext } from '..';
 import { SaPageContext } from '../../404';
-import ButtonDrawer from '../../action/buttonDrawer';
 import ButtonModal from '../../action/buttonModal';
 import CustomerColumnRender from '../../action/customerColumn';
 import { isStr } from '../../checkers';
@@ -401,18 +400,13 @@ export const ToolBarMenu = (props) => {
             ? {
                 key: 'editModelRelation',
                 label: (
-                  <ButtonDrawer
+                  <ModelRelation
                     trigger={
                       <Button type="link" icon={<PartitionOutlined />}>
                         {t('relate', intl)}
                       </Button>
                     }
-                    width={1000}
-                    title={t('relate', intl)}
-                    //drawerProps={{ styles: { body: { padding: 16 } } }}
-                  >
-                    <ModelRelation model={{ id: pageMenu.model_id }} />
-                  </ButtonDrawer>
+                  />
                 ),
               }
             : null,

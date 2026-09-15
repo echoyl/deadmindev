@@ -1,8 +1,8 @@
 import { SaPageContext } from '@/components/Sadmin/404';
 import { saReloadModel } from '@/components/Sadmin/components/refresh';
 import { SaDevContext } from '@/components/Sadmin/dev';
-import { FakeDataForm } from '@/components/Sadmin/dev/table/fakedata';
-import { ModelFieldForm } from '@/components/Sadmin/dev/table/modelField';
+import Fakedata from '@/components/Sadmin/dev/table/fakedata';
+import ModelField from '@/components/Sadmin/dev/table/modelField';
 import fieldColumns from '@/components/Sadmin/dev/vars/model/fieldColumns';
 import settingColumns from '@/components/Sadmin/dev/vars/model/settingColumns';
 import tagOptions from '@/components/Sadmin/helper/tagOptions';
@@ -17,7 +17,7 @@ import {
   ProfileOutlined,
 } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { Space } from 'antd';
+import { Button, Space, Tooltip } from 'antd';
 import { use, useRef } from 'react';
 import ModelRelation from './modelRelation';
 import QuickCreate from './quickCreate';
@@ -285,37 +285,46 @@ export default () => {
         items: [
           {
             if: '{{record.type == 1}}',
-            domtype: 'button',
-            modal: {
-              title: '{{record.title + " - 关联管理"}}',
-              childrenRender: (record: Record<string, any>) => <ModelRelation model={record} />,
-            },
-            action: 'drawer',
-            btn: { text: '', icon: <InsertRowLeftOutlined />, tooltip: '模型关联', size: 'small' },
+            render: (record: Record<string, any>) => (
+              <ModelRelation
+                title={[record?.title, '关联管理'].join(' - ')}
+                modelId={record.id}
+                trigger={
+                  <Tooltip title="关联管理">
+                    <Button size="small" icon={<InsertRowLeftOutlined />} />
+                  </Tooltip>
+                }
+              />
+            ),
           },
           {
             if: '{{record.type == 1}}',
-            domtype: 'button',
-            modal: {
-              title: '{{record.title + " - 字段管理"}}',
-              childrenRender: (record: Record<string, any>) => (
-                <ModelFieldForm modelId={record.id} />
-              ),
-              width: 1500,
-            },
-            action: 'drawer',
-            btn: { text: '', icon: <ProfileOutlined />, tooltip: '字段管理', size: 'small' },
+            render: (record: Record<string, any>) => (
+              <ModelField
+                title={[record?.title, '字段管理'].join(' - ')}
+                modelId={record.id}
+                trigger={
+                  <Tooltip title="字段管理">
+                    <Button size="small" icon={<ProfileOutlined />} />
+                  </Tooltip>
+                }
+              />
+            ),
           },
 
           {
             if: '{{record.type == 1}}',
-            domtype: 'button',
-            modal: {
-              title: '{{record.title + " - FakeData"}}',
-              childrenRender: (record: Record<string, any>) => <FakeDataForm modelId={record.id} />,
-            },
-            action: 'drawer',
-            btn: { text: '', icon: <DatabaseOutlined />, tooltip: 'FakeData', size: 'small' },
+            render: (record: Record<string, any>) => (
+              <Fakedata
+                trigger={
+                  <Tooltip title="FakeData">
+                    <Button size="small" icon={<DatabaseOutlined />} />
+                  </Tooltip>
+                }
+                title={[record?.title, 'FakeData'].join(' - ')}
+                modelId={record.id}
+              />
+            ),
           },
 
           {

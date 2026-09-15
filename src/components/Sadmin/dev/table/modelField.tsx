@@ -68,7 +68,7 @@ export const ModelFieldForm = (mprops) => {
 };
 
 export default (props: any) => {
-  const { trigger, modelId = 0 } = props;
+  const { trigger, modelId = 0, title } = props;
   const { pageMenu = { model_id: 0 } } = useContext(SaPageContext);
   const model_id = modelId || pageMenu?.model_id;
   const intl = useIntl();
@@ -77,7 +77,7 @@ export default (props: any) => {
     <ButtonDrawer
       trigger={trigger}
       width={1500}
-      title={t('columns', intl)}
+      title={title || t('columns', intl)}
       drawerProps={{ styles: { body: { paddingTop: 8 } } }}
     >
       <ModelFieldForm modelId={model_id} />
