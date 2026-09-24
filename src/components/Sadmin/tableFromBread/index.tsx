@@ -65,9 +65,15 @@ const TableFromBread: FC<{
   const [pageMenu, setPageMenu] = usePageMenu(effectiveMenu);
 
   if (fieldProps.foreign_key) {
+    const moreParam = { [fieldProps.foreign_key]: post_key ? post_key : 0 };
     fieldProps.props.paramExtra = {
       ...fieldProps.props.paramExtra,
-      [fieldProps.foreign_key]: post_key ? post_key : 0,
+      ...moreParam,
+    };
+    //将外键的值传递给postExtra，这样不需要后端返回该值且不用添加hidden表单元素
+    fieldProps.props.postExtra = {
+      ...(fieldProps.props.postExtra || {}),
+      ...moreParam,
     };
   }
 
