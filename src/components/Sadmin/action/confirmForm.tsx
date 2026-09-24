@@ -11,6 +11,7 @@ import { SaForm, saFormProps } from '../posts/post';
 import { SaContext } from '../posts/table';
 import ButtonDrawer from './buttonDrawer';
 import ButtonModal from './buttonModal';
+import { isFunction } from 'es-toolkit';
 
 interface actionConfirm {
   msg?: string;
@@ -281,10 +282,11 @@ const ConfirmForm: FC<actionConfirm> = (props) => {
     />
   );
   //console.log('inner form ', inner);
+  const realTrigger = trigger ? (isFunction(trigger) ? trigger(props.value) : trigger) : null;
 
   return showType == 'modal' ? (
     <ButtonModal
-      trigger={trigger ? trigger : <Button {..._btn}>{_btn.title}</Button>}
+      trigger={realTrigger || <Button {..._btn}>{_btn.title}</Button>}
       open={open}
       width={width}
       title={msg}

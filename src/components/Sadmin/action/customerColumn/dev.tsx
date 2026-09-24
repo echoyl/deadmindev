@@ -1,4 +1,4 @@
-import { Typography } from 'antd';
+import { Button } from 'antd';
 import type { Key } from 'react';
 import { inArray } from '../../checkers';
 import { dependencyOn } from '../../dev/vars/dependencyOn';
@@ -404,39 +404,16 @@ export const getCustomerColumn = (modelId: Key) => {
                           fieldProps: {
                             formColumns: domFormColumns,
                             saFormProps: { grid: false, devEnable: false },
+                            trigger: (btn?: Record<string, any>) => {
+                              return btn ? (
+                                <Button size="small" icon={parseIcon(btn?.icon)}>
+                                  {btn?.text}
+                                </Button>
+                              ) : null;
+                            },
                           },
                           colProps: {
-                            span: 3,
-                          },
-                        },
-                        {
-                          valueType: 'dependency',
-                          name: ['btn'],
-                          columns: ({ btn }: any) => {
-                            //console.log(btn);
-                            //return [];
-                            return [
-                              {
-                                dataIndex: '',
-                                title: 'title',
-                                readonly: true,
-                                render: () => {
-                                  return (
-                                    <Typography.Text
-                                      code
-                                      style={{ width: 60 }}
-                                      ellipsis={{ tooltip: btn?.text }}
-                                    >
-                                      {parseIcon(btn?.icon)}
-                                      {btn?.text}
-                                    </Typography.Text>
-                                  );
-                                },
-                                colProps: {
-                                  span: 4,
-                                },
-                              },
-                            ];
+                            span: 5,
                           },
                         },
                         {
