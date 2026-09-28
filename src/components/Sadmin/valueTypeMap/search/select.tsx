@@ -103,22 +103,27 @@ export default function SearchSelect<
       return options;
     }
     setNowKeyword(keyword);
-    if (!keyword && options.length > 0 && !nowKeyword) {
-      return options;
-    }
 
     const _recordParams: Record<string, any> = {};
     const normalParms: Record<string, any> = {}; //params中固定的参数
-    Object.keys(params).map((v) => {
-      if (!isUndefined(requestParam[v])) {
+    let has_dep = false; //添加判断是否有依赖参数
+    Object.keys(params).map((key) => {
+      const v = params[key];
+      const is_tpl = v.toString().indexOf('{{') == 0;
+      if (is_tpl) {
         //_recordParams[v] = requestParam[v];
         //console.log('params[v] and requestParam', params[v], requestParam);
         //修复参数是模板时未渲染的问题
-        _recordParams[v] = tplComplie(params[v], { record: requestParam });
+        _recordParams[key] = tplComplie(v, { record: requestParam });
+        has_dep = true;
       } else {
-        normalParms[v] = params[v];
+        //检测v是否是{{开头，如果是的话直接过滤掉
+        normalParms[key] = v;
       }
     });
+    if (!keyword && options.length > 0 && !nowKeyword && !has_dep) {
+      return options;
+    }
     if (!isEqual(_recordParams, recordParams)) {
       setRecordParams(_recordParams);
     }
