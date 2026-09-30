@@ -11,7 +11,7 @@ export default () => {
         height: `calc(100vh - ${
           footerHeight(initialState?.settings, 'page') + pageTopHeight(false)
         }px)`,
-        padding: '24px 0',
+        padding: 0,
         display: 'flex',
         flexDirection: 'column',
       }}

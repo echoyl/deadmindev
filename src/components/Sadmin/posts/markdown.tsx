@@ -221,7 +221,7 @@ const Markdown: React.FC<saTableProps> = (props) => {
         }}
       >
         {/* <Row gutter={[30, 0]} style={!leftMenuClose ? { marginLeft: 0 } : {}}> */}
-        <Layout hasSider>
+        <Layout hasSider style={{ minHeight: 'auto' }}>
           {!leftMenuClose && !isMobile && (
             <Affix
               offsetTop={topHeight}

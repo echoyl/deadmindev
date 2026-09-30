@@ -96,7 +96,7 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/data-flow#%E5%85%A8%E5%B1%80%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81
    */
   initialState: {
-    loading: '@/components/LoadingFullHeight',
+    loading: '@/loading',
   },
   /**
    * @name layout 插件

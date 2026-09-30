@@ -2,9 +2,9 @@ import { messageLoadingKey, saUpload } from '@/components/Sadmin/lib/request';
 import { FC, useContext, useRef, lazy, Suspense, useState, useEffect } from 'react';
 import './style.less';
 import { SaDevContext } from '../dev';
-import LoadingFullHeight from '@/components/LoadingFullHeight';
 import { message } from '@/components/Sadmin/message';
 import { uid } from '../helpers';
+import { Spin } from 'antd';
 
 const Editor = lazy(() =>
   import('@tinymce/tinymce-react').then((module) => ({
@@ -33,7 +33,20 @@ const TinyEditor: FC<{
   }, [setting?.navTheme]);
 
   return (
-    <Suspense fallback={<LoadingFullHeight />}>
+    <Suspense
+      fallback={
+        <div
+          style={{
+            height: height,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Spin />
+        </div>
+      }
+    >
       <Editor
         licenseKey="gpl"
         key={key}
@@ -102,12 +115,9 @@ const TinyEditor: FC<{
                 progress(pr);
                 if (pr < 90) {
                   pr += Math.ceil(Math.random() * 10) + 1;
-                  ti = setTimeout(
-                    () => {
-                      f1(pr);
-                    },
-                    (Math.ceil(Math.random() * 10) + 1) * 10,
-                  );
+                  ti = setTimeout(() => {
+                    f1(pr);
+                  }, (Math.ceil(Math.random() * 10) + 1) * 10);
                 }
               };
               fd.append('file', blobInfo.blob(), blobInfo.filename());

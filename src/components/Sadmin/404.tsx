@@ -247,7 +247,13 @@ const Page: React.FC = () => {
   return menu ? (
     !menu.data?.redirect ? (
       <SaPageContext value={{ pageMenu, setPageMenu }}>
-        <Suspense fallback={<Loading />}>
+        <Suspense
+          fallback={
+            <PageContainer404>
+              <Loading />
+            </PageContainer404>
+          }
+        >
           <PageTypes key={pageKey} match={match} pathname={pathname} />
         </Suspense>
       </SaPageContext>
