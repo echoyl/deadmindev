@@ -121,7 +121,7 @@ const TreeMenu: FC<TreeMenuProps> = (props) => {
   useEffect(() => {
     render(treeData);
   }, [treeData, fieldNames]);
-  const fullHeight = fullPageHeight(initialState?.settings) + 58;
+  const fullHeight = fullPageHeight(initialState?.settings) + 55;
   const height = bodyHeight || `calc(100vh - ${fullHeight}px)`;
   return (
     <ProCard

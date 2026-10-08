@@ -585,7 +585,7 @@ const SaTable: React.FC<saTableProps> = (props) => {
   const footerHeight = !initialState?.settings?.adminSetting?.tech && pageType == 'page' ? 0 : 38;
   const sideLayout = isSideLayout(initialState?.settings) && pageType == 'page';
   const sideOffset = sideLayout ? -27 : 0;
-  const initMinHeight = 185 + footerHeight + heightOffset + sideOffset;
+  const initMinHeight = 193 + footerHeight + heightOffset + sideOffset;
   const [minHeight, setMinHeight] = useState<number>(initMinHeight);
   const tableHeaderHeight = tableHeaderHeightArr[tableSize];
   const tableFooterHeight = tableFooterHeightArr[tableSize];

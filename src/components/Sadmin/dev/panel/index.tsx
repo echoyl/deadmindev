@@ -203,7 +203,6 @@ const ItemCol = (props) => {
       ) : type == 'user' ? (
         <ProCard
           styles={{
-            header: devEnable ? { width: '100%', display: 'block' } : {},
             root: { height },
           }}
           title={devEnable ? ctitle() : false}

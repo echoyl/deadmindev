@@ -410,7 +410,7 @@ export const SaForm: FC<saFormProps> = (props) => {
                 ? {
                     margin: 'auto',
                     maxWidth: width || 800,
-                    height: `calc(100vh - ${fullPageHeight(initialState?.settings) + 32}px)`,
+                    height: `calc(100vh - ${fullPageHeight(initialState?.settings) + 48}px)`,
                     padding: '13px 0',
                   }
                 : { padding: '13px 0' }
