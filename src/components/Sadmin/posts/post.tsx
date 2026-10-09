@@ -323,6 +323,12 @@ export const SaForm: FC<saFormProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadTick, JSON.stringify(params)]);
 
+  const pageStyle: React.CSSProperties = {
+    margin: 'auto',
+    maxWidth: width || 800,
+    minHeight: `calc(100vh - ${fullPageHeight(initialState?.settings) + 48}px)`,
+  };
+
   return (
     <SaContext.Provider
       value={{
@@ -405,16 +411,10 @@ export const SaForm: FC<saFormProps> = (props) => {
           </>
         ) : loading ? (
           <div
-            style={
-              pageType == 'page'
-                ? {
-                    margin: 'auto',
-                    maxWidth: width || 800,
-                    height: `calc(100vh - ${fullPageHeight(initialState?.settings) + 48}px)`,
-                    padding: '13px 0',
-                  }
-                : { padding: '13px 0' }
-            }
+            style={{
+              ...(pageType == 'page' ? pageStyle : {}),
+              padding: '13px 0',
+            }}
           >
             <Space
               size={20}
@@ -435,7 +435,7 @@ export const SaForm: FC<saFormProps> = (props) => {
             form={props.form}
             formRef={formRef}
             variant="filled"
-            style={pageType == 'page' ? { margin: 'auto', maxWidth: width || 800 } : {}}
+            style={pageType == 'page' ? pageStyle : {}}
             //style={pageType == 'page' ? { maxWidth: 688 } : {}}
             //layout="vertical"
             //layout="horizontal"
