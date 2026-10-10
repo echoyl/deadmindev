@@ -103,9 +103,9 @@ ol {
 //   background: linear-gradient(#141414, #000000 28%);
 // }
 
-// .deadmin-light.ant-pro-layout .ant-pro-layout-bg-list {
-//   background: linear-gradient(#ffffff, #f5f5f5 28%);
-// }
+.deadmin-light.ant-pro-layout .ant-pro-layout-bg-list {
+  background: linear-gradient(#ffffff, #f8f8f8 28%);
+}
 
 // .deadmin-light .ant-pro-card {
 //   background: #ffffff;
@@ -180,6 +180,76 @@ ol {
 .ant-pro-top-nav-header-base-menu.ant-menu-dark.ant-menu-horizontal > .ant-menu-item a,
 .ant-pro-top-nav-header-base-menu.ant-menu-dark.ant-menu-horizontal > .ant-menu-item a span {
   transition: none;
+}
+/*
+ * 左侧选中指示条 (类 github 效果)
+ *
+ * 背景: antd 的 activeBarWidth 默认是 0 (Ant Design v6, 见
+ *       antd/es/menu/style/index.js:372), 所以自带的 ::after 画出来是 0 宽,
+ *       必须自己补 width 和 background.
+ *       antd 原始定义见 antd/es/menu/style/theme.js:198-223.
+ *
+ * 原理: github 的做法是 position: absolute + 负 left, 把条放到菜单项左侧的空隙里.
+ *       这里复用 antd 的 ::after 盒子 (已带 position:absolute / inset-block:0 /
+ *       transition), 把 inset-inline-start 设为负值, 再补宽度与背景色.
+ *       未选中时 antd 给的是 transform: scaleY(0.0001) + opacity: 0 会被隐藏,
+ *       选中时自动变成 scaleY(1) + opacity: 1, 原有过渡动画依然生效.
+ *
+ * 两个坑:
+ *   1) .ant-menu-item 自带 overflow: hidden (antd/es/menu/style/vertical.js:17-20),
+ *      负偏移会被裁掉, 所以要放开成 visible.
+ *      (文字省略号由 .ant-menu-title-content 自己负责, 不受影响)
+ *   2) 菜单外面套着 .ant-pro-sider-menu-scroll, 它设了 overflow-x: hidden
+ *      (SiderMenu.js:220-222), 条最多只能顶到该容器的左边缘. 而菜单项默认
+ *      左右 margin 只有 4px, 放不下"条 + 间距", 所以这里把菜单项左右内缩改成 8px,
+ *      让条贴在容器左缘时, 右边还能和菜单项留出 ~5px 的间距.
+ *
+ * 颜色: 取 CSS 变量 --sa-color-primary (在 app.tsx 里由后台 colorPrimary 同步),
+ *       带兜底值, 后台改主题色时会自动跟随.
+ *       若想直接用 antd 的选中文字色, 把 background 换成 currentColor 即可.
+ *
+ * 权重: antd hashPriority 为 low (:where 权重 0), 其选择器权重是 (0,2,1),
+ *       这里加 .ant-pro-sider 前缀提到 (0,4,1), 否则会被运行时注入的 antd 样式覆盖.
+ *       只限定 .ant-menu-inline (排除折叠态), 避免误伤 horizontal 导航 (那边 ::after 是下划线).
+ */
+.ant-pro-sider .ant-menu-inline:not(.ant-menu-inline-collapsed) {
+  // 菜单项自带 overflow: hidden, 负偏移的指示条会被裁掉, 放开成 visible.
+  // (只影响这一层; 文字省略号由 .ant-menu-title-content 自己负责)
+  .ant-menu-item {
+    overflow: visible;
+  }
+
+  .ant-menu-item::after {
+    width: 4px;
+    background: var(--sa-color-primary, #1677ff);
+    // 两端收圆, 形成悬浮指示条的效果
+    border-radius: 2px;
+    inset-inline-end: auto;
+    // github 式: position: absolute + 负 left.
+    // 菜单项默认 margin-inline 4px, 盒子左边在 12px 处; -8px 让条落到 4px 处,
+    // 条右边缘 8px, 与菜单项之间正好留 4px 间距.
+    inset-inline-start: -8px;
+    // 缩减高度并垂直居中: 上下各留 20% (条高 = 60%),
+    // 不用 transform 居中, 才能保留 antd 的 scaleY 展开动画.
+    inset-block: 20%;
+    border-inline-end: 0 none;
+  }
+}
+
+/*
+ * 上面的 -8px 会被外层滚动容器 .ant-pro-sider-scroll 的 overflow-x: hidden 裁掉
+ * (SiderMenu.js:220-222), 因为它的左边界就在菜单左边 8px 处.
+ *
+ * 这里用"向左加宽 + 等量 padding"把它的裁剪边界左移 8px, 内容位置/宽度保持不变:
+ *   border box (padding box = 裁剪边界): [0, W-8]   原来是 [8, W-8]
+ *   content box (菜单所在):              [8, W-8]   不变
+ * 于是左侧凭空多出 8px 空间给指示条, 又完全不动菜单项自己的 margin/width.
+ */
+.ant-pro-sider .ant-pro-sider-scroll {
+  box-sizing: border-box;
+  width: calc(100% + 8px);
+  margin-inline-start: -8px;
+  padding-inline-start: 8px;
 }
 .saContainer .ant-page-header-has-breadcrumb {
   padding-inline: 20px;

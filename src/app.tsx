@@ -125,6 +125,12 @@ export function rootContainer(container: JSX.Element) {
       document.documentElement.classList.toggle('dark', setting?.navTheme != 'light');
     }, [setting?.navTheme]);
     useEffect(() => {
+      //同步主题色到 CSS 变量 供 global.less 使用(如菜单选中项的左侧指示条)
+      if (setting?.colorPrimary) {
+        document.documentElement.style.setProperty('--sa-color-primary', setting.colorPrimary);
+      }
+    }, [setting?.colorPrimary]);
+    useEffect(() => {
       //console.log('root get');
       //dayjs.locale(currentLocale.toLocaleLowerCase());
       saGetSetting().then((v) => {
