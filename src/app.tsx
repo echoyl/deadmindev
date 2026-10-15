@@ -223,7 +223,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     if (watermark) {
       return watermark == 'username' ? initialState?.currentUser?.name : watermark;
     } else {
-      return false;
+      return undefined;
     }
   };
 
