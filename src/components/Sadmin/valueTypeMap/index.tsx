@@ -209,7 +209,7 @@ export default {
   },
   searchSelect: {
     formItemRender: (text, props) => {
-      return <SearchSelect {...props.fieldProps} />;
+      return <SearchSelect {...props.fieldProps} dependencies={props?.dependencies} />;
     },
     render: (text, props) => {
       return <SearchSelect {...props.fieldProps} value={text} readonly={true} />;
@@ -254,13 +254,7 @@ export default {
     formItemRender: (text, props) => {
       const { fieldProps } = props;
       const name = fieldProps.dataindex ? fieldProps.dataindex : fieldProps.id;
-      return (
-        <SaOptions
-          name={name}
-          columns={props.columns}
-          {...fieldProps}
-        />
-      );
+      return <SaOptions name={name} columns={props.columns} {...fieldProps} />;
     },
     render: (text) => text,
   },
