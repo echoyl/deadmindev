@@ -6,14 +6,33 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
+/**
+ * @name 开发环境代理的目标接口地址
+ * @description 统一在此处配置，target 只能写到域名（协议 + host + 端口），
+ * 不要带路径。请求路径由代理的匹配前缀（如 /sadmin/、/storage/）保留转发，
+ * 若 target 带了路径会被 http-proxy-middleware 拼接到请求路径前面，导致 404。
+ */
+const DEV_TARGET = 'http://echoyl.la';
+
 export default {
   dev: {
-    // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
+    // localhost:8000/sadmin/** -> http://tansuo.la/sadmin/**
     '/sadmin/': {
       // 要代理的地址
-      target: 'http://echoyl.la',
+      target: DEV_TARGET,
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
+      changeOrigin: true,
+    },
+    // localhost:8000/storage/** -> http://tansuo.la/storage/**
+    '/storage/': {
+      // 要代理的地址
+      target: DEV_TARGET,
+      changeOrigin: true,
+    },
+    '/img/': {
+      // 要代理的地址
+      target: DEV_TARGET,
       changeOrigin: true,
     },
   },
