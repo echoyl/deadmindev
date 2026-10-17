@@ -264,6 +264,22 @@ export default () => {
                     tooltip: '优先级高于右侧设置中选择的主题色',
                     colProps: { span: 12 },
                   },
+                  {
+                    title: '菜单样式',
+                    dataIndex: 'menuIndicator',
+                    valueType: 'radioSegmented',
+                    tooltip:
+                      '默认:使用antd默认样式，为默认值；指示条:选中菜单项左侧显示GitHub风格的短指示条；指示线:每个大菜单的子菜单左侧显示一条竖线',
+                    fieldProps: {
+                      defaultValue: 'default',
+                      options: [
+                        { label: '默认', value: 'default' },
+                        { label: '指示条', value: 'bar' },
+                        { label: '指示线', value: 'line' },
+                      ],
+                    },
+                    colProps: { span: 12 },
+                  },
                 ],
               },
               {

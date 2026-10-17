@@ -186,6 +186,7 @@ export function rootContainer(container: JSX.Element) {
       components: {
         Menu: {
           subMenuItemBg: 'transparent',
+          itemHeight: 34,
         },
         ...setting?.adminSetting?.antdtheme?.components,
       },
@@ -234,6 +235,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     adminSetting.headerColor == 'white' ? 'deadmin-header-white' : '',
     initialState?.settings?.layout == 'side' ? 'deadmin-layout-side' : '',
     initialState?.settings?.navTheme == 'light' ? 'deadmin-light' : 'deadmin-dark',
+    //左侧菜单样式(后台"主题配置 → 菜单样式"): 指示条 / 指示线, 'default' 为 antd 原生样式。
+    //值已在 parseAdminSeting 里归一化, 未配置时为 'default'。
+    adminSetting.menuIndicator == 'bar' ? 'deadmin-menu-bar' : '',
+    adminSetting.menuIndicator == 'line' ? 'deadmin-menu-line' : '',
   ];
 
   const pRender = (props: Record<string, any>, dom: React.ReactNode, type: string) => {
@@ -316,7 +321,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         </ProConfigProvider>
       );
     },
-    siderWidth: 200,
+    siderWidth: 208,
     className: classNames.filter((v) => v).join(' '),
     ...initialState?.settings,
   };

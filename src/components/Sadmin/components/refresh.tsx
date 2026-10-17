@@ -15,6 +15,26 @@ import defaultSettings from '../../../../config/defaultSettings';
 import { SaDevContext } from '../dev';
 import { uid } from '../helpers';
 import { getTheme } from '../themeSwitch';
+/**左侧菜单指示效果的可选值: 默认 / 指示条 / 指示线 */
+export const menuIndicatorModes = ['default', 'bar', 'line'] as const;
+export type MenuIndicatorMode = (typeof menuIndicatorModes)[number];
+
+/**
+ * 解析后台"菜单样式"的配置
+ * 兼容更早版本的布尔开关(指示条开/关: true=指示条, false=默认), 未配置时为"默认"
+ */
+export const parseMenuIndicator = (val: unknown): MenuIndicatorMode => {
+  if (val === true) {
+    return 'bar';
+  }
+  if (val === false || val === 0 || val === '0' || val === 'false') {
+    return 'default';
+  }
+  return menuIndicatorModes.includes(val as MenuIndicatorMode)
+    ? (val as MenuIndicatorMode)
+    : 'default';
+};
+
 export const parseAdminSeting: any = (localsetting: Record<string, any>) => {
   const { devData, ...restLocalsetting } = localsetting;
   const theme = getTheme(localsetting);
@@ -43,7 +63,11 @@ export const parseAdminSeting: any = (localsetting: Record<string, any>) => {
 
   return {
     ...defaultSettings,
-    adminSetting: restLocalsetting,
+    adminSetting: {
+      ...restLocalsetting,
+      //左侧菜单样式(default/bar/line), 未配置时为 default(antd 原生样式)
+      menuIndicator: parseMenuIndicator(restLocalsetting.menuIndicator),
+    },
     ...navTheme,
     ...antdproRest,
     logo: localsetting.logo,

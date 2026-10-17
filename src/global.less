@@ -98,6 +98,35 @@ ol {
   color: rgba(0, 0, 0, 0.65);
 }
 
+/*
+ * 侧边栏滚动条贴边.
+ *
+ * 现象: 菜单超出一屏、出现滚动条时, 滚动条离侧边栏右边缘还差 8px 左右, 没有贴边.
+ * 原因: 真正滚动的是 .ant-pro-sider-scroll (SiderMenu.js 里设了 overflow-y: auto),
+ *       而 ProLayout 给它的父级 .ant-layout-sider-children 加了左右 8px 内边距
+ *       (token.layout.sider.paddingInlineLayoutMenu, 默认 8, 见
+ *        pro-components/es/provider/typing/layoutToken.js), 再算上 1px 右边框,
+ *       滚动条就被顶在里面 8px 处了.
+ *
+ * 处理: 不去动 .ant-layout-sider-children (它上面还挂着 logo / 折叠按钮的定位),
+ *       只把滚动容器自己向左右各拉宽 8px (负 margin), 再用等量 padding 把内容推回原位:
+ *         滚动容器边界 [8, 200] => [0, 208]  ← 滚动条画在自己边界上, 于是贴到侧边栏右边缘
+ *         滚动容器内容区 [8, 200] => [8, 200]  ← 菜单项位置/宽度一点没变
+ *       顺带一个好处: 该容器 overflow-x: hidden 的裁剪边界也从 8px 变成 0,
+ *       指示条那种 -8px 的负偏移不会再被裁掉 (见下方"指示条").
+ *
+ * 为什么加 .ant-pro-layout .ant-pro-sider 前缀:
+ *   ProLayout 那份内边距的选择器就是 .ant-pro-layout .ant-pro-sider .ant-layout-sider-children,
+ *   用同样的前缀, "有内边距" 和 "拉宽补偿" 两件事就永远同时生效或同时失效
+ *   (比如移动端抽屉里不满足该前缀, 内边距本来就没有, 也就不需要拉宽), 不会互相错位.
+ */
+.ant-pro-layout .ant-pro-sider .ant-pro-sider-scroll {
+  box-sizing: border-box;
+  width: calc(100% + 16px);
+  margin-inline: -8px;
+  padding-inline: 8px;
+}
+
 /* hack style 如果pro-components 支持动态切换主题后可删除 */
 // .deadmin-dark.ant-pro-layout .ant-pro-layout-bg-list {
 //   background: linear-gradient(#141414, #000000 28%);
@@ -182,7 +211,13 @@ ol {
   transition: none;
 }
 /*
- * 左侧选中指示条 (类 github 效果)
+ * 左侧菜单指示效果 (类 github 风格)
+ *
+ * 开关: 后台"主题配置 → 菜单样式", 三个选项, 由 app.tsx 给布局根节点加对应 class:
+ *   default 默认   —— 不加 class, 完全走 antd 原生样式 (默认值)
+ *   bar     指示条 —— .deadmin-menu-bar:  选中菜单项左侧一条短指示条 (本文件下方第 1 段)
+ *   line    指示线 —— .deadmin-menu-line: 每个大菜单(一级菜单)的子菜单左侧一条贯通竖线 (下方第 2 段)
+ *   未配置时按 default 处理(见 refresh.tsx parseMenuIndicator).
  *
  * 背景: antd 的 activeBarWidth 默认是 0 (Ant Design v6, 见
  *       antd/es/menu/style/index.js:372), 所以自带的 ::after 画出来是 0 宽,
@@ -199,20 +234,22 @@ ol {
  *   1) .ant-menu-item 自带 overflow: hidden (antd/es/menu/style/vertical.js:17-20),
  *      负偏移会被裁掉, 所以要放开成 visible.
  *      (文字省略号由 .ant-menu-title-content 自己负责, 不受影响)
- *   2) 菜单外面套着 .ant-pro-sider-menu-scroll, 它设了 overflow-x: hidden
- *      (SiderMenu.js:220-222), 条最多只能顶到该容器的左边缘. 而菜单项默认
- *      左右 margin 只有 4px, 放不下"条 + 间距", 所以这里把菜单项左右内缩改成 8px,
- *      让条贴在容器左缘时, 右边还能和菜单项留出 ~5px 的间距.
+ *   2) 菜单外面套着 .ant-pro-sider-scroll, 它设了 overflow-x: hidden
+ *      (SiderMenu.js:220-222), 条最多只能顶到该容器的左边缘. 而菜单项盒子左边在
+ *      12px 处, 条放到它左侧 4px 处 (inset-inline-start: -8px) 才留得出间距.
+ *      好在本文件开头的"滚动条贴边"把该容器的裁剪边界从 8px 拉到了 0 (负 margin 拉宽),
+ *      所以条落在 4px 处不会被裁掉.
  *
  * 颜色: 取 CSS 变量 --sa-color-primary (在 app.tsx 里由后台 colorPrimary 同步),
  *       带兜底值, 后台改主题色时会自动跟随.
  *       若想直接用 antd 的选中文字色, 把 background 换成 currentColor 即可.
  *
  * 权重: antd hashPriority 为 low (:where 权重 0), 其选择器权重是 (0,2,1),
- *       这里加 .ant-pro-sider 前缀提到 (0,4,1), 否则会被运行时注入的 antd 样式覆盖.
+ *       这里加 .deadmin-menu-bar .ant-pro-sider 前缀提到 (0,5,1),
+ *       否则会被运行时注入的 antd 样式覆盖.
  *       只限定 .ant-menu-inline (排除折叠态), 避免误伤 horizontal 导航 (那边 ::after 是下划线).
  */
-.ant-pro-sider .ant-menu-inline:not(.ant-menu-inline-collapsed) {
+.deadmin-menu-bar .ant-pro-sider .ant-menu-inline:not(.ant-menu-inline-collapsed) {
   // 菜单项自带 overflow: hidden, 负偏移的指示条会被裁掉, 放开成 visible.
   // (只影响这一层; 文字省略号由 .ant-menu-title-content 自己负责)
   .ant-menu-item {
@@ -237,19 +274,73 @@ ol {
 }
 
 /*
- * 上面的 -8px 会被外层滚动容器 .ant-pro-sider-scroll 的 overflow-x: hidden 裁掉
- * (SiderMenu.js:220-222), 因为它的左边界就在菜单左边 8px 处.
+ * 指示线: 只给一级(大菜单)的子菜单左侧画一条贯通竖线, 并和子项行留出间距(二级及更深不画).
  *
- * 这里用"向左加宽 + 等量 padding"把它的裁剪边界左移 8px, 内容位置/宽度保持不变:
- *   border box (padding box = 裁剪边界): [0, W-8]   原来是 [8, W-8]
- *   content box (菜单所在):              [8, W-8]   不变
- * 于是左侧凭空多出 8px 空间给指示条, 又完全不动菜单项自己的 margin/width.
+ * 结构: li.ant-menu-submenu > ul.ant-menu.ant-menu-sub.ant-menu-inline
+ *       竖线画在 ul 上, ul 的上下边界正好是"父级标题下方"到"最后一个子项",
+ *       所以 inset-block: 0 就是子菜单的完整高度, 子菜单收起时 ul 是 display:none, 线自动消失.
+ *
+ * 目标几何(以下都是实测坐标, 一级菜单带图标 / 不带图标都一样):
+ *   标题 div(.ant-menu-submenu-title) 左边缘 12 + 自身内缩 16  => 标题文字/图标起点 x=28
+ *   子 ul 左边缘 8                                            => 竖线 inset-inline-start = 28 - 8 = 20
+ *   子项行盒子左边缘 = 子 ul 左边缘 + 子 ul 内缩 + 行自带 4px margin-inline
+ *   要求"线右侧与子项行左边缘留 8px"                           => 行左边缘 = 28 + 1(线宽) + 8 = 37
+ *                                                            => 子 ul 内缩 = 37 - 8 - 4 = 25
+ *   子项文字 = 37 + 32(层级内缩) = 69, 正好落在标题文字(68)下面.
+ *
+ *   所以比默认(带图标的一级菜单子 ul 内缩 10, 无图标为 0)宽了 15px, 一级子项整体右移 15px,
+ *   这是"线对齐标题文字" + "线与子项留 8px"两条要求的必然结果.
+ *
+ * 为什么只做一级:
+ *   一是 antd 同一组内的行盒子是齐平的(下一级 ul 跟着上一级子 ul 的内容区走, SiderMenu.js),
+ *   只改一级这一层, 二级 / 三级行盒子会一起落到 37, 不用逐层补规则;
+ *   二是逐层补会把内缩层层叠加: 二级要"线上 x=69 + 行盒子 78"(子 ul 内缩 41),
+ *   三级文字起点就跟着到 126, 而 208px 侧边栏的菜单可用宽度只有 184px, 菜单文字会被挤没.
+ *   所以二级及更深的组保持 antd 默认缩进, 只有一级那条线.
+ *
+ * 颜色: 跟随侧边栏底色 —— 暗色侧边栏用亮线, 亮色侧边栏用暗线 (见下方 --sa-menu-line-color).
+ *
+ * 坑 1(线看不见): antd 在 .ant-menu::before 上写了 clearfix (display: table; content: ''),
+ *       绝对定位的 table 盒子在 top/bottom 同时为 0 时高度按内容算(内容为空) => height: 0,
+ *       所以这里必须显式 display: block, 让 inset-block: 0 生效.
+ * 坑 2(展开时抖动): 伪元素从文档流里挪走后, 子项自带的上下 margin (antd marginBlock: 4px)
+ *       会和 ul 上下边缘发生外边距折叠, ul 会矮 4px; 而展开动画结束时 ul 高度从动画给的固定值
+ *       切回 auto, 折叠行为变了, 内容就会突然跳一下. 默认(不加指示线)时是 antd 那两个 clearfix
+ *       伪元素挡着不折叠, 所以每层子 ul 都用 display: flow-root 建 BFC, 让纵向布局和默认完全一致.
  */
-.ant-pro-sider .ant-pro-sider-scroll {
-  box-sizing: border-box;
-  width: calc(100% + 8px);
-  margin-inline-start: -8px;
-  padding-inline-start: 8px;
+.deadmin-menu-line .ant-pro-sider .ant-menu-inline.ant-menu-root:not(.ant-menu-inline-collapsed) {
+  > .ant-menu-submenu > .ant-menu-sub.ant-menu-inline:not(.ant-menu-hidden) {
+    position: relative;
+    display: flow-root;
+    // 让子项行盒子左边缘落到 x=37 (见上方推导)
+    padding-inline-start: 25px;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      inset-block: 0;
+      // 28(标题文字/图标起点) - 8(子 ul 左边缘)
+      inset-inline-start: 20px;
+      width: 1px;
+      background: var(--sa-menu-line-color, rgba(0, 0, 0, 0.1));
+      // 纯装饰, 不要挡住菜单项的点击/悬浮
+      pointer-events: none;
+    }
+  }
+}
+
+// 指示线颜色: 默认亮色侧边栏, 后面两条覆盖成暗色侧边栏的场景
+.deadmin-menu-line {
+  --sa-menu-line-color: rgba(0, 0, 0, 0.1);
+}
+.deadmin-dark.deadmin-menu-line,
+.deadmin-sider-dark.deadmin-menu-line {
+  --sa-menu-line-color: rgba(255, 255, 255, 0.12);
+}
+// 放在最后: 亮色侧边栏优先于导航暗黑(deadmin-dark)
+.deadmin-sider-white.deadmin-menu-line {
+  --sa-menu-line-color: rgba(0, 0, 0, 0.1);
 }
 .saContainer .ant-page-header-has-breadcrumb {
   padding-inline: 20px;
