@@ -188,6 +188,14 @@ export function rootContainer(container: JSX.Element) {
           subMenuItemBg: 'transparent',
           itemHeight: 34,
         },
+        // 卡片默认阴影: antd 给"非 bordered"的 Card 补的是 boxShadowTertiary
+        // (antd/es/card/style/index.js:218-220), ProTable 的搜索栏、ProCard 都会用到.
+        // 原值三层 0.05 / 0.03 / 0.03, 这里收成两层并调淡, 比原来更收敛.
+        // 想完全去掉就写 'none'; 鼠标悬浮(hoverable)用的是另一个 token boxShadowCard, 这里不动.
+        // 后台主题里若配了 Card, 同名 key 仍然以后台为准.
+        Card: {
+          boxShadowTertiary: '0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02)',
+        },
         ...setting?.adminSetting?.antdtheme?.components,
       },
     };
