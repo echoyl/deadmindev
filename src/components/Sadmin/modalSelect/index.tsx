@@ -363,7 +363,9 @@ const ModalSelectList = (props) => {
               style={{
                 height: 98,
                 marginBottom: 10,
-                backgroundColor: token.colorFillQuaternary,
+                // colorFillQuaternary 为半透明色，直接作为背景时拖拽悬浮会透出下层卡片
+                // 这里先叠加在容器底色上，得到不透明但视觉一致的背景色
+                background: `linear-gradient(${token.colorFillQuaternary}, ${token.colorFillQuaternary}), ${token.colorBgContainer}`,
                 maxWidth: '100%',
               }}
               className="sa-modal-select-item"
