@@ -224,6 +224,7 @@ export const getFormFieldColumns = (props: formFieldsProps) => {
       if (v.formItemProps?.hidden && devEnable) {
         v.formItemProps.hidden = false;
         v.formItemProps.extra = 'hidden元素';
+        v.colProps = { span: 24 };
         //v.readonly = true; //隐藏元素设置为只读
       }
 
